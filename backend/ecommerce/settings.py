@@ -36,6 +36,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ecommerce.middleware.ErrorHandlingMiddleware',
 ]
 
 ROOT_URLCONF = 'ecommerce.urls'
@@ -134,7 +135,8 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
-    ]
+    ],
+    'EXCEPTION_HANDLER': 'ecommerce.middleware.custom_exception_handler'
 }
 
 SIMPLE_JWT = {
