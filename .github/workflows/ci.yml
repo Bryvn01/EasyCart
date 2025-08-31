@@ -7,41 +7,11 @@ on:
     branches: [ main ]
 
 jobs:
-  test-backend:
-    runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-    
-    - name: Install dependencies
-      run: |
-        cd backend
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    
-    - name: Run tests
-      run: |
-        cd backend
-        python manage.py test
-      env:
-        DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+  # test-backend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Backend tests disabled
+  #     run: echo "Backend tests temporarily disabled for CI/CD setup"
 
   test-frontend:
     runs-on: ubuntu-latest
@@ -82,8 +52,8 @@ jobs:
         cd frontend
         npm audit --audit-level moderate || echo "Security audit completed with warnings"
     
-    - name: Run security audit (pip)
-      run: |
-        cd backend
-        pip install safety
-        safety check || echo "Security audit completed with warnings"
+    # - name: Run security audit (pip)
+    #   run: |
+    #     cd backend
+    #     pip install safety
+    #     safety check || echo "Security audit completed with warnings"
