@@ -1,13 +1,12 @@
-Django==5.1.11.5
-djangorestframework==3.15.2
+Django==4.2.16
+djangorestframework==3.14.0
 django-cors-headers==4.3.1
-djangorestframework-simplejwt==5.5.1
+djangorestframework-simplejwt==5.3.0
 Pillow==10.4.0
 python-decouple==3.8
 django-filter==23.3
 django-ratelimit==4.1.0
 django-environ==0.11.2
-# psycopg2-binary==2.9.9  # Skip for SQLite development
 redis==5.0.1
 celery==5.3.4
 stripe==7.8.0
