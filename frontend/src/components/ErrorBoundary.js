@@ -1,7 +1,5 @@
 import React from 'react';
 
-
-
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -13,31 +11,34 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Sanitize error information before logging to prevent log injection
-    const sanitizedError = {
-      message: error?.message ? String(error.message).replace(/[\r\n\t]/g, ' ') : 'Unknown error',
-      stack: error?.stack ? String(error.stack).replace(/[\r\n\t]/g, ' ').substring(0, 500) : 'No stack trace'
-    };
-    const sanitizedErrorInfo = {
-      componentStack: errorInfo?.componentStack ? String(errorInfo.componentStack).replace(/[\r\n\t]/g, ' ').substring(0, 500) : 'No component stack'
-    };
-    console.error('Error caught by boundary:', sanitizedError, sanitizedErrorInfo);
+    console.error('Error caught by boundary:', error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="container py-16 text-center">
-          <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>⚠️</div>
-          <h2 className="text-2xl font-bold mb-4">{this.props.errorTitle || 'Something went wrong'}</h2>
-          <p style={{ color: 'var(--gray-600)', marginBottom: 'var(--space-4)' }}>
-            {this.props.errorMessage || "We're sorry, but something unexpected happened."}
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="btn btn-primary"
+        <div style={{
+          padding: '20px',
+          textAlign: 'center',
+          backgroundColor: '#f8f9fa',
+          border: '1px solid #dee2e6',
+          borderRadius: '8px',
+          margin: '20px'
+        }}>
+          <h2>Something went wrong</h2>
+          <p>We're sorry, but something unexpected happened.</p>
+          <button 
+            onClick={() => this.setState({ hasError: false, error: null })}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
           >
-            {this.props.reloadText || 'Reload Page'}
+            Try Again
           </button>
         </div>
       );

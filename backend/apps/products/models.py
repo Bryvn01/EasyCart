@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.utils.html import escape
 from django.db.models import Avg
 
 class Category(models.Model):
@@ -20,7 +21,7 @@ class Category(models.Model):
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return self.name
+        return escape(self.name)
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -89,7 +90,7 @@ class Product(models.Model):
         return 0
     
     def __str__(self):
-        return self.name
+        return escape(self.name)
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
@@ -102,4 +103,4 @@ class ProductImage(models.Model):
         ordering = ['order', 'id']
     
     def __str__(self):
-        return f'{self.product.name} - Image {self.id}'
+        return f'{escape(self.product.name)} - Image {self.id}'
