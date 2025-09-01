@@ -35,25 +35,35 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (credentials) => {
-    const response = await authAPI.login(credentials);
-    const { user, access, refresh } = response.data;
-    
-    localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
-    setUser(user);
-    
-    return response;
+    try {
+      const response = await authAPI.login(credentials);
+      const { user, access, refresh } = response.data;
+      
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      setUser(user);
+      
+      return response;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
   };
 
   const register = async (userData) => {
-    const response = await authAPI.register(userData);
-    const { user, access, refresh } = response.data;
-    
-    localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
-    setUser(user);
-    
-    return response;
+    try {
+      const response = await authAPI.register(userData);
+      const { user, access, refresh } = response.data;
+      
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      setUser(user);
+      
+      return response;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
+    }
   };
 
   const logout = (resetCart) => {

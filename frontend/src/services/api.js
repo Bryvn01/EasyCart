@@ -118,6 +118,11 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  // Add CSRF protection for state-changing requests
+  if (['post', 'put', 'patch', 'delete'].includes(config.method)) {
+    config.headers['X-CSRF-Token'] = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    config.headers['X-Requested-With'] = 'XMLHttpRequest';
+  }
   return config;
 });
 

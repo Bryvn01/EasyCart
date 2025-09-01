@@ -12,13 +12,20 @@ const SupportChat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const sanitizeInput = (input) => {
+    return input.replace(/<script[^>]*>.*?<\/script>/gi, '')
+                .replace(/<[^>]*>/g, '')
+                .trim();
+  };
+
   const sendMessage = (e) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    const sanitizedMessage = sanitizeInput(newMessage);
+    if (!sanitizedMessage) return;
 
     const message = {
       id: Date.now(),
-      text: newMessage,
+      text: sanitizedMessage,
       sender: 'user',
       timestamp: new Date()
     };

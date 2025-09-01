@@ -4,8 +4,15 @@ import { analytics } from '../services/analytics';
 export const usePerformance = () => {
   useEffect(() => {
     window.addEventListener('load', () => {
-      const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-      analytics.track('Page Load Time', { duration: loadTime });
+      try {
+        const navigation = performance.getEntriesByType('navigation')[0];
+        if (navigation) {
+          const loadTime = navigation.loadEventEnd - navigation.fetchStart;
+          analytics.track('Page Load Time', { duration: loadTime });
+        }
+      } catch (error) {
+        console.warn('Performance measurement not available:', error);
+      }
     });
   }, []);
 };

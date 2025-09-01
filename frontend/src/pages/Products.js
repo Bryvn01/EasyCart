@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import SearchInput from '../components/ui/SearchInput';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -77,17 +79,17 @@ const Products = () => {
 
   const addToCart = async (productId) => {
     if (!isAuthenticated) {
-      alert('Please login to add items to cart');
+      toast.error('Please login to add items to cart');
       return;
     }
 
     try {
       await ordersAPI.addToCart({ product_id: productId, quantity: 1 });
       fetchCartCount();
-      alert('Product added to cart! 🛒');
+      toast.success('Product added to cart! 🛒');
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Failed to add product to cart');
+      toast.error('Failed to add product to cart');
     }
   };
 
@@ -163,12 +165,9 @@ const Products = () => {
       <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
         <div className="grid grid-cols-5 gap-4">
           <div>
-            <input
-              type="text"
-              className="form-control"
+            <SearchInput
+              onSearch={setSearchTerm}
               placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div>
