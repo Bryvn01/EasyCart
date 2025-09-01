@@ -29,11 +29,24 @@ const Register = () => {
     setLoading(true);
     setError('');
 
+    // Client-side validation
+    if (formData.password !== formData.password_confirm) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
     try {
       await register(formData);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.non_field_errors?.[0] || 'Registration failed');
+      setError(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
