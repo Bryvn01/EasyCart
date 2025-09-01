@@ -3,6 +3,24 @@ import { BrowserRouter } from 'react-router-dom';
 import Products from '../pages/Products';
 import * as api from '../services/api';
 
+// Mock axios
+jest.mock('axios', () => ({
+  create: jest.fn(() => ({
+    get: jest.fn(),
+    post: jest.fn(),
+    interceptors: {
+      request: { use: jest.fn() },
+      response: { use: jest.fn() }
+    }
+  }))
+}));
+
+// Mock react-hot-toast
+jest.mock('react-hot-toast', () => ({
+  success: jest.fn(),
+  error: jest.fn()
+}));
+
 jest.mock('../services/api');
 
 const mockProducts = {
@@ -14,8 +32,36 @@ const mockProducts = {
   }
 };
 
-const renderWithRouter = (component) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>);
+const MockAuthProvider = ({ children }) => {
+  const mockValue = {
+    user: null,
+    login: jest.fn(),
+    register: jest.fn(),
+    logout: jest.fn(),
+    loading: false,
+    isAuthenticated: false
+  };
+  return React.createElement('div', { 'data-testid': 'auth-provider' }, children);
+};
+
+const MockCartProvider = ({ children }) => {
+  const mockValue = {
+    cartCount: 0,
+    fetchCartCount: jest.fn()
+  };
+  return React.createElement('div', { 'data-testid': 'cart-provider' }, children);
+};
+
+const renderWithProviders = (component) => {
+  return render(
+    <BrowserRouter>
+      <MockAuthProvider>
+        <MockCartProvider>
+          {component}
+        </MockCartProvider>
+      </MockAuthProvider>
+    </BrowserRouter>
+  );
 };
 
 describe('Products Page', () => {
@@ -25,7 +71,7 @@ describe('Products Page', () => {
   });
 
   test('renders products list', async () => {
-    renderWithRouter(<Products />);
+    renderWithProviders(<Products />);
     
     await waitFor(() => {
       expect(screen.getByText('Test Product')).toBeInTheDocument();
@@ -33,7 +79,7 @@ describe('Products Page', () => {
   });
 
   test('filters products by search', async () => {
-    renderWithRouter(<Products />);
+    renderWithProviders(<Products />);
     
     const searchInput = screen.getByPlaceholderText(/search/i);
     fireEvent.change(searchInput, { target: { value: 'Test' } });
