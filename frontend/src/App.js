@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -7,6 +7,9 @@ import Navbar from './components/Navbar';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
+import SupportChat from './components/Chat/SupportChat';
+import { usePerformance } from './hooks/usePerformance';
+import { analytics } from './services/analytics';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -22,6 +25,12 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProductManager from './components/Admin/ProductManager';
 
 function App() {
+  usePerformance();
+  
+  useEffect(() => {
+    analytics.page('App Loaded');
+  }, []);
+  
   return (
     <ErrorBoundary>
       <AuthProvider>
@@ -50,6 +59,7 @@ function App() {
                     </Routes>
                   </Suspense>
                 </main>
+                <SupportChat />
                 <Toaster 
                   position="top-right"
                   toastOptions={{
