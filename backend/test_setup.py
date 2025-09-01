@@ -5,11 +5,16 @@ Test setup script to ensure test data exists
 import os
 import sys
 import django
+from django.core.management import execute_from_command_line
 
 # Setup Django
 sys.path.append('.')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecommerce.settings')
 django.setup()
+
+# Run migrations first
+print("Running migrations...")
+execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
 
 from django.contrib.auth import get_user_model
 from apps.products.models import Category, Product

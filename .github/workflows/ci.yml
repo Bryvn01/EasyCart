@@ -24,6 +24,11 @@ jobs:
         pip cache purge
         pip install --no-cache-dir -r requirements.txt
 
+    - name: Run migrations
+      run: |
+        cd backend
+        python manage.py migrate
+    
     - name: Run backend tests
       run: cd backend && python test_runner.py
       env:
