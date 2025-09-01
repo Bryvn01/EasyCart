@@ -13,9 +13,9 @@
       "dest": "/server.js"
     }
   ],
-  "env": {
-    "MONGODB_URI": "@mongodb_uri",
-    "JWT_SECRET": "@jwt_secret",
-    "FRONTEND_URL": "@frontend_url"
+  "functions": {
+    "server.js": {
+      "maxDuration": 10
+    }
   }
 }
