@@ -22,7 +22,7 @@ app.use('/api/seed', require('./routes/seed'));
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'EasyCart API is running' });
+  res.json({ status: 'OK', message: 'EasyCart API is running', timestamp: new Date().toISOString() });
 });
 
 const PORT = process.env.PORT || 5000;
