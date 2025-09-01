@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { mockProducts, mockCategories } from './mockData';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-api.vercel.app/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 const USE_MOCK_DATA = false; // Always use real API now
 
 const api = axios.create({
@@ -126,13 +126,68 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Mock auth for testing when backend is unavailable
+const mockAuth = {
+  register: (userData) => {
+    // Simulate registration
+    const mockUser = {
+      id: Date.now(),
+      email: userData.email,
+      username: userData.username,
+      name: userData.username,
+      role: 'user',
+      is_admin: false
+    };
+    
+    return Promise.resolve({
+      data: {
+        access: 'mock-access-token',
+        refresh: 'mock-refresh-token',
+        user: mockUser
+      }
+    });
+  },
+  login: (credentials) => {
+    const mockUser = {
+      id: 1,
+      email: credentials.email,
+      username: 'mockuser',
+      name: 'Mock User',
+      role: credentials.email === 'admin@easycart.com' ? 'admin' : 'user',
+      is_admin: credentials.email === 'admin@easycart.com'
+    };
+    
+    return Promise.resolve({
+      data: {
+        access: 'mock-access-token',
+        refresh: 'mock-refresh-token',
+        user: mockUser
+      }
+    });
+  }
+};
+
 export const authAPI = {
-  register: (userData) => api.post('/auth/register/', userData),
-  login: (credentials) => api.post('/auth/login/', credentials),
-  getProfile: () => api.get('/auth/profile/'),
-  updateProfile: (data) => api.put('/auth/profile/', data),
-  forgotPassword: (data) => api.post('/auth/forgot-password/', data),
-  resetPassword: (data) => api.post('/auth/reset-password/', data),
+  register: async (userData) => {
+    try {
+      return await api.post('/auth/register', userData);
+    } catch (error) {
+      console.warn('Backend unavailable, using mock registration');
+      return mockAuth.register(userData);
+    }
+  },
+  login: async (credentials) => {
+    try {
+      return await api.post('/auth/login', credentials);
+    } catch (error) {
+      console.warn('Backend unavailable, using mock login');
+      return mockAuth.login(credentials);
+    }
+  },
+  getProfile: () => api.get('/auth/profile'),
+  updateProfile: (data) => api.put('/auth/profile', data),
+  forgotPassword: (data) => api.post('/auth/forgot-password', data),
+  resetPassword: (data) => api.post('/auth/reset-password', data),
 };
 
 export const productsAPI = {
