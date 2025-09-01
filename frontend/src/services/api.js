@@ -1,10 +1,34 @@
 import axios from 'axios';
+import { mockProducts, mockCategories } from './mockData';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const USE_MOCK_DATA = !process.env.REACT_APP_API_URL && process.env.NODE_ENV === 'production';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
+
+// Mock API responses for production
+const mockAPI = {
+  get: (url) => {
+    if (url === '/products/') {
+      return Promise.resolve({ data: { results: mockProducts, count: mockProducts.length } });
+    }
+    if (url === '/products/categories/') {
+      return Promise.resolve({ data: mockCategories });
+    }
+    if (url.startsWith('/products/') && url.endsWith('/')) {
+      const id = parseInt(url.split('/')[2]);
+      const product = mockProducts.find(p => p.id === id);
+      return product ? Promise.resolve({ data: product }) : Promise.reject({ status: 404 });
+    }
+    return Promise.reject({ status: 404 });
+  },
+  post: () => Promise.resolve({ data: { message: 'Mock API - Feature not available' } }),
+  put: () => Promise.resolve({ data: { message: 'Mock API - Feature not available' } }),
+  delete: () => Promise.resolve({ data: { message: 'Mock API - Feature not available' } }),
+  patch: () => Promise.resolve({ data: { message: 'Mock API - Feature not available' } })
+};
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
@@ -24,11 +48,11 @@ export const authAPI = {
 };
 
 export const productsAPI = {
-  getProducts: (params) => api.get('/products/', { params }),
-  getProduct: (id) => api.get(`/products/${id}/`),
-  getCategories: () => api.get('/products/categories/'),
-  deleteProduct: (id) => api.delete(`/products/${id}/`),
-  updateProduct: (id, data) => api.put(`/products/${id}/`, data),
+  getProducts: (params) => USE_MOCK_DATA ? mockAPI.get('/products/') : api.get('/products/', { params }),
+  getProduct: (id) => USE_MOCK_DATA ? mockAPI.get(`/products/${id}/`) : api.get(`/products/${id}/`),
+  getCategories: () => USE_MOCK_DATA ? mockAPI.get('/products/categories/') : api.get('/products/categories/'),
+  deleteProduct: (id) => USE_MOCK_DATA ? mockAPI.delete(`/products/${id}/`) : api.delete(`/products/${id}/`),
+  updateProduct: (id, data) => USE_MOCK_DATA ? mockAPI.put(`/products/${id}/`, data) : api.put(`/products/${id}/`, data),
 };
 
 export const ordersAPI = {
