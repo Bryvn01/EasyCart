@@ -37,7 +37,8 @@ jobs:
         python manage.py migrate
     
     - name: Run backend tests
-      run: cd backend && python test_runner.py
+      run: python test_runner.py
+      working-directory: backend
       env:
         TEST_EMAIL: test@example.com
         TEST_PASSWORD: testpassword
