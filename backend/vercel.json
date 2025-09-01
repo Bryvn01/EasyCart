@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "easycart-backend",
   "builds": [
     {
       "src": "server.js",
@@ -14,6 +15,7 @@
   ],
   "env": {
     "MONGODB_URI": "@mongodb_uri",
-    "JWT_SECRET": "@jwt_secret"
+    "JWT_SECRET": "@jwt_secret",
+    "FRONTEND_URL": "@frontend_url"
   }
 }
