@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useTranslation } from 'react-i18next';
 import Button from './ui/Button';
+import CartBadge from './ui/CartBadge';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -42,11 +43,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-6">
                 <Link to="/cart" className="relative text-gray-600 hover:text-primary-600 font-medium transition-colors">
                   {t('cart')}
-                  {cartCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
-                      {cartCount}
-                    </span>
-                  )}
+                  <CartBadge count={cartCount} />
                 </Link>
                 <Link to="/orders" className="text-gray-600 hover:text-primary-600 font-medium transition-colors">
                   {t('orders')}
@@ -105,11 +102,7 @@ const Navbar = () => {
                 <>
                   <Link to="/cart" className="relative text-gray-600 hover:text-primary-600 font-medium">
                     {t('cart')}
-                    {cartCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
-                        {cartCount}
-                      </span>
-                    )}
+                    <CartBadge count={cartCount} />
                   </Link>
                   <Link to="/orders" className="text-gray-600 hover:text-primary-600 font-medium">
                     {t('orders')}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { productsAPI, ordersAPI } from '../services/api';
@@ -55,7 +56,7 @@ const Home = () => {
     try {
       await ordersAPI.addToCart({ product_id: productId, quantity: 1 });
       fetchCartCount();
-      alert('Product added to cart! 🛒');
+      toast.success('Product added to cart! 🛒');
     } catch (error) {
       console.error('Error adding to cart:', error);
     }

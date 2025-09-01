@@ -2,9 +2,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button, Card } from './ui';
+import PropTypes from 'prop-types';
 
 const ProductCard = ({ product, onAddToCart, loading = false }) => {
   const { t } = useTranslation();
+
+  if (!product) {
+    return (
+      <Card className="p-4">
+        <div className="text-center text-gray-500">Product not available</div>
+      </Card>
+    );
+  }
 
   return (
     <Card hover className="overflow-hidden">
@@ -58,6 +67,19 @@ const ProductCard = ({ product, onAddToCart, loading = false }) => {
       </div>
     </Card>
   );
+};
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    name: PropTypes.string.isRequired,
+    image: PropTypes.string,
+    description: PropTypes.string,
+    price: PropTypes.number.isRequired,
+    stock: PropTypes.number
+  }),
+  onAddToCart: PropTypes.func.isRequired,
+  loading: PropTypes.bool
 };
 
 export default ProductCard;
