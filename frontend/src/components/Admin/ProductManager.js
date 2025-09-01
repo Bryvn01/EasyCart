@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { productsAPI } from '../../services/api';
+import AdminAuth from './AdminAuth';
 
 const ProductManager = () => {
   const [products, setProducts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '', price: '', category: 'Groceries', description: '', 
     stock: '', image: '', brand: '', weight: ''
@@ -10,23 +14,65 @@ const ProductManager = () => {
 
   const categories = ['Electronics', 'Fashion', 'Home & Living', 'Food & Beverages', 'Health & Beauty', 'Sports & Fitness', 'Groceries'];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newProduct = {
-      id: Date.now(),
-      ...formData,
-      price: parseFloat(formData.price),
-      stock: parseInt(formData.stock),
-      rating: 4.5
-    };
-    setProducts([...products, newProduct]);
-    setFormData({
-      name: '', price: '', category: 'Groceries', description: '', 
-      stock: '', image: '', brand: '', weight: ''
-    });
-    setShowAddForm(false);
-    alert('Product added! Note: Changes are temporary in demo mode.');
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    const userData = localStorage.getItem('user');
+    if (token && userData) {
+      const parsedUser = JSON.parse(userData);
+      if (parsedUser.role === 'admin') {
+        setUser(parsedUser);
+        fetchProducts();
+      }
+    }
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await productsAPI.getProducts();
+      setProducts(response.data.results || []);
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+    }
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const productData = {
+        ...formData,
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock)
+      };
+      await productsAPI.createProduct(productData);
+      await fetchProducts();
+      setFormData({
+        name: '', price: '', category: 'Groceries', description: '', 
+        stock: '', image: '', brand: '', weight: ''
+      });
+      setShowAddForm(false);
+      alert('Product added successfully!');
+    } catch (error) {
+      alert('Failed to add product: ' + (error.response?.data?.message || 'Network error'));
+    }
+    setLoading(false);
+  };
+
+  const deleteProduct = async (id) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        await productsAPI.deleteProduct(id);
+        await fetchProducts();
+        alert('Product deleted successfully!');
+      } catch (error) {
+        alert('Failed to delete product');
+      }
+    }
+  };
+
+  if (!user) {
+    return <AdminAuth onLogin={setUser} />;
+  }
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -163,6 +209,16 @@ const ProductManager = () => {
               Stock: {product.stock} | {product.weight}
             </p>
             <p style={{ fontSize: '12px', color: '#6c757d' }}>Brand: {product.brand}</p>
+            <button 
+              onClick={() => deleteProduct(product._id)}
+              style={{ 
+                backgroundColor: '#dc3545', color: 'white', padding: '6px 12px', 
+                border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px',
+                marginTop: '8px'
+              }}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>
