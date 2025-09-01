@@ -5,7 +5,7 @@ Test setup script to ensure test data exists
 import os
 import sys
 import django
-from django.core.management import execute_from_command_line
+from django.core.management import call_command
 
 # Setup Django
 sys.path.append('.')
@@ -14,7 +14,11 @@ django.setup()
 
 # Run migrations first
 print("Running migrations...")
-execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
+try:
+    call_command('migrate', verbosity=0)
+    print("[OK] Migrations completed")
+except Exception as e:
+    print(f"[WARNING] Migration error (may be expected): {e}")
 
 from django.contrib.auth import get_user_model
 from apps.products.models import Category, Product
