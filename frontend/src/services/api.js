@@ -8,26 +8,109 @@ const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-// Mock API responses for production
+// Mock API responses with filtering and search support
 const mockAPI = {
-  get: (url) => {
+  get: (url, config = {}) => {
     if (url === '/products/') {
-      return Promise.resolve({ data: { results: mockProducts, count: mockProducts.length } });
+      let filteredProducts = [...mockProducts];
+      const params = config.params || {};
+      
+      // Search functionality
+      if (params.search) {
+        const searchTerm = params.search.toLowerCase();
+        filteredProducts = filteredProducts.filter(product => 
+          product.name.toLowerCase().includes(searchTerm) ||
+          product.description.toLowerCase().includes(searchTerm) ||
+          product.category.toLowerCase().includes(searchTerm) ||
+          product.brand.toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      // Category filter
+      if (params.category) {
+        filteredProducts = filteredProducts.filter(product => 
+          product.category.toLowerCase() === params.category.toLowerCase()
+        );
+      }
+      
+      // Price range filter
+      if (params.min_price) {
+        filteredProducts = filteredProducts.filter(product => 
+          product.price >= parseFloat(params.min_price)
+        );
+      }
+      if (params.max_price) {
+        filteredProducts = filteredProducts.filter(product => 
+          product.price <= parseFloat(params.max_price)
+        );
+      }
+      
+      // Brand filter
+      if (params.brand) {
+        filteredProducts = filteredProducts.filter(product => 
+          product.brand.toLowerCase() === params.brand.toLowerCase()
+        );
+      }
+      
+      // Sorting
+      if (params.ordering) {
+        switch (params.ordering) {
+          case 'price':
+            filteredProducts.sort((a, b) => a.price - b.price);
+            break;
+          case '-price':
+            filteredProducts.sort((a, b) => b.price - a.price);
+            break;
+          case 'name':
+            filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+          case '-name':
+            filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+          case 'rating':
+            filteredProducts.sort((a, b) => a.rating - b.rating);
+            break;
+          case '-rating':
+            filteredProducts.sort((a, b) => b.rating - a.rating);
+            break;
+          default:
+            break;
+        }
+      }
+      
+      // Pagination
+      const page = parseInt(params.page) || 1;
+      const pageSize = parseInt(params.page_size) || 12;
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+      
+      return Promise.resolve({ 
+        data: { 
+          results: paginatedProducts, 
+          count: filteredProducts.length,
+          next: endIndex < filteredProducts.length ? `?page=${page + 1}` : null,
+          previous: page > 1 ? `?page=${page - 1}` : null
+        } 
+      });
     }
+    
     if (url === '/products/categories/') {
       return Promise.resolve({ data: mockCategories });
     }
+    
     if (url.startsWith('/products/') && url.endsWith('/')) {
       const id = parseInt(url.split('/')[2]);
       const product = mockProducts.find(p => p.id === id);
       return product ? Promise.resolve({ data: product }) : Promise.reject({ status: 404 });
     }
+    
     return Promise.reject({ status: 404 });
   },
-  post: () => Promise.resolve({ data: { message: 'Mock API - Feature not available' } }),
-  put: () => Promise.resolve({ data: { message: 'Mock API - Feature not available' } }),
-  delete: () => Promise.resolve({ data: { message: 'Mock API - Feature not available' } }),
-  patch: () => Promise.resolve({ data: { message: 'Mock API - Feature not available' } })
+  post: () => Promise.resolve({ data: { message: 'Mock API - Feature not available in demo' } }),
+  put: () => Promise.resolve({ data: { message: 'Mock API - Feature not available in demo' } }),
+  delete: () => Promise.resolve({ data: { message: 'Mock API - Feature not available in demo' } }),
+  patch: () => Promise.resolve({ data: { message: 'Mock API - Feature not available in demo' } })
 };
 
 api.interceptors.request.use((config) => {
@@ -48,7 +131,7 @@ export const authAPI = {
 };
 
 export const productsAPI = {
-  getProducts: (params) => USE_MOCK_DATA ? mockAPI.get('/products/') : api.get('/products/', { params }),
+  getProducts: (params) => USE_MOCK_DATA ? mockAPI.get('/products/', { params }) : api.get('/products/', { params }),
   getProduct: (id) => USE_MOCK_DATA ? mockAPI.get(`/products/${id}/`) : api.get(`/products/${id}/`),
   getCategories: () => USE_MOCK_DATA ? mockAPI.get('/products/categories/') : api.get('/products/categories/'),
   deleteProduct: (id) => USE_MOCK_DATA ? mockAPI.delete(`/products/${id}/`) : api.delete(`/products/${id}/`),
