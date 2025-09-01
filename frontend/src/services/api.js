@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { mockProducts, mockCategories } from './mockData';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
-const USE_MOCK_DATA = !process.env.REACT_APP_API_URL && process.env.NODE_ENV === 'production';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-api.vercel.app/api';
+const USE_MOCK_DATA = false; // Always use real API now
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -131,11 +131,12 @@ export const authAPI = {
 };
 
 export const productsAPI = {
-  getProducts: (params) => USE_MOCK_DATA ? mockAPI.get('/products/', { params }) : api.get('/products/', { params }),
-  getProduct: (id) => USE_MOCK_DATA ? mockAPI.get(`/products/${id}/`) : api.get(`/products/${id}/`),
-  getCategories: () => USE_MOCK_DATA ? mockAPI.get('/products/categories/') : api.get('/products/categories/'),
-  deleteProduct: (id) => USE_MOCK_DATA ? mockAPI.delete(`/products/${id}/`) : api.delete(`/products/${id}/`),
-  updateProduct: (id, data) => USE_MOCK_DATA ? mockAPI.put(`/products/${id}/`, data) : api.put(`/products/${id}/`, data),
+  getProducts: (params) => USE_MOCK_DATA ? mockAPI.get('/products/', { params }) : api.get('/products', { params }),
+  getProduct: (id) => USE_MOCK_DATA ? mockAPI.get(`/products/${id}/`) : api.get(`/products/${id}`),
+  getCategories: () => USE_MOCK_DATA ? mockAPI.get('/products/categories/') : api.get('/categories'),
+  createProduct: (data) => api.post('/products', data),
+  deleteProduct: (id) => USE_MOCK_DATA ? mockAPI.delete(`/products/${id}/`) : api.delete(`/products/${id}`),
+  updateProduct: (id, data) => USE_MOCK_DATA ? mockAPI.put(`/products/${id}/`, data) : api.put(`/products/${id}`, data),
 };
 
 export const ordersAPI = {
