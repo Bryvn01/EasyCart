@@ -19,6 +19,7 @@ import Profile from './pages/Profile';
 import Wishlist from './pages/Wishlist';
 import AdminProducts from './pages/AdminProducts';
 import AdminDashboard from './pages/AdminDashboard';
+import ProductManager from './components/Admin/ProductManager';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
                       <Route path="/wishlist" element={<Wishlist />} />
                       <Route path="/admin/products" element={<AdminProducts />} />
                       <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                      <Route path="/admin/manage" element={<ProductManager />} />
                       <Route path="/admin" element={<AdminDashboard />} />
                     </Routes>
                   </Suspense>
