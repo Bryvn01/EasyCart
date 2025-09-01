@@ -25,9 +25,7 @@ jobs:
         pip install --no-cache-dir -r requirements.txt
 
     - name: Run backend tests
-      run: |
-        cd backend
-        python test_runner.py
+      run: cd backend && python test_runner.py
       env:
         TEST_EMAIL: test@example.com
         TEST_PASSWORD: testpassword

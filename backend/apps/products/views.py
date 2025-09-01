@@ -33,21 +33,29 @@ class ProductListView(generics.ListCreateAPIView):
         
         if price_min:
             try:
-                if price_min.lower() not in ['nan', 'inf', '-inf']:
+                # Skip filtering if value is invalid (NaN, inf, infinity, etc.)
+                if price_min.lower() in ['nan', 'inf', '-inf', 'infinity', '-infinity', '+infinity']:
+                    pass  # Skip this filter
+                else:
                     price_min_val = float(price_min)
-                    if not (price_min_val != price_min_val):  # Check for NaN
+                    # Additional check for NaN after conversion
+                    if price_min_val == price_min_val:  # This will be False for NaN
                         queryset = queryset.filter(price__gte=price_min_val)
-            except (ValueError, TypeError):
-                pass
-                
+            except (ValueError, TypeError, OverflowError):
+                pass  # Skip invalid values
+
         if price_max:
             try:
-                if price_max.lower() not in ['nan', 'inf', '-inf']:
+                # Skip filtering if value is invalid (NaN, inf, infinity, etc.)
+                if price_max.lower() in ['nan', 'inf', '-inf', 'infinity', '-infinity', '+infinity']:
+                    pass  # Skip this filter
+                else:
                     price_max_val = float(price_max)
-                    if not (price_max_val != price_max_val):  # Check for NaN
+                    # Additional check for NaN after conversion
+                    if price_max_val == price_max_val:  # This will be False for NaN
                         queryset = queryset.filter(price__lte=price_max_val)
-            except (ValueError, TypeError):
-                pass
+            except (ValueError, TypeError, OverflowError):
+                pass  # Skip invalid values
                 
         return queryset
 
