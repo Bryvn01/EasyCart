@@ -9,12 +9,14 @@ import json
 import sys
 from datetime import datetime
 
+import os
+
 BASE_URL = "http://localhost:8000/api"
 AUTH_TOKEN = None  # Set this after login
 
 def print_result(test_name, success, message=""):
     """Print test result with formatting"""
-    status = "✅ PASS" if success else "❌ FAIL"
+    status = "[PASS]" if success else "[FAIL]"
     print(f"{status} {test_name}")
     if message:
         print(f"   {message}")
@@ -24,9 +26,13 @@ def login_user():
     """Login and get authentication token with proper session validation"""
     global AUTH_TOKEN
     try:
+        # Use environment variables or defaults for test credentials
+        test_email = os.getenv('TEST_EMAIL', 'test@example.com')
+        test_password = os.getenv('TEST_PASSWORD', 'testpassword')
+
         response = requests.post(
             f"{BASE_URL}/auth/login/",
-            json={"email": "test@example.com", "password": "testpassword"}
+            json={"email": test_email, "password": test_password}
         )
         if response.status_code == 200:
             data = response.json()
@@ -41,7 +47,7 @@ def login_user():
 
 def test_wishlist_apis():
     """Test wishlist related APIs"""
-    print("🧪 Testing Wishlist APIs")
+    print("[TEST] Testing Wishlist APIs")
     print("=" * 50)
     
     headers = {"Authorization": f"Bearer {AUTH_TOKEN}"} if AUTH_TOKEN else {}
@@ -96,7 +102,7 @@ def test_wishlist_apis():
 
 def test_review_apis():
     """Test review related APIs"""
-    print("\n🧪 Testing Review APIs")
+    print("\n[TEST] Testing Review APIs")
     print("=" * 50)
     
     headers = {"Authorization": f"Bearer {AUTH_TOKEN}"} if AUTH_TOKEN else {}
@@ -150,21 +156,21 @@ def test_review_apis():
 
 def main():
     """Main test function"""
-    print("🚀 Starting Wishlist & Review API Tests")
+    print("[START] Starting Wishlist & Review API Tests")
     print(f"Timestamp: {datetime.now()}")
     print("=" * 60)
-    
+
     # Try to login first
     if login_user():
-        print("✅ User logged in successfully")
+        print("[OK] User logged in successfully")
     else:
-        print("⚠️  Login failed, testing without authentication")
-    
+        print("[WARN] Login failed, testing without authentication")
+
     # Run tests
     test_wishlist_apis()
     test_review_apis()
-    
-    print("🎯 Test execution completed!")
+
+    print("[DONE] Test execution completed!")
     print("Check the results above and refer to TESTING_GUIDE.md for manual testing.")
 
 if __name__ == "__main__":
