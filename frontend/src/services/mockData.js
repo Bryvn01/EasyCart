@@ -230,6 +230,248 @@ export const mockProducts = [
     stock: 30,
     rating: 4.3,
     brand: "Mitre Kenya"
+  },
+
+  // Groceries & Daily Supplies
+  {
+    id: 21,
+    name: "Fresh Sukuma Wiki - 1 Bunch",
+    price: 20,
+    image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400",
+    category: "Groceries",
+    description: "Fresh collard greens, locally grown, rich in vitamins and minerals",
+    stock: 150,
+    rating: 4.7,
+    brand: "Local Farm",
+    weight: "250g"
+  },
+  {
+    id: 22,
+    name: "Brookside Milk - 500ml",
+    price: 60,
+    image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400",
+    category: "Groceries",
+    description: "Fresh pasteurized whole milk, rich in calcium and protein",
+    stock: 80,
+    rating: 4.6,
+    brand: "Brookside",
+    weight: "500ml"
+  },
+  {
+    id: 23,
+    name: "Royco Mchuzi Mix - 8g",
+    price: 10,
+    image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400",
+    category: "Groceries",
+    description: "Beef flavored cooking seasoning, perfect for stews and soups",
+    stock: 200,
+    rating: 4.5,
+    brand: "Royco",
+    weight: "8g"
+  },
+  {
+    id: 24,
+    name: "Tomatoes - 1kg",
+    price: 80,
+    image: "https://images.unsplash.com/photo-1546470427-e5ac89cd0b50?w=400",
+    category: "Groceries",
+    description: "Fresh red tomatoes, perfect for cooking and salads",
+    stock: 120,
+    rating: 4.4,
+    brand: "Local Farm",
+    weight: "1kg"
+  },
+  {
+    id: 25,
+    name: "Onions - 1kg",
+    price: 60,
+    image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400",
+    category: "Groceries",
+    description: "Fresh red onions, essential for Kenyan cooking",
+    stock: 100,
+    rating: 4.3,
+    brand: "Local Farm",
+    weight: "1kg"
+  },
+  {
+    id: 26,
+    name: "Rice - Pishori 2kg",
+    price: 280,
+    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400",
+    category: "Groceries",
+    description: "Premium Pishori rice, aromatic and fluffy when cooked",
+    stock: 60,
+    rating: 4.8,
+    brand: "Mwea Rice",
+    weight: "2kg"
+  },
+  {
+    id: 27,
+    name: "Cooking Oil - 500ml",
+    price: 180,
+    image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400",
+    category: "Groceries",
+    description: "Pure sunflower cooking oil, cholesterol free",
+    stock: 90,
+    rating: 4.5,
+    brand: "Elianto",
+    weight: "500ml"
+  },
+  {
+    id: 28,
+    name: "Bread - White Loaf",
+    price: 55,
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400",
+    category: "Groceries",
+    description: "Fresh white bread loaf, soft and perfect for breakfast",
+    stock: 40,
+    rating: 4.4,
+    brand: "Superloaf",
+    weight: "400g"
+  },
+  {
+    id: 29,
+    name: "Eggs - Tray of 30",
+    price: 420,
+    image: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400",
+    category: "Groceries",
+    description: "Fresh farm eggs, high in protein and nutrients",
+    stock: 35,
+    rating: 4.7,
+    brand: "Kenchic",
+    weight: "30 pieces"
+  },
+  {
+    id: 30,
+    name: "Sugar - 2kg",
+    price: 220,
+    image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400",
+    category: "Groceries",
+    description: "Pure white granulated sugar, perfect for tea and baking",
+    stock: 70,
+    rating: 4.6,
+    brand: "Mumias Sugar",
+    weight: "2kg"
+  },
+  {
+    id: 31,
+    name: "Salt - 500g",
+    price: 25,
+    image: "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400",
+    category: "Groceries",
+    description: "Iodized table salt, essential for daily cooking",
+    stock: 180,
+    rating: 4.5,
+    brand: "Kensalt",
+    weight: "500g"
+  },
+  {
+    id: 32,
+    name: "Bananas - 1 Dozen",
+    price: 120,
+    image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400",
+    category: "Groceries",
+    description: "Sweet ripe bananas, rich in potassium and natural sugars",
+    stock: 85,
+    rating: 4.6,
+    brand: "Local Farm",
+    weight: "12 pieces"
+  },
+  {
+    id: 33,
+    name: "Oranges - 1kg",
+    price: 100,
+    image: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400",
+    category: "Groceries",
+    description: "Juicy sweet oranges, high in vitamin C",
+    stock: 95,
+    rating: 4.5,
+    brand: "Local Farm",
+    weight: "1kg"
+  },
+  {
+    id: 34,
+    name: "Omo Washing Powder - 500g",
+    price: 180,
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
+    category: "Groceries",
+    description: "Powerful laundry detergent for clean and fresh clothes",
+    stock: 65,
+    rating: 4.4,
+    brand: "Omo",
+    weight: "500g"
+  },
+  {
+    id: 35,
+    name: "Colgate Toothpaste - 75ml",
+    price: 120,
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",
+    category: "Groceries",
+    description: "Fluoride toothpaste for strong teeth and fresh breath",
+    stock: 110,
+    rating: 4.6,
+    brand: "Colgate",
+    weight: "75ml"
+  },
+  {
+    id: 36,
+    name: "Tissue Paper - 4 Rolls",
+    price: 250,
+    image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400",
+    category: "Groceries",
+    description: "Soft and absorbent toilet tissue, 4-roll pack",
+    stock: 45,
+    rating: 4.3,
+    brand: "Softcare",
+    weight: "4 rolls"
+  },
+  {
+    id: 37,
+    name: "Maize Flour - 2kg",
+    price: 140,
+    image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400",
+    category: "Groceries",
+    description: "Fine white maize flour for making ugali and porridge",
+    stock: 75,
+    rating: 4.7,
+    brand: "Exe Flour",
+    weight: "2kg"
+  },
+  {
+    id: 38,
+    name: "Beans - 1kg",
+    price: 150,
+    image: "https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=400",
+    category: "Groceries",
+    description: "Dried red kidney beans, high in protein and fiber",
+    stock: 55,
+    rating: 4.5,
+    brand: "Local Farm",
+    weight: "1kg"
+  },
+  {
+    id: 39,
+    name: "Chicken - Whole 1.5kg",
+    price: 650,
+    image: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400",
+    category: "Groceries",
+    description: "Fresh whole chicken, free-range and hormone-free",
+    stock: 25,
+    rating: 4.8,
+    brand: "Kenchic",
+    weight: "1.5kg"
+  },
+  {
+    id: 40,
+    name: "Beef - 1kg",
+    price: 800,
+    image: "https://images.unsplash.com/photo-1588347818133-38c4106ca7b4?w=400",
+    category: "Groceries",
+    description: "Fresh lean beef cuts, perfect for stews and roasting",
+    stock: 20,
+    rating: 4.6,
+    brand: "Local Butchery",
+    weight: "1kg"
   }
 ];
 
@@ -239,5 +481,6 @@ export const mockCategories = [
   { id: 3, name: "Home & Living" },
   { id: 4, name: "Food & Beverages" },
   { id: 5, name: "Health & Beauty" },
-  { id: 6, name: "Sports & Fitness" }
+  { id: 6, name: "Sports & Fitness" },
+  { id: 7, name: "Groceries" }
 ];
