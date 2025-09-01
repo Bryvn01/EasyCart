@@ -15,6 +15,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/easycart'
   .catch(err => console.log('MongoDB connection error:', err));
 
 // Routes
+app.use('/api/health', require('./routes/health'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/categories', require('./routes/categories'));

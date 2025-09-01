@@ -58,16 +58,27 @@ router.post('/', async (req, res) => {
     await Category.insertMany(categories);
     await Product.insertMany(products);
     
-    const adminExists = await User.findOne({ email: 'admin@easycart.com' });
-    if (!adminExists) {
-      const admin = new User({
-        email: 'admin@easycart.com',
-        password: 'admin123',
-        name: 'Admin User',
-        role: 'admin'
-      });
-      await admin.save();
-    }
+    // Create admin user
+    await User.deleteOne({ email: 'admin@easycart.com' });
+    const admin = new User({
+      email: 'admin@easycart.com',
+      password: 'admin123',
+      name: 'Admin User',
+      username: 'admin',
+      role: 'admin',
+      is_admin: true
+    });
+    await admin.save();
+    
+    // Create test user
+    await User.deleteOne({ email: 'test@easycart.com' });
+    const testUser = new User({
+      email: 'test@easycart.com',
+      password: 'test123',
+      name: 'Test User',
+      username: 'testuser'
+    });
+    await testUser.save();
     
     res.json({ message: 'Database seeded successfully', products: products.length, categories: categories.length });
   } catch (error) {
