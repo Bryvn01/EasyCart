@@ -16,12 +16,13 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: '3.11'
 
     - name: Install backend dependencies
       run: |
         cd backend
-        pip install -r requirements.txt
+        pip cache purge
+        pip install --no-cache-dir -r requirements.txt
 
     - name: Run backend tests
       run: |
