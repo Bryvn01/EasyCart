@@ -32,9 +32,8 @@ jobs:
         pip install --no-cache-dir -r requirements.txt
 
     - name: Run migrations
-      run: |
-        cd backend
-        python manage.py migrate
+      run: python manage.py migrate
+      working-directory: backend
     
     - name: Run backend tests
       run: python test_runner.py
