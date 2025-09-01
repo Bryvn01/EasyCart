@@ -37,7 +37,7 @@ jobs:
       working-directory: backend
     
     - name: Run backend tests
-      run: python manage.py test
+      run: python test_runner.py
       working-directory: backend
       env:
         TEST_EMAIL: test@example.com
