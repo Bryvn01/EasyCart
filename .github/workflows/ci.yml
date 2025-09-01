@@ -7,27 +7,53 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  test-backend:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+
+    - name: Run backend tests
+      run: |
+        cd backend
+        python test_runner.py
+      env:
+        TEST_EMAIL: test@example.com
+        TEST_PASSWORD: testpassword
+        TEST_USERNAME: testuser
+        DEBUG: True
+
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-    
+
     - name: Install frontend dependencies
       run: |
         cd frontend
         npm install
-    
+
     - name: Build frontend
       run: |
         cd frontend
         npm run build || echo "Build completed"
-    
+
     - name: Run basic checks
       run: |
         echo "✅ Repository structure check"
