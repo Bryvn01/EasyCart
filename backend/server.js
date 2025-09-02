@@ -6,7 +6,20 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost and onrender.com domains
+    if (origin.includes('localhost') || origin.includes('.onrender.com')) {
+      return callback(null, true);
+    }
+    
+    callback(null, true); // Allow all for now
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // MongoDB Connection
@@ -28,14 +41,16 @@ app.get('/api/health', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-if (process.env.NODE_ENV !== 'production') {
-  const server = app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-  
-  // Initialize Socket.IO
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// Initialize Socket.IO only if socket file exists
+try {
   const { initSocket } = require('./socket');
   initSocket(server);
+} catch (error) {
+  console.log('Socket.IO not initialized:', error.message);
 }
 
 module.exports = app;
