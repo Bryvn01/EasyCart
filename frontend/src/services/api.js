@@ -191,12 +191,12 @@ export const authAPI = {
 };
 
 export const productsAPI = {
-  getProducts: (params) => api.get('/products', { params }),
-  getProduct: (id) => api.get(`/products/${id}`),
-  getCategories: () => api.get('/categories'),
-  createProduct: (data) => api.post('/products', data),
-  deleteProduct: (id) => api.delete(`/products/${id}`),
-  updateProduct: (id, data) => api.put(`/products/${id}`, data),
+  getProducts: (params) => api.get('/products/', { params }),
+  getProduct: (id) => api.get(`/products/${id}/`),
+  getCategories: () => api.get('/products/categories/'),
+  createProduct: (data) => api.post('/products/', data),
+  deleteProduct: (id) => api.delete(`/products/${id}/`),
+  updateProduct: (id, data) => api.put(`/products/${id}/`, data),
 };
 
 export const ordersAPI = {
