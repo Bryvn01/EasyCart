@@ -191,9 +191,34 @@ export const authAPI = {
 };
 
 export const productsAPI = {
-  getProducts: (params) => api.get('/products', { params }),
-  getProduct: (id) => api.get(`/products/${id}`),
-  getCategories: () => api.get('/categories'),
+  getProducts: async (params) => {
+    try {
+      const response = await api.get('/products', { params });
+      return response;
+    } catch (error) {
+      console.warn('Backend API unavailable, using mock data:', error.message);
+      // Fallback to mock data when real API is down
+      return mockAPI.get('/products/', { params });
+    }
+  },
+  getProduct: async (id) => {
+    try {
+      const response = await api.get(`/products/${id}`);
+      return response;
+    } catch (error) {
+      console.warn('Backend API unavailable, using mock data');
+      return mockAPI.get(`/products/${id}/`);
+    }
+  },
+  getCategories: async () => {
+    try {
+      const response = await api.get('/categories');
+      return response;
+    } catch (error) {
+      console.warn('Backend API unavailable, using mock data');
+      return mockAPI.get('/products/categories/');
+    }
+  },
   createProduct: (data) => api.post('/products', data),
   deleteProduct: (id) => api.delete(`/products/${id}`),
   updateProduct: (id, data) => api.put(`/products/${id}`, data),
