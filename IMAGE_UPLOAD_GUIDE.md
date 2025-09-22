@@ -11,14 +11,14 @@
 2. **Access Admin Panel**: http://localhost:8000/admin/
 
 3. **Login**: 
-   - Username: `admin`
+   - Username: `admin@example.com`
    - Password: `admin123`
 
 4. **Navigate to Products**:
    - Click "Products" under "PRODUCTS" section
 
 5. **Edit Product**:
-   - Click on any product name (e.g., "Unga wa Dola 2kg")
+   - Click on any product name (e.g., "Test Product")
 
 6. **Upload Image**:
    - Scroll to "Media" section
@@ -54,8 +54,23 @@ Images automatically appear on:
 - ✅ Shopping cart
 - ✅ Fallback placeholder if no image
 
+## API Response Format
+
+The ProductSerializer returns absolute image URLs:
+```json
+{
+  "id": 1,
+  "name": "Test Product",
+  "image": "http://localhost:8000/media/products/test_product_image.jpg",
+  "category_name": "Electronics",
+  "price": "99.99"
+}
+```
+
 ## Troubleshooting
 
 - **Image not showing**: Check file path in admin
 - **404 error**: Ensure Django server is running
 - **Upload fails**: Check file size and format
+- **Relative URLs**: ProductSerializer automatically converts to absolute URLs
+- **CORS issues**: Frontend configured to connect to localhost:8000
