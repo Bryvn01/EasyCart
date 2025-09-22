@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { mockProducts, mockCategories } from './mockData';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-j6ue.onrender.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 const USE_MOCK_DATA = false; // Always use real API
 
 const api = axios.create({

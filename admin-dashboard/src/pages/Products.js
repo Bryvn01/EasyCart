@@ -26,10 +26,15 @@ const Products = () => {
       const response = await adminAPI.getProducts();
       setProducts(response.data.results || response.data || []);
     } catch (error) {
-      setProducts([
-        { id: 1, name: 'Sample Product 1', price: 299.99, stock: 50, category: 'Electronics', description: 'Sample description' },
-        { id: 2, name: 'Sample Product 2', price: 149.50, stock: 25, category: 'Fashion', description: 'Sample description' }
-      ]);
+      console.error('Failed to fetch products:', error);
+      toast.error('Failed to fetch products from server');
+      // Only show sample products if the error is a network error
+      if (error.code === 'NETWORK_ERROR' || error.message.includes('Network Error')) {
+        setProducts([
+          { id: 1, name: 'Sample Product 1', price: 299.99, stock: 50, category: 'Electronics', description: 'Sample description' },
+          { id: 2, name: 'Sample Product 2', price: 149.50, stock: 25, category: 'Fashion', description: 'Sample description' }
+        ]);
+      }
     } finally {
       setLoading(false);
     }
@@ -39,11 +44,12 @@ const Products = () => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         await adminAPI.deleteProduct(id);
-        setProducts(products.filter(p => p.id !== id));
         toast.success('Product deleted successfully');
+        // Refresh products list after successful deletion
+        await fetchProducts();
       } catch (error) {
-        setProducts(products.filter(p => p.id !== id));
-        toast.success('Product deleted successfully');
+        console.error('Delete Error:', error);
+        toast.error(`Failed to delete product: ${error.message || 'Network error'}`);
       }
     }
   };
@@ -53,25 +59,17 @@ const Products = () => {
     try {
       if (editingProduct) {
         await adminAPI.updateProduct(editingProduct.id, formData);
-        setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...formData } : p));
         toast.success('Product updated successfully');
       } else {
-        const response = await adminAPI.createProduct(formData);
-        const newProduct = { id: Date.now(), ...formData };
-        setProducts([...products, newProduct]);
+        await adminAPI.createProduct(formData);
         toast.success('Product created successfully');
       }
       closeModal();
+      // Refresh products list after successful operation
+      await fetchProducts();
     } catch (error) {
-      if (editingProduct) {
-        setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...formData } : p));
-        toast.success('Product updated successfully');
-      } else {
-        const newProduct = { id: Date.now(), ...formData };
-        setProducts([...products, newProduct]);
-        toast.success('Product created successfully');
-      }
-      closeModal();
+      console.error('API Error:', error);
+      toast.error(`Failed to ${editingProduct ? 'update' : 'create'} product: ${error.message || 'Network error'}`);
     }
   };
 

@@ -61,6 +61,56 @@ const Products = () => {
     fetchProducts();
   }, [selectedCategory, debouncedSearchTerm, sortBy, priceRange.min, priceRange.max]);
 
+  // Auto-refresh products when window gains focus (useful when switching from admin panel)
+  useEffect(() => {
+    const handleFocus = () => {
+      // Refresh products when window gains focus
+      const fetchProducts = async () => {
+        try {
+          const params = {};
+          if (selectedCategory) params.category = selectedCategory;
+          if (debouncedSearchTerm) params.search = debouncedSearchTerm;
+          if (sortBy) params.ordering = sortBy;
+          if (priceRange.min) params.price_min = priceRange.min;
+          if (priceRange.max) params.price_max = priceRange.max;
+          
+          const response = await productsAPI.getProducts(params);
+          const productsData = response.data.results || response.data;
+          setProducts(Array.isArray(productsData) ? productsData : []);
+        } catch (error) {
+          console.error('Error refreshing products:', error);
+        }
+      };
+      
+      fetchProducts();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [selectedCategory, debouncedSearchTerm, sortBy, priceRange.min, priceRange.max]);
+
+  // Periodic refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const params = {};
+        if (selectedCategory) params.category = selectedCategory;
+        if (debouncedSearchTerm) params.search = debouncedSearchTerm;
+        if (sortBy) params.ordering = sortBy;
+        if (priceRange.min) params.price_min = priceRange.min;
+        if (priceRange.max) params.price_max = priceRange.max;
+        
+        const response = await productsAPI.getProducts(params);
+        const productsData = response.data.results || response.data;
+        setProducts(Array.isArray(productsData) ? productsData : []);
+      } catch (error) {
+        console.error('Error in periodic refresh:', error);
+      }
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [selectedCategory, debouncedSearchTerm, sortBy, priceRange.min, priceRange.max]);
+
   useEffect(() => {
     fetchCategories();
   }, []);
