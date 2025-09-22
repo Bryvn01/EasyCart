@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
-import { productsAPI, ordersAPI } from '../services/api';
-import LazyImage from '../components/LazyImage';
+import { productsAPI } from '../services/api';
 import heroBanner from '../assets/hero-banner.jpg';
 
 const Home = () => {
   const { t } = useTranslation();
-  const { isAuthenticated } = useAuth();
-  const { fetchCartCount } = useCart();
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -46,20 +40,6 @@ const Home = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
-
-  const addToCart = async (productId) => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-    try {
-      await ordersAPI.addToCart({ product_id: productId, quantity: 1 });
-      fetchCartCount();
-      toast.success('Product added to cart! 🛒');
-    } catch (error) {
-      console.error('Error adding to cart:', error);
     }
   };
 
@@ -155,19 +135,15 @@ const Home = () => {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">Shop by Category</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="categories-grid">
             {categories.map((category) => (
               <Link
                 key={category.id}
                 to={`/products?category=${category.id}`}
-                className="group text-center hover:transform hover:scale-105 transition-all duration-300"
+                className="category-card"
               >
-                <div className="bg-gray-100 rounded-2xl p-6 mb-4 group-hover:bg-blue-50 transition-colors">
-                  <div className="text-4xl mb-2">🛒</div>
-                </div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                  {category.name}
-                </h3>
+                <div className="category-icon">🛒</div>
+                <h3 className="category-name">{category.name}</h3>
               </Link>
             ))}
           </div>
@@ -183,10 +159,13 @@ const Home = () => {
               View All →
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="products-grid">
             {featuredProducts.map((product) => (
-              <div key={product.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4">
-                <div className="aspect-square bg-gray-100 rounded-lg mb-4 overflow-hidden">
+              <div key={product.id} className="product-card">
+                <div className="product-image-container">
+                  <div className="product-category-badge">
+                    {product.category_name || 'Product'}
+                  </div>
                   {product.image ? (
                     <img
                       src={product.image.startsWith('http') ? product.image : `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${product.image}`}
@@ -194,19 +173,31 @@ const Home = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl">📦</div>
+                    <div className="product-image-placeholder">📦</div>
                   )}
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{product.name}</h3>
-                <p className="text-gray-600 text-sm mb-3">{product.description?.substring(0, 60)}...</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-xl font-bold text-gray-900">KES {product.price}</span>
-                  <button
-                    onClick={() => addToCart(product.id)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
-                  >
-                    Add to Cart
-                  </button>
+                <div className="product-info">
+                  <h3 className="product-title">{product.name}</h3>
+                  <p className="product-description">
+                    {product.description?.slice(0, 60)}...
+                  </p>
+                  <div className="product-price-container">
+                    <span className="product-price">KES {parseFloat(product.price).toFixed(2)}</span>
+                  </div>
+                  <div className="product-actions">
+                    <button
+                      onClick={() => {
+                        const cartEvent = new CustomEvent('addToCart', { 
+                          detail: { product, quantity: 1 } 
+                        });
+                        window.dispatchEvent(cartEvent);
+                        toast.success('Added to cart! 🛒');
+                      }}
+                      className="btn-primary"
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
