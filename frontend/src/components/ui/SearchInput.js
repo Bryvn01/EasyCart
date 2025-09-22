@@ -1,21 +1,20 @@
-import React, { useState, useCallback } from 'react';
-import { debounce } from 'lodash';
+import React, { useState, useEffect } from 'react';
 
 const SearchInput = ({ onSearch, placeholder = "Search products..." }) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
 
-  const debouncedSearch = useCallback(
-    debounce((searchQuery) => {
-      onSearch(searchQuery);
-    }, 300),
-    [onSearch]
-  );
+  useEffect(() => {
+    const delayedSearch = setTimeout(() => {
+      onSearch(query);
+    }, 300);
+
+    return () => clearTimeout(delayedSearch);
+  }, [query, onSearch]);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setQuery(value);
-    debouncedSearch(value);
   };
 
   return (

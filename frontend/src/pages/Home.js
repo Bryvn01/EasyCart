@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { productsAPI, ordersAPI } from '../services/api';
-import LazyImage from '../components/LazyImage';
 import heroBanner from '../assets/hero-banner.jpg';
 
 const Home = () => {

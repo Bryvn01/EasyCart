@@ -6,7 +6,6 @@ const ProductManager = () => {
   const [products, setProducts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '', price: '', category: 'Groceries', description: '', 
     stock: '', image: '', brand: '', weight: ''
@@ -37,7 +36,6 @@ const ProductManager = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     try {
       const productData = {
         ...formData,
@@ -55,7 +53,6 @@ const ProductManager = () => {
     } catch (error) {
       alert('Failed to add product: ' + (error.response?.data?.message || 'Network error'));
     }
-    setLoading(false);
   };
 
   const deleteProduct = async (id) => {

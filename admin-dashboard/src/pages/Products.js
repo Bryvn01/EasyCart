@@ -56,7 +56,7 @@ const Products = () => {
         setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...formData } : p));
         toast.success('Product updated successfully');
       } else {
-        const response = await adminAPI.createProduct(formData);
+        await adminAPI.createProduct(formData);
         const newProduct = { id: Date.now(), ...formData };
         setProducts([...products, newProduct]);
         toast.success('Product created successfully');
