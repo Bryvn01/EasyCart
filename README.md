@@ -89,9 +89,15 @@ npm start
 ```
 
 ### 4. Access the Application
+**Local Development:**
 - Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- Admin Panel: http://localhost:8000/admin
+- Backend API: http://localhost:5000
+- Admin Panel: http://localhost:3000/admin
+
+**Live Production:**
+- Frontend: https://easycart-2-zhkw.onrender.com
+- Backend API: https://easycart-j6ue.onrender.com
+- Admin Dashboard: https://easycart-1-752r.onrender.com
 
 ## 📁 Project Structure
 
@@ -143,7 +149,13 @@ npm test
 
 ## 📦 Deployment
 
-See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed deployment instructions.
+### Live Application
+- **Frontend**: https://easycart-2-zhkw.onrender.com
+- **Backend API**: https://easycart-j6ue.onrender.com
+- **Admin Dashboard**: https://easycart-1-752r.onrender.com
+
+### Deploy Your Own
+See [RENDER_DEPLOY.md](RENDER_DEPLOY.md) for detailed Render deployment instructions.
 
 ## 🤝 Contributing
 

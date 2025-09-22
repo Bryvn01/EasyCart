@@ -34,7 +34,7 @@
    - **Publish Directory**: `build`
 4. **Environment Variables**:
    ```
-   REACT_APP_API_URL=https://easycart-backend.onrender.com/api
+   REACT_APP_API_URL=https://easycart-j6ue.onrender.com/api
    ```
 5. Click **"Create Static Site"**
 
@@ -48,7 +48,7 @@
    - **Publish Directory**: `build`
 4. **Environment Variables**:
    ```
-   REACT_APP_API_URL=https://easycart-backend.onrender.com/api
+   REACT_APP_API_URL=https://easycart-j6ue.onrender.com/api
    ```
 5. Click **"Create Static Site"**
 
@@ -61,9 +61,15 @@
 
 ### **Get Your URLs:**
 After deployment:
-- **Backend**: `https://easycart-backend.onrender.com`
-- **Frontend**: `https://easycart-frontend.onrender.com`
-- **Admin**: `https://easycart-admin.onrender.com`
+- **Backend**: `https://easycart-j6ue.onrender.com`
+- **Frontend**: `https://easycart-2-zhkw.onrender.com`
+- **Admin**: `https://easycart-1-752r.onrender.com`
+
+### **Live Demo URLs:**
+The current live deployment is available at:
+- **Frontend**: https://easycart-2-zhkw.onrender.com
+- **Backend API**: https://easycart-j6ue.onrender.com
+- **Admin Dashboard**: https://easycart-1-752r.onrender.com
 
 ### **Update API URLs:**
 1. Go to frontend service → Environment
@@ -74,16 +80,16 @@ After deployment:
 
 ### **1. Seed Database:**
 ```bash
-curl -X POST https://easycart-backend.onrender.com/api/seed
+curl -X POST https://easycart-j6ue.onrender.com/api/seed
 ```
 
 ### **2. Test Admin:**
-- URL: `https://easycart-admin.onrender.com/admin/login`
+- URL: `https://easycart-1-752r.onrender.com/admin/login`
 - Email: admin@easycart.com
 - Password: admin123
 
 ### **3. Test Frontend:**
-- Visit: `https://easycart-frontend.onrender.com`
+- Visit: `https://easycart-2-zhkw.onrender.com`
 - Register account, browse products
 
 ## 🔄 **Auto-Deploy**
