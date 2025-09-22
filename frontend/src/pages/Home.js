@@ -158,8 +158,8 @@ const Home = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {categories.map((category) => (
               <Link
-                key={category.id}
-                to={`/products?category=${category.id}`}
+                key={category._id || category.id}
+                to={`/products?category=${encodeURIComponent(category.name)}`}
                 className="group text-center hover:transform hover:scale-105 transition-all duration-300"
               >
                 <div className="bg-gray-100 rounded-2xl p-6 mb-4 group-hover:bg-blue-50 transition-colors">
@@ -185,7 +185,7 @@ const Home = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
-              <div key={product.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4">
+              <div key={product._id || product.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4">
                 <div className="aspect-square bg-gray-100 rounded-lg mb-4 overflow-hidden">
                   {product.image ? (
                     <img
