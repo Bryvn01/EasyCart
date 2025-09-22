@@ -160,9 +160,12 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_SECONDS = 31536000
     SECURE_REDIRECT_EXEMPT = []
-    SECURE_SSL_REDIRECT = True
+    SECURE_SSL_REDIRECT = True  # Only in production
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+else:
+    # Development settings - disable HTTPS redirects
+    SECURE_SSL_REDIRECT = False
     X_FRAME_OPTIONS = 'DENY'
 
 # Email Configuration

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { mockProducts, mockCategories } from './mockData';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-j6ue.onrender.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 const USE_MOCK_DATA = false; // Always use real API
 
 const api = axios.create({
@@ -191,12 +191,12 @@ export const authAPI = {
 };
 
 export const productsAPI = {
-  getProducts: (params) => api.get('/products', { params }),
-  getProduct: (id) => api.get(`/products/${id}`),
-  getCategories: () => api.get('/categories'),
-  createProduct: (data) => api.post('/products', data),
-  deleteProduct: (id) => api.delete(`/products/${id}`),
-  updateProduct: (id, data) => api.put(`/products/${id}`, data),
+  getProducts: (params) => api.get('/products/', { params }),
+  getProduct: (id) => api.get(`/products/${id}/`),
+  getCategories: () => api.get('/products/categories/'),
+  createProduct: (data) => api.post('/products/', data),
+  deleteProduct: (id) => api.delete(`/products/${id}/`),
+  updateProduct: (id, data) => api.put(`/products/${id}/`, data),
 };
 
 export const ordersAPI = {
