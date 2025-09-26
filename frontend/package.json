@@ -2,18 +2,33 @@
   "name": "easycart-frontend",
   "version": "1.0.0",
   "private": true,
+  "keywords": [
+    "ecommerce",
+    "shopping-cart",
+    "typescript",
+    "cart"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bryvn01/EasyCart"
+  },
+  "bugs": {
+    "url": "https://github.com/Bryvn01/EasyCart/issues"
+  },
   "dependencies": {
     "@babel/runtime": "^7.28.3",
     "@testing-library/react": "^13.3.0",
     "ajv": "^8.12.0",
     "axios": "^1.4.0",
     "firebase": "^12.2.1",
+    "framer-motion": "^12.23.12",
     "i18next": "^22.5.1",
     "lodash": "^4.17.21",
     "posthog-js": "^1.261.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^12.3.1",
     "react-query": "^3.39.3",
@@ -22,10 +37,14 @@
     "socket.io-client": "^4.8.1",
     "web-vitals": "^2.1.4"
   },
+  "proxy": "http://localhost:8001",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "build:ts": "tsc",
+    "prepublishOnly": "npm test && npm run build",
     "eject": "react-scripts eject",
     "vercel-build": "npm run build",
     "lint": "eslint src/",

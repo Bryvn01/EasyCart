@@ -6,24 +6,23 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000").split(',');
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     
-    // Allow localhost and onrender.com domains
-    if (origin.includes('localhost') || origin.includes('.onrender.com')) {
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    
-    callback(null, true); // Allow all for now
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true
 }));
 app.use(express.json());
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/easycart')
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/easycart')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
 

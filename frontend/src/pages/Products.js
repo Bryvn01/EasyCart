@@ -48,7 +48,10 @@ const Products = () => {
         if (priceRange.max) params.price_max = priceRange.max;
         
         const response = await productsAPI.getProducts(params);
-        const productsData = response.data.results || response.data;
+        let productsData = response.data.results || response.data;
+        if (Array.isArray(productsData)) {
+          productsData = productsData.map(p => ({ ...p, id: p._id || p.id, category: p.category || p.category_name }));
+        }
         setProducts(Array.isArray(productsData) ? productsData : []);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -296,7 +299,7 @@ const Products = () => {
                 fontWeight: '500',
                 marginBottom: 'var(--space-1)'
               }}>
-                {product.category_name}
+                {product.category}
               </div>
               
               <h3 style={{

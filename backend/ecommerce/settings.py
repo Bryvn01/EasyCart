@@ -3,13 +3,36 @@ from decouple import config
 from datetime import timedelta
 import os
 
+
+# CORS settings
+if config('DEBUG', default=False, cast=bool):
+    # Local development: allow all origins for convenience
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "https://localhost:3000"
+    ]
+else:
+    # Production: only allow whitelisted origins
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "https://localhost:3000",
+        "https://yourdomain.com",
+        "https://www.yourdomain.com"
+    ]
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-production')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='localhost,127.0.0.1,easycart-j6ue.onrender.com',
+    cast=lambda v: [s.strip() for s in v.split(',')]
+)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,6 +48,8 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.products',
     'apps.orders',
+    'sslserver',  # Enables HTTPS for local development
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -76,7 +101,7 @@ DATABASES = {
 # Redis Cache Configuration
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
@@ -147,7 +172,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000,http://127.0.0.1:3000',
+    default='http://localhost:3000,http://127.0.0.1:3000,http://localhost:3004,http://127.0.0.1:3004,http://localhost:8000,http://127.0.0.1:8000',
     cast=lambda v: [s.strip() for s in v.split(',')]
 )
 

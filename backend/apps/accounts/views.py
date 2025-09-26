@@ -78,11 +78,15 @@ def forgot_password(request):
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         
+        # Hash the token before sending
+        from django.contrib.auth.hashers import make_password
+        hashed_token = make_password(token)
+
         # In production, send actual email
         # For now, just return success
-        print(f"Password reset token for {email}: {token}")
-        print(f"Reset URL: http://localhost:3000/reset-password/{uid}/{token}/")
-        
+        print(f"Password reset token for {email}: {hashed_token}")
+        print(f"Reset URL: http://localhost:3000/reset-password/{uid}/{hashed_token}/")
+
         return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         # Don't reveal if email exists or not for security
