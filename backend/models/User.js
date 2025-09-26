@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   phone: { type: String },
   address: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 
 userSchema.pre('save', async function(next) {

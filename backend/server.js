@@ -22,16 +22,31 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/easycart')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB connection error:', err));
+// MongoDB Connection with fallback
+const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/easycart';
+console.log('Attempting MongoDB connection to:', mongoURI.includes('mongodb+srv') ? 'MongoDB Atlas' : 'Local MongoDB');
+
+mongoose.connect(mongoURI, {
+  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+  connectTimeoutMS: 5000,
+})
+  .then(() => {
+    console.log('MongoDB connected successfully');
+    global.dbConnected = true;
+  })
+  .catch(err => {
+    console.log('MongoDB connection failed, using fallback mode:', err.message);
+    global.dbConnected = false;
+  });
 
 // Routes
 app.use('/api/health', require('./routes/health'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/categories', require('./routes/categories'));
+app.use('/api/orders', require('./routes/orders'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/admin', require('./routes/admin'));
 app.use('/api/seed', require('./routes/seed'));
 
 // Health check
