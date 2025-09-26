@@ -24,6 +24,13 @@ If SRV continues to fail, use a direct connection string:
 MONGODB_URI=mongodb://cluster0-shard-00-00.mongodb.net:27017,cluster0-shard-00-01.mongodb.net:27017,cluster0-shard-00-02.mongodb.net:27017/easycart?ssl=true&replicaSet=atlas-cluster-shard-0&authSource=admin&retryWrites=true&w=majority
 ```
 
+You can also set this as a fallback URI:
+```
+MONGODB_FALLBACK_URI=mongodb://cluster0-shard-00-00.mongodb.net:27017,cluster0-shard-00-01.mongodb.net:27017,cluster0-shard-00-02.mongodb.net:27017/easycart?ssl=true&replicaSet=atlas-cluster-shard-0&authSource=admin&retryWrites=true&w=majority
+```
+
+The application will automatically try the fallback URI if the primary SRV connection fails.
+
 ### 3. Testing Your Connection
 
 Run the diagnostic script to test your MongoDB connection:

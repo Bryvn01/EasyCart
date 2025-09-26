@@ -65,13 +65,26 @@ const connectToMongoDB = async () => {
   } catch (error) {
     console.error('❌ Initial MongoDB connection failed:', error.message);
     
-    // If SRV lookup fails, provide helpful error message
+    // If SRV lookup fails, provide helpful error message and try fallback
     if (error.message.includes('querySrv ENOTFOUND') || error.message.includes('ENOTFOUND')) {
       console.error('🔍 DNS Resolution Error - This usually indicates:');
       console.error('1. Incorrect MongoDB Atlas connection string');
       console.error('2. Network/DNS issues in the deployment environment');
       console.error('3. MongoDB Atlas cluster not accessible');
       console.error('💡 Check your MONGODB_URI environment variable format');
+      
+      // Try fallback connection if available
+      const fallbackUri = process.env.MONGODB_FALLBACK_URI;
+      if (fallbackUri && fallbackUri !== mongoUri) {
+        console.log('🔄 Attempting fallback connection...');
+        try {
+          await mongoose.connect(fallbackUri, mongoOptions);
+          console.log('✅ Fallback MongoDB connection successful');
+          return;
+        } catch (fallbackError) {
+          console.error('❌ Fallback connection also failed:', fallbackError.message);
+        }
+      }
     }
     
     // In production, we might want to retry or use a fallback
@@ -81,6 +94,7 @@ const connectToMongoDB = async () => {
         connectToMongoDB();
       }, 5000);
     } else {
+      // In development, exit to allow restart
       process.exit(1);
     }
   }
