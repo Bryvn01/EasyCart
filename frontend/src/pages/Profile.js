@@ -22,9 +22,12 @@ const Profile = () => {
   const fetchProfile = async () => {
     try {
       const response = await authAPI.getProfile();
-      setProfile(response.data);
+      // Handle both Django (direct data) and Node.js (nested data) response formats
+      const profileData = response.data.user || response.data;
+      setProfile(profileData);
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setMessage('Failed to load profile data');
     } finally {
       setLoading(false);
     }
@@ -36,9 +39,13 @@ const Profile = () => {
     setMessage('');
 
     try {
-      await authAPI.updateProfile(profile);
+      const response = await authAPI.updateProfile(profile);
+      // Handle both Django (direct data) and Node.js (nested data) response formats
+      const updatedProfileData = response.data.user || response.data;
+      setProfile(updatedProfileData);
       setMessage('Profile updated successfully!');
     } catch (error) {
+      console.error('Error updating profile:', error);
       setMessage('Failed to update profile');
     } finally {
       setSaving(false);

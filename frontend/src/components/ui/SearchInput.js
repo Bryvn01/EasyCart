@@ -6,9 +6,12 @@ const SearchInput = ({ onSearch, placeholder = "Search products..." }) => {
   const [suggestions, setSuggestions] = useState([]);
 
   const debouncedSearch = useCallback(
-    debounce((searchQuery) => {
-      onSearch(searchQuery);
-    }, 300),
+    (searchQuery) => {
+      const debouncedFn = debounce((query) => {
+        onSearch(query);
+      }, 300);
+      debouncedFn(searchQuery);
+    },
     [onSearch]
   );
 

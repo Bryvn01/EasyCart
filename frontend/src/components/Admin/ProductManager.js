@@ -6,6 +6,7 @@ const ProductManager = () => {
   const [products, setProducts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [user, setUser] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '', price: '', category: 'Groceries', description: '', 

@@ -93,9 +93,62 @@ router.get('/profile', auth, async (req, res) => {
       id: req.user._id, 
       email: req.user.email, 
       name: req.user.name, 
+      username: req.user.username,
+      phone: req.user.phone,
+      address: req.user.address,
       role: req.user.role 
     }
   });
+});
+
+// Update profile
+router.put('/profile', auth, async (req, res) => {
+  try {
+    const { username, email, phone, address } = req.body;
+    
+    // Check if email or username is being changed and already exists
+    if (email && email !== req.user.email) {
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+        return res.status(400).json({ message: 'Email already exists' });
+      }
+    }
+    
+    if (username && username !== req.user.username) {
+      const existingUsername = await User.findOne({ username });
+      if (existingUsername) {
+        return res.status(400).json({ message: 'Username already exists' });
+      }
+    }
+
+    // Update user profile
+    const updateData = {};
+    if (username) updateData.username = username;
+    if (email) updateData.email = email;
+    if (phone !== undefined) updateData.phone = phone;
+    if (address !== undefined) updateData.address = address;
+    if (username && !updateData.name) updateData.name = username;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id, 
+      updateData, 
+      { new: true, runValidators: true }
+    );
+
+    res.json({
+      user: { 
+        id: updatedUser._id, 
+        email: updatedUser.email, 
+        name: updatedUser.name, 
+        username: updatedUser.username,
+        phone: updatedUser.phone,
+        address: updatedUser.address,
+        role: updatedUser.role 
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 module.exports = router;

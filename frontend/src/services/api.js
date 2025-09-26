@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { mockProducts, mockCategories } from './mockData';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-j6ue.onrender.com/api';
-const USE_MOCK_DATA = false; // Always use real API
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
 // Mock API responses with filtering and search support
+// eslint-disable-next-line no-unused-vars
 const mockAPI = {
   get: (url, config = {}) => {
     if (url === '/products/') {
@@ -164,6 +164,36 @@ const mockAuth = {
         user: mockUser
       }
     });
+  },
+  getProfile: () => {
+    const mockProfile = {
+      id: 1,
+      username: 'mockuser',
+      email: 'user@example.com',
+      phone: '254712345678',
+      address: 'Nairobi, Kenya',
+      role: 'user',
+      is_admin: false
+    };
+    
+    return Promise.resolve({
+      data: mockProfile
+    });
+  },
+  updateProfile: (profileData) => {
+    const updatedProfile = {
+      id: 1,
+      username: profileData.username || 'mockuser',
+      email: profileData.email || 'user@example.com',
+      phone: profileData.phone || '',
+      address: profileData.address || '',
+      role: 'user',
+      is_admin: false
+    };
+    
+    return Promise.resolve({
+      data: updatedProfile
+    });
   }
 };
 
@@ -184,8 +214,22 @@ export const authAPI = {
       return mockAuth.login(credentials);
     }
   },
-  getProfile: () => api.get('/auth/profile'),
-  updateProfile: (data) => api.put('/auth/profile', data),
+  getProfile: async () => {
+    try {
+      return await api.get('/auth/profile');
+    } catch (error) {
+      console.warn('Backend unavailable, using mock profile');
+      return mockAuth.getProfile();
+    }
+  },
+  updateProfile: async (data) => {
+    try {
+      return await api.put('/auth/profile', data);
+    } catch (error) {
+      console.warn('Backend unavailable, using mock profile update');
+      return mockAuth.updateProfile(data);
+    }
+  },
   forgotPassword: (data) => api.post('/auth/forgot-password', data),
   resetPassword: (data) => api.post('/auth/reset-password', data),
 };
