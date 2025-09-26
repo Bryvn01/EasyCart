@@ -26,6 +26,17 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/easycart')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
 
+// Mongoose connection events
+mongoose.connection.on('connected', () => {
+  console.log('Mongoose is connected to MongoDB');
+});
+mongoose.connection.on('error', (err) => {
+  console.error('Mongoose connection error:', err);
+});
+mongoose.connection.on('disconnected', () => {
+  console.log('Mongoose disconnected from MongoDB');
+});
+
 // Routes
 app.use('/api/health', require('./routes/health'));
 app.use('/api/auth', require('./routes/auth'));
