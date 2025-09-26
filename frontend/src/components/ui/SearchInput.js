@@ -1,16 +1,17 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { debounce } from 'lodash';
 
 const SearchInput = ({ onSearch, placeholder = "Search products..." }) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
 
-  const debouncedSearch = useCallback(
-    debounce((searchQuery) => {
-      onSearch(searchQuery);
-    }, 300),
-    [onSearch]
-  );
+  // Memoize debounced function and clean up on unmount
+  const debouncedSearch = useMemo(() => debounce(onSearch, 300), [onSearch]);
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   const handleInputChange = (e) => {
     const value = e.target.value;

@@ -1,81 +1,80 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { HeartIcon, ShoppingCartIcon, StarIcon } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
-import Button from './Button';
 
-const ProductCard = ({ product, onAddToCart, onToggleWishlist, isInWishlist = false }) => {
-  const renderStars = (rating) => {
-    return [...Array(5)].map((_, i) => (
-      <StarIcon
-        key={i}
-        className={`h-4 w-4 ${i < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-      />
-    ));
-  };
+
+const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isInWishlist = false }) => {
+
 
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden group"
+      whileHover={{ y: -8, scale: 1.03, boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
+      className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden group flex flex-col min-h-[340px] sm:min-h-[360px] md:min-h-[380px] cursor-pointer transition-all duration-200"
+      tabIndex={0}
+      aria-label={product.name}
+      onClick={e => {
+        if (e.target.tagName !== 'BUTTON' && typeof onQuickView === 'function') onQuickView();
+      }}
     >
-      <div className="relative">
+      <div className="relative w-full aspect-[1/1] overflow-hidden rounded-t-lg min-h-[160px] sm:min-h-[180px] md:min-h-[200px]">
         <img
-          src={product.image || '/api/placeholder/300/300'}
+          src={product.image_url || product.image || '/placeholder.png'}
           alt={product.name}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-200"
+          loading="lazy"
         />
-        {product.is_on_sale && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-medium">
-            -{product.discount_percentage}%
+        {product.is_flash_sale && (
+          <span className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg animate-pulse">Flash Sale</span>
+        )}
+        {product.is_top_seller && (
+          <span className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded shadow-lg">Top Seller</span>
+        )}
+        {product.is_new && (
+          <span className="absolute bottom-2 left-2 bg-gradient-to-r from-green-500 to-teal-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg">New</span>
+        )}
+        {product.old_price && product.price < product.old_price && (
+          <span className="absolute bottom-2 right-2 bg-gradient-to-r from-blue-600 to-cyan-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg">
+            -{Math.round(((product.old_price - product.price) / product.old_price) * 100)}%
+          </span>
+        )}
+      </div>
+      <div className="flex-1 flex flex-col p-3">
+        <div className="text-sm text-gray-500 mb-1">{product.category}</div>
+        <h3 className="font-semibold text-base mb-1 truncate" title={product.name}>{product.name}</h3>
+        <div className="text-xs text-gray-400 mb-1">{product.brand}</div>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-lg font-bold text-primary">KSh {product.price?.toLocaleString()}</span>
+          {product.old_price && product.price < product.old_price && (
+            <span className="text-xs line-through text-gray-400">KSh {product.old_price?.toLocaleString()}</span>
+          )}
+        </div>
+        {/* Trust badges beside info */}
+        {product.trust_badges && (
+          <div className="flex gap-2 mb-2">
+            {product.trust_badges.map(badge => (
+              <span key={badge} className="bg-gradient-to-r from-gray-100 to-gray-200 text-xs text-gray-700 px-2 py-1 rounded border border-gray-200 font-medium shadow">{badge}</span>
+            ))}
           </div>
         )}
-        <button
-          onClick={() => onToggleWishlist(product.id)}
-          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
-        >
-          {isInWishlist ? (
-            <HeartSolidIcon className="h-5 w-5 text-red-500" />
-          ) : (
-            <HeartIcon className="h-5 w-5 text-gray-600" />
-          )}
-        </button>
-      </div>
-      
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{product.name}</h3>
-        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.short_description}</p>
-        
-        <div className="flex items-center mb-2">
-          <div className="flex items-center">
-            {renderStars(product.average_rating)}
-          </div>
-          <span className="ml-2 text-sm text-gray-600">({product.review_count})</span>
+        <div className="flex gap-2 mt-auto">
+          <button
+            className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded transition w-full opacity-100 group-hover:scale-105 group-hover:shadow-lg focus:opacity-100"
+            onClick={e => { e.stopPropagation(); onAddToCart(product); }}
+            aria-label={`Add ${product.name} to cart`}
+          >
+            Add to Cart
+          </button>
+          <button
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded transition w-full opacity-100 group-hover:scale-105 group-hover:shadow focus:opacity-100"
+            onClick={e => { e.stopPropagation(); if (typeof onQuickView === 'function') onQuickView(); }}
+            aria-label={`Quick view ${product.name}`}
+          >
+            Quick View
+          </button>
         </div>
-        
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <span className="text-lg font-bold text-gray-900">${product.price}</span>
-            {product.compare_price && (
-              <span className="text-sm text-gray-500 line-through">${product.compare_price}</span>
-            )}
-          </div>
-          <span className="text-sm text-gray-600">{product.stock} left</span>
-        </div>
-        
-        <Button
-          onClick={() => onAddToCart(product.id)}
-          disabled={product.stock === 0}
-          className="w-full"
-          size="sm"
-        >
-          <ShoppingCartIcon className="h-4 w-4 mr-2" />
-          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-        </Button>
       </div>
-    </motion.div>
+    </motion.article>
   );
 };
 

@@ -5,11 +5,16 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Products from './pages/Products';
-import Orders from './pages/Orders';
-import Users from './pages/Users';
-import Reports from './pages/Reports';
+import React, { Suspense, lazy } from 'react';
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Products = lazy(() => import('./pages/Products'));
+const Orders = lazy(() => import('./pages/Orders'));
+const Users = lazy(() => import('./pages/Users'));
+const Reports = lazy(() => import('./pages/Reports'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminProducts = lazy(() => import('./pages/AdminProducts'));
+const AdminCategories = lazy(() => import('./pages/AdminCategories'));
+const AdminOrders = lazy(() => import('./pages/AdminOrders'));
 
 function App() {
   return (
@@ -17,24 +22,32 @@ function App() {
       <Router>
         <div className="App">
           <Toaster position="top-right" />
-          <Routes>
-            <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin/*" element={
-              <ProtectedRoute>
-                <Layout>
-                  <Routes>
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="products" element={<Products />} />
-                    <Route path="orders" element={<Orders />} />
-                    <Route path="users" element={<Users />} />
-                    <Route path="reports" element={<Reports />} />
-                    <Route path="" element={<Navigate to="dashboard" replace />} />
-                  </Routes>
-                </Layout>
-              </ProtectedRoute>
-            } />
-            <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
-          </Routes>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/admin/login" element={<Login />} />
+              <Route path="/admin/login" element={<Login />} />
+              <Route path="/admin/*" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Routes>
+                      <Route path="dashboard" element={<Dashboard />} />
+                      <Route path="products" element={<Products />} />
+                      <Route path="orders" element={<Orders />} />
+                      <Route path="users" element={<Users />} />
+                      <Route path="reports" element={<Reports />} />
+                      <Route path="dashboard" element={<AdminDashboard />}>
+                        <Route path="products" element={<AdminProducts />} />
+                        <Route path="categories" element={<AdminCategories />} />
+                        <Route path="orders" element={<AdminOrders />} />
+                      </Route>
+                      <Route path="" element={<Navigate to="dashboard" replace />} />
+                    </Routes>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+            </Routes>
+          </Suspense>
         </div>
       </Router>
     </AuthProvider>

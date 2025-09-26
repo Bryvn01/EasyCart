@@ -40,7 +40,7 @@ const products = [
 
 async function seedDatabase() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+  await mongoose.connect(process.env.MONGO_URI);
     
     await Category.insertMany(categories);
     await Product.insertMany(products);

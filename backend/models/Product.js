@@ -11,6 +11,7 @@ const productSchema = new mongoose.Schema({
   weight: { type: String },
   rating: { type: Number, default: 4.5 },
   isActive: { type: Boolean, default: true },
+  tags: { type: [String], default: [] },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

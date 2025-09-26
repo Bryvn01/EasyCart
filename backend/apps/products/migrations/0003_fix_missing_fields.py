@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     operations = [
         # Add missing fields to Category if they don't exist
         migrations.RunSQL(
-            "ALTER TABLE products_category ADD COLUMN is_active BOOLEAN DEFAULT 1;",
+            "ALTER TABLE products_category ADD COLUMN is_active BOOLEAN DEFAULT TRUE;",
             reverse_sql="ALTER TABLE products_category DROP COLUMN is_active;",
             state_operations=[
                 migrations.AddField(

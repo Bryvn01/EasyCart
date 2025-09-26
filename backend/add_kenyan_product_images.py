@@ -39,9 +39,9 @@ def optimize_image(image_url, max_width=600, quality=90):
 # Accurate Kenyan product images matching Carrefour Kenya
 KENYAN_PRODUCTS = {
     # Groceries - Exact Kenyan brands
-    'Unga wa Dola 2kg': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&q=80',  # Wheat flour
-    'Pembe Maize Flour 2kg': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&q=80',  # Maize flour
-    'Basmati Rice 1kg': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&q=80',  # Rice
+    'Unga wa Dola 2kg': 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.k8gOs5HYANkqP_GKz4VIPwHaKi%3Fpid%3DApi&f=1&ipt=2e9be5ffdb4b694b291a2aa1415434cb548e3edfaeb22d91d63fcfca33cb12a7&ipo=images',  # Wheat flour
+    'Pembe Maize Flour 2kg': 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.K-UeMAuaYzeBcFGDrBoSLgHaHa%3Fpid%3DApi&f=1&ipt=9100eca0f3abb6c22973bb49eedffec8a12fba874ccd2cd6fd8d2d36d3251c50&ipo=images',  # Maize flour
+    'Basmati Rice 1kg': 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.cpmVSrgZG6JpP-NAW0qNiQHaH1%3Fpid%3DApi&f=1&ipt=2e4208f87f22a689070ac01a6dee7cc4a7d2f775779e8c5420001a22858fc59f&ipo=images',  # Rice
     'Sugar 2kg': 'https://images.unsplash.com/photo-1582049165295-519d5d5c4a8c?w=600&q=80',  # Sugar
     'Cooking Oil 1L': 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80',  # Oil
     
