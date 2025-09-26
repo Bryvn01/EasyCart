@@ -22,10 +22,72 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/easycart')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB connection error:', err));
+// MongoDB Connection with improved error handling and DNS resolution
+const connectToMongoDB = async () => {
+  const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/easycart';
+  
+  const mongoOptions = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 30000, // 30 seconds
+    socketTimeoutMS: 45000, // 45 seconds
+    maxPoolSize: 10,
+    minPoolSize: 5,
+  };
+
+  // Add additional options for mongodb+srv connections to handle DNS issues
+  if (mongoUri.startsWith('mongodb+srv://')) {
+    mongoOptions.family = 4; // Force IPv4 for better DNS resolution
+    mongoOptions.retryWrites = true;
+    mongoOptions.w = 'majority';
+  }
+
+  try {
+    console.log('Attempting to connect to MongoDB...');
+    console.log('URI format:', mongoUri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')); // Log URI without credentials
+    
+    await mongoose.connect(mongoUri, mongoOptions);
+    console.log('✅ MongoDB connected successfully');
+    
+    // Handle connection events
+    mongoose.connection.on('error', (err) => {
+      console.error('❌ MongoDB connection error:', err);
+    });
+    
+    mongoose.connection.on('disconnected', () => {
+      console.log('⚠️ MongoDB disconnected. Attempting to reconnect...');
+    });
+    
+    mongoose.connection.on('reconnected', () => {
+      console.log('✅ MongoDB reconnected');
+    });
+    
+  } catch (error) {
+    console.error('❌ Initial MongoDB connection failed:', error.message);
+    
+    // If SRV lookup fails, provide helpful error message
+    if (error.message.includes('querySrv ENOTFOUND') || error.message.includes('ENOTFOUND')) {
+      console.error('🔍 DNS Resolution Error - This usually indicates:');
+      console.error('1. Incorrect MongoDB Atlas connection string');
+      console.error('2. Network/DNS issues in the deployment environment');
+      console.error('3. MongoDB Atlas cluster not accessible');
+      console.error('💡 Check your MONGODB_URI environment variable format');
+    }
+    
+    // In production, we might want to retry or use a fallback
+    if (process.env.NODE_ENV === 'production') {
+      console.log('🔄 Retrying connection in 5 seconds...');
+      setTimeout(() => {
+        connectToMongoDB();
+      }, 5000);
+    } else {
+      process.exit(1);
+    }
+  }
+};
+
+// Initialize MongoDB connection
+connectToMongoDB();
 
 // Routes
 app.use('/api/health', require('./routes/health'));
@@ -34,9 +96,38 @@ app.use('/api/products', require('./routes/products'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/seed', require('./routes/seed'));
 
-// Health check
+// Health check with MongoDB status
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'EasyCart API is running', timestamp: new Date().toISOString() });
+  const mongoStatus = mongoose.connection.readyState;
+  const mongoStates = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+  
+  const healthCheck = {
+    status: 'OK',
+    message: 'EasyCart API is running',
+    timestamp: new Date().toISOString(),
+    mongodb: {
+      status: mongoStates[mongoStatus] || 'unknown',
+      readyState: mongoStatus
+    },
+    environment: process.env.NODE_ENV || 'development',
+    version: require('./package.json').version || '1.0.0'
+  };
+  
+  // Return 503 if MongoDB is not connected in production
+  if (process.env.NODE_ENV === 'production' && mongoStatus !== 1) {
+    return res.status(503).json({
+      ...healthCheck,
+      status: 'ERROR',
+      message: 'Service unavailable - Database not connected'
+    });
+  }
+  
+  res.json(healthCheck);
 });
 
 const PORT = process.env.PORT || 5000;

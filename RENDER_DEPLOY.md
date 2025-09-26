@@ -20,7 +20,7 @@
    ```
    NODE_ENV=production
    JWT_SECRET=easycart-super-secret-jwt-key-2024
-   MONGODB_URI=mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart
+   MONGODB_URI=mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart?retryWrites=true&w=majority&family=4
    ```
 5. Click **"Create Web Service"**
 

@@ -24,7 +24,7 @@
 
 ### Step 4: Add Environment Variables
 ```
-MONGODB_URI=mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart?retryWrites=true&w=majority&family=4
 JWT_SECRET=easycart-super-secret-jwt-key-production-2024
 NODE_ENV=production
 FRONTEND_URL=https://easy-cart-obsc.vercel.app

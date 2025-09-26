@@ -31,7 +31,7 @@ REACT_APP_API_URL=https://easycart-backend-new.vercel.app/api
 
 ### Environment Variables for Backend:
 ```
-MONGODB_URI=mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart
+MONGODB_URI=mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart?retryWrites=true&w=majority&family=4
 JWT_SECRET=easycart-super-secret-jwt-key-production-2024
 NODE_ENV=production
 ```

@@ -7,7 +7,7 @@
 2. Import GitHub repo: `https://github.com/Bryvn01/EasyCart`
 3. Set Root Directory: `backend`
 4. Add Environment Variables:
-   - `MONGODB_URI`: `mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart`
+   - `MONGODB_URI`: `mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart?retryWrites=true&w=majority&family=4`
    - `JWT_SECRET`: `easycart-super-secret-jwt-key-production-2024`
    - `FRONTEND_URL`: `https://easycart-frontend.vercel.app`
 5. Deploy
