@@ -21,27 +21,29 @@
 4. Whitelist all IPs: 0.0.0.0/0
 5. Copy connection string to backend/.env
 
-## 4. Vercel Deployment
+## 4. Render Deployment
 
 ### Backend:
 ```bash
-# Deploy backend
-cd backend
-vercel --prod
-# Set environment variables in Vercel dashboard
+# Deploy backend as Web Service
+# Root Directory: backend
+# Build Command: npm install
+# Start Command: npm start
+# Set environment variables in Render dashboard
 ```
 
 ### Frontend:
 ```bash
-# Deploy frontend
-cd frontend
-vercel --prod
-# Set environment variables in Vercel dashboard
+# Deploy frontend as Static Site
+# Root Directory: frontend
+# Build Command: npm run build
+# Publish Directory: build
+# Set environment variables in Render dashboard
 ```
 
 ## 5. Environment Variables
 
-### Vercel Frontend Settings:
+### Render Frontend Settings:
 - REACT_APP_FIREBASE_API_KEY
 - REACT_APP_FIREBASE_AUTH_DOMAIN
 - REACT_APP_FIREBASE_PROJECT_ID
@@ -49,7 +51,7 @@ vercel --prod
 - REACT_APP_API_URL
 - REACT_APP_CHAT_URL
 
-### Vercel Backend Settings:
+### Render Backend Settings:
 - MONGODB_URI
 - JWT_SECRET
 - FRONTEND_URL
@@ -57,11 +59,11 @@ vercel --prod
 ## 6. Test Deployment
 ```bash
 # Seed database
-curl -X POST https://your-backend.vercel.app/api/seed
+curl -X POST https://easycart-backend.onrender.com/api/seed
 
 # Test API
-curl https://your-backend.vercel.app/api/health
+curl https://easycart-backend.onrender.com/api/health
 
 # Test frontend
-https://your-frontend.vercel.app
+https://easycart-frontend.onrender.com
 ```

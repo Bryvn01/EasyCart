@@ -1,15 +1,16 @@
 # Backend Deployment Instructions
 
-## 1. Deploy to Vercel
+## 1. Deploy to Render
 
-1. Go to https://vercel.com/new
-2. Import your GitHub repository: `https://github.com/Bryvn01/EasyCart`
-3. Select the `backend` folder as root directory
-4. Add environment variables:
+1. Go to https://render.com/new
+2. Select "Web Service"
+3. Connect your GitHub repository: `https://github.com/Bryvn01/EasyCart`
+4. Select the `backend` folder as root directory
+5. Add environment variables:
    - `MONGODB_URI`: `mongodb+srv://easycart:easycart2024@easycart.abc123.mongodb.net/easycart`
    - `JWT_SECRET`: `easycart-super-secret-key-2024`
    - `NODE_ENV`: `production`
-5. Deploy
+6. Deploy
 
 ## 2. Setup MongoDB Atlas
 
@@ -23,13 +24,13 @@
 
 After deployment, run:
 ```bash
-curl -X POST https://your-backend-url.vercel.app/api/seed
+curl -X POST https://easycart-backend.onrender.com/api/seed
 ```
 
 ## 4. Test API
 
 ```bash
-curl https://your-backend-url.vercel.app/api/health
+curl https://easycart-backend.onrender.com/api/health
 ```
 
 ## 5. Admin Login
