@@ -13,13 +13,14 @@ git commit -m "fix: Admin login, health endpoint, lazy loading, and production d
 git push
 
 echo "✅ Deployment complete!"
-echo "🔗 Frontend: https://easy-cart-obsc.vercel.app/"
-echo "🔗 Backend: https://easycart-api-bryvn01.vercel.app/"
+echo "🔗 Frontend: https://easycart-frontend.onrender.com"
+echo "🔗 Backend: https://easycart-backend.onrender.com"
+echo "🔗 Admin Panel: https://easycart-admin.onrender.com"
 echo ""
 echo "🧪 Test Admin Login:"
 echo "Email: admin@easycart.com"
 echo "Password: admin123"
-echo "URL: https://easy-cart-obsc.vercel.app/admin/manage"
+echo "URL: https://easycart-admin.onrender.com/admin/login"
 echo ""
 echo "📊 Seed Database:"
-echo "curl -X POST https://easycart-api-bryvn01.vercel.app/api/seed"
+echo "curl -X POST https://easycart-backend.onrender.com/api/seed"

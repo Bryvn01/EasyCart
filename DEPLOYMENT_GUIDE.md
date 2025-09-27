@@ -36,24 +36,27 @@ aws s3 sync build/ s3://your-company-ecommerce-frontend-$(date +%Y%m%d) --delete
 aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
 ```
 
-### Option 2: Vercel + Railway
+### Option 2: Render Deployment (Recommended for Simplicity)
 
-#### **Frontend on Vercel**
+#### **Full Stack on Render**
 ```bash
-# 1. Install Vercel CLI
-npm i -g vercel
+# 1. Backend (Web Service)
+# - Root Directory: backend
+# - Build Command: npm install
+# - Start Command: npm start
 
-# 2. Deploy frontend
-cd frontend
-vercel --prod
+# 2. Frontend (Static Site)
+# - Root Directory: frontend
+# - Build Command: npm run build
+# - Publish Directory: build
+
+# 3. Admin Dashboard (Static Site)
+# - Root Directory: admin-dashboard
+# - Build Command: npm run build
+# - Publish Directory: build
 ```
 
-#### **Backend on Railway**
-```bash
-# 1. Connect Railway to your GitHub repo
-# 2. Set environment variables in Railway dashboard
-# 3. Deploy automatically on push
-```
+For detailed Render deployment instructions, see [RENDER_DEPLOY.md](RENDER_DEPLOY.md)
 
 ### Option 3: DigitalOcean App Platform
 

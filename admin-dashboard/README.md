@@ -91,10 +91,21 @@ The dashboard connects to the existing EasyCart backend:
    npm run build
    ```
 
-2. **Deploy to Vercel**
+2. **Deploy to Render**
+   - Go to https://render.com/dashboard
+   - Create "Static Site"
    - Connect GitHub repository
-   - Set build directory to `admin-dashboard`
-   - Add environment variables
+   - Set Root Directory to `admin-dashboard`
+   - Set Build Command: `npm run build`
+   - Set Publish Directory: `build`
+   - Add environment variables:
+     ```
+     REACT_APP_API_URL=https://easycart-backend.onrender.com/api
+     ```
+
+3. **Alternative: Manual Deploy**
+   - Build locally: `npm run build`
+   - Upload `build/` directory to any static hosting service
 
 ## Routes
 
