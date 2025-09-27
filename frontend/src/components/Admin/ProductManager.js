@@ -5,6 +5,7 @@ import AdminAuth from './AdminAuth';
 const ProductManager = () => {
   const [products, setProducts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
   const [user, setUser] = useState(null);
   // Removed unused loading state
   const [formData, setFormData] = useState({
@@ -44,16 +45,27 @@ const ProductManager = () => {
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock)
       };
-      await productsAPI.createProduct(productData);
+      
+      if (editingProduct) {
+        // Update existing product
+        await productsAPI.updateProduct(editingProduct._id, productData);
+        alert('Product updated successfully!');
+      } else {
+        // Create new product
+        await productsAPI.createProduct(productData);
+        alert('Product added successfully!');
+      }
+      
       await fetchProducts();
       setFormData({
         name: '', price: '', category: 'Groceries', description: '', 
         stock: '', image: '', brand: '', weight: ''
       });
       setShowAddForm(false);
-      alert('Product added successfully!');
+      setEditingProduct(null);
     } catch (error) {
-      alert('Failed to add product: ' + (error.response?.data?.message || 'Network error'));
+      const action = editingProduct ? 'update' : 'add';
+      alert(`Failed to ${action} product: ` + (error.response?.data?.message || 'Network error'));
     }
   // setLoading(false); // removed unused
   };
@@ -70,6 +82,30 @@ const ProductManager = () => {
     }
   };
 
+  const handleEditProduct = (product) => {
+    setFormData({
+      name: product.name || '',
+      price: product.price || '',
+      category: product.category || 'Groceries',
+      description: product.description || '',
+      stock: product.stock || '',
+      image: product.image || '',
+      brand: product.brand || '',
+      weight: product.weight || ''
+    });
+    setEditingProduct(product);
+    setShowAddForm(true);
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({
+      name: '', price: '', category: 'Groceries', description: '', 
+      stock: '', image: '', brand: '', weight: ''
+    });
+    setEditingProduct(null);
+    setShowAddForm(false);
+  };
+
   if (!user) {
     return <AdminAuth onLogin={setUser} />;
   }
@@ -78,11 +114,18 @@ const ProductManager = () => {
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h2>Admin - Product Manager</h2>
       <p style={{ color: '#666', marginBottom: '20px' }}>
-        Demo Mode: Add products temporarily. For permanent changes, implement backend API.
+        Manage your product catalog with full CRUD operations.
       </p>
       
       <button 
-        onClick={() => setShowAddForm(true)}
+        onClick={() => {
+          setFormData({
+            name: '', price: '', category: 'Groceries', description: '', 
+            stock: '', image: '', brand: '', weight: ''
+          });
+          setEditingProduct(null);
+          setShowAddForm(true);
+        }}
         style={{ 
           backgroundColor: '#007bff', color: 'white', padding: '12px 24px', 
           border: 'none', borderRadius: '6px', marginBottom: '20px', cursor: 'pointer'
@@ -96,7 +139,7 @@ const ProductManager = () => {
           backgroundColor: '#f8f9fa', padding: '24px', borderRadius: '8px', 
           marginBottom: '20px', border: '1px solid #dee2e6'
         }}>
-          <h3>Add New Product</h3>
+          <h3>{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
               <input
@@ -170,11 +213,11 @@ const ProductManager = () => {
                   border: 'none', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'
                 }}
               >
-                Add Product
+                {editingProduct ? 'Update Product' : 'Add Product'}
               </button>
               <button 
                 type="button"
-                onClick={() => setShowAddForm(false)}
+                onClick={handleCancelEdit}
                 style={{ 
                   backgroundColor: '#6c757d', color: 'white', padding: '12px 24px', 
                   border: 'none', borderRadius: '4px', cursor: 'pointer'
@@ -209,16 +252,26 @@ const ProductManager = () => {
               Stock: {product.stock} | {product.weight}
             </p>
             <p style={{ fontSize: '12px', color: '#6c757d' }}>Brand: {product.brand}</p>
-            <button 
-              onClick={() => deleteProduct(product._id)}
-              style={{ 
-                backgroundColor: '#dc3545', color: 'white', padding: '6px 12px', 
-                border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px',
-                marginTop: '8px'
-              }}
-            >
-              Delete
-            </button>
+            <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+              <button 
+                onClick={() => handleEditProduct(product)}
+                style={{ 
+                  backgroundColor: '#007bff', color: 'white', padding: '6px 12px', 
+                  border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px'
+                }}
+              >
+                Edit
+              </button>
+              <button 
+                onClick={() => deleteProduct(product._id)}
+                style={{ 
+                  backgroundColor: '#dc3545', color: 'white', padding: '6px 12px', 
+                  border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px'
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>
