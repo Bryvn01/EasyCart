@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import Products from '../pages/Products';
 import * as api from '../services/api';
@@ -24,7 +25,11 @@ jest.mock('react-hot-toast', () => ({
 
 // Mock lodash debounce
 jest.mock('lodash', () => ({
-  debounce: jest.fn((fn) => fn)
+  debounce: jest.fn((fn) => {
+    const debounced = fn;
+    debounced.cancel = jest.fn();
+    return debounced;
+  })
 }));
 
 // Mock the services API module
@@ -99,17 +104,19 @@ describe('Products Page', () => {
   test('renders products list', async () => {
     renderWithProviders(<Products />);
     
-    // Debug: check screen output after waiting
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    screen.debug();
+    // Give some time for component to render and API calls to resolve
+    await new Promise(resolve => setTimeout(resolve, 500));
     
-    await waitFor(() => {
-      expect(screen.getByText('Test Product')).toBeInTheDocument();
-    }, { timeout: 5000 });
+    // Check if Test Product is in the document
+    const productElement = screen.getByText('Test Product');
+    expect(productElement).toBeInTheDocument();
   });
 
   test('filters products by search', async () => {
     renderWithProviders(<Products />);
+    
+    // Wait for component to load
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     const searchInput = screen.getByPlaceholderText(/search/i);
     fireEvent.change(searchInput, { target: { value: 'Test' } });
