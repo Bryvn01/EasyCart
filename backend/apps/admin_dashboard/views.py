@@ -14,7 +14,15 @@ def dashboard_stats(request):
     if not (request.user.is_authenticated and getattr(request.user, 'is_admin', False)):
         return Response({'error': 'Admin access required'}, status=status.HTTP_403_FORBIDDEN)
     
-    days = int(request.GET.get('days', 30))
+    try:
+        days_param = request.GET.get('days', '30')
+        days = int(days_param)
+        # Validate reasonable range for days parameter
+        if days < 1 or days > 365:
+            return Response({'error': 'Days parameter must be between 1 and 365'}, status=status.HTTP_400_BAD_REQUEST)
+    except (ValueError, TypeError):
+        return Response({'error': 'Invalid days parameter. Please provide a valid number.'}, status=status.HTTP_400_BAD_REQUEST)
+    
     start_date = timezone.now() - timedelta(days=days)
     
     orders_qs = Order.objects.filter(created_at__gte=start_date)
