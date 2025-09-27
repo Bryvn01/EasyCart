@@ -66,12 +66,11 @@ const AdminProducts = () => {
       return;
     }
     try {
-      let res;
       if (form.id) {
-        res = await axios.put(`${API_BASE}/${form.id}`, form);
+        await axios.put(`${API_BASE}/${form.id}`, form);
         setSuccess("Product updated successfully");
       } else {
-        res = await axios.post(API_BASE, form);
+        await axios.post(API_BASE, form);
         setSuccess("Product added successfully");
       }
       setShowForm(false);
