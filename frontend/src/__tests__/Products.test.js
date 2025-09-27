@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Products from '../pages/Products';
@@ -21,7 +22,21 @@ jest.mock('react-hot-toast', () => ({
   error: jest.fn()
 }));
 
-jest.mock('../services/api');
+// Mock lodash debounce
+jest.mock('lodash', () => ({
+  debounce: jest.fn((fn) => fn)
+}));
+
+// Mock the services API module
+jest.mock('../services/api', () => ({
+  productsAPI: {
+    getProducts: jest.fn(),
+    getCategories: jest.fn()
+  },
+  ordersAPI: {
+    addToCart: jest.fn()
+  }
+}));
 
 const mockProducts = {
   data: {
@@ -32,23 +47,30 @@ const mockProducts = {
   }
 };
 
-const MockAuthProvider = ({ children }) => {
-  const mockValue = {
+// Mock the context hooks directly
+jest.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
     user: null,
     login: jest.fn(),
     register: jest.fn(),
     logout: jest.fn(),
     loading: false,
     isAuthenticated: false
-  };
+  })
+}));
+
+jest.mock('../context/CartContext', () => ({
+  useCart: () => ({
+    cartCount: 0,
+    fetchCartCount: jest.fn()
+  })
+}));
+
+const MockAuthProvider = ({ children }) => {
   return React.createElement('div', { 'data-testid': 'auth-provider' }, children);
 };
 
 const MockCartProvider = ({ children }) => {
-  const mockValue = {
-    cartCount: 0,
-    fetchCartCount: jest.fn()
-  };
   return React.createElement('div', { 'data-testid': 'cart-provider' }, children);
 };
 
@@ -66,6 +88,10 @@ const renderWithProviders = (component) => {
 
 describe('Products Page', () => {
   beforeEach(() => {
+    // Clear all mocks before each test
+    jest.clearAllMocks();
+    
+    // Mock the API calls
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
     api.productsAPI.getCategories.mockResolvedValue({ data: [{ id: 1, name: 'Electronics' }] });
   });
@@ -73,9 +99,13 @@ describe('Products Page', () => {
   test('renders products list', async () => {
     renderWithProviders(<Products />);
     
+    // Debug: check screen output after waiting
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    screen.debug();
+    
     await waitFor(() => {
       expect(screen.getByText('Test Product')).toBeInTheDocument();
-    });
+    }, { timeout: 5000 });
   });
 
   test('filters products by search', async () => {

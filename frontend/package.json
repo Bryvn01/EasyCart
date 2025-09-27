@@ -57,6 +57,7 @@
     ]
   },
   "jest": {
+    "testEnvironment": "jsdom",
     "transform": {
       "^.+\\.[jt]sx?$": "babel-jest"
     },
@@ -65,7 +66,8 @@
     ],
     "moduleNameMapper": {
       "^axios$": "axios/dist/node/axios.cjs"
-    }
+    },
+    "setupFilesAfterEnv": ["<rootDir>/src/setupTests.js"]
   },
   "browserslist": {
     "production": [
