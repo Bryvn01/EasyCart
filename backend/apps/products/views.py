@@ -1,5 +1,6 @@
 from rest_framework import generics, filters, permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
@@ -33,35 +34,43 @@ class ProductListView(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Product.objects.all() if (self.request.user.is_authenticated and getattr(self.request.user, 'is_admin', False)) else Product.objects.filter(is_active=True)
         
-        # Price range filtering
+        # Price range filtering with validation
         price_min = self.request.query_params.get('price_min')
         price_max = self.request.query_params.get('price_max')
         
-        if price_min:
+        if price_min and price_min.strip():  # Ignore empty strings
             try:
-                # Skip filtering if value is invalid (NaN, inf, infinity, etc.)
+                # Check for invalid values that could be injection attempts
                 if price_min.lower() in ['nan', 'inf', '-inf', 'infinity', '-infinity', '+infinity']:
-                    pass  # Skip this filter
+                    # Return 400 for invalid values instead of silently ignoring
+                    from rest_framework.exceptions import ValidationError
+                    raise ValidationError("Invalid price_min value. Please provide a valid number.")
                 else:
                     price_min_val = float(price_min)
                     # Additional check for NaN after conversion
-                    if price_min_val == price_min_val:  # This will be False for NaN
-                        queryset = queryset.filter(price__gte=price_min_val)
+                    if price_min_val != price_min_val:  # This will be True for NaN
+                        raise ValidationError("Invalid price_min value. Please provide a valid number.")
+                    queryset = queryset.filter(price__gte=price_min_val)
             except (ValueError, TypeError, OverflowError):
-                pass  # Skip invalid values
+                from rest_framework.exceptions import ValidationError
+                raise ValidationError("Invalid price_min value. Please provide a valid number.")
 
-        if price_max:
+        if price_max and price_max.strip():  # Ignore empty strings
             try:
-                # Skip filtering if value is invalid (NaN, inf, infinity, etc.)
+                # Check for invalid values that could be injection attempts
                 if price_max.lower() in ['nan', 'inf', '-inf', 'infinity', '-infinity', '+infinity']:
-                    pass  # Skip this filter
+                    # Return 400 for invalid values instead of silently ignoring
+                    from rest_framework.exceptions import ValidationError
+                    raise ValidationError("Invalid price_max value. Please provide a valid number.")
                 else:
                     price_max_val = float(price_max)
                     # Additional check for NaN after conversion
-                    if price_max_val == price_max_val:  # This will be False for NaN
-                        queryset = queryset.filter(price__lte=price_max_val)
+                    if price_max_val != price_max_val:  # This will be True for NaN
+                        raise ValidationError("Invalid price_max value. Please provide a valid number.")
+                    queryset = queryset.filter(price__lte=price_max_val)
             except (ValueError, TypeError, OverflowError):
-                pass  # Skip invalid values
+                from rest_framework.exceptions import ValidationError
+                raise ValidationError("Invalid price_max value. Please provide a valid number.")
                 
         return queryset
 

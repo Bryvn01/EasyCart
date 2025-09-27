@@ -62,8 +62,21 @@ class SecurityTestCase(TestCase):
             'price_max': 'Infinity'
         })
         
-        # Should handle gracefully without errors
-        self.assertEqual(response.status_code, 200)
+        # Should return 400 for invalid price values
+        self.assertEqual(response.status_code, 400)
+
+    def test_price_validation_additional_invalid_values(self):
+        """Test additional invalid price values return 400"""
+        invalid_values = ['inf', '-inf', '+infinity', 'invalid', 'null', '']
+        for invalid_val in invalid_values:
+            with self.subTest(price_value=invalid_val):
+                response = self.client.get('/api/products/', {
+                    'price_min': invalid_val
+                })
+                if invalid_val != '':  # Empty string should be ignored, not cause error
+                    self.assertEqual(response.status_code, 400, f"Failed for value: {invalid_val}")
+                else:
+                    self.assertEqual(response.status_code, 200, "Empty string should be ignored")
 
     def test_authentication_required_for_sensitive_operations(self):
         """Test that sensitive operations require authentication"""

@@ -190,6 +190,15 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     X_FRAME_OPTIONS = 'DENY'
 
+# For testing, ensure SSL redirect doesn't interfere with API responses
+# Tests should return proper HTTP status codes (400, 401, 403) not redirects
+import sys
+if 'test' in sys.argv:
+    SECURE_SSL_REDIRECT = False
+    # Disable throttling during tests to avoid Redis dependency
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'] = []
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {}
+
 # Email Configuration
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 EMAIL_HOST = config('EMAIL_HOST', default='')
