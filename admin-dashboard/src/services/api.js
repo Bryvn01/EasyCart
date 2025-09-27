@@ -28,7 +28,9 @@ export const adminAPI = {
   getOrders: (params) => api.get('/orders', { params }),
   updateOrderStatus: (id, status) => api.patch(`/orders/${id}`, { status }),
   getUsers: (params) => api.get('/users', { params }),
+  createUser: (data) => api.post('/users', data),
   updateUser: (id, data) => api.patch(`/users/${id}`, data),
+  deleteUser: (id) => api.delete(`/users/${id}`),
 };
 
 export default api;
