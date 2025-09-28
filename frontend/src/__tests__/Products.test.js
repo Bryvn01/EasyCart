@@ -62,6 +62,10 @@ const renderWithProviders = (component) => {
 
 describe('Products Page', () => {
   beforeEach(() => {
+    // Clear all mocks
+    jest.clearAllMocks();
+    
+    // Setup API mocks with immediate resolution
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
     api.productsAPI.getCategories.mockResolvedValue({ data: [{ id: 1, name: 'Electronics' }] });
   });
@@ -69,21 +73,28 @@ describe('Products Page', () => {
   test('renders products list', async () => {
     renderWithProviders(<Products />);
     
+    // Wait for loading to complete and product to appear
     await waitFor(() => {
       expect(screen.getByText('Test Product')).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   test('filters products by search', async () => {
     renderWithProviders(<Products />);
     
-    const searchInput = screen.getByPlaceholderText(/search/i);
+    // Wait for component to load completely before trying to interact
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText(/search products/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
+    
+    const searchInput = screen.getByPlaceholderText(/search products/i);
     fireEvent.change(searchInput, { target: { value: 'Test' } });
     
+    // Wait for debounced search to be called
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(expect.objectContaining({
         search: 'Test'
       }));
-    });
+    }, { timeout: 1000 });
   });
 });
