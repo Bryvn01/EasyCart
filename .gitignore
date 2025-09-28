@@ -51,6 +51,10 @@ yarn-error.log*
 # Build outputs
 /frontend/build/
 /frontend/dist/
+# Test coverage
+coverage/
+*.lcov
+
 
 # IDE
 .vscode/
