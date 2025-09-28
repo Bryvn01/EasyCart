@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Products from '../pages/Products';
@@ -21,6 +22,25 @@ jest.mock('react-hot-toast', () => ({
   error: jest.fn()
 }));
 
+// Mock the context hooks
+jest.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
+    user: null,
+    login: jest.fn(),
+    register: jest.fn(),
+    logout: jest.fn(),
+    loading: false,
+    isAuthenticated: false
+  })
+}));
+
+jest.mock('../context/CartContext', () => ({
+  useCart: () => ({
+    cartCount: 0,
+    fetchCartCount: jest.fn()
+  })
+}));
+
 jest.mock('../services/api');
 
 const mockProducts = {
@@ -32,34 +52,10 @@ const mockProducts = {
   }
 };
 
-const MockAuthProvider = ({ children }) => {
-  const mockValue = {
-    user: null,
-    login: jest.fn(),
-    register: jest.fn(),
-    logout: jest.fn(),
-    loading: false,
-    isAuthenticated: false
-  };
-  return React.createElement('div', { 'data-testid': 'auth-provider' }, children);
-};
-
-const MockCartProvider = ({ children }) => {
-  const mockValue = {
-    cartCount: 0,
-    fetchCartCount: jest.fn()
-  };
-  return React.createElement('div', { 'data-testid': 'cart-provider' }, children);
-};
-
 const renderWithProviders = (component) => {
   return render(
     <BrowserRouter>
-      <MockAuthProvider>
-        <MockCartProvider>
-          {component}
-        </MockCartProvider>
-      </MockAuthProvider>
+      {component}
     </BrowserRouter>
   );
 };
