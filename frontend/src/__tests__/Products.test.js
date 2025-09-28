@@ -4,6 +4,25 @@ import { BrowserRouter } from 'react-router-dom';
 import Products from '../pages/Products';
 import * as api from '../services/api';
 
+// Mock the contexts
+jest.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
+    user: null,
+    login: jest.fn(),
+    register: jest.fn(),
+    logout: jest.fn(),
+    loading: false,
+    isAuthenticated: false
+  })
+}));
+
+jest.mock('../context/CartContext', () => ({
+  useCart: () => ({
+    cartCount: 0,
+    fetchCartCount: jest.fn()
+  })
+}));
+
 // Mock axios
 jest.mock('axios', () => ({
   create: jest.fn(() => ({
@@ -33,34 +52,10 @@ const mockProducts = {
   }
 };
 
-const MockAuthProvider = ({ children }) => {
-  const mockValue = {
-    user: null,
-    login: jest.fn(),
-    register: jest.fn(),
-    logout: jest.fn(),
-    loading: false,
-    isAuthenticated: false
-  };
-  return React.createElement('div', { 'data-testid': 'auth-provider' }, children);
-};
-
-const MockCartProvider = ({ children }) => {
-  const mockValue = {
-    cartCount: 0,
-    fetchCartCount: jest.fn()
-  };
-  return React.createElement('div', { 'data-testid': 'cart-provider' }, children);
-};
-
 const renderWithProviders = (component) => {
   return render(
     <BrowserRouter>
-      <MockAuthProvider>
-        <MockCartProvider>
-          {component}
-        </MockCartProvider>
-      </MockAuthProvider>
+      {component}
     </BrowserRouter>
   );
 };
@@ -81,6 +76,11 @@ describe('Products Page', () => {
 
   test('filters products by search', async () => {
     renderWithProviders(<Products />);
+    
+    // Wait for the component to finish loading
+    await waitFor(() => {
+      expect(screen.queryByText('Loading products...')).not.toBeInTheDocument();
+    });
     
     const searchInput = screen.getByPlaceholderText(/search/i);
     fireEvent.change(searchInput, { target: { value: 'Test' } });
