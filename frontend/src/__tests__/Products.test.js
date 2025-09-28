@@ -34,14 +34,28 @@ const mockProducts = {
         stock: 10, 
         rating: 4.5, 
         brand: 'Test Brand' 
+      },
+      { 
+        id: 2, 
+        name: 'Another Product', 
+        price: 200, 
+        category: 'Fashion', 
+        image: 'test2.jpg', 
+        description: 'Another test description for the product', 
+        stock: 0, 
+        rating: 3.5, 
+        brand: 'Test Brand 2' 
       }
     ],
-    count: 1
+    count: 2
   }
 };
 
 const mockCategories = {
-  data: [{ id: 1, name: 'Electronics' }]
+  data: [
+    { id: 1, name: 'Electronics' },
+    { id: 2, name: 'Fashion' }
+  ]
 };
 
 // Create proper context providers
@@ -139,6 +153,39 @@ describe('Products Page', () => {
     // Verify API calls were made
     expect(api.productsAPI.getProducts).toHaveBeenCalled();
     expect(api.productsAPI.getCategories).toHaveBeenCalled();
+    
+    // Verify multiple products are rendered
+    expect(screen.getByText('Test Product')).toBeInTheDocument();
+    expect(screen.getByText('Another Product')).toBeInTheDocument();
+  });
+
+  test('displays loading state initially', async () => {
+    // Make API calls take longer to resolve
+    api.productsAPI.getProducts.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(mockProducts), 100)));
+    api.productsAPI.getCategories.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(mockCategories), 100)));
+    
+    renderWithProviders(<Products />);
+    
+    // Check loading state is shown
+    expect(screen.getByText('Loading products...')).toBeInTheDocument();
+    
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(screen.getByText('Test Product')).toBeInTheDocument();
+    });
+  });
+
+  test('handles API error gracefully', async () => {
+    // Mock API to reject
+    api.productsAPI.getProducts.mockRejectedValue(new Error('API Error'));
+    api.productsAPI.getCategories.mockRejectedValue(new Error('API Error'));
+    
+    renderWithProviders(<Products />);
+    
+    // Wait for error handling to complete
+    await waitFor(() => {
+      expect(screen.getByText('No products found')).toBeInTheDocument();
+    });
   });
 
   test('filters products by search', async () => {
@@ -158,5 +205,56 @@ describe('Products Page', () => {
         search: 'Test'
       }));
     }, { timeout: 1000 });
+  });
+
+  test('filters products by category', async () => {
+    renderWithProviders(<Products />);
+    
+    // Wait for component to load
+    await waitFor(() => {
+      expect(screen.getByText('Test Product')).toBeInTheDocument();
+    });
+    
+    // Find and use category dropdown
+    const categorySelect = screen.getByDisplayValue('All Categories');
+    fireEvent.change(categorySelect, { target: { value: '1' } });
+    
+    // Wait for API call with category filter
+    await waitFor(() => {
+      expect(api.productsAPI.getProducts).toHaveBeenCalledWith(expect.objectContaining({
+        category: '1'
+      }));
+    });
+  });
+
+  test('displays out of stock badge for products with no stock', async () => {
+    renderWithProviders(<Products />);
+    
+    // Wait for products to load
+    await waitFor(() => {
+      expect(screen.getByText('Another Product')).toBeInTheDocument();
+    });
+    
+    // Check that out of stock badge is displayed for second product
+    expect(screen.getByText('Out of Stock')).toBeInTheDocument();
+  });
+
+  test('shows clear filters button when filters are active', async () => {
+    renderWithProviders(<Products />);
+    
+    // Wait for component to load
+    await waitFor(() => {
+      expect(screen.getByText('Test Product')).toBeInTheDocument();
+    });
+    
+    // Apply a search filter
+    const searchInput = screen.getByTestId('search-input');
+    fireEvent.change(searchInput, { target: { value: 'Test' } });
+    
+    // Wait for active filters section to appear
+    await waitFor(() => {
+      expect(screen.getByText('Active Filters:')).toBeInTheDocument();
+      expect(screen.getByText('Clear All')).toBeInTheDocument();
+    });
   });
 });
