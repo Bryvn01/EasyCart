@@ -143,7 +143,33 @@ npm test
 
 ## 📦 Deployment
 
-See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed deployment instructions.
+### 🚀 Live Application - Deployed on Render
+
+The EasyCart application is currently deployed on Render with three separate services:
+
+#### **Frontend Application**
+🌐 **Live URL**: [https://easycart-frontend-zge5.onrender.com](https://easycart-frontend-zge5.onrender.com)
+- Main e-commerce storefront
+- User registration, login, and shopping cart
+- Product browsing and ordering
+
+#### **Backend API**
+⚙️ **Live URL**: [https://easycart-backend-0u8r.onrender.com](https://easycart-backend-0u8r.onrender.com)
+- REST API endpoints
+- Database operations
+- Authentication services
+
+#### **Admin Dashboard**
+👨‍💼 **Live URL**: [https://easycart-admin.onrender.com](https://easycart-admin.onrender.com)
+- Product management
+- Order administration
+- System monitoring
+
+### 📖 Deployment Documentation
+
+For detailed deployment instructions, see:
+- [RENDER_DEPLOY.md](RENDER_DEPLOY.md) - Complete Render deployment guide
+- [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) - General deployment information
 
 ## 🤝 Contributing
 

@@ -1,61 +1,68 @@
-# Deployment Instructions
+# EasyCart Deployment Instructions
 
-## 1. Manual Vercel Deployment
+## Current Deployment - Render Platform ✅
 
-### Backend:
-1. Go to https://vercel.com/new
-2. Import GitHub repo: `https://github.com/Bryvn01/EasyCart`
-3. Set Root Directory: `backend`
-4. Add Environment Variables:
-   - `MONGODB_URI`: `mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart`
-   - `JWT_SECRET`: `easycart-super-secret-jwt-key-production-2024`
-   - `FRONTEND_URL`: `https://easycart-frontend.vercel.app`
-5. Deploy
+EasyCart is deployed on **Render** with the following live applications:
 
-### Frontend:
-1. Go to https://vercel.com/new
-2. Import same GitHub repo
-3. Set Root Directory: `frontend`
-4. Add Environment Variables:
-   - `REACT_APP_API_URL`: `https://easycart-backend.vercel.app/api`
-   - `REACT_APP_FIREBASE_API_KEY`: `AIzaSyBqK8J9X2mF4nP7vL3wR8sT1uY6eH9cA2b`
-   - `REACT_APP_POSTHOG_KEY`: `phc_easycart_demo_key_2024`
-5. Deploy
+### 🌐 Live Applications:
+- **Frontend**: [https://easycart-frontend-zge5.onrender.com](https://easycart-frontend-zge5.onrender.com)
+- **Backend API**: [https://easycart-backend-0u8r.onrender.com](https://easycart-backend-0u8r.onrender.com)
+- **Admin Dashboard**: [https://easycart-admin.onrender.com](https://easycart-admin.onrender.com)
 
-## 2. GitHub Actions Auto-Deploy
+## 🚀 Deploy Your Own Instance
 
-### Setup Secrets:
-1. Go to GitHub repo Settings > Secrets
-2. Add Repository Secrets:
-   - `VERCEL_TOKEN`: Get from https://vercel.com/account/tokens
-   - `VERCEL_ORG_ID`: Get from Vercel team settings
-   - `VERCEL_BACKEND_PROJECT_ID`: Get from backend project settings
-   - `VERCEL_FRONTEND_PROJECT_ID`: Get from frontend project settings
+For complete step-by-step deployment instructions, see [RENDER_DEPLOY.md](RENDER_DEPLOY.md)
 
-### Auto-Deploy:
-- Push to `main` branch triggers deployment
-- Both frontend and backend deploy automatically
-- Environment variables managed in Vercel dashboard
+### Quick Summary:
+1. **Backend (Web Service)**: Deploy from `backend/` directory
+2. **Frontend (Static Site)**: Deploy from `frontend/` directory  
+3. **Admin Dashboard (Static Site)**: Deploy from `admin-dashboard/` directory
 
-## 3. Post-Deployment
+## 🧪 Test the Live Application
 
 ### Seed Database:
 ```bash
-curl -X POST https://easycart-backend.vercel.app/api/seed
+curl -X POST https://easycart-backend-0u8r.onrender.com/api/seed
 ```
 
-### Test Endpoints:
+### Test API Endpoints:
 ```bash
 # Health check
-curl https://easycart-backend.vercel.app/api/health
+curl https://easycart-backend-0u8r.onrender.com/api/health
 
 # Get products
-curl https://easycart-backend.vercel.app/api/products
-
-# Frontend
-https://easycart-frontend.vercel.app
+curl https://easycart-backend-0u8r.onrender.com/api/products
 ```
 
-## 4. Admin Access
-- URL: `https://easycart-frontend.vercel.app/admin/manage`
-- Login: `admin@easycart.com` / `admin123`
+### Test Frontend:
+Visit [https://easycart-frontend-zge5.onrender.com](https://easycart-frontend-zge5.onrender.com)
+
+### Admin Access:
+- **URL**: [https://easycart-admin.onrender.com/admin/login](https://easycart-admin.onrender.com/admin/login)
+- **Login**: `admin@easycart.com` / `admin123`
+
+## 🔄 Auto-Deploy
+
+Render automatically deploys when you push changes to the `main` branch:
+- GitHub integration handles automatic deployments
+- Environment variables managed in Render dashboard
+- No additional CI/CD setup required
+
+## 🛠️ Environment Variables
+
+### Backend:
+```
+NODE_ENV=production
+JWT_SECRET=your-secret-key
+MONGODB_URI=your-mongodb-connection-string
+```
+
+### Frontend & Admin:
+```
+REACT_APP_API_URL=https://easycart-backend-0u8r.onrender.com/api
+```
+
+## 📖 Additional Resources
+
+- [RENDER_DEPLOY.md](RENDER_DEPLOY.md) - Complete deployment guide
+- [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) - General deployment information

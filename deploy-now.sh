@@ -1,25 +1,24 @@
 #!/bin/bash
 
-echo "🚀 Deploying EasyCart with all fixes..."
+echo "🚀 EasyCart - Deployed on Render"
 
-# Build frontend
-cd frontend
-npm run build
-
-# Commit and push changes
-cd ..
-git add .
-git commit -m "fix: Admin login, health endpoint, lazy loading, and production deployment"
-git push
-
-echo "✅ Deployment complete!"
-echo "🔗 Frontend: https://easy-cart-obsc.vercel.app/"
-echo "🔗 Backend: https://easycart-api-bryvn01.vercel.app/"
+echo "✅ Application is live on Render!"
+echo ""
+echo "🌐 Frontend Application:"
+echo "   https://easycart-frontend-zge5.onrender.com"
+echo ""
+echo "⚙️  Backend API:"
+echo "   https://easycart-backend-0u8r.onrender.com"
+echo ""
+echo "👨‍💼 Admin Dashboard:"
+echo "   https://easycart-admin.onrender.com"
 echo ""
 echo "🧪 Test Admin Login:"
-echo "Email: admin@easycart.com"
-echo "Password: admin123"
-echo "URL: https://easy-cart-obsc.vercel.app/admin/manage"
+echo "   Email: admin@easycart.com"
+echo "   Password: admin123"
+echo "   URL: https://easycart-admin.onrender.com/admin/login"
 echo ""
 echo "📊 Seed Database:"
-echo "curl -X POST https://easycart-api-bryvn01.vercel.app/api/seed"
+echo "   curl -X POST https://easycart-backend-0u8r.onrender.com/api/seed"
+echo ""
+echo "📖 Deployment Guide: See RENDER_DEPLOY.md for setup instructions"

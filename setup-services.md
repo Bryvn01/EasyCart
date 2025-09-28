@@ -21,47 +21,44 @@
 4. Whitelist all IPs: 0.0.0.0/0
 5. Copy connection string to backend/.env
 
-## 4. Vercel Deployment
+## 4. Render Deployment ✅
 
-### Backend:
-```bash
-# Deploy backend
-cd backend
-vercel --prod
-# Set environment variables in Vercel dashboard
-```
+**Current Status**: EasyCart is deployed on Render with all services running.
 
-### Frontend:
-```bash
-# Deploy frontend
-cd frontend
-vercel --prod
-# Set environment variables in Vercel dashboard
-```
+### Live Applications:
+- **Frontend**: [https://easycart-frontend-zge5.onrender.com](https://easycart-frontend-zge5.onrender.com)
+- **Backend API**: [https://easycart-backend-0u8r.onrender.com](https://easycart-backend-0u8r.onrender.com)
+- **Admin Dashboard**: [https://easycart-admin.onrender.com](https://easycart-admin.onrender.com)
+
+### Deploy Your Own:
+For complete deployment instructions, see [RENDER_DEPLOY.md](RENDER_DEPLOY.md)
 
 ## 5. Environment Variables
 
-### Vercel Frontend Settings:
+### Frontend & Admin Settings:
 - REACT_APP_FIREBASE_API_KEY
 - REACT_APP_FIREBASE_AUTH_DOMAIN
 - REACT_APP_FIREBASE_PROJECT_ID
 - REACT_APP_POSTHOG_KEY
-- REACT_APP_API_URL
+- REACT_APP_API_URL=https://easycart-backend-0u8r.onrender.com/api
 - REACT_APP_CHAT_URL
 
-### Vercel Backend Settings:
+### Backend Settings:
 - MONGODB_URI
 - JWT_SECRET
-- FRONTEND_URL
+- NODE_ENV=production
 
-## 6. Test Deployment
+## 6. Test Live Deployment
 ```bash
 # Seed database
-curl -X POST https://your-backend.vercel.app/api/seed
+curl -X POST https://easycart-backend-0u8r.onrender.com/api/seed
 
 # Test API
-curl https://your-backend.vercel.app/api/health
+curl https://easycart-backend-0u8r.onrender.com/api/health
 
 # Test frontend
-https://your-frontend.vercel.app
+https://easycart-frontend-zge5.onrender.com
+
+# Test admin
+https://easycart-admin.onrender.com/admin/login
 ```
