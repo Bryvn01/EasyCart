@@ -46,7 +46,6 @@
     "build:ts": "tsc",
     "prepublishOnly": "npm test && npm run build",
     "eject": "react-scripts eject",
-    "vercel-build": "npm run build",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix"
   },

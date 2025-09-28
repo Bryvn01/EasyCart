@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { productsAPI } from '../services/api';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -74,7 +76,7 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
         stock: parseInt(formData.stock)
       };
       
-      const response = await fetch(`http://localhost:8000/api/products/${product.id}/`, {
+      const response = await fetch(`${API_BASE_URL}/products/${product.id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
