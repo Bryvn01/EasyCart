@@ -1,3 +1,6 @@
+// jest-dom adds custom jest matchers for asserting on DOM nodes.
+import '@testing-library/jest-dom';
+
 // Mock axios globally
 jest.mock('axios', () => ({
   create: jest.fn(() => ({
