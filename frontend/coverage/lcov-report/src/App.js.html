@@ -144,7 +144,15 @@
 <a name='L79'></a><a href='#L79'>79</a>
 <a name='L80'></a><a href='#L80'>80</a>
 <a name='L81'></a><a href='#L81'>81</a>
-<a name='L82'></a><a href='#L82'>82</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -178,6 +186,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -230,7 +242,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
@@ -263,42 +277,45 @@ function <span class="fstat-no" title="function not covered" >App(</span>) {
       &lt;AuthProvider&gt;
         &lt;CartProvider&gt;
           &lt;WishlistProvider&gt;
-            &lt;Router&gt;
-              &lt;div className="min-h-screen bg-gray-50"&gt;
-                &lt;Navbar /&gt;
-                &lt;main className="flex-1"&gt;
-                  &lt;Suspense fallback={&lt;Loading size="lg" className="py-20" /&gt;}&gt;
-                    &lt;Routes&gt;
-                      &lt;Route path="/" element={&lt;Home /&gt;} /&gt;
-                      &lt;Route path="/login" element={&lt;Login /&gt;} /&gt;
-                      &lt;Route path="/register" element={&lt;Register /&gt;} /&gt;
-                      &lt;Route path="/forgot-password" element={&lt;ForgotPassword /&gt;} /&gt;
-                      &lt;Route path="/products" element={&lt;Products /&gt;} /&gt;
-                      &lt;Route path="/products/:id" element={&lt;ProductDetail /&gt;} /&gt;
-                      &lt;Route path="/cart" element={&lt;Cart /&gt;} /&gt;
-                      &lt;Route path="/orders" element={&lt;Orders /&gt;} /&gt;
-                      &lt;Route path="/profile" element={&lt;Profile /&gt;} /&gt;
-                      &lt;Route path="/wishlist" element={&lt;Wishlist /&gt;} /&gt;
-                      &lt;Route path="/admin/products" element={&lt;AdminProducts /&gt;} /&gt;
-                      &lt;Route path="/admin/dashboard" element={&lt;AdminDashboard /&gt;} /&gt;
-                      &lt;Route path="/admin/manage" element={&lt;ProductManager /&gt;} /&gt;
-                      &lt;Route path="/admin" element={&lt;AdminDashboard /&gt;} /&gt;
-                    &lt;/Routes&gt;
-                  &lt;/Suspense&gt;
-                &lt;/main&gt;
-                &lt;SupportChat /&gt;
-                &lt;Toaster 
-                  position="top-right"
-                  toastOptions={{
-                    duration: 4000,
-                    style: {
-                      background: '#363636',
-                      color: '#fff',
-                    },
-                  }}
-                /&gt;
-              &lt;/div&gt;
-            &lt;/Router&gt;
+            &lt;ThemeProvider&gt;
+              &lt;Router&gt;
+                &lt;div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900"&gt;
+                  &lt;Navbar /&gt;
+                  &lt;main className="flex-1"&gt;
+                    &lt;Suspense fallback={&lt;Loading size="lg" className="py-20" /&gt;}&gt;
+                      &lt;Routes&gt;
+                        &lt;Route path="/" element={&lt;Home /&gt;} /&gt;
+                        &lt;Route path="/login" element={&lt;Login /&gt;} /&gt;
+                        &lt;Route path="/register" element={&lt;Register /&gt;} /&gt;
+                        &lt;Route path="/forgot-password" element={&lt;ForgotPassword /&gt;} /&gt;
+                        &lt;Route path="/products" element={&lt;Products /&gt;} /&gt;
+                        &lt;Route path="/products/:id" element={&lt;ProductDetail /&gt;} /&gt;
+                        &lt;Route path="/cart" element={&lt;Cart /&gt;} /&gt;
+                        &lt;Route path="/orders" element={&lt;Orders /&gt;} /&gt;
+                        &lt;Route path="/profile" element={&lt;Profile /&gt;} /&gt;
+                        &lt;Route path="/wishlist" element={&lt;Wishlist /&gt;} /&gt;
+                        &lt;Route path="/admin/products" element={&lt;AdminProducts /&gt;} /&gt;
+                        &lt;Route path="/admin/dashboard" element={&lt;AdminDashboard /&gt;} /&gt;
+                        &lt;Route path="/admin/manage" element={&lt;ProductManager /&gt;} /&gt;
+                        &lt;Route path="/admin" element={&lt;AdminDashboard /&gt;} /&gt;
+                      &lt;/Routes&gt;
+                    &lt;/Suspense&gt;
+                  &lt;/main&gt;
+                  &lt;Footer /&gt;
+                  &lt;SupportChat /&gt;
+                  &lt;Toaster 
+                    position="top-right"
+                    toastOptions={{
+                      duration: 4000,
+                      style: {
+                        background: '#363636',
+                        color: '#fff',
+                      },
+                    }}
+                  /&gt;
+                &lt;/div&gt;
+              &lt;/Router&gt;
+            &lt;/ThemeProvider&gt;
           &lt;/WishlistProvider&gt;
         &lt;/CartProvider&gt;
       &lt;/AuthProvider&gt;
@@ -306,14 +323,15 @@ function <span class="fstat-no" title="function not covered" >App(</span>) {
   );
 }
 &nbsp;
-export default App;</pre></td></tr></table></pre>
+export default App;
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-01T18:45:19.779Z
+                at 2025-09-28T19:24:26.292Z
             </div>
         <script src="../prettify.js"></script>
         <script>

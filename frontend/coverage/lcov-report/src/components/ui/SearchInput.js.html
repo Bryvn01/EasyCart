@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">7.14% </span>
+                <span class="strong">58.82% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/14</span>
+                <span class='fraction'>10/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>1/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">57.14% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>4/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">7.14% </span>
+                <span class="strong">56.25% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/14</span>
+                <span class='fraction'>9/16</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -113,27 +113,29 @@
 <a name='L48'></a><a href='#L48'>48</a>
 <a name='L49'></a><a href='#L49'>49</a>
 <a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -163,27 +165,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState, useCallback } from 'react';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState, useMemo, useEffect } from 'react';
 import { debounce } from 'lodash';
 &nbsp;
-const SearchInput = <span class="fstat-no" title="function not covered" >({</span> onSearch, placeholder = <span class="branch-0 cbranch-no" title="branch not covered" >"Search products..." </span>}) =&gt; {
-  const [query, setQuery] = <span class="cstat-no" title="statement not covered" >useState('');</span>
-  const [suggestions, setSuggestions] = <span class="cstat-no" title="statement not covered" >useState([]);</span>
+const SearchInput = ({ onSearch, placeholder = <span class="branch-0 cbranch-no" title="branch not covered" >"Search products..." </span>}) =&gt; {
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
 &nbsp;
-  const debouncedSearch = <span class="cstat-no" title="statement not covered" >useCallback(</span>
-    debounce(<span class="fstat-no" title="function not covered" >(s</span>earchQuery) =&gt; {
-<span class="cstat-no" title="statement not covered" >      onSearch(searchQuery);</span>
-    }, 300),
-    [onSearch]
-  );
+  // Memoize debounced function and clean up on unmount
+  const debouncedSearch = useMemo(() =&gt; debounce(onSearch, 300), [onSearch]);
+  useEffect(() =&gt; {
+    return () =&gt; {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 &nbsp;
-  const handleInputChange = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
+  const handleInputChange = <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {
     const value = <span class="cstat-no" title="statement not covered" >e.target.value;</span>
 <span class="cstat-no" title="statement not covered" >    setQuery(value);</span>
 <span class="cstat-no" title="statement not covered" >    debouncedSearch(value);</span>
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className="relative"&gt;
       &lt;input
         type="text"
@@ -193,7 +196,7 @@ const SearchInput = <span class="fstat-no" title="function not covered" >({</spa
         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       /&gt;
       {suggestions.length &gt; 0 &amp;&amp; (
-        &lt;div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-10"&gt;
+<span class="branch-1 cbranch-no" title="branch not covered" >        &lt;div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-10"&gt;</span>
           {suggestions.map(<span class="fstat-no" title="function not covered" >(s</span>uggestion, index) =&gt; (
 <span class="cstat-no" title="statement not covered" >            &lt;div</span>
               key={index}
@@ -220,7 +223,7 @@ export default SearchInput;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-01T18:45:19.779Z
+                at 2025-09-28T19:24:26.292Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

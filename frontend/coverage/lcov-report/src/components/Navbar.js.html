@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>0/14</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
@@ -202,7 +202,27 @@
 <a name='L137'></a><a href='#L137'>137</a>
 <a name='L138'></a><a href='#L138'>138</a>
 <a name='L139'></a><a href='#L139'>139</a>
-<a name='L140'></a><a href='#L140'>140</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -215,7 +235,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -283,7 +303,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -348,20 +386,21 @@ import { useCart } from '../context/CartContext';
 import { useTranslation } from 'react-i18next';
 import Button from './ui/Button';
 import CartBadge from './ui/CartBadge';
+import { useTheme } from '../context/ThemeContext';
 &nbsp;
 const Navbar = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
   const { user, logout, isAuthenticated } = <span class="cstat-no" title="statement not covered" >useAuth();</span>
   const { cartCount, updateCartCount } = <span class="cstat-no" title="statement not covered" >useCart();</span>
   const { t } = <span class="cstat-no" title="statement not covered" >useTranslation();</span>
   const [isMenuOpen, setIsMenuOpen] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
-&nbsp;
+  const { isDarkMode, toggleTheme } = <span class="cstat-no" title="statement not covered" >useTheme();</span>
 &nbsp;
   const handleLogout = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    logout(<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >updateCartCount(0))</span>;</span>
   };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return (</span>
-    &lt;nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm"&gt;
+    &lt;nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 shadow-sm"&gt;
       &lt;div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"&gt;
         &lt;div className="flex justify-between items-center h-16"&gt;
           {/* Logo */}
@@ -375,32 +414,32 @@ const Navbar = <span class="cstat-no" title="statement not covered" ><span class
           
           {/* Desktop Navigation */}
           &lt;div className={`hidden md:flex items-center space-x-8`}&gt;
-            &lt;Link to="/" className="text-gray-600 hover:text-primary-600 font-medium transition-colors"&gt;
+            &lt;Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"&gt;
               {t('home')}
             &lt;/Link&gt;
-            &lt;Link to="/products" className="text-gray-600 hover:text-primary-600 font-medium transition-colors"&gt;
+            &lt;Link to="/products" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"&gt;
               {t('products')}
             &lt;/Link&gt;
             
             {isAuthenticated ? (
               &lt;div className="flex items-center space-x-6"&gt;
-                &lt;Link to="/cart" className="relative text-gray-600 hover:text-primary-600 font-medium transition-colors"&gt;
+                &lt;Link to="/cart" className="relative text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"&gt;
                   {t('cart')}
                   &lt;CartBadge count={cartCount} /&gt;
                 &lt;/Link&gt;
-                &lt;Link to="/orders" className="text-gray-600 hover:text-primary-600 font-medium transition-colors"&gt;
+                &lt;Link to="/orders" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"&gt;
                   {t('orders')}
                 &lt;/Link&gt;
-                &lt;Link to="/profile" className="text-gray-600 hover:text-primary-600 font-medium transition-colors"&gt;
+                &lt;Link to="/profile" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"&gt;
                   {t('profile')}
                 &lt;/Link&gt;
                 {user?.is_admin &amp;&amp; (
-                  &lt;Link to="/admin/dashboard" className="text-gray-600 hover:text-primary-600 font-medium transition-colors"&gt;
+                  &lt;Link to="/admin/dashboard" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"&gt;
                     {t('admin')}
                   &lt;/Link&gt;
                 )}
                 &lt;div className="flex items-center space-x-4"&gt;
-                  &lt;span className="text-sm text-gray-600"&gt;
+                  &lt;span className="text-sm text-gray-600 dark:text-gray-300"&gt;
                     Hi, {user?.username}
                   &lt;/span&gt;
                   &lt;Button variant="secondary" size="sm" onClick={handleLogout}&gt;
@@ -418,14 +457,23 @@ const Navbar = <span class="cstat-no" title="statement not covered" ><span class
                 &lt;/Button&gt;
               &lt;/div&gt;
             )}
+            &lt;button
+              onClick={toggleTheme}
+              className="ml-4 p-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              aria-label="Toggle Dark Mode"
+              title="Toggle Dark Mode"
+            &gt;
+              {isDarkMode ? '🌙' : '☀️'}
+            &lt;/button&gt;
           &lt;/div&gt;
 &nbsp;
           {/* Mobile Menu Button */}
           &lt;button
             onClick={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >setIsMenuOpen(!isMenuOpen)}</span>
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Toggle menu"
           &gt;
-            &lt;svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"&gt;
+            &lt;svg className="h-6 w-6 text-gray-800 dark:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"&gt;
               &lt;path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /&gt;
             &lt;/svg&gt;
           &lt;/button&gt;
@@ -433,28 +481,28 @@ const Navbar = <span class="cstat-no" title="statement not covered" ><span class
 &nbsp;
         {/* Mobile Menu */}
         {isMenuOpen &amp;&amp; (
-          &lt;div className="md:hidden border-t border-gray-200 pt-4 pb-4"&gt;
+          &lt;div className="md:hidden border-t border-gray-200 dark:border-gray-700 pt-4 pb-4"&gt;
             &lt;div className="flex flex-col space-y-4"&gt;
-              &lt;Link to="/" className="text-gray-600 hover:text-primary-600 font-medium"&gt;
+              &lt;Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"&gt;
                 {t('home')}
               &lt;/Link&gt;
-              &lt;Link to="/products" className="text-gray-600 hover:text-primary-600 font-medium"&gt;
+              &lt;Link to="/products" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"&gt;
                 {t('products')}
               &lt;/Link&gt;
               {isAuthenticated ? (
                 &lt;&gt;
-                  &lt;Link to="/cart" className="relative text-gray-600 hover:text-primary-600 font-medium"&gt;
+                  &lt;Link to="/cart" className="relative text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"&gt;
                     {t('cart')}
                     &lt;CartBadge count={cartCount} /&gt;
                   &lt;/Link&gt;
-                  &lt;Link to="/orders" className="text-gray-600 hover:text-primary-600 font-medium"&gt;
+                  &lt;Link to="/orders" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"&gt;
                     {t('orders')}
                   &lt;/Link&gt;
-                  &lt;Link to="/profile" className="text-gray-600 hover:text-primary-600 font-medium"&gt;
+                  &lt;Link to="/profile" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"&gt;
                     {t('profile')}
                   &lt;/Link&gt;
                   {user?.is_admin &amp;&amp; (
-                    &lt;Link to="/admin/dashboard" className="text-gray-600 hover:text-primary-600 font-medium"&gt;
+                    &lt;Link to="/admin/dashboard" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"&gt;
                       {t('admin')}
                     &lt;/Link&gt;
                   )}
@@ -472,6 +520,14 @@ const Navbar = <span class="cstat-no" title="statement not covered" ><span class
                   &lt;/Button&gt;
                 &lt;/div&gt;
               )}
+              &lt;button
+                onClick={toggleTheme}
+                className="mt-4 p-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                aria-label="Toggle Dark Mode"
+                title="Toggle Dark Mode"
+              &gt;
+                {isDarkMode ? '🌙' : '☀️'}
+              &lt;/button&gt;
             &lt;/div&gt;
           &lt;/div&gt;
         )}
@@ -480,14 +536,15 @@ const Navbar = <span class="cstat-no" title="statement not covered" ><span class
   );
 };
 &nbsp;
-export default Navbar;</pre></td></tr></table></pre>
+export default Navbar;
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-01T18:45:19.779Z
+                at 2025-09-28T19:24:26.292Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
