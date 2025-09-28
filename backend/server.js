@@ -44,6 +44,33 @@ app.use('/api/products', require('./routes/products'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/seed', require('./routes/seed'));
 
+// Root endpoint - API information and status
+app.get('/', (req, res) => {
+  try {
+    res.json({
+      status: 'OK',
+      message: 'EasyCart API is running',
+      timestamp: new Date().toISOString(),
+      version: '1.0.0',
+      endpoints: {
+        health: '/api/health',
+        authentication: '/api/auth',
+        products: '/api/products',
+        categories: '/api/categories',
+        seed: '/api/seed'
+      },
+      api_docs: 'Visit the respective endpoints for API functionality'
+    });
+  } catch (error) {
+    console.error('Error handling root request:', error);
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Internal server error',
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'EasyCart API is running', timestamp: new Date().toISOString() });
