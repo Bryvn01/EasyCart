@@ -254,7 +254,9 @@ describe('Products Page', () => {
     // Wait for active filters section to appear
     await waitFor(() => {
       expect(screen.getByText('Active Filters:')).toBeInTheDocument();
-      expect(screen.getByText('Clear All')).toBeInTheDocument();
     });
+    
+    // Check that clear all button is present
+    expect(screen.getByText('Clear All')).toBeInTheDocument();
   });
 });
