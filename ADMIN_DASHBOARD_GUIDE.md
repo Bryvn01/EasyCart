@@ -285,7 +285,7 @@ REACT_APP_ENVIRONMENT=production
 ```
 
 ### Hosting Platforms
-- **Vercel**: Automatic deployments from Git
+- **Render**: Automatic deployments from Git with HTTPS (Recommended)
 - **Netlify**: Easy static site hosting
 - **AWS S3**: Scalable static hosting
 - **GitHub Pages**: Free hosting for public repos

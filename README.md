@@ -143,7 +143,12 @@ npm test
 
 ## 📦 Deployment
 
-See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed deployment instructions.
+**Live Application:**
+- Frontend: https://easycart-frontend.onrender.com
+- Backend API: https://easycart-backend.onrender.com
+- Admin Dashboard: https://easycart-admin.onrender.com
+
+See [RENDER_DEPLOY.md](RENDER_DEPLOY.md) for detailed deployment instructions.
 
 ## 🤝 Contributing
 
