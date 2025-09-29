@@ -39,6 +39,12 @@ const Products = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, searchTerm, categoryFilter]);
 
+  // Reset selections when products change
+  useEffect(() => {
+    setSelectedProducts(new Set());
+    setSelectAll(false);
+  }, [products]);
+
   const fetchCategories = async () => {
     try {
       const response = await adminAPI.getCategories();
@@ -294,22 +300,39 @@ const Products = () => {
     }
 
     if (window.confirm(`Are you sure you want to delete ${selectedProducts.size} selected products?`)) {
+      setLoading(true);
       try {
-        const deletePromises = Array.from(selectedProducts).map(id => 
-          adminAPI.deleteProduct(id).catch(() => {}) // Continue even if some fail
-        );
-        await Promise.allSettled(deletePromises);
+        // Try bulk delete API first, fallback to individual deletes
+        const productIds = Array.from(selectedProducts);
+        try {
+          await adminAPI.bulkDeleteProducts(productIds);
+        } catch (bulkError) {
+          // Fallback to individual deletes
+          const deletePromises = productIds.map(id => 
+            adminAPI.deleteProduct(id).catch(() => {}) // Continue even if some fail
+          );
+          await Promise.allSettled(deletePromises);
+        }
         
         setProducts(products.filter(p => !selectedProducts.has(p.id)));
         setSelectedProducts(new Set());
         setSelectAll(false);
         toast.success(`Successfully deleted ${selectedProducts.size} products`);
+        
+        // Refresh products to ensure consistency
+        if (products.length - selectedProducts.size <= 0 && currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        } else {
+          fetchProducts();
+        }
       } catch (error) {
         // Fallback for demo mode
         setProducts(products.filter(p => !selectedProducts.has(p.id)));
         setSelectedProducts(new Set());
         setSelectAll(false);
         toast.success(`Successfully deleted ${selectedProducts.size} products (demo mode)`);
+      } finally {
+        setLoading(false);
       }
     }
   };
