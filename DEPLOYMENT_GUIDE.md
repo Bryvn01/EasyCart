@@ -2,7 +2,18 @@
 
 ## Quick Deploy Options
 
-### Option 1: AWS Deployment (Recommended)
+### Option 1: Render (Recommended)
+
+**Complete deployment with automatic builds and HTTPS:**
+
+**Live URLs:**
+- Frontend: https://easycart-frontend.onrender.com  
+- Backend: https://easycart-backend.onrender.com
+- Admin Dashboard: https://easycart-admin.onrender.com
+
+See [RENDER_DEPLOY.md](RENDER_DEPLOY.md) for complete setup instructions.
+
+### Option 2: AWS Deployment
 
 #### **A. AWS ECS with Fargate**
 ```bash
@@ -36,26 +47,15 @@ aws s3 sync build/ s3://your-company-ecommerce-frontend-$(date +%Y%m%d) --delete
 aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
 ```
 
-### Option 2: Vercel + Railway
+### Option 3: Railway
 
-#### **Frontend on Vercel**
-```bash
-# 1. Install Vercel CLI
-npm i -g vercel
-
-# 2. Deploy frontend
-cd frontend
-vercel --prod
-```
-
-#### **Backend on Railway**
 ```bash
 # 1. Connect Railway to your GitHub repo
-# 2. Set environment variables in Railway dashboard
+# 2. Set environment variables in Railway dashboard  
 # 3. Deploy automatically on push
 ```
 
-### Option 3: DigitalOcean App Platform
+### Option 4: DigitalOcean App Platform
 
 ```bash
 # 1. Create app.yaml

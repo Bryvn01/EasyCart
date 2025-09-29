@@ -1,32 +1,31 @@
-# Quick Deployment Fix
+# Quick Deployment Guide
 
-## Backend Issue
-The backend deployment failed. Here's how to fix it:
+## Render Deployment
 
-### Option 1: Manual Vercel Deploy
-1. Go to https://vercel.com/dashboard
-2. Import GitHub repo: https://github.com/Bryvn01/EasyCart
-3. Create new project for backend:
-   - Root Directory: `backend`
-   - Framework: Other
-   - Build Command: `npm install`
-   - Output Directory: (leave empty)
+The application is deployed on Render with automatic builds and HTTPS:
 
-### Option 2: Use Different Backend URL
-Update frontend to use working backend:
+### Live URLs:
+- ✅ Frontend: https://easycart-frontend.onrender.com/
+- ✅ Backend: https://easycart-backend.onrender.com/
+- ✅ Admin: https://easycart-admin.onrender.com/
 
-```bash
-# In frontend/.env
-REACT_APP_API_URL=https://easycart-backend-new.vercel.app/api
-```
+### Manual Render Deploy (if needed):
+1. Go to https://render.com/dashboard
+2. Click "New +" → "Web Service" (for backend) or "Static Site" (for frontend/admin)
+3. Connect GitHub repo: https://github.com/Bryvn01/EasyCart
+4. Set appropriate root directory:
+   - Backend: `backend`
+   - Frontend: `frontend`
+   - Admin: `admin-dashboard`
 
 ### Current Status:
-- ✅ Frontend: https://easy-cart-obsc.vercel.app/ (Working)
-- ❌ Backend: https://easycart-api-bryvn01.vercel.app/ (Not Found)
+- ✅ Frontend: https://easycart-frontend.onrender.com/ (Working)
+- ✅ Backend: https://easycart-backend.onrender.com/ (Working)
+- ✅ Admin: https://easycart-admin.onrender.com/ (Working)
 
 ### Test URLs:
-- Frontend: https://easy-cart-obsc.vercel.app/
-- Admin Panel: https://easy-cart-obsc.vercel.app/admin/manage
+- Frontend: https://easycart-frontend.onrender.com/
+- Admin Panel: https://easycart-admin.onrender.com/admin/manage
 - Login: admin@easycart.com / admin123
 
 ### Environment Variables for Backend:
@@ -34,4 +33,9 @@ REACT_APP_API_URL=https://easycart-backend-new.vercel.app/api
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/easycart
 JWT_SECRET=<your_jwt_secret>
 NODE_ENV=production
+```
+
+### Environment Variables for Frontend/Admin:
+```
+REACT_APP_API_URL=https://easycart-backend.onrender.com/api
 ```
