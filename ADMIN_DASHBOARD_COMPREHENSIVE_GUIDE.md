@@ -247,9 +247,11 @@ npm run build
 ```
 
 ### Deployment Options
-1. **Static Hosting**: Deploy build folder to Netlify, Vercel, or S3
+1. **Static Hosting**: Deploy build folder to Render, Netlify, or S3
 2. **Server Deployment**: Use nginx or Apache to serve static files
 3. **Container Deployment**: Use Docker for containerized deployment
+
+**Recommended:** Render for simplicity with automatic HTTPS and git deployments
 
 ### Environment Variables for Production
 ```

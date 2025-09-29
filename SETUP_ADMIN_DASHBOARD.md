@@ -49,8 +49,8 @@ npm run build
 # Serve locally to test
 npm run serve
 
-# Deploy to Netlify/Vercel/S3
-# Upload the 'build' folder
+# Deploy to Render/Netlify/S3
+# Upload the 'build' folder or connect to Render for automatic deployment
 ```
 
 ## Features Available

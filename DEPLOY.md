@@ -1,67 +1,94 @@
-# 🚀 Manual Deployment Guide
+# 🚀 Render Deployment Guide
 
 ## Current Status
-- ✅ Frontend: https://easy-cart-obsc.vercel.app/ (Working)
-- ❌ Backend: Needs manual deployment
+- ✅ Frontend: https://easycart-frontend.onrender.com/ (Working)
+- ✅ Backend: https://easycart-backend.onrender.com/ (Working)  
+- ✅ Admin: https://easycart-admin.onrender.com/ (Working)
 
-## Deploy Backend to Vercel
+## Deploy to Render
 
-### Step 1: Go to Vercel Dashboard
-1. Visit: https://vercel.com/dashboard
-2. Click "New Project"
+### Step 1: Go to Render Dashboard
+1. Visit: https://render.com/dashboard
+2. Click "New +"
 
-### Step 2: Import Repository
-1. Select "Import Git Repository"
-2. Enter: `https://github.com/Bryvn01/EasyCart`
-3. Click "Import"
+### Step 2: Deploy Backend (Web Service)
+1. Select "Web Service"
+2. Connect GitHub repository: `https://github.com/Bryvn01/EasyCart`
+3. Configure:
+   - **Service Name:** `easycart-backend`
+   - **Root Directory:** `backend`
+   - **Runtime:** Node
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
 
-### Step 3: Configure Backend Project
-1. **Project Name:** `easycart-backend`
-2. **Root Directory:** `backend`
-3. **Framework Preset:** Other
-4. **Build Command:** `npm install`
-5. **Output Directory:** (leave empty)
-
-### Step 4: Add Environment Variables
+### Step 3: Add Backend Environment Variables
 ```
 MONGODB_URI=mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart?retryWrites=true&w=majority
 JWT_SECRET=easycart-super-secret-jwt-key-production-2024
 NODE_ENV=production
-FRONTEND_URL=https://easy-cart-obsc.vercel.app
+FRONTEND_URL=https://easycart-frontend.onrender.com
 ```
 
-### Step 5: Deploy
-1. Click "Deploy"
-2. Wait for deployment to complete
-3. Copy the deployment URL
+### Step 4: Deploy Frontend (Static Site)  
+1. Click "New +" → "Static Site"
+2. Connect same GitHub repository
+3. Configure:
+   - **Site Name:** `easycart-frontend`
+   - **Root Directory:** `frontend`
+   - **Build Command:** `npm run build`
+   - **Publish Directory:** `build`
 
-### Step 6: Update Frontend
-Update frontend environment to use new backend URL:
-```bash
-# In frontend/.env
-REACT_APP_API_URL=https://your-new-backend-url.vercel.app/api
+### Step 5: Add Frontend Environment Variables
+```
+REACT_APP_API_URL=https://easycart-backend.onrender.com/api
+```
+
+### Step 6: Deploy Admin (Static Site)
+1. Click "New +" → "Static Site"
+2. Connect same GitHub repository  
+3. Configure:
+   - **Site Name:** `easycart-admin`
+   - **Root Directory:** `admin-dashboard`
+   - **Build Command:** `npm run build`
+   - **Publish Directory:** `build`
+
+### Step 7: Add Admin Environment Variables
+```
+REACT_APP_API_URL=https://easycart-backend.onrender.com/api
+```
 ```
 
 ## Test After Deployment
 
 ### Seed Database
 ```bash
-curl -X POST https://your-backend-url.vercel.app/api/seed
+curl -X POST https://easycart-backend.onrender.com/api/seed
 ```
 
 ### Test Admin Login
-- URL: https://easy-cart-obsc.vercel.app/admin/manage
+- URL: https://easycart-admin.onrender.com/admin/manage
 - Email: admin@easycart.com
 - Password: admin123
 
 ### Test API Health
 ```bash
-curl https://your-backend-url.vercel.app/api/health
+curl https://easycart-backend.onrender.com/api/health
 ```
 
-## All Features Ready
-✅ Security fixes (CSRF, XSS protection)
-✅ Performance improvements (lazy loading, debouncing)
-✅ UI/UX enhancements (toast notifications, reusable components)
-✅ Error handling improvements
-✅ Admin panel with proper authentication
+### Test Frontend
+- Visit: https://easycart-frontend.onrender.com
+
+## Benefits of Render
+
+✅ **Automatic HTTPS** - All deployments get SSL certificates  
+✅ **Auto-deploy on push** - Automatically builds and deploys from Git  
+✅ **Environment variables** - Managed securely in dashboard  
+✅ **Free tier** - 750 hours/month included  
+✅ **Built-in monitoring** - Logs and metrics included  
+✅ **No cold starts** - For static sites  
+
+## Live URLs
+
+- **Frontend:** https://easycart-frontend.onrender.com  
+- **Backend:** https://easycart-backend.onrender.com  
+- **Admin:** https://easycart-admin.onrender.com
