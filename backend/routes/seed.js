@@ -6,13 +6,16 @@ const User = require('../models/User');
 const router = express.Router();
 
 const categories = [
-  { name: 'Electronics' },
-  { name: 'Fashion' },
-  { name: 'Home & Living' },
-  { name: 'Food & Beverages' },
-  { name: 'Health & Beauty' },
-  { name: 'Sports & Fitness' },
-  { name: 'Groceries' }
+  { name: 'Electronics', description: 'Electronic devices and gadgets' },
+  { name: 'Fashion', description: 'Clothing and accessories' },
+  { name: 'Home & Living', description: 'Home decor and furniture' },
+  { name: 'Food & Beverages', description: 'Food items and drinks' },
+  { name: 'Health & Beauty', description: 'Health and beauty products' },
+  { name: 'Sports & Fitness', description: 'Sports equipment and fitness gear' },
+  { name: 'Groceries', description: 'Daily grocery items' },
+  { name: 'Beverages', description: 'Drinks and beverages' },
+  { name: 'Household', description: 'Household cleaning and maintenance' },
+  { name: 'Personal Care', description: 'Personal hygiene and care products' }
 ];
 
 const products = [
