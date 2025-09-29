@@ -9,7 +9,8 @@ import {
   BarChart3, 
   LogOut,
   Menu,
-  X
+  X,
+  Tag
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -21,6 +22,7 @@ const Layout = ({ children }) => {
   const navigation = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Products', href: '/admin/products', icon: Package },
+    { name: 'Categories', href: '/admin/categories', icon: Tag },
     { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Reports', href: '/admin/reports', icon: BarChart3 },

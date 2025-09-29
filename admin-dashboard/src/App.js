@@ -12,10 +12,7 @@ const Products = lazy(() => import('./pages/Products'));
 const Orders = lazy(() => import('./pages/Orders'));
 const Users = lazy(() => import('./pages/Users'));
 const Reports = lazy(() => import('./pages/Reports'));
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const AdminProducts = lazy(() => import('./pages/AdminProducts'));
 const AdminCategories = lazy(() => import('./pages/AdminCategories'));
-const AdminOrders = lazy(() => import('./pages/AdminOrders'));
 
 function App() {
   return (
@@ -32,14 +29,10 @@ function App() {
                     <Routes>
                       <Route path="dashboard" element={<Dashboard />} />
                       <Route path="products" element={<Products />} />
+                      <Route path="categories" element={<AdminCategories />} />
                       <Route path="orders" element={<Orders />} />
                       <Route path="users" element={<Users />} />
                       <Route path="reports" element={<Reports />} />
-                      <Route path="admin-dashboard" element={<AdminDashboard />}>
-                        <Route path="products" element={<AdminProducts />} />
-                        <Route path="categories" element={<AdminCategories />} />
-                        <Route path="orders" element={<AdminOrders />} />
-                      </Route>
                       <Route path="" element={<Navigate to="dashboard" replace />} />
                     </Routes>
                   </Layout>
