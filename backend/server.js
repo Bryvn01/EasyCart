@@ -40,6 +40,25 @@ mongoose.connection.on('disconnected', () => {
   console.log('Mongoose disconnected from MongoDB');
 });
 
+// Root route for API information
+app.get('/', (req, res) => {
+  res.json({
+    message: 'EasyCart API',
+    status: 'OK',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      products: '/api/products',
+      categories: '/api/categories',
+      upload: '/api/upload',
+      seed: '/api/seed'
+    },
+    documentation: 'https://github.com/Bryvn01/EasyCart'
+  });
+});
+
 // Routes
 app.use('/api/health', require('./routes/health'));
 app.use('/api/auth', require('./routes/auth'));
