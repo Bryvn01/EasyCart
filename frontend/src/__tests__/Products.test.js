@@ -1,7 +1,12 @@
+import React, { createContext } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Products from '../pages/Products';
 import * as api from '../services/api';
+
+// Mock the contexts
+const AuthContext = createContext();
+const CartContext = createContext();
 
 // Mock axios
 jest.mock('axios', () => ({
@@ -41,7 +46,11 @@ const MockAuthProvider = ({ children }) => {
     loading: false,
     isAuthenticated: false
   };
-  return React.createElement('div', { 'data-testid': 'auth-provider' }, children);
+  return (
+    <AuthContext.Provider value={mockValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 const MockCartProvider = ({ children }) => {
@@ -49,7 +58,11 @@ const MockCartProvider = ({ children }) => {
     cartCount: 0,
     fetchCartCount: jest.fn()
   };
-  return React.createElement('div', { 'data-testid': 'cart-provider' }, children);
+  return (
+    <CartContext.Provider value={mockValue}>
+      {children}
+    </CartContext.Provider>
+  );
 };
 
 const renderWithProviders = (component) => {

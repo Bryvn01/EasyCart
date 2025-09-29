@@ -48,7 +48,8 @@
     "eject": "react-scripts eject",
     "vercel-build": "npm run build",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js"
   },
   "eslintConfig": {
     "extends": [
@@ -57,6 +58,10 @@
     ]
   },
   "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.js"
+    ],
     "transform": {
       "^.+\\.[jt]sx?$": "babel-jest"
     },
@@ -80,14 +85,15 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.14.0",
+    "@babel/preset-env": "^7.14.0",
+    "@babel/preset-react": "^7.14.0",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/user-event": "^14.6.1",
+    "babel-jest": "^26.6.3",
     "eslint": "^8.0.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "babel-jest": "^26.6.3",
-    "@babel/core": "^7.14.0",
-    "@babel/preset-env": "^7.14.0",
-    "@babel/preset-react": "^7.14.0"
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }
