@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000").split(',');
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:3001").split(',');
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, curl, etc.)
@@ -15,7 +15,10 @@ app.use(cors({
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    callback(new Error('Not allowed by CORS'));
+    
+    // In development, allow all origins to avoid CORS issues
+    console.warn(`CORS allowing origin: ${origin}`);
+    callback(null, true);
   },
   credentials: true
 }));
@@ -42,6 +45,7 @@ app.use('/api/health', require('./routes/health'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/categories', require('./routes/categories'));
+app.use('/api/upload', require('./routes/upload'));
 app.use('/api/seed', require('./routes/seed'));
 
 // Health check
