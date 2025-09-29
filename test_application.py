@@ -9,7 +9,9 @@ import requests
 from pathlib import Path
 
 # Setup Django
-sys.path.append('backend')
+backend_path = os.path.join(os.getcwd(), 'backend')
+sys.path.insert(0, backend_path)
+os.chdir(backend_path)  # Change to backend directory
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecommerce.settings')
 django.setup()
 
@@ -111,6 +113,9 @@ def test_security_configurations():
 
 def test_file_structure():
     """Test critical file structure"""
+    # Get the original project root directory
+    project_root = Path(os.getcwd()).parent
+    
     critical_files = [
         'backend/manage.py',
         'backend/ecommerce/settings.py',
@@ -125,7 +130,8 @@ def test_file_structure():
     
     missing_files = []
     for file_path in critical_files:
-        if not Path(file_path).exists():
+        full_path = project_root / file_path
+        if not full_path.exists():
             missing_files.append(file_path)
     
     if missing_files:

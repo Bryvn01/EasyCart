@@ -2,18 +2,18 @@
 # Production Deployment Checklist
 
 ## Security
-- [x] Change SECRET_KEY to a strong, unique value
-- [x] Set DEBUG = False
-- [x] Configure ALLOWED_HOSTS properly
+- [ ] Change SECRET_KEY to a strong, unique value
+- [ ] Set DEBUG = False
+- [ ] Configure ALLOWED_HOSTS properly
 - [ ] Set up HTTPS/SSL certificates
 - [ ] Configure secure session cookies
-- [x] Set up proper CORS origins
-- [x] Enable security middleware
+- [ ] Set up proper CORS origins
+- [ ] Enable security middleware
 - [ ] Set up rate limiting
-- [x] Configure CSP headers
+- [ ] Configure CSP headers
 
 ## Database
-- [x] Use PostgreSQL or MySQL in production (not SQLite)
+- [ ] Use PostgreSQL or MySQL in production (not SQLite)
 - [ ] Set up database backups
 - [ ] Configure connection pooling
 - [ ] Set up database monitoring
