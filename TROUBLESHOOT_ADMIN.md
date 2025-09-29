@@ -4,12 +4,11 @@
 
 ### 1. **Seed the Database First**
 ```bash
-curl -X POST https://your-backend-url.onrender.com/api/seed
+curl -X POST https://easycart-backend.onrender.com/api/seed
 ```
-Replace `your-backend-url` with your actual Render backend URL.
 
 ### 2. **Check Backend is Running**
-Visit: `https://your-backend-url.onrender.com/api/health`
+Visit: `https://easycart-backend.onrender.com/api/health`
 Should return: `{"status":"OK"}`
 
 ### 3. **Admin Login Credentials**
@@ -36,14 +35,14 @@ The admin dashboard now has a fallback:
 
 **CORS Errors:**
 - Check if backend URL is correct in admin dashboard
-- Should be: `https://your-backend.onrender.com/api`
+- Should be: `https://easycart-backend.onrender.com/api`
 
 **Database Not Seeded:**
 - Run the seed command above
 - Check backend logs in Render dashboard
 
 ### 7. **Manual Database Check**
-Visit: `https://your-backend-url.onrender.com/api/auth/login`
+Visit: `https://easycart-backend.onrender.com/api/auth/login`
 POST with:
 ```json
 {
@@ -52,10 +51,11 @@ POST with:
 }
 ```
 
-## URLs to Check
-- **Backend Health**: `https://your-backend.onrender.com/api/health`
-- **Admin Panel**: `https://your-admin.onrender.com/admin/login`
-- **Seed Database**: `https://your-backend.onrender.com/api/seed`
+## Live URLs
+- **Backend Health**: `https://easycart-backend.onrender.com/api/health`
+- **Admin Panel**: `https://easycart-admin.onrender.com/admin/login`
+- **Seed Database**: `https://easycart-backend.onrender.com/api/seed`
+- **Frontend**: `https://easycart-frontend.onrender.com`
 
 ## Still Having Issues?
 1. Check Render dashboard logs
