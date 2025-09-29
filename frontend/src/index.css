@@ -260,7 +260,7 @@ body {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .container { 
     padding: 0 var(--space-4); 
   }
@@ -282,9 +282,156 @@ body {
   
   .text-3xl { font-size: 1.5rem; }
   .text-2xl { font-size: 1.25rem; }
+  .text-4xl { font-size: 1.875rem; }
   
   .btn {
     width: 100%;
     justify-content: center;
+    min-height: 44px; /* Touch-friendly size */
   }
+  
+  .btn-sm {
+    width: auto;
+    display: inline-flex;
+    min-height: 36px;
+  }
+  
+  /* Mobile-specific navigation */
+  .nav-text-mobile-hidden {
+    display: none;
+  }
+  
+  /* Improve form inputs on mobile */
+  .form-input, .form-select, .form-textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+    min-height: 44px;
+  }
+  
+  /* Better card spacing on mobile */
+  .card {
+    margin-bottom: var(--space-4);
+  }
+  
+  /* Stack flexbox items on mobile */
+  .flex-mobile-stack {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid-cols-4 { 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: var(--space-6);
+  }
+  
+  .grid-cols-6 { 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: var(--space-4);
+  }
+}
+
+@media (min-width: 1025px) {
+  .grid-cols-6 { 
+    grid-template-columns: repeat(6, 1fr); 
+    gap: var(--space-6);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles for better accessibility */
+*:focus {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn {
+    border-width: 2px;
+  }
+  
+  .card {
+    border-width: 2px;
+  }
+  
+  .form-input, .form-select, .form-textarea {
+    border-width: 2px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gray-50: #0f172a;
+    --gray-100: #1e293b;
+    --gray-200: #334155;
+    --gray-300: #475569;
+    --gray-600: #cbd5e1;
+    --gray-900: #f1f5f9;
+  }
+  
+  body {
+    background-color: var(--gray-900);
+    color: var(--gray-50);
+  }
+  
+  .card {
+    background-color: var(--gray-800);
+    border-color: var(--gray-700);
+  }
+}
+
+/* Additional utility classes for better mobile experience */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+.select-none {
+  user-select: none;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Better scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-400);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-500);
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { productsAPI, ordersAPI } from '../services/api';
@@ -19,68 +19,22 @@ const Products = () => {
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
   const location = useLocation();
+  const previousSearch = useRef('');
 
-  useEffect(() => {
-    // Get search term from URL parameters
-    const urlParams = new URLSearchParams(location.search);
-    const urlSearch = urlParams.get('search');
-    if (urlSearch && urlSearch !== searchTerm) {
-      setSearchTerm(urlSearch);
-    }
-  }, [location.search, searchTerm]);
-
-  // Debounce search term
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const params = {};
-        if (selectedCategory) params.category = selectedCategory;
-        if (debouncedSearchTerm) params.search = debouncedSearchTerm;
-        if (sortBy) params.ordering = sortBy;
-        if (priceRange.min) params.price_min = priceRange.min;
-        if (priceRange.max) params.price_max = priceRange.max;
-        
-        const response = await productsAPI.getProducts(params);
-        let productsData = response.data.results || response.data;
-        if (Array.isArray(productsData)) {
-          productsData = productsData.map(p => ({ ...p, id: p._id || p.id, category: p.category || p.category_name }));
-        }
-        setProducts(Array.isArray(productsData) ? productsData : []);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchProducts();
-  }, [selectedCategory, debouncedSearchTerm, sortBy, priceRange.min, priceRange.max]);
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  // Memoize fetch categories function to prevent re-creation
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await productsAPI.getCategories();
-      // Handle paginated response from Django REST framework
       const categoriesData = response.data.results || response.data;
       setCategories(Array.isArray(categoriesData) ? categoriesData : []);
     } catch (error) {
       console.error('Error fetching categories:', error);
       setCategories([]);
     }
-  };
+  }, []);
 
-  const addToCart = async (productId) => {
+  // Memoize add to cart function
+  const addToCart = useCallback(async (productId) => {
     if (!isAuthenticated) {
       toast.error('Please login to add items to cart');
       return;
@@ -94,7 +48,66 @@ const Products = () => {
       console.error('Error adding to cart:', error);
       toast.error('Failed to add product to cart');
     }
-  };
+  }, [isAuthenticated, fetchCartCount]);
+
+  useEffect(() => {
+    // Get search term from URL parameters
+    const urlParams = new URLSearchParams(location.search);
+    const urlSearch = urlParams.get('search') || '';
+    
+    // Only update if the search term actually changed
+    if (urlSearch !== previousSearch.current) {
+      setSearchTerm(urlSearch);
+      previousSearch.current = urlSearch;
+    }
+  }, [location.search]);
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Memoize fetch products parameters
+  const fetchParams = useMemo(() => {
+    const params = {};
+    if (selectedCategory) params.category = selectedCategory;
+    if (debouncedSearchTerm) params.search = debouncedSearchTerm;
+    if (sortBy) params.ordering = sortBy;
+    if (priceRange.min) params.price_min = priceRange.min;
+    if (priceRange.max) params.price_max = priceRange.max;
+    return params;
+  }, [selectedCategory, debouncedSearchTerm, sortBy, priceRange.min, priceRange.max]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await productsAPI.getProducts(fetchParams);
+        let productsData = response.data.results || response.data;
+        if (Array.isArray(productsData)) {
+          productsData = productsData.map(p => ({ 
+            ...p, 
+            id: p._id || p.id, 
+            category: p.category || p.category_name 
+          }));
+        }
+        setProducts(Array.isArray(productsData) ? productsData : []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProducts();
+  }, [fetchParams]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   if (loading) {
     return (
