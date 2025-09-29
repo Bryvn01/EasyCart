@@ -25,6 +25,7 @@ export const adminAPI = {
   createProduct: (data) => api.post('/products', data),
   updateProduct: (id, data) => api.put(`/products/${id}`, data),
   deleteProduct: (id) => api.delete(`/products/${id}`),
+  bulkDeleteProducts: (ids) => api.post('/products/bulk-delete', { ids }),
   uploadImage: (formData) => api.post('/upload/image', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
