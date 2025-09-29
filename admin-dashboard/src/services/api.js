@@ -25,6 +25,13 @@ export const adminAPI = {
   createProduct: (data) => api.post('/products', data),
   updateProduct: (id, data) => api.put(`/products/${id}`, data),
   deleteProduct: (id) => api.delete(`/products/${id}`),
+  uploadImage: (formData) => api.post('/upload/image', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  getCategories: () => api.get('/categories'),
+  createCategory: (data) => api.post('/categories', data),
+  updateCategory: (id, data) => api.put(`/categories/${id}`, data),
+  deleteCategory: (id) => api.delete(`/categories/${id}`),
   getOrders: (params) => api.get('/orders', { params }),
   updateOrderStatus: (id, status) => api.patch(`/orders/${id}`, { status }),
   getUsers: (params) => api.get('/users', { params }),
