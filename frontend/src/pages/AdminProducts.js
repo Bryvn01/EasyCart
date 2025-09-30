@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { productsAPI } from '../services/api';
 import ProductEditModal from '../components/ProductEditModal';
 import { useAuth } from '../context/AuthContext';
+import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -23,8 +24,11 @@ const AdminProducts = () => {
     try {
       const response = await productsAPI.getProducts();
       setProducts(response.data);
+      // Dispatch event for Homepage to refresh
+      window.dispatchEvent(new Event('easycart-products-updated'));
     } catch (error) {
       console.error('Error fetching products:', error);
+      handleApiError(error, 'Failed to load products');
     } finally {
       setLoading(false);
     }
@@ -41,6 +45,9 @@ const AdminProducts = () => {
         product.id === updatedProduct.id ? updatedProduct : product
       )
     );
+    handleApiSuccess('Product updated successfully!');
+    // Dispatch event for Homepage to refresh
+    window.dispatchEvent(new Event('easycart-products-updated'));
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -51,10 +58,12 @@ const AdminProducts = () => {
     try {
       await productsAPI.deleteProduct(productId);
       setProducts(prev => prev.filter(product => product.id !== productId));
-      alert('Product deleted successfully! 🗑️');
+      handleApiSuccess('Product deleted successfully! 🗑️');
+      // Dispatch event for Homepage to refresh
+      window.dispatchEvent(new Event('easycart-products-updated'));
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert('Failed to delete product');
+      handleApiError(error, 'Failed to delete product');
     }
   };
 

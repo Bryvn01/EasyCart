@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { productsAPI } from '../../services/api';
 import AdminAuth from './AdminAuth';
+import { handleApiError, handleApiSuccess } from '../../utils/errorHandler';
 
 const ProductManager = () => {
   const [products, setProducts] = useState([]);
@@ -30,14 +31,16 @@ const ProductManager = () => {
     try {
       const response = await productsAPI.getProducts();
       setProducts(response.data.results || []);
+      // Dispatch event for Homepage to refresh
+      window.dispatchEvent(new Event('easycart-products-updated'));
     } catch (error) {
       console.error('Failed to fetch products:', error);
+      handleApiError(error, 'Failed to load products');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  // setLoading(true); // removed unused
     try {
       const productData = {
         ...formData,
@@ -51,11 +54,10 @@ const ProductManager = () => {
         stock: '', image: '', brand: '', weight: ''
       });
       setShowAddForm(false);
-      alert('Product added successfully!');
+      handleApiSuccess('Product added successfully!');
     } catch (error) {
-      alert('Failed to add product: ' + (error.response?.data?.message || 'Network error'));
+      handleApiError(error, 'Failed to add product');
     }
-  // setLoading(false); // removed unused
   };
 
   const deleteProduct = async (id) => {
@@ -63,9 +65,9 @@ const ProductManager = () => {
       try {
         await productsAPI.deleteProduct(id);
         await fetchProducts();
-        alert('Product deleted successfully!');
+        handleApiSuccess('Product deleted successfully!');
       } catch (error) {
-        alert('Failed to delete product');
+        handleApiError(error, 'Failed to delete product');
       }
     }
   };
