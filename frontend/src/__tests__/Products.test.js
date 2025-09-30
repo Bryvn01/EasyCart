@@ -3,6 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Products from '../pages/Products';
 import * as api from '../services/api';
+import { AuthProvider } from '../context/AuthContext';
+import { CartProvider } from '../context/CartContext';
 
 // Mock the API module
 jest.mock('../services/api');
@@ -58,76 +60,14 @@ const mockCategories = {
   ]
 };
 
-// Create proper context providers
-const MockAuthProvider = ({ children }) => {
-  const mockValue = {
-    user: null,
-    login: jest.fn(),
-    register: jest.fn(),
-    logout: jest.fn(),
-    loading: false,
-    isAuthenticated: false
-  };
-  
-  return React.createElement(
-    'div', 
-    { 'data-testid': 'auth-provider' }, 
-    React.createElement(
-      React.createContext().Provider,
-      { value: mockValue },
-      children
-    )
-  );
-};
-
-const MockCartProvider = ({ children }) => {
-  const mockValue = {
-    cartCount: 0,
-    fetchCartCount: jest.fn(),
-    updateCartCount: jest.fn()
-  };
-  
-  return React.createElement(
-    'div', 
-    { 'data-testid': 'cart-provider' }, 
-    React.createElement(
-      React.createContext().Provider,
-      { value: mockValue },
-      children
-    )
-  );
-};
-
-// Mock the context hooks
-jest.mock('../context/AuthContext', () => ({
-  useAuth: () => ({
-    user: null,
-    login: jest.fn(),
-    register: jest.fn(),
-    logout: jest.fn(),
-    loading: false,
-    isAuthenticated: false
-  }),
-  AuthProvider: ({ children }) => children
-}));
-
-jest.mock('../context/CartContext', () => ({
-  useCart: () => ({
-    cartCount: 0,
-    fetchCartCount: jest.fn(),
-    updateCartCount: jest.fn()
-  }),
-  CartProvider: ({ children }) => children
-}));
-
 const renderWithProviders = (component) => {
   return render(
     <BrowserRouter>
-      <MockAuthProvider>
-        <MockCartProvider>
+      <AuthProvider>
+        <CartProvider>
           {component}
-        </MockCartProvider>
-      </MockAuthProvider>
+        </CartProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 };
@@ -137,9 +77,18 @@ describe('Products Page', () => {
     // Reset all mocks
     jest.clearAllMocks();
     
+    // Clear localStorage to ensure clean state
+    localStorage.clear();
+    
     // Setup API mocks
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
     api.productsAPI.getCategories.mockResolvedValue(mockCategories);
+    
+    // Mock auth API to prevent AuthProvider from making API calls
+    api.authAPI.getProfile.mockRejectedValue(new Error('Not authenticated'));
+    
+    // Mock cart API to prevent CartProvider from making API calls
+    api.ordersAPI.getCart.mockResolvedValue({ data: { items: [] } });
   });
 
   test('renders products list', async () => {
