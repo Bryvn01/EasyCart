@@ -1,10 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import ProductGrid from './ProductGrid';
 import CategoryNav from './CategoryNav';
 import BannerCarousel from './BannerCarousel';
 import WhatsAppButton from './WhatsAppButton';
-import { productsAPI } from '../services/api';
+import { productsAPI, ordersAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 
 import { Helmet } from 'react-helmet-async';
 
@@ -20,6 +22,8 @@ const Homepage = () => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useAuth();
+  const { fetchCartCount } = useCart();
 
   // Fetch products from backend
   const fetchProducts = async () => {
@@ -27,6 +31,8 @@ const Homepage = () => {
     try {
       const res = await productsAPI.getProducts();
       setProducts(res.data.results || res.data || []);
+    } catch (error) {
+      handleApiError(error, 'Failed to load products');
     } finally {
       setLoading(false);
     }
@@ -37,11 +43,25 @@ const Homepage = () => {
   }, []);
 
   // Refetch products after admin CRUD (optional: use context/event for real-time)
-  window.addEventListener('easycart-products-updated', fetchProducts);
+  useEffect(() => {
+    const handleProductsUpdated = () => fetchProducts();
+    window.addEventListener('easycart-products-updated', handleProductsUpdated);
+    return () => window.removeEventListener('easycart-products-updated', handleProductsUpdated);
+  }, []);
 
-  const handleAddToCart = (product) => {
-    // TODO: Implement add to cart logic
-    alert(`Added ${product.name} to cart!`);
+  const handleAddToCart = async (product) => {
+    if (!isAuthenticated) {
+      handleApiError({ message: 'Please login to add items to cart' });
+      return;
+    }
+
+    try {
+      await ordersAPI.addToCart({ product_id: product.id, quantity: 1 });
+      fetchCartCount();
+      handleApiSuccess(`${product.name} added to cart! 🛒`);
+    } catch (error) {
+      handleApiError(error, 'Failed to add product to cart');
+    }
   };
 
   const renderSection = (section) => {
