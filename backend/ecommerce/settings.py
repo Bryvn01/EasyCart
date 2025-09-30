@@ -84,19 +84,35 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': config('DB_ENGINE', default='django.db.backends.sqlite3'),
-        'NAME': config('DB_NAME', default=str(BASE_DIR / 'db.sqlite3')),
-        'USER': config('DB_USER', default=''),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default=''),
-        'PORT': config('DB_PORT', default=''),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-        } if config('DB_ENGINE', default='').endswith('mysql') else {},
+# MongoDB Configuration
+MONGO_URI = config('MONGO_URI', default='')
+
+if MONGO_URI:
+    # Use MongoDB with Djongo when MONGO_URI is provided
+    DATABASES = {
+        'default': {
+            'ENGINE': 'djongo',
+            'CLIENT': {
+                'host': MONGO_URI,
+            },
+            'NAME': 'easycart',
+        }
     }
-}
+else:
+    # Fallback to SQLite for local development without MongoDB
+    DATABASES = {
+        'default': {
+            'ENGINE': config('DB_ENGINE', default='django.db.backends.sqlite3'),
+            'NAME': config('DB_NAME', default=str(BASE_DIR / 'db.sqlite3')),
+            'USER': config('DB_USER', default=''),
+            'PASSWORD': config('DB_PASSWORD', default=''),
+            'HOST': config('DB_HOST', default=''),
+            'PORT': config('DB_PORT', default=''),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+            } if config('DB_ENGINE', default='').endswith('mysql') else {},
+        }
+    }
 
 # Redis Cache Configuration
 CACHES = {
