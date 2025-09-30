@@ -7,6 +7,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
+import ProtectedRoute from './components/ProtectedRoute';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
@@ -51,14 +52,46 @@ function App() {
                         <Route path="/forgot-password" element={<ForgotPassword />} />
                         <Route path="/products" element={<Products />} />
                         <Route path="/products/:id" element={<ProductDetail />} />
-                        <Route path="/cart" element={<Cart />} />
-                        <Route path="/orders" element={<Orders />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/wishlist" element={<Wishlist />} />
-                        <Route path="/admin/products" element={<AdminProducts />} />
-                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                        <Route path="/admin/manage" element={<ProductManager />} />
-                        <Route path="/admin" element={<AdminDashboard />} />
+                        <Route path="/cart" element={
+                          <ProtectedRoute>
+                            <Cart />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/orders" element={
+                          <ProtectedRoute>
+                            <Orders />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/profile" element={
+                          <ProtectedRoute>
+                            <Profile />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/wishlist" element={
+                          <ProtectedRoute>
+                            <Wishlist />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/admin/products" element={
+                          <ProtectedRoute requireAdmin={true}>
+                            <AdminProducts />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/admin/dashboard" element={
+                          <ProtectedRoute requireAdmin={true}>
+                            <AdminDashboard />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/admin/manage" element={
+                          <ProtectedRoute requireAdmin={true}>
+                            <ProductManager />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/admin" element={
+                          <ProtectedRoute requireAdmin={true}>
+                            <AdminDashboard />
+                          </ProtectedRoute>
+                        } />
                       </Routes>
                     </Suspense>
                   </main>

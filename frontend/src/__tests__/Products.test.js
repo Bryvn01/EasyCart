@@ -115,8 +115,10 @@ describe('Products Page', () => {
     
     renderWithProviders(<Products />);
     
-    // Check loading state is shown
-    expect(screen.getByText('Loading products...')).toBeInTheDocument();
+    // Check loading skeleton is shown - we now use ProductGridSkeleton instead of text
+    // The loading skeleton uses animate-pulse class
+    const loadingElements = document.querySelectorAll('.animate-pulse');
+    expect(loadingElements.length).toBeGreaterThan(0);
     
     // Wait for loading to complete
     await waitFor(() => {
