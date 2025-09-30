@@ -20,7 +20,23 @@ const ProductGrid = ({ products, onAddToCart, loading }) => {
     return img && !img.includes('placeholder');
   });
   if (!productsWithImages.length) {
-    return <div className="text-center text-gray-500 py-8">No products with images found.</div>;
+    return (
+      <div className="text-center py-16 px-4">
+        <div className="max-w-md mx-auto">
+          <div className="text-6xl mb-4">🛒</div>
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">No Products Yet</h3>
+          <p className="text-gray-600 mb-6">
+            More amazing products coming soon! Check back later for great deals.
+          </p>
+          <a 
+            href="/products" 
+            className="inline-block bg-primary hover:bg-primary-dark text-white font-semibold px-6 py-3 rounded-lg transition"
+          >
+            Explore All Products
+          </a>
+        </div>
+      </div>
+    );
   }
   return (
     <>
