@@ -177,14 +177,14 @@ const Cart = () => {
                     <div style={{ flex: 1 }}>
                       <h3 className="font-semibold mb-1">{item.product.name}</h3>
                       <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem' }}>
-                        KES {item.product.price} × {item.quantity}
+                        KSh {item.product.price} × {item.quantity}
                       </p>
                     </div>
                     
                     {/* Price & Remove */}
                     <div style={{ textAlign: 'right' }}>
                       <div className="font-bold mb-2">
-                        KES {(item.product.price * item.quantity).toFixed(2)}
+                        KSh {(item.product.price * item.quantity).toFixed(2)}
                       </div>
                       <button
                         onClick={() => removeFromCart(item.id)}
@@ -217,17 +217,29 @@ const Cart = () => {
               <div style={{ marginBottom: 'var(--space-6)' }}>
                 <div className="flex justify-between mb-2">
                   <span>Subtotal:</span>
-                  <span>KES {cart.total_price}</span>
+                  <span>KSh {cart.total_price}</span>
                 </div>
                 <div className="flex justify-between mb-2">
                   <span>Delivery:</span>
-                  <span>KES 100</span>
+                  <span className="text-green-600 font-semibold">
+                    {parseFloat(cart.total_price) >= 2000 ? 'FREE' : 'KSh 100'}
+                  </span>
                 </div>
                 <hr style={{ margin: 'var(--space-4) 0', border: 'none', borderTop: '1px solid var(--gray-200)' }} />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total:</span>
-                  <span>KES {(parseFloat(cart.total_price) + 100).toFixed(2)}</span>
+                  <span>KSh {(parseFloat(cart.total_price) + (parseFloat(cart.total_price) >= 2000 ? 0 : 100)).toFixed(2)}</span>
                 </div>
+                {parseFloat(cart.total_price) >= 2000 && (
+                  <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
+                    <span>🎉</span> You qualify for FREE delivery!
+                  </p>
+                )}
+                {parseFloat(cart.total_price) < 2000 && (
+                  <p className="text-sm text-gray-600 mt-2">
+                    Add KSh {(2000 - parseFloat(cart.total_price)).toFixed(2)} more for FREE delivery
+                  </p>
+                )}
               </div>
               
               <div className="form-group">
@@ -303,12 +315,32 @@ const Cart = () => {
                   width: '100%',
                   padding: 'var(--space-4)',
                   fontSize: '1rem',
-                  fontWeight: '600'
+                  fontWeight: '600',
+                  background: paymentMethod === 'mpesa' ? 'linear-gradient(135deg, #00A651 0%, #00D86E 100%)' : undefined,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem'
                 }}
                 disabled={checkoutLoading}
               >
-                {checkoutLoading ? 'Processing...' : 'Proceed to Checkout'}
+                {checkoutLoading ? '⏳ Processing...' : (
+                  <>
+                    {paymentMethod === 'mpesa' && '💳'} 
+                    Checkout with {paymentMethod === 'mpesa' ? 'M-Pesa' : paymentMethod === 'airtel' ? 'Airtel Money' : 'Card'}
+                  </>
+                )}
               </button>
+              
+              {/* Trust Indicators */}
+              <div className="mt-4 text-xs text-gray-600 text-center">
+                <p className="flex items-center justify-center gap-2 mb-1">
+                  <span>🔒</span> Secure Checkout
+                </p>
+                <p className="flex items-center justify-center gap-2">
+                  <span>✓</span> 100% Money Back Guarantee
+                </p>
+              </div>
             </div>
           </div>
         </div>
