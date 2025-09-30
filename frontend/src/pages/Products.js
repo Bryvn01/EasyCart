@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
-import ProductCard from '../components/ProductCard';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 
 const Products = () => {
