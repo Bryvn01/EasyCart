@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
 import ProductCard from '../components/ProductCard';
+import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -84,17 +84,17 @@ const Products = () => {
 
   const addToCart = async (productId) => {
     if (!isAuthenticated) {
-      toast.error('Please login to add items to cart');
+      handleApiError({ message: 'Please login to add items to cart' });
       return;
     }
 
     try {
       await ordersAPI.addToCart({ product_id: productId, quantity: 1 });
       fetchCartCount();
-      toast.success('Product added to cart! 🛒');
+      handleApiSuccess('Product added to cart! 🛒');
     } catch (error) {
       console.error('Error adding to cart:', error);
-      toast.error('Failed to add product to cart');
+      handleApiError(error, 'Failed to add product to cart');
     }
   };
 
