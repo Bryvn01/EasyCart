@@ -14,12 +14,8 @@ const ProductGrid = ({ products, onAddToCart, loading }) => {
       </div>
     );
   }
-  // Filter out products without a real image
-  const productsWithImages = products.filter(product => {
-    const img = product.image_url || product.image;
-    return img && !img.includes('placeholder');
-  });
-  if (!productsWithImages.length) {
+  // Show all products - placeholder images are acceptable
+  if (!products.length) {
     return (
       <div className="text-center py-16 px-4">
         <div className="max-w-md mx-auto">
@@ -46,7 +42,7 @@ const ProductGrid = ({ products, onAddToCart, loading }) => {
       </Helmet>
       <section aria-label="Product Grid" className="w-full">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 xl:gap-6">
-          {productsWithImages.map(product => (
+          {products.map(product => (
             <ProductCard
               key={product.id}
               product={product}
