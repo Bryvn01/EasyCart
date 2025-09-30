@@ -84,32 +84,32 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
-# Database configuration - Using Djongo for MongoDB
+# Database configuration
+# Note: MongoDB support via PyMongo is available for custom use cases
+# Django ORM uses SQLite/PostgreSQL/MySQL for built-in models
 MONGO_URI = config('MONGO_URI', default='')
 
-if MONGO_URI:
-    # MongoDB configuration using Djongo
-    DATABASES = {
-        'default': {
-            'ENGINE': 'djongo',
-            'CLIENT': {
-                'host': MONGO_URI,
-            }
-        }
+# Primary database for Django ORM (auth, sessions, admin, etc.)
+DATABASES = {
+    'default': {
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.sqlite3'),
+        'NAME': config('DB_NAME', default=str(BASE_DIR / 'db.sqlite3')),
+        'USER': config('DB_USER', default=''),
+        'PASSWORD': config('DB_PASSWORD', default=''),
+        'HOST': config('DB_HOST', default=''),
+        'PORT': config('DB_PORT', default=''),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        } if config('DB_ENGINE', default='').endswith('mysql') else {},
     }
-else:
-    # Fallback to SQLite for local development without MongoDB
-    DATABASES = {
+}
+
+# MongoDB client configuration (optional - for direct PyMongo use)
+# Access via: from django.conf import settings; client = pymongo.MongoClient(settings.MONGO_URI)
+if MONGO_URI:
+    MONGODB_DATABASES = {
         'default': {
-            'ENGINE': config('DB_ENGINE', default='django.db.backends.sqlite3'),
-            'NAME': config('DB_NAME', default=str(BASE_DIR / 'db.sqlite3')),
-            'USER': config('DB_USER', default=''),
-            'PASSWORD': config('DB_PASSWORD', default=''),
-            'HOST': config('DB_HOST', default=''),
-            'PORT': config('DB_PORT', default=''),
-            'OPTIONS': {
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-            } if config('DB_ENGINE', default='').endswith('mysql') else {},
+            'URI': MONGO_URI,
         }
     }
 
