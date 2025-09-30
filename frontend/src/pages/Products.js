@@ -5,6 +5,8 @@ import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import SearchInput from '../components/ui/SearchInput';
+import { ProductGridSkeleton } from '../components/ui';
+import ProductCard from '../components/ProductCard';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -98,9 +100,12 @@ const Products = () => {
 
   if (loading) {
     return (
-      <div className="container py-16 text-center">
-        <div style={{ fontSize: '2rem' }}>⏳</div>
-        <p>Loading products...</p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64 mb-2 animate-pulse"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-96 animate-pulse"></div>
+        </div>
+        <ProductGridSkeleton count={8} />
       </div>
     );
   }
