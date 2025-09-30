@@ -1,7 +1,7 @@
 # Django 4.2.x LTS - Compatible with Python 3.8+
 # For Ubuntu/Debian: sudo apt-get install python3-django python3-pymongo
 # For pip: These versions are flexible to allow system packages or PyPI
-Django>=4.2,<5.0
+Django>=3.2,<4.0
 # PyMongo for MongoDB support (compatible with Django 4.x)
 pymongo>=3.12,<5.0
 # Core dependencies
