@@ -18,8 +18,8 @@ else:
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000",
         "https://localhost:3000",
-        "https://yourdomain.com",
-        "https://www.yourdomain.com"
+        "https://easycart-frontend.onrender.com",
+        "https://easycart-admin.onrender.com"
     ]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +30,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
-    default='localhost,127.0.0.1,easycart-j6ue.onrender.com',
+    default='localhost,127.0.0.1,easycart-backend.onrender.com,.onrender.com',
     cast=lambda v: [s.strip() for s in v.split(',')]
 )
 
