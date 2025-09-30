@@ -15,8 +15,17 @@ def api_root(request):
         }
     })
 
+def health_check(request):
+    """Health check endpoint for monitoring and load balancers"""
+    return JsonResponse({
+        'status': 'healthy',
+        'service': 'easycart-backend',
+        'version': '1.0.0'
+    })
+
 urlpatterns = [
     path('', api_root, name='api-root'),
+    path('api/health/', health_check, name='health-check'),
     path('admin/', admin.site.urls),
     path('api/auth/', include('apps.accounts.urls')),
     path('api/products/', include('apps.products.urls')),
