@@ -1,18 +1,26 @@
-# Django version pinned to 3.2.25 (latest LTS) for Djongo 1.3.6 compatibility
-# Djongo 1.3.6 requires sqlparse==0.2.4, but Django 4.x requires sqlparse>=0.3.1
-Django==3.2.25
-djongo==1.3.6
-sqlparse==0.2.4
-pymongo==3.12.3
-python-decouple
-djangorestframework
-djangorestframework-simplejwt
-django-cors-headers
-django-filter
-Pillow
-requests
-django-sslserver
-django-extensions
-redis
-django-redis
-gunicorn
+# Django 4.2.x LTS - Compatible with Python 3.8+
+# For Ubuntu/Debian: sudo apt-get install python3-django python3-pymongo
+# For pip: These versions are flexible to allow system packages or PyPI
+Django>=4.2,<5.0
+# PyMongo for MongoDB support (compatible with Django 4.x)
+pymongo>=3.12,<5.0
+# Core dependencies
+python-decouple==3.8
+djangorestframework>=3.15,<4.0
+djangorestframework-simplejwt>=5.3,<6.0
+django-cors-headers>=4.3,<5.0
+django-filter>=23.3,<24.0
+Pillow>=10.4,<11.0
+requests>=2.32,<3.0
+# Development and deployment
+django-sslserver>=0.22
+django-extensions>=3.2,<4.0
+redis>=5.0,<6.0
+django-redis>=5.4,<6.0
+gunicorn>=21.2,<22.0
+# Additional dependencies
+celery>=5.3,<6.0
+stripe>=7.8,<8.0
+whitenoise>=6.6,<7.0
+django-ratelimit>=4.1,<5.0
+django-environ>=0.11,<1.0
