@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import ProductGrid from './ProductGrid';
 import CategoryNav from './CategoryNav';
 import BannerCarousel from './BannerCarousel';
+import WhatsAppButton from './WhatsAppButton';
 import { productsAPI } from '../services/api';
 
 import { Helmet } from 'react-helmet-async';
@@ -93,34 +94,39 @@ const Homepage = () => {
         <meta name="description" content="Shop groceries, electronics, fashion, and more. Fast delivery, best prices, and trusted brands in Kenya." />
       </Helmet>
       {/* Hero Section */}
-      <section className="relative flex flex-col md:flex-row items-center justify-between gap-8 py-12 md:py-20 px-4 md:px-12 bg-gradient-to-br from-primary-50 to-blue-100 rounded-2xl shadow mb-8 overflow-hidden">
+      <section className="relative flex flex-col md:flex-row items-center justify-between gap-8 py-12 md:py-20 px-6 md:px-12 bg-gradient-to-br from-primary-50 via-blue-50 to-green-50 rounded-2xl shadow-lg mb-8 overflow-hidden">
         <div className="z-10 max-w-xl">
           <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
-            Shop Kenya's Best <span className="text-primary-600">Deals</span> Online
+            Kenya's #1 Online Shopping Platform
           </h1>
-          <p className="text-lg md:text-2xl text-gray-700 mb-6">
-            Groceries, electronics, fashion, and more. Fast delivery, best prices, and trusted brands.
+          <p className="text-lg md:text-xl text-gray-700 mb-6">
+            Fresh groceries, latest electronics, trending fashion delivered to your door. Shop with confidence!
           </p>
-          <a href="/products" className="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 py-3 rounded-lg shadow transition text-lg">
-            Start Shopping
-          </a>
-          <div className="flex gap-4 mt-6">
-            <div className="flex items-center gap-2">
-              <img src="/badges/secure-checkout.svg" alt="Secure Checkout" className="h-6" />
-              <span className="text-xs text-gray-600">Secure Checkout</span>
+          <div className="flex flex-wrap gap-3 mb-6">
+            <a href="/products" className="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg transition text-base">
+              Shop Now 🛒
+            </a>
+            <a href="/products" className="inline-block bg-white hover:bg-gray-50 text-primary-600 font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg transition border-2 border-primary-600 text-base">
+              Download App 📱
+            </a>
+          </div>
+          <div className="flex flex-wrap gap-3 md:gap-4">
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+              <span className="text-green-600 font-bold text-xl">✓</span>
+              <span className="text-sm font-medium text-gray-700">M-Pesa Secure</span>
             </div>
-            <div className="flex items-center gap-2">
-              <img src="/badges/delivery.svg" alt="Fast Delivery" className="h-6" />
-              <span className="text-xs text-gray-600">Fast Delivery</span>
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+              <span className="text-blue-600 font-bold text-xl">⚡</span>
+              <span className="text-sm font-medium text-gray-700">Same-Day Nairobi</span>
             </div>
-            <div className="flex items-center gap-2">
-              <img src="/badges/guarantee.svg" alt="Satisfaction Guarantee" className="h-6" />
-              <span className="text-xs text-gray-600">Satisfaction Guarantee</span>
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+              <span className="text-green-600 font-bold text-xl">🌿</span>
+              <span className="text-sm font-medium text-gray-700">100% Fresh Guarantee</span>
             </div>
           </div>
         </div>
         <div className="hidden md:block absolute right-0 bottom-0 z-0">
-          <img src="/hero-shopping.svg" alt="Shopping" className="w-96 max-w-xs md:max-w-md lg:max-w-lg opacity-90" loading="lazy" />
+          <img src="/hero-shopping.svg" alt="Happy Kenyan family shopping online" className="w-96 max-w-xs md:max-w-md lg:max-w-lg opacity-90" loading="lazy" />
         </div>
       </section>
       <BannerCarousel />
@@ -162,21 +168,56 @@ const Homepage = () => {
       <div className="hidden md:block">
         {sectionMap.map(renderSection)}
       </div>
+      
+      {/* Payment Methods & Delivery Promise Section */}
+      <section className="my-12 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 md:p-8" aria-label="Payment and Delivery">
+        <div className="text-center mb-6">
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">We Accept</h3>
+          <div className="flex flex-wrap justify-center gap-4 items-center">
+            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 font-semibold text-green-700 flex items-center gap-2">
+              <span className="text-2xl">💳</span> M-Pesa
+            </div>
+            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 font-semibold text-blue-700 flex items-center gap-2">
+              <span className="text-2xl">💳</span> Visa
+            </div>
+            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 font-semibold text-red-700 flex items-center gap-2">
+              <span className="text-2xl">💳</span> Mastercard
+            </div>
+            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 font-semibold text-orange-700 flex items-center gap-2">
+              <span className="text-2xl">💳</span> Airtel Money
+            </div>
+          </div>
+        </div>
+        <div className="text-center border-t border-gray-200 pt-6">
+          <p className="text-lg font-semibold text-gray-800 mb-4">
+            🚚 Free delivery on orders over <span className="text-primary-600 font-bold">KSh 2,000</span> in Nairobi
+          </p>
+          <p className="text-sm text-gray-600">Same-day delivery available for orders placed before 2 PM</p>
+        </div>
+      </section>
+      
       {/* Trust badges */}
       <section className="flex flex-wrap gap-4 justify-center my-12" aria-label="Trust Badges">
         <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 shadow-sm">
-          <img src="/badges/official-store.svg" alt="Official Store" className="h-6" loading="lazy" />
+          <span className="text-xl">🏪</span>
           <span className="text-sm font-medium">Official Store</span>
         </div>
         <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 shadow-sm">
-          <img src="/badges/warranty.svg" alt="Warranty" className="h-6" loading="lazy" />
-          <span className="text-sm font-medium">Warranty</span>
+          <span className="text-xl">🛡️</span>
+          <span className="text-sm font-medium">Warranty Protected</span>
         </div>
         <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 shadow-sm">
-          <img src="/badges/free-delivery.svg" alt="Free Delivery" className="h-6" loading="lazy" />
-          <span className="text-sm font-medium">Free Delivery</span>
+          <span className="text-xl">🚚</span>
+          <span className="text-sm font-medium">Fast Delivery</span>
+        </div>
+        <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 shadow-sm">
+          <span className="text-xl">⭐</span>
+          <span className="text-sm font-medium">5000+ Happy Customers</span>
         </div>
       </section>
+      
+      {/* WhatsApp Support Button */}
+      <WhatsAppButton />
     </main>
   );
 };
