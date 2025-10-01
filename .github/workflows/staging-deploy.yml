@@ -1,0 +1,24 @@
+name: Deploy to Render Staging
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' # only auto-deploy Dependabot PRs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Render Staging
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          SERVICE_ID: ${{ secrets.RENDER_STAGING_SERVICE_ID }}
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"serviceId":"'"$SERVICE_ID"'"}' \
+            https://api.render.com/v1/services/$SERVICE_ID/deploys
