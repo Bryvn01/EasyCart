@@ -144,7 +144,7 @@ npm test
 ## 📦 Deployment
 
 **Live Application:**
-- Frontend: https://easycart-frontend.onrender.com
+- Frontend: https://easycart-frontend-zge5.onrender.com/
 - Backend API: https://easycart-backend.onrender.com
 - Admin Dashboard: https://easycart-admin.onrender.com
 
