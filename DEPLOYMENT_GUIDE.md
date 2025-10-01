@@ -6,6 +6,12 @@
 
 **Complete deployment with automatic builds and HTTPS:**
 
+**Important Note about SSL/TLS:**
+- Render automatically handles SSL/TLS termination at the edge
+- Your application should serve plain HTTP (not HTTPS)
+- Do NOT include SSL certificate files or SSL flags in your application
+- Render provides free SSL certificates for all deployments
+
 **Live URLs:**
 - Frontend: https://easycart-frontend.onrender.com  
 - Backend: https://easycart-backend.onrender.com
@@ -194,18 +200,20 @@ aws s3 sync media/ s3://your-company-ecommerce-media-$(date +%Y%m%d)/media/
 
 ### SSL Certificate
 ```bash
-# Using Let's Encrypt (free)
+# Using Let's Encrypt (free) - for self-hosted deployments only
 certbot --nginx -d yourdomain.com -d www.yourdomain.com
 
 # Or use AWS Certificate Manager (free with AWS services)
 ```
+
+**Note for Render/Railway/Heroku deployments:** These platforms automatically provide SSL certificates. You do NOT need to configure SSL manually - just deploy your app serving plain HTTP and the platform handles the rest.
 
 ## Go-Live Checklist
 
 - [ ] Environment variables configured
 - [ ] Database migrations applied
 - [ ] Static files collected
-- [ ] SSL certificate installed
+- [ ] SSL certificate installed (only for self-hosted; platforms like Render handle this automatically)
 - [ ] Domain DNS configured
 - [ ] Monitoring tools setup
 - [ ] Backup strategy implemented
