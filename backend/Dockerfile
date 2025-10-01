@@ -10,15 +10,11 @@ RUN pip install gunicorn
 # Copy project files
 COPY . .
 
-# Copy SSL certificates
-COPY cert.pem /app/cert.pem
-COPY key.pem /app/key.pem
-
 # Collect static files (if needed)
 RUN python manage.py collectstatic --noinput || true
 
 # Expose port
 EXPOSE 8000
 
-# Run Gunicorn with HTTPS
-CMD ["gunicorn", "ecommerce.wsgi:application", "--bind", "0.0.0.0:8000", "--certfile", "cert.pem", "--keyfile", "key.pem"]
+# Run Gunicorn (Render handles SSL/TLS at the edge)
+CMD ["gunicorn", "ecommerce.wsgi:application", "--bind", "0.0.0.0:8000"]

@@ -5,7 +5,7 @@
 - [ ] Change SECRET_KEY to a strong, unique value
 - [ ] Set DEBUG = False
 - [ ] Configure ALLOWED_HOSTS properly
-- [ ] Set up HTTPS/SSL certificates
+- [ ] Set up HTTPS/SSL certificates (Note: Render automatically handles SSL/TLS - do NOT include SSL certificates in your app)
 - [ ] Configure secure session cookies
 - [ ] Set up proper CORS origins
 - [ ] Enable security middleware
@@ -19,7 +19,7 @@
 - [ ] Set up database monitoring
 
 ## Infrastructure
-- [ ] Set up reverse proxy (Nginx/Apache)
+- [ ] Set up reverse proxy (Nginx/Apache) - Note: Not needed on Render, it provides this automatically
 - [ ] Configure static file serving
 - [ ] Set up media file storage (AWS S3/CloudFront)
 - [ ] Configure logging and monitoring
