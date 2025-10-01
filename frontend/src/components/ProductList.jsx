@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { productsAPI } from '../services/api';
 
 /**
  * ProductList Component
@@ -16,7 +16,7 @@ const ProductList = () => {
       setError(null);
       
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/products/`);
+        const response = await productsAPI.getProducts();
         const productsData = response.data.results || response.data;
         setProducts(Array.isArray(productsData) ? productsData : []);
       } catch (err) {
@@ -59,15 +59,14 @@ const ProductList = () => {
     return (
       <div className="text-center py-8">
         <div className="text-gray-400 text-5xl mb-4">📦</div>
-        <h3 className="text-xl font-semibold text-gray-700 mb-2">No Products Found</h3>
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">No products available</h3>
         <p className="text-gray-600">Check back later for new products!</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {products.map((product) => (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">{products.map((product) => (
         <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
           {/* Product Image */}
           <div className="h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
@@ -100,14 +99,14 @@ const ProductList = () => {
             )}
 
             {/* Product Name */}
-            <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2" title={product.name}>
               {product.name}
             </h3>
 
             {/* Price */}
             <div className="flex items-center justify-between">
               <span className="text-2xl font-bold text-gray-900">
-                KES {product.price?.toLocaleString() || '0'}
+                KSh {product.price?.toLocaleString() || '0'}
               </span>
 
               {/* Stock Status */}
