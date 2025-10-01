@@ -1,0 +1,165 @@
+# Dependabot Configuration for EasyCart
+# Automatically checks for dependency updates and creates PRs
+# Helps address security vulnerabilities (Django SQL injection, Gunicorn request smuggling, 
+# Multer DoS, Axios DoS, nth-check regex complexity, webpack-dev-server, PostCSS, braces, etc.)
+
+version: 2
+
+updates:
+  # Frontend npm dependencies (React application)
+  # Location: /frontend
+  # Monitors package.json and package-lock.json for updates
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      # Check for updates every Monday at 09:00 UTC
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    # Limit the number of open pull requests to avoid overwhelming reviewers
+    open-pull-requests-limit: 5
+    # Group npm updates together to reduce PR noise
+    groups:
+      # Group all npm dependencies into a single PR per update type
+      npm-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Keep major updates separate as they may include breaking changes
+      npm-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+    # Add labels for easy identification and filtering
+    labels:
+      - "dependencies"
+      - "frontend"
+      - "npm"
+    # Customize commit messages for better Git history
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+  # Backend npm dependencies (Node.js service)
+  # Location: /backend
+  # Monitors package.json and package-lock.json for backend services
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      # Check for updates every Monday at 09:00 UTC
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    # Limit the number of open pull requests to avoid overwhelming reviewers
+    open-pull-requests-limit: 5
+    # Group npm updates together to reduce PR noise
+    groups:
+      # Group all npm dependencies into a single PR per update type
+      npm-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Keep major updates separate as they may include breaking changes
+      npm-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+    # Add labels for easy identification and filtering
+    labels:
+      - "dependencies"
+      - "backend"
+      - "npm"
+    # Customize commit messages for better Git history
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+  # Admin Dashboard npm dependencies (React admin panel)
+  # Location: /admin-dashboard
+  # Monitors package.json and package-lock.json for admin dashboard
+  - package-ecosystem: "npm"
+    directory: "/admin-dashboard"
+    schedule:
+      # Check for updates every Monday at 09:00 UTC
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    # Limit the number of open pull requests to avoid overwhelming reviewers
+    open-pull-requests-limit: 5
+    # Group npm updates together to reduce PR noise
+    groups:
+      # Group all npm dependencies into a single PR per update type
+      npm-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Keep major updates separate as they may include breaking changes
+      npm-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+    # Add labels for easy identification and filtering
+    labels:
+      - "dependencies"
+      - "admin-dashboard"
+      - "npm"
+    # Customize commit messages for better Git history
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+  # Backend Python dependencies (Django application)
+  # Location: /backend
+  # Monitors requirements.txt and temp_requirements.txt for security updates
+  # Addresses vulnerabilities in Django, Gunicorn, and other Python packages
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      # Check for updates every Monday at 09:00 UTC
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    # Limit the number of open pull requests to avoid overwhelming reviewers
+    open-pull-requests-limit: 5
+    # Group Python dependencies together to reduce PR noise
+    groups:
+      # Group all pip dependencies into a single PR per update type
+      pip-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Keep major updates separate as they may include breaking changes
+      pip-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+    # Add labels for easy identification and filtering
+    labels:
+      - "dependencies"
+      - "backend"
+      - "python"
+    # Customize commit messages for better Git history
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+# Best Practices Implemented:
+# 1. Weekly schedule balances security with review capacity
+# 2. Open PR limits prevent overwhelming the team
+# 3. Grouping reduces notification fatigue
+# 4. Clear labels enable easy filtering and automation
+# 5. Separate major updates allow careful review of breaking changes
+# 6. Consistent schedule across all ecosystems simplifies planning
+# 7. Compatible with branch protection rules requiring PR reviews

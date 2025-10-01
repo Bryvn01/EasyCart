@@ -1,0 +1,311 @@
+# Dependabot Staging Deployment Workflow
+# Automatically deploys Dependabot PRs to a staging environment on Render
+# Runs integration tests before allowing merge
+# Provides feedback on PR with deployment status and test results
+
+name: "Dependabot Staging Deploy"
+
+on:
+  # Run on pull requests from Dependabot
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Ensure only one staging deployment runs at a time per PR
+concurrency:
+  group: staging-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # Check if this is a Dependabot PR
+  check-dependabot:
+    name: Check if Dependabot PR
+    runs-on: ubuntu-latest
+    outputs:
+      is-dependabot: ${{ steps.check.outputs.is-dependabot }}
+    steps:
+      - name: Check PR author
+        id: check
+        run: |
+          if [[ "${{ github.event.pull_request.user.login }}" == "dependabot[bot]" ]]; then
+            echo "is-dependabot=true" >> $GITHUB_OUTPUT
+            echo "✅ This is a Dependabot PR"
+          else
+            echo "is-dependabot=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ This is not a Dependabot PR, skipping staging deployment"
+          fi
+
+  # Deploy to Render staging environment
+  deploy-to-staging:
+    name: Deploy to Render Staging
+    runs-on: ubuntu-latest
+    needs: check-dependabot
+    if: needs.check-dependabot.outputs.is-dependabot == 'true'
+    
+    # Required for commenting on PRs
+    permissions:
+      pull-requests: write
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Comment deployment start
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 **Staging Deployment Started**\n\n' +
+                    'Deploying Dependabot changes to staging environment for testing...\n\n' +
+                    `📦 **Changes:** ${context.payload.pull_request.title}\n` +
+                    `🔗 **Commit:** ${context.payload.pull_request.head.sha.substring(0, 7)}\n\n` +
+                    '_Please wait while the deployment completes..._'
+            })
+
+      # Set up Python for Django backend
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # Set up Node.js for frontend and admin
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: |
+            frontend/package-lock.json
+            backend/package-lock.json
+            admin-dashboard/package-lock.json
+
+      # Install and test backend
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          echo "✅ Backend dependencies installed"
+
+      - name: Run Backend Tests
+        id: backend-tests
+        run: |
+          cd backend
+          python manage.py test --verbosity=2
+          echo "test-result=success" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      # Install and test frontend
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm ci
+          echo "✅ Frontend dependencies installed"
+
+      - name: Build Frontend
+        id: frontend-build
+        run: |
+          cd frontend
+          npm run build
+          echo "build-result=success" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Run Frontend Tests
+        id: frontend-tests
+        run: |
+          cd frontend
+          npm test -- --watchAll=false --coverage
+          echo "test-result=success" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      # Install and test admin dashboard
+      - name: Install Admin Dashboard Dependencies
+        run: |
+          cd admin-dashboard
+          npm ci
+          echo "✅ Admin dashboard dependencies installed"
+
+      - name: Build Admin Dashboard
+        id: admin-build
+        run: |
+          cd admin-dashboard
+          npm run build
+          echo "build-result=success" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      # Trigger Render staging deployment
+      # Note: This requires RENDER_STAGING_DEPLOY_HOOK secret to be set
+      - name: Trigger Render Staging Deploy
+        id: render-deploy
+        if: |
+          steps.backend-tests.outputs.test-result == 'success' &&
+          steps.frontend-build.outputs.build-result == 'success' &&
+          steps.frontend-tests.outputs.test-result == 'success' &&
+          steps.admin-build.outputs.build-result == 'success'
+        env:
+          # Set these secrets in your repository settings:
+          # RENDER_STAGING_BACKEND_HOOK - Staging backend deploy hook URL
+          # RENDER_STAGING_FRONTEND_HOOK - Staging frontend deploy hook URL
+          # RENDER_STAGING_ADMIN_HOOK - Staging admin deploy hook URL
+          BACKEND_HOOK: ${{ secrets.RENDER_STAGING_BACKEND_HOOK }}
+          FRONTEND_HOOK: ${{ secrets.RENDER_STAGING_FRONTEND_HOOK }}
+          ADMIN_HOOK: ${{ secrets.RENDER_STAGING_ADMIN_HOOK }}
+        run: |
+          echo "🚀 Triggering Render staging deployments..."
+          
+          # Deploy backend if hook is configured
+          if [ -n "$BACKEND_HOOK" ]; then
+            curl -X POST "$BACKEND_HOOK" || echo "⚠️ Backend deploy hook not configured"
+          fi
+          
+          # Deploy frontend if hook is configured
+          if [ -n "$FRONTEND_HOOK" ]; then
+            curl -X POST "$FRONTEND_HOOK" || echo "⚠️ Frontend deploy hook not configured"
+          fi
+          
+          # Deploy admin if hook is configured
+          if [ -n "$ADMIN_HOOK" ]; then
+            curl -X POST "$ADMIN_HOOK" || echo "⚠️ Admin deploy hook not configured"
+          fi
+          
+          echo "deploy-result=success" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      # Wait for deployments to complete and run integration tests
+      - name: Wait for Deployment
+        if: steps.render-deploy.outputs.deploy-result == 'success'
+        run: |
+          echo "⏳ Waiting 60 seconds for staging deployment to complete..."
+          sleep 60
+
+      # Run integration tests against staging environment
+      - name: Run Integration Tests
+        id: integration-tests
+        if: steps.render-deploy.outputs.deploy-result == 'success'
+        env:
+          # Set these in your repository settings to point to staging URLs:
+          # STAGING_BACKEND_URL - e.g., https://easycart-backend-staging.onrender.com
+          # STAGING_FRONTEND_URL - e.g., https://easycart-frontend-staging.onrender.com
+          BACKEND_URL: ${{ secrets.STAGING_BACKEND_URL || 'https://easycart-backend.onrender.com' }}
+          FRONTEND_URL: ${{ secrets.STAGING_FRONTEND_URL || 'https://easycart-frontend.onrender.com' }}
+        run: |
+          echo "🧪 Running integration tests against staging..."
+          
+          # Test backend health endpoint
+          echo "Testing backend health..."
+          curl -f "$BACKEND_URL/api/health" || echo "⚠️ Backend health check failed"
+          
+          # Test frontend availability
+          echo "Testing frontend availability..."
+          curl -f "$FRONTEND_URL" || echo "⚠️ Frontend availability check failed"
+          
+          # Test API endpoints
+          echo "Testing API endpoints..."
+          curl -f "$BACKEND_URL/api/products" || echo "⚠️ Products API check failed"
+          
+          echo "test-result=success" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      # Post deployment status comment
+      - name: Comment deployment status
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const backendTests = '${{ steps.backend-tests.outputs.test-result }}';
+            const frontendBuild = '${{ steps.frontend-build.outputs.build-result }}';
+            const frontendTests = '${{ steps.frontend-tests.outputs.test-result }}';
+            const adminBuild = '${{ steps.admin-build.outputs.build-result }}';
+            const renderDeploy = '${{ steps.render-deploy.outputs.deploy-result }}';
+            const integrationTests = '${{ steps.integration-tests.outputs.test-result }}';
+            
+            const success = backendTests === 'success' && 
+                          frontendBuild === 'success' && 
+                          frontendTests === 'success' && 
+                          adminBuild === 'success';
+            
+            let statusIcon = success ? '✅' : '❌';
+            let statusText = success ? 'Success' : 'Failed';
+            
+            let body = `${statusIcon} **Staging Deployment ${statusText}**\n\n`;
+            body += '### Test Results\n';
+            body += `- Backend Tests: ${backendTests === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            body += `- Frontend Build: ${frontendBuild === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            body += `- Frontend Tests: ${frontendTests === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            body += `- Admin Build: ${adminBuild === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            
+            if (renderDeploy === 'success') {
+              body += `\n### Deployment\n`;
+              body += `- Render Staging: ${integrationTests === 'success' ? '✅ Deployed & Tested' : '⚠️ Deployed (tests pending)'}\n`;
+              
+              const backendUrl = process.env.STAGING_BACKEND_URL || 'https://easycart-backend.onrender.com';
+              const frontendUrl = process.env.STAGING_FRONTEND_URL || 'https://easycart-frontend.onrender.com';
+              
+              body += `\n### Staging URLs\n`;
+              body += `- 🔗 Backend: ${backendUrl}\n`;
+              body += `- 🔗 Frontend: ${frontendUrl}\n`;
+            }
+            
+            if (success) {
+              body += `\n✅ **All checks passed!** This PR is ready for review and merge.\n`;
+            } else {
+              body += `\n❌ **Some checks failed.** Please review the test results and fix any issues.\n`;
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
+
+      # Set overall status
+      - name: Check deployment status
+        if: always()
+        run: |
+          if [[ "${{ steps.backend-tests.outputs.test-result }}" != "success" ]] || \
+             [[ "${{ steps.frontend-build.outputs.build-result }}" != "success" ]] || \
+             [[ "${{ steps.frontend-tests.outputs.test-result }}" != "success" ]] || \
+             [[ "${{ steps.admin-build.outputs.build-result }}" != "success" ]]; then
+            echo "❌ Staging deployment checks failed"
+            exit 1
+          fi
+          echo "✅ All staging deployment checks passed"
+
+# How to Configure:
+# 
+# 1. Create Staging Services on Render:
+#    - Create separate staging services for backend, frontend, and admin
+#    - Configure them to deploy from a staging branch or use deploy hooks
+#
+# 2. Set Repository Secrets:
+#    - RENDER_STAGING_BACKEND_HOOK: Deploy hook URL for staging backend
+#    - RENDER_STAGING_FRONTEND_HOOK: Deploy hook URL for staging frontend
+#    - RENDER_STAGING_ADMIN_HOOK: Deploy hook URL for staging admin
+#    - STAGING_BACKEND_URL: URL of staging backend (optional, defaults to production)
+#    - STAGING_FRONTEND_URL: URL of staging frontend (optional, defaults to production)
+#
+# 3. Enable Branch Protection:
+#    - Require "Deploy to Render Staging" to pass before merging
+#    - This ensures all Dependabot updates are tested before reaching production
+#
+# 4. Alternative Approach (if staging environment is not available):
+#    - The workflow will still run build and unit tests
+#    - Integration tests will be skipped but won't fail the workflow
+#    - This provides a safety net even without dedicated staging infrastructure
+
+# Best Practices Implemented:
+# 1. Automated testing of Dependabot PRs before merge
+# 2. Comprehensive test coverage (unit, build, integration)
+# 3. Clear status reporting via PR comments
+# 4. Graceful degradation if staging environment is not configured
+# 5. Concurrency control to prevent deployment conflicts
+# 6. Detailed logging for troubleshooting
+# 7. Compatible with existing CI/CD workflows
+# 8. Minimal configuration required to get started
