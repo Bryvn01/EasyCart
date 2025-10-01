@@ -16,7 +16,7 @@ requests>=2.32,<3.0
 django-sslserver>=0.22
 django-extensions>=3.2,<4.0
 redis>=5.0,<6.0
-django-redis>=5.4,<6.0
+django-redis>=5.4,<7.0
 gunicorn>=21.2,<22.0
 # Additional dependencies
 celery>=5.3,<6.0
