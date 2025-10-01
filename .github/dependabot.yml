@@ -1,0 +1,29 @@
+version: 2
+updates:
+  # React frontend
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Django backend (npm deps)
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Admin dashboard
+  - package-ecosystem: "npm"
+    directory: "/admin-dashboard"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Django backend (pip deps)
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
