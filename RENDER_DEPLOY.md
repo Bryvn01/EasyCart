@@ -1,5 +1,16 @@
 # 🚀 Render Deployment Guide for EasyCart
 
+## ⚠️ Important: SSL/TLS Configuration
+
+**Render automatically handles SSL/TLS termination at the edge.** This means:
+- ✅ Your application should serve **plain HTTP** (not HTTPS)
+- ✅ Render provides **free SSL certificates** automatically
+- ❌ Do NOT include SSL certificate files (`.pem`, `.key`, `.crt`) in your application
+- ❌ Do NOT use SSL flags (`--ssl-keyfile`, `--ssl-certfile`, `--certfile`, `--keyfile`) in your start command
+- ✅ All traffic to your app is automatically secured with HTTPS by Render
+
+**If you see `[SSL] record layer failure` errors**, it means your app is configured for SSL when it shouldn't be. Follow the steps in this guide to fix it.
+
 ## Quick Deploy Steps
 
 ### 1. **Setup Render Account**
