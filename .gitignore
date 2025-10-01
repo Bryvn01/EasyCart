@@ -88,3 +88,9 @@ ecommerce_db
 # Coverage reports
 coverage/
 frontend/coverage/
+
+# SSL Certificates (Render handles SSL at the edge)
+*.pem
+*.key
+*.crt
+*.cert
