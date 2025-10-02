@@ -86,8 +86,6 @@ def forgot_password(request):
         # In production, send actual email
         # For now, just return success
         frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
-        print(f"Password reset token for {email}: {hashed_token}")
-        print(f"Reset URL: {frontend_url}/reset-password/{uid}/{hashed_token}/")
 
         return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
