@@ -55,7 +55,7 @@ POST with:
 - **Backend Health**: `https://easycart-backend.onrender.com/api/health`
 - **Admin Panel**: `https://easycart-admin.onrender.com/admin/login`
 - **Seed Database**: `https://easycart-backend.onrender.com/api/seed`
-- **Frontend**: `https://easycart-frontend.onrender.com`
+- **Frontend**: `https://easycart-1-752r.onrender.com`
 
 ## Still Having Issues?
 1. Check Render dashboard logs

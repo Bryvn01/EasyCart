@@ -73,7 +73,7 @@
 ### **Get Your URLs:**
 After deployment:
 - **Backend**: `https://easycart-backend.onrender.com`
-- **Frontend**: `https://easycart-frontend.onrender.com`
+- **Frontend**: `https://easycart-1-752r.onrender.com`
 - **Admin**: `https://easycart-admin.onrender.com`
 
 ### **Update API URLs:**
@@ -94,7 +94,7 @@ curl -X POST https://easycart-backend.onrender.com/api/seed
 - Password: admin123
 
 ### **3. Test Frontend:**
-- Visit: `https://easycart-frontend.onrender.com`
+- Visit: `https://easycart-1-752r.onrender.com`
 - Register account, browse products
 
 ## 🔄 **Auto-Deploy**
