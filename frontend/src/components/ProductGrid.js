@@ -5,15 +5,24 @@ import QuickViewModal from './ui/QuickViewModal';
 
 const ProductGrid = ({ products, onAddToCart, loading }) => {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 xl:gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="bg-white rounded-lg shadow p-4 animate-pulse h-64" />
+          <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden animate-pulse">
+            <div className="bg-gray-200 h-40 w-full"></div>
+            <div className="p-3">
+              <div className="bg-gray-200 h-4 rounded mb-2"></div>
+              <div className="bg-gray-200 h-3 rounded w-3/4 mb-2"></div>
+              <div className="bg-gray-200 h-4 rounded w-1/2"></div>
+            </div>
+          </div>
         ))}
       </div>
     );
   }
+  
   // Show all products - placeholder images are acceptable
   if (!products.length) {
     return (
@@ -34,12 +43,14 @@ const ProductGrid = ({ products, onAddToCart, loading }) => {
       </div>
     );
   }
+  
   return (
     <>
       <Helmet>
         <title>Shop Products | EasyCart</title>
         <meta name="description" content="Browse our wide selection of products at EasyCart. Find the best deals on groceries, electronics, fashion, and more." />
       </Helmet>
+      
       <section aria-label="Product Grid" className="w-full">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 xl:gap-6">
           {products.map(product => (
@@ -51,6 +62,7 @@ const ProductGrid = ({ products, onAddToCart, loading }) => {
             />
           ))}
         </div>
+        
         {quickViewProduct && (
           <QuickViewModal
             product={quickViewProduct}
@@ -62,7 +74,5 @@ const ProductGrid = ({ products, onAddToCart, loading }) => {
     </>
   );
 };
-
-
 
 export default ProductGrid;
