@@ -7,6 +7,7 @@ import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
+import { optimizeImage, imageFallback } from '../utils/images';
 
 import { Helmet } from 'react-helmet-async';
 
@@ -113,7 +114,8 @@ const Homepage = () => {
         <title>EasyCart - Kenya's Leading Online Supermarket</title>
         <meta name="description" content="Shop groceries, electronics, fashion, and more. Fast delivery, best prices, and trusted brands in Kenya." />
       </Helmet>
-      {/* Hero Section */}
+      
+      {/* Enhanced Hero Section with Better Images */}
       <section className="relative flex flex-col md:flex-row items-center justify-between gap-8 py-12 md:py-20 px-6 md:px-12 bg-gradient-to-br from-primary-50 via-blue-50 to-green-50 rounded-2xl shadow-lg mb-8 overflow-hidden">
         <div className="z-10 max-w-xl">
           <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
@@ -132,24 +134,32 @@ const Homepage = () => {
           </div>
           <div className="flex flex-wrap gap-3 md:gap-4">
             <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
-              <span className="text-green-600 font-bold text-xl">✓</span>
+              <img src="/icons/secure-payment.svg" alt="Secure Payment" className="w-5 h-5" onError={(e) => imageFallback(e, 'icon')} />
               <span className="text-sm font-medium text-gray-700">M-Pesa Secure</span>
             </div>
             <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
-              <span className="text-blue-600 font-bold text-xl">⚡</span>
+              <img src="/icons/fast-delivery.svg" alt="Fast Delivery" className="w-5 h-5" onError={(e) => imageFallback(e, 'icon')} />
               <span className="text-sm font-medium text-gray-700">Same-Day Nairobi</span>
             </div>
             <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
-              <span className="text-green-600 font-bold text-xl">🌿</span>
+              <img src="/icons/fresh-guarantee.svg" alt="Fresh Guarantee" className="w-5 h-5" onError={(e) => imageFallback(e, 'icon')} />
               <span className="text-sm font-medium text-gray-700">100% Fresh Guarantee</span>
             </div>
           </div>
         </div>
         <div className="hidden md:block absolute right-0 bottom-0 z-0">
-          <img src="/hero-shopping.svg" alt="Happy Kenyan family shopping online" className="w-96 max-w-xs md:max-w-md lg:max-w-lg opacity-90" loading="lazy" />
+          <img 
+            src="/images/hero-shopping.jpg" 
+            alt="Happy Kenyan family shopping online with EasyCart" 
+            className="w-96 max-w-xs md:max-w-md lg:max-w-lg opacity-90 rounded-lg shadow-xl" 
+            loading="eager"
+            onError={(e) => imageFallback(e, 'hero')}
+          />
         </div>
       </section>
+
       <BannerCarousel />
+      
       {/* Sticky Category Bar */}
       <div className="sticky top-0 z-30 bg-white shadow-sm border-b border-gray-100">
         <CategoryNav
@@ -157,26 +167,31 @@ const Homepage = () => {
           selectedCategory={selectedCategory}
         />
       </div>
+
       {/* Deals Carousel/Section */}
       <section className="my-8">
         <h2 className="text-2xl font-bold mb-4">Today's Deals</h2>
         <ProductGrid products={products.filter(p => p.is_flash_sale).slice(0, 10)} onAddToCart={handleAddToCart} loading={loading} />
       </section>
+
       {/* Full Product Grid */}
       <section className="my-8">
         <h2 className="text-2xl font-bold mb-4">All Products</h2>
         <ProductGrid products={selectedCategory ? products.filter(categorySections[selectedCategory]?.filter || (() => true)) : products} onAddToCart={handleAddToCart} loading={loading} />
       </section>
+
       {/* Top Picks Section */}
       <section className="my-8">
         <h2 className="text-xl font-semibold mb-4">Top Picks</h2>
         <ProductGrid products={products.filter(p => p.is_top_seller).slice(0, 8)} onAddToCart={handleAddToCart} loading={loading} />
       </section>
+
       {/* Essentials Section */}
       <section className="my-8">
         <h2 className="text-xl font-semibold mb-4">Essentials</h2>
         <ProductGrid products={products.filter(p => p.category_name && ['Groceries', 'Baby & Kids', 'Beauty & Personal Care', 'Essentials'].some(cat => p.category_name.includes(cat))).slice(0, 8)} onAddToCart={handleAddToCart} loading={loading} />
       </section>
+
       {/* Popular in Selected Category */}
       {selectedCategory && (
         <section className="my-8">
@@ -184,27 +199,32 @@ const Homepage = () => {
           <ProductGrid products={products.filter(categorySections[selectedCategory]?.filter || (() => true)).slice(0, 8)} onAddToCart={handleAddToCart} loading={loading} />
         </section>
       )}
+
       {/* Optionally render all sections below main one */}
       <div className="hidden md:block">
         {sectionMap.map(renderSection)}
       </div>
-      
-      {/* Payment Methods & Delivery Promise Section */}
+
+      {/* Enhanced Payment Methods & Delivery Promise Section */}
       <section className="my-12 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 md:p-8" aria-label="Payment and Delivery">
         <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">We Accept</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">We Accept</h3>
           <div className="flex flex-wrap justify-center gap-4 items-center">
-            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 font-semibold text-green-700 flex items-center gap-2">
-              <span className="text-2xl">💳</span> M-Pesa
+            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 flex items-center gap-2 hover:shadow-md transition-shadow">
+              <img src="/icons/mpesa-logo.png" alt="M-Pesa" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
+              <span className="font-semibold text-green-700">M-Pesa</span>
             </div>
-            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 font-semibold text-blue-700 flex items-center gap-2">
-              <span className="text-2xl">💳</span> Visa
+            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 flex items-center gap-2 hover:shadow-md transition-shadow">
+              <img src="/icons/visa-logo.png" alt="Visa" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
+              <span className="font-semibold text-blue-700">Visa</span>
             </div>
-            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 font-semibold text-red-700 flex items-center gap-2">
-              <span className="text-2xl">💳</span> Mastercard
+            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 flex items-center gap-2 hover:shadow-md transition-shadow">
+              <img src="/icons/mastercard-logo.png" alt="Mastercard" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
+              <span className="font-semibold text-red-700">Mastercard</span>
             </div>
-            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 font-semibold text-orange-700 flex items-center gap-2">
-              <span className="text-2xl">💳</span> Airtel Money
+            <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 flex items-center gap-2 hover:shadow-md transition-shadow">
+              <img src="/icons/airtel-money-logo.png" alt="Airtel Money" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
+              <span className="font-semibold text-orange-700">Airtel Money</span>
             </div>
           </div>
         </div>
@@ -215,27 +235,27 @@ const Homepage = () => {
           <p className="text-sm text-gray-600">Same-day delivery available for orders placed before 2 PM</p>
         </div>
       </section>
-      
-      {/* Trust badges */}
+
+      {/* Enhanced Trust badges with Icons */}
       <section className="flex flex-wrap gap-4 justify-center my-12" aria-label="Trust Badges">
-        <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 shadow-sm">
-          <span className="text-xl">🏪</span>
-          <span className="text-sm font-medium">Official Store</span>
+        <div className="flex items-center gap-2 bg-white border rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow">
+          <img src="/icons/verified-store.svg" alt="Verified Store" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
+          <span className="text-sm font-medium text-gray-700">Official Store</span>
         </div>
-        <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 shadow-sm">
-          <span className="text-xl">🛡️</span>
-          <span className="text-sm font-medium">Warranty Protected</span>
+        <div className="flex items-center gap-2 bg-white border rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow">
+          <img src="/icons/warranty.svg" alt="Warranty Protected" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
+          <span className="text-sm font-medium text-gray-700">Warranty Protected</span>
         </div>
-        <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 shadow-sm">
-          <span className="text-xl">🚚</span>
-          <span className="text-sm font-medium">Fast Delivery</span>
+        <div className="flex items-center gap-2 bg-white border rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow">
+          <img src="/icons/fast-delivery.svg" alt="Fast Delivery" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
+          <span className="text-sm font-medium text-gray-700">Fast Delivery</span>
         </div>
-        <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 shadow-sm">
-          <span className="text-xl">⭐</span>
-          <span className="text-sm font-medium">5000+ Happy Customers</span>
+        <div className="flex items-center gap-2 bg-white border rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow">
+          <img src="/icons/happy-customers.svg" alt="Happy Customers" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
+          <span className="text-sm font-medium text-gray-700">5000+ Happy Customers</span>
         </div>
       </section>
-      
+
       {/* WhatsApp Support Button */}
       <WhatsAppButton />
     </main>
