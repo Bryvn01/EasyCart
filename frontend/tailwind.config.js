@@ -18,6 +18,8 @@ module.exports = {
           700: '#1d4ed8',
           800: '#1e40af',
           900: '#1e3a8a',
+          DEFAULT: '#2563eb',
+          dark: '#1d4ed8',
         },
         accent: {
           50: '#fdf4ff',
