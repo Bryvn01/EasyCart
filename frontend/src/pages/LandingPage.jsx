@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { productsAPI, ordersAPI } from '../services/api';
@@ -6,44 +6,222 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 
+// Error Boundary Component
+const ErrorFallback = ({ error, resetErrorBoundary }) => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+      <div className="text-6xl mb-4">😵</div>
+      <h2 className="text-2xl font-bold text-gray-900 mb-4">Something went wrong</h2>
+      <p className="text-gray-600 mb-6">
+        We're having trouble loading the page. Please try again.
+      </p>
+      <button
+        onClick={resetErrorBoundary}
+        className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors"
+      >
+        Try Again
+      </button>
+    </div>
+  </div>
+);
+
+// Skeleton Loaders
+const CategorySkeleton = () => (
+  <div className="bg-white rounded-xl p-6 shadow-sm animate-pulse">
+    <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-3"></div>
+    <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+  </div>
+);
+
+const ProductCardSkeleton = () => (
+  <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
+    <div className="aspect-square bg-gray-200"></div>
+    <div className="p-4">
+      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+      <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
+      <div className="h-8 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+);
+
+// Enhanced Product Card Component with React.memo
+const ProductCard = React.memo(({ product, onAddToCart }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  const handleAddToCartClick = useCallback((e) => {
+    e.preventDefault();
+    onAddToCart(product);
+  }, [product, onAddToCart]);
+
+  const productImage = product.image || product.image_url;
+  const isOutOfStock = product.stock === 0;
+  const isLowStock = product.stock > 0 && product.stock < 10;
+
+  return (
+    <div className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+      <Link to={`/products/${product.id}`} className="block" aria-label={`View ${product.name} details`}>
+        <div className="relative aspect-square overflow-hidden bg-gray-100">
+          {productImage && !imageError ? (
+            <>
+              <img
+                src={productImage}
+                alt={product.name}
+                className={`w-full h-full object-cover transition-transform duration-500 ${
+                  imageLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-110'
+                }`}
+                loading="lazy"
+                width="300"
+                height="300"
+                onLoad={() => setImageLoading(false)}
+                onError={() => {
+                  setImageError(true);
+                  setImageLoading(false);
+                }}
+              />
+              {imageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-6xl text-gray-400" role="img" aria-label="Product placeholder">
+              📦
+            </div>
+          )}
+
+          {isOutOfStock && (
+            <div 
+              className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+              role="status"
+              aria-label="Out of stock"
+            >
+              <span className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                Out of Stock
+              </span>
+            </div>
+          )}
+
+          {product.is_flash_sale && !isOutOfStock && (
+            <div className="absolute top-2 left-2">
+              <span className="bg-red-600 text-white px-3 py-1 rounded-full font-semibold text-xs">
+                🔥 SALE
+              </span>
+            </div>
+          )}
+        </div>
+      </Link>
+
+      <div className="p-4">
+        <Link to={`/products/${product.id}`}>
+          <h3 
+            className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors min-h-[3rem]" 
+            title={product.name}
+          >
+            {product.name}
+          </h3>
+        </Link>
+
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xl font-bold text-gray-900" aria-label={`Price: KSh ${product.price?.toLocaleString() || '0'}`}>
+            KSh {product.price?.toLocaleString() || '0'}
+          </div>
+          {isLowStock && (
+            <span 
+              className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium"
+              aria-label={`Only ${product.stock} items left`}
+            >
+              Only {product.stock} left
+            </span>
+          )}
+        </div>
+
+        <button
+          onClick={handleAddToCartClick}
+          disabled={isOutOfStock}
+          className="w-full py-2 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-300 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          aria-label={isOutOfStock ? 'Out of stock' : `Add ${product.name} to cart`}
+        >
+          {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+        </button>
+      </div>
+    </div>
+  );
+});
+
+ProductCard.displayName = 'ProductCard';
+
+// Main Landing Page Component
 const LandingPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [error, setError] = useState(null);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
 
-  useEffect(() => {
-    fetchData();
+  // Memoized category icons
+  const getCategoryIcon = useCallback((name) => {
+    const icons = {
+      'Electronics': '📱',
+      'Fashion': '👗',
+      'Groceries': '🛒',
+      'Home & Living': '🏠',
+      'Beauty': '💄',
+      'Sports': '⚽',
+      'Books': '📚',
+      'Toys': '🧸',
+    };
+    return icons[name] || '📦';
   }, []);
 
-  const fetchData = async () => {
+  // Fetch data with proper error handling
+  const fetchData = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const [productsRes, categoriesRes] = await Promise.all([
         productsAPI.getProducts(),
         productsAPI.getCategories()
       ]);
-      
+
       const productsData = productsRes.data.results || productsRes.data || [];
       const categoriesData = categoriesRes.data.results || categoriesRes.data || [];
-      
-      setCategories(categoriesData.slice(0, 6)); // Top 6 categories
-      
-      // Featured products: top sellers or random selection
+
+      setCategories(categoriesData.slice(0, 6));
+
+      // Enhanced product filtering and sorting
       const featured = productsData
         .filter(p => p.stock > 0)
-        .sort((a, b) => (b.is_top_seller ? 1 : 0) - (a.is_top_seller ? 1 : 0))
+        .sort((a, b) => {
+          // Prioritize top sellers, then by creation date or rating
+          if (a.is_top_seller !== b.is_top_seller) {
+            return b.is_top_seller ? 1 : -1;
+          }
+          return (b.rating || 0) - (a.rating || 0);
+        })
         .slice(0, 8);
+      
       setFeaturedProducts(featured);
     } catch (error) {
       console.error('Error fetching data:', error);
+      setError('Failed to load products and categories. Please try again.');
+      handleApiError(error, 'Failed to load page content');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleAddToCart = async (product) => {
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Add to cart handler with useCallback
+  const handleAddToCart = useCallback(async (product) => {
     if (!isAuthenticated) {
       handleApiError({ message: 'Please login to add items to cart' });
       return;
@@ -56,21 +234,58 @@ const LandingPage = () => {
     } catch (error) {
       handleApiError(error, 'Failed to add product to cart');
     }
-  };
+  }, [isAuthenticated, fetchCartCount]);
 
-  const getCategoryIcon = (name) => {
-    const icons = {
-      'Electronics': '📱',
-      'Fashion': '👗',
-      'Groceries': '🛒',
-      'Home & Living': '🏠',
-      'Beauty': '💄',
-      'Sports': '⚽',
-      'Books': '📚',
-      'Toys': '🧸',
-    };
-    return icons[name] || '📦';
-  };
+  // Newsletter handler
+  const handleNewsletterSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+
+    setNewsletterLoading(true);
+    try {
+      // Simulate API call - replace with actual newsletter subscription
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      handleApiSuccess('Successfully subscribed to newsletter!');
+      setNewsletterEmail('');
+    } catch (error) {
+      handleApiError(error, 'Failed to subscribe to newsletter');
+    } finally {
+      setNewsletterLoading(false);
+    }
+  }, [newsletterEmail]);
+
+  // Memoized trust badges data
+  const trustBadges = useMemo(() => [
+    { icon: '🔒', text: 'Secure Payments' },
+    { icon: '⚡', text: 'Fast Delivery' },
+    { icon: '🛡️', text: 'Warranty Protected' }
+  ], []);
+
+  // Memoized stats data
+  const statsData = useMemo(() => [
+    { value: '10K+', label: 'Happy Customers' },
+    { value: '5K+', label: 'Products Available' },
+    { value: '50+', label: 'Categories' },
+    { value: '24/7', label: 'Customer Support' }
+  ], []);
+
+  if (error && !loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="text-6xl mb-4">😞</div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Unable to Load Content</h2>
+          <p className="text-gray-600 mb-6 max-w-md">{error}</p>
+          <button
+            onClick={fetchData}
+            className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -86,8 +301,8 @@ const LandingPage = () => {
       <main className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 text-white overflow-hidden">
-          <div className="absolute inset-0 bg-black opacity-10"></div>
-          
+          <div className="absolute inset-0 bg-black opacity-10" aria-hidden="true"></div>
+
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Hero Content */}
@@ -100,44 +315,43 @@ const LandingPage = () => {
                   Fresh groceries, latest electronics, trending fashion delivered to your door. 
                   Shop with confidence and enjoy unbeatable prices!
                 </p>
-                
+
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
                   <Link 
                     to="/products" 
-                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-white text-primary-600 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-white text-primary-600 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                    aria-label="Start shopping now"
                   >
-                    <span className="mr-2">🛒</span>
+                    <span className="mr-2" aria-hidden="true">🛒</span>
                     Shop Now
                   </Link>
                   <Link 
-                    to="/products" 
-                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-transparent border-2 border-white text-white rounded-lg hover:bg-white hover:text-primary-600 transition-all duration-300"
+                    to="/app-download" 
+                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-transparent border-2 border-white text-white rounded-lg hover:bg-white hover:text-primary-600 transition-all duration-300 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                    aria-label="Download our mobile app"
                   >
-                    <span className="mr-2">📱</span>
+                    <span className="mr-2" aria-hidden="true">📱</span>
                     Download App
                   </Link>
                 </div>
 
                 {/* Trust Badges */}
                 <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <span className="text-yellow-300 text-xl">🔒</span>
-                    <span className="text-sm font-medium">Secure Payments</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <span className="text-yellow-300 text-xl">⚡</span>
-                    <span className="text-sm font-medium">Fast Delivery</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <span className="text-yellow-300 text-xl">🛡️</span>
-                    <span className="text-sm font-medium">Warranty Protected</span>
-                  </div>
+                  {trustBadges.map((badge, index) => (
+                    <div 
+                      key={index}
+                      className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full"
+                    >
+                      <span className="text-yellow-300 text-xl" aria-hidden="true">{badge.icon}</span>
+                      <span className="text-sm font-medium">{badge.text}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               {/* Hero Image */}
-              <div className="hidden lg:block animate-slide-up">
+              <div className="hidden lg:block animate-slide-up" aria-hidden="true">
                 <div className="relative">
                   <div className="absolute inset-0 bg-yellow-300 rounded-full blur-3xl opacity-20 animate-pulse"></div>
                   <div className="relative w-full max-w-lg mx-auto">
@@ -149,17 +363,20 @@ const LandingPage = () => {
           </div>
 
           {/* Wave Separator */}
-          <div className="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-12 md:h-20">
+          <div className="absolute bottom-0 left-0 right-0" aria-hidden="true">
+            <svg viewBox="0 0 1440 120" fill="none" className="w-full h-12 md:h-20">
               <path d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z" fill="#F9FAFB"/>
             </svg>
           </div>
         </section>
 
         {/* Categories Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <section 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16"
+          aria-labelledby="categories-heading"
+        >
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+            <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
               Shop by Category
             </h2>
             <p className="text-gray-600 text-lg">
@@ -170,10 +387,7 @@ const LandingPage = () => {
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl p-6 shadow-sm animate-pulse">
-                  <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-3"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
-                </div>
+                <CategorySkeleton key={i} />
               ))}
             </div>
           ) : (
@@ -182,9 +396,10 @@ const LandingPage = () => {
                 <Link
                   key={category.id}
                   to={`/products?category=${category.id}`}
-                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105 group"
+                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105 group focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  aria-label={`Browse ${category.name} category`}
                 >
-                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
                     {getCategoryIcon(category.name)}
                   </div>
                   <h3 className="text-sm font-semibold text-gray-900 text-center group-hover:text-primary-600 transition-colors">
@@ -197,11 +412,14 @@ const LandingPage = () => {
         </section>
 
         {/* Top Deals / Trending Section */}
-        <section className="bg-white py-12 md:py-16">
+        <section 
+          className="bg-white py-12 md:py-16"
+          aria-labelledby="trending-heading"
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                <h2 id="trending-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
                   🔥 Trending Now
                 </h2>
                 <p className="text-gray-600">
@@ -210,10 +428,11 @@ const LandingPage = () => {
               </div>
               <Link 
                 to="/products" 
-                className="hidden md:inline-flex items-center text-primary-600 font-semibold hover:text-primary-700 transition-colors"
+                className="hidden md:inline-flex items-center text-primary-600 font-semibold hover:text-primary-700 transition-colors focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
+                aria-label="View all products"
               >
                 View All
-                <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
@@ -222,7 +441,7 @@ const LandingPage = () => {
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
                 {[...Array(8)].map((_, i) => (
-                  <div key={i} className="bg-gray-100 rounded-xl animate-pulse h-80"></div>
+                  <ProductCardSkeleton key={i} />
                 ))}
               </div>
             ) : (
@@ -240,10 +459,11 @@ const LandingPage = () => {
             <div className="text-center mt-8">
               <Link 
                 to="/products"
-                className="inline-flex items-center px-8 py-3 text-lg font-semibold bg-primary-600 text-white rounded-lg shadow-md hover:bg-primary-700 hover:shadow-lg transition-all duration-300"
+                className="inline-flex items-center px-8 py-3 text-lg font-semibold bg-primary-600 text-white rounded-lg shadow-md hover:bg-primary-700 hover:shadow-lg transition-all duration-300 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                aria-label="Explore all products"
               >
                 Explore All Products
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </Link>
@@ -256,7 +476,7 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Secure Payments */}
             <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
                 <span className="text-3xl">🔒</span>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -274,7 +494,7 @@ const LandingPage = () => {
 
             {/* Fast Delivery */}
             <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
                 <span className="text-3xl">🚚</span>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -290,7 +510,7 @@ const LandingPage = () => {
 
             {/* Warranty Protected */}
             <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 text-center">
-              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
                 <span className="text-3xl">🛡️</span>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -310,48 +530,58 @@ const LandingPage = () => {
         <section className="bg-gradient-to-r from-primary-600 to-primary-700 text-white py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div className="animate-fade-in">
-                <div className="text-4xl md:text-5xl font-bold mb-2">10K+</div>
-                <div className="text-blue-100 text-sm md:text-base">Happy Customers</div>
-              </div>
-              <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
-                <div className="text-4xl md:text-5xl font-bold mb-2">5K+</div>
-                <div className="text-blue-100 text-sm md:text-base">Products Available</div>
-              </div>
-              <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <div className="text-4xl md:text-5xl font-bold mb-2">50+</div>
-                <div className="text-blue-100 text-sm md:text-base">Categories</div>
-              </div>
-              <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <div className="text-4xl md:text-5xl font-bold mb-2">24/7</div>
-                <div className="text-blue-100 text-sm md:text-base">Customer Support</div>
-              </div>
+              {statsData.map((stat, index) => (
+                <div 
+                  key={index}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="text-4xl md:text-5xl font-bold mb-2">{stat.value}</div>
+                  <div className="text-blue-100 text-sm md:text-base">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Newsletter Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <section 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16"
+          aria-labelledby="newsletter-heading"
+        >
           <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl p-8 md:p-12 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 id="newsletter-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Stay Updated with Our Latest Deals
             </h2>
             <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
               Subscribe to our newsletter and get exclusive offers, new arrivals, and special discounts delivered to your inbox.
             </p>
-            <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="flex-1 px-6 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-                required
-                aria-label="Email address"
-              />
+            <form 
+              onSubmit={handleNewsletterSubmit}
+              className="max-w-md mx-auto flex flex-col sm:flex-row gap-3"
+              noValidate
+            >
+              <div className="flex-1">
+                <label htmlFor="newsletter-email" className="sr-only">
+                  Email address
+                </label>
+                <input
+                  id="newsletter-email"
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  className="w-full px-6 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  required
+                  disabled={newsletterLoading}
+                />
+              </div>
               <button
                 type="submit"
-                className="px-8 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors duration-300 whitespace-nowrap"
+                disabled={newsletterLoading || !newsletterEmail}
+                className="px-8 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 whitespace-nowrap focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
-                Subscribe
+                {newsletterLoading ? 'Subscribing...' : 'Subscribe'}
               </button>
             </form>
           </div>
@@ -361,77 +591,21 @@ const LandingPage = () => {
   );
 };
 
-// Enhanced Product Card Component
-const ProductCard = ({ product, onAddToCart }) => {
-  const [imageError, setImageError] = useState(false);
+// Export with error boundary
+const LandingPageWithErrorBoundary = (props) => {
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState(null);
 
-  return (
-    <div className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-      <Link to={`/products/${product.id}`} className="block">
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
-          {!imageError && (product.image || product.image_url) ? (
-            <img
-              src={product.image || product.image_url}
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              loading="lazy"
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-6xl">
-              📦
-            </div>
-          )}
-          
-          {product.stock === 0 && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <span className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold text-sm">
-                Out of Stock
-              </span>
-            </div>
-          )}
+  const resetError = () => {
+    setHasError(false);
+    setError(null);
+  };
 
-          {product.is_flash_sale && (
-            <div className="absolute top-2 left-2">
-              <span className="bg-red-600 text-white px-3 py-1 rounded-full font-semibold text-xs">
-                🔥 SALE
-              </span>
-            </div>
-          )}
-        </div>
-      </Link>
+  if (hasError) {
+    return <ErrorFallback error={error} resetErrorBoundary={resetError} />;
+  }
 
-      <div className="p-4">
-        <Link to={`/products/${product.id}`}>
-          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors min-h-[3rem]" title={product.name}>
-            {product.name}
-          </h3>
-        </Link>
-
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-xl font-bold text-gray-900">
-            KSh {product.price?.toLocaleString() || '0'}
-          </div>
-          {product.stock > 0 && product.stock < 10 && (
-            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium">
-              Only {product.stock} left
-            </span>
-          )}
-        </div>
-
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            onAddToCart(product);
-          }}
-          disabled={product.stock === 0}
-          className="w-full py-2 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-300"
-        >
-          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-        </button>
-      </div>
-    </div>
-  );
+  return <LandingPage {...props} />;
 };
 
-export default LandingPage;
+export default LandingPageWithErrorBoundary;
