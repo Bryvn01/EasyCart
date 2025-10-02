@@ -26,6 +26,7 @@ import Wishlist from './pages/Wishlist';
 import AdminProducts from './pages/AdminProducts';
 import AdminDashboard from './pages/AdminDashboard';
 import ProductManager from './components/Admin/ProductManager';
+import NotFound from './pages/NotFound';
 
 function App() {
   usePerformance();
@@ -92,6 +93,7 @@ function App() {
                             <AdminDashboard />
                           </ProtectedRoute>
                         } />
+                        <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Suspense>
                   </main>
