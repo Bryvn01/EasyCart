@@ -1,7 +1,7 @@
 # 🚀 Render Deployment Guide
 
 ## Current Status
-- ✅ Frontend: https://easycart-frontend.onrender.com/ (Working)
+- ✅ Frontend: https://easycart-1-752r.onrender.com/ (Working)
 - ✅ Backend: https://easycart-backend.onrender.com/ (Working)  
 - ✅ Admin: https://easycart-admin.onrender.com/ (Working)
 
@@ -26,7 +26,7 @@
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/easycart?retryWrites=true&w=majority
 JWT_SECRET=<your_jwt_secret>
 NODE_ENV=production
-FRONTEND_URL=https://easycart-frontend.onrender.com
+FRONTEND_URL=https://easycart-1-752r.onrender.com
 ```
 
 ### Step 4: Deploy Frontend (Static Site)  
@@ -76,7 +76,7 @@ curl https://easycart-backend.onrender.com/api/health
 ```
 
 ### Test Frontend
-- Visit: https://easycart-frontend.onrender.com
+- Visit: https://easycart-1-752r.onrender.com
 
 ## Benefits of Render
 
@@ -89,6 +89,6 @@ curl https://easycart-backend.onrender.com/api/health
 
 ## Live URLs
 
-- **Frontend:** https://easycart-frontend.onrender.com  
+- **Frontend:** https://easycart-1-752r.onrender.com  
 - **Backend:** https://easycart-backend.onrender.com  
 - **Admin:** https://easycart-admin.onrender.com
