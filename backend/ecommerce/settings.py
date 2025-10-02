@@ -231,6 +231,10 @@ LOGGING = {
             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
             'style': '{',
         },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
     },
     'handlers': {
         'file': {
@@ -240,13 +244,45 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'console': {
-            'level': 'INFO',
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'error_console': {
+            'level': 'ERROR',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
     },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'error_console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console', 'error_console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'WARNING' if not DEBUG else 'DEBUG',
+            'propagate': False,
+        },
+        'apps.products': {
+            'handlers': ['console', 'error_console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'ecommerce': {
+            'handlers': ['console', 'error_console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
     'root': {
-        'handlers': ['console', 'file'] if not DEBUG else ['console'],
+        'handlers': ['console', 'error_console'],
         'level': 'INFO',
     },
 }

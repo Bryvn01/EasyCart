@@ -1,4 +1,5 @@
 import logging
+import traceback
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError, PermissionDenied
 from rest_framework.views import exception_handler
@@ -15,7 +16,12 @@ class ErrorHandlingMiddleware:
         return response
 
     def process_exception(self, request, exception):
+        # Log with full traceback to console for Render logs visibility
         logger.error(f"Unhandled exception: {exception}", exc_info=True)
+        logger.error(f"Request path: {request.path}")
+        logger.error(f"Request method: {request.method}")
+        logger.error(f"User: {request.user if hasattr(request, 'user') else 'Unknown'}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
         
         if isinstance(exception, ValidationError):
             return JsonResponse({
@@ -32,10 +38,16 @@ class ErrorHandlingMiddleware:
         # Generic error response for production
         return JsonResponse({
             'error': 'Internal server error',
-            'message': 'An unexpected error occurred'
+            'message': 'An unexpected error occurred',
+            'path': request.path
         }, status=500)
 
 def custom_exception_handler(exc, context):
+    # Log exception with full traceback
+    logger.error(f"REST Framework exception: {exc}", exc_info=True)
+    logger.error(f"Context: {context}")
+    logger.error(f"Traceback: {traceback.format_exc()}")
+    
     response = exception_handler(exc, context)
     
     if response is not None:
