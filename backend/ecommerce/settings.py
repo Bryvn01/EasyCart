@@ -18,7 +18,7 @@ else:
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000",
         "https://localhost:3000",
-        "https://easycart-1-752r.onrender.com",
+        "https://easycart-frontend-zge5.onrender.com",
         "https://easycart-admin.onrender.com"
     ]
 
@@ -30,7 +30,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
-    default='localhost,127.0.0.1,easycart-backend.onrender.com,.onrender.com',
+    default='localhost,127.0.0.1,easycart-backend-0u8r.onrender.com,easycart-frontend-zge5.onrender.com,easycart-admin.onrender.com,.onrender.com',
     cast=lambda v: [s.strip() for s in v.split(',')]
 )
 
@@ -184,12 +184,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
 }
-
-CORS_ALLOWED_ORIGINS = config(
-    'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000,http://127.0.0.1:3000,http://localhost:3004,http://127.0.0.1:3004,http://localhost:8000,http://127.0.0.1:8000,https://easycart-1-752r.onrender.com',
-    cast=lambda v: [s.strip() for s in v.split(',')]
-)
 
 CORS_ALLOW_CREDENTIALS = True
 
