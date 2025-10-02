@@ -12,10 +12,10 @@ import { Helmet } from 'react-helmet-async';
 
 const sectionMap = [
   { title: 'Flash Sales', filter: p => p.is_flash_sale },
-  { title: 'Grocery Essentials', filter: p => p.category === 'Groceries' },
-  { title: 'TV Deals', filter: p => p.category?.toLowerCase().includes('tv') },
-  { title: 'Phone Deals', filter: p => p.category?.toLowerCase().includes('phone') },
-  { title: 'Beauty & Baby', filter: p => ['Beauty', 'Baby'].includes(p.category) },
+  { title: 'Grocery Essentials', filter: p => p.category_name === 'Groceries' },
+  { title: 'TV Deals', filter: p => p.category_name?.toLowerCase().includes('tv') || p.category_name?.toLowerCase().includes('electronic') },
+  { title: 'Phone Deals', filter: p => p.category_name?.toLowerCase().includes('phone') || p.category_name?.toLowerCase().includes('electronic') },
+  { title: 'Beauty & Baby', filter: p => p.category_name?.toLowerCase().includes('beauty') || p.category_name?.toLowerCase().includes('baby') },
 ];
 
 const Homepage = () => {
@@ -175,7 +175,7 @@ const Homepage = () => {
       {/* Essentials Section */}
       <section className="my-8">
         <h2 className="text-xl font-semibold mb-4">Essentials</h2>
-        <ProductGrid products={products.filter(p => ['Groceries', 'Baby', 'Beauty'].includes(p.category)).slice(0, 8)} onAddToCart={handleAddToCart} loading={loading} />
+        <ProductGrid products={products.filter(p => p.category_name && ['Groceries', 'Baby & Kids', 'Beauty & Personal Care', 'Essentials'].some(cat => p.category_name.includes(cat))).slice(0, 8)} onAddToCart={handleAddToCart} loading={loading} />
       </section>
       {/* Popular in Selected Category */}
       {selectedCategory && (
