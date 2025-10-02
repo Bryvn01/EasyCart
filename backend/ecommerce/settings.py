@@ -18,7 +18,7 @@ else:
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000",
         "https://localhost:3000",
-        "https://easycart-frontend.onrender.com",
+        "https://easycart-1-752r.onrender.com",
         "https://easycart-admin.onrender.com"
     ]
 
@@ -187,7 +187,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000,http://127.0.0.1:3000,http://localhost:3004,http://127.0.0.1:3004,http://localhost:8000,http://127.0.0.1:8000',
+    default='http://localhost:3000,http://127.0.0.1:3000,http://localhost:3004,http://127.0.0.1:3004,http://localhost:8000,http://127.0.0.1:8000,https://easycart-1-752r.onrender.com',
     cast=lambda v: [s.strip() for s in v.split(',')]
 )
 

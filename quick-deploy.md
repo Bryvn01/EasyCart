@@ -5,7 +5,7 @@
 The application is deployed on Render with automatic builds and HTTPS:
 
 ### Live URLs:
-- ✅ Frontend: https://easycart-frontend.onrender.com/
+- ✅ Frontend: https://easycart-1-752r.onrender.com/
 - ✅ Backend: https://easycart-backend.onrender.com/
 - ✅ Admin: https://easycart-admin.onrender.com/
 
@@ -19,12 +19,12 @@ The application is deployed on Render with automatic builds and HTTPS:
    - Admin: `admin-dashboard`
 
 ### Current Status:
-- ✅ Frontend: https://easycart-frontend.onrender.com/ (Working)
+- ✅ Frontend: https://easycart-1-752r.onrender.com/ (Working)
 - ✅ Backend: https://easycart-backend.onrender.com/ (Working)
 - ✅ Admin: https://easycart-admin.onrender.com/ (Working)
 
 ### Test URLs:
-- Frontend: https://easycart-frontend.onrender.com/
+- Frontend: https://easycart-1-752r.onrender.com/
 - Admin Panel: https://easycart-admin.onrender.com/admin/manage
 - Login: admin@easycart.com / admin123
 

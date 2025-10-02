@@ -10,6 +10,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 from django.conf import settings
 import re
+import os
 from .models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 
@@ -84,8 +85,7 @@ def forgot_password(request):
 
         # In production, send actual email
         # For now, just return success
-        print(f"Password reset token for {email}: {hashed_token}")
-        print(f"Reset URL: http://localhost:3000/reset-password/{uid}/{hashed_token}/")
+        frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 
         return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
