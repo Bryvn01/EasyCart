@@ -13,7 +13,7 @@ import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
 import { usePerformance } from './hooks/usePerformance';
 import { analytics } from './services/analytics';
-import Home from './pages/Home';
+import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -46,7 +46,7 @@ function App() {
                   <main className="flex-1">
                     <Suspense fallback={<Loading size="lg" className="py-20" />}>
                       <Routes>
-                        <Route path="/" element={<Home />} />
+                        <Route path="/" element={<LandingPage />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
