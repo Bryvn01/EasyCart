@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:3001").split(',');
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:3001,https://easycart-1-752r.onrender.com").split(',');
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, curl, etc.)
