@@ -10,7 +10,7 @@
 5. Add Environment Variables:
    - `MONGODB_URI`: `mongodb+srv://easycart:EasyCart2024@cluster0.mongodb.net/easycart`
    - `JWT_SECRET`: `easycart-super-secret-jwt-key-production-2024`
-   - `FRONTEND_URL`: `https://easycart-frontend.onrender.com`
+   - `FRONTEND_URL`: `https://easycart-1-752r.onrender.com`
 6. Deploy
 
 ### Frontend:
@@ -38,7 +38,7 @@
 **Note:** Render automatically deploys on push to main branch. No additional setup required.
 
 **Live URLs:**
-- Frontend: https://easycart-frontend.onrender.com
+- Frontend: https://easycart-1-752r.onrender.com
 - Backend: https://easycart-backend.onrender.com
 - Admin: https://easycart-admin.onrender.com
 
@@ -56,7 +56,7 @@ curl https://easycart-backend.onrender.com/api/products
 ```
 
 ### Test Frontend:
-https://easycart-frontend.onrender.com
+https://easycart-1-752r.onrender.com
 
 ### Test Admin Dashboard:
 - URL: `https://easycart-admin.onrender.com/admin/manage`

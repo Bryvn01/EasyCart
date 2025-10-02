@@ -61,5 +61,5 @@ curl -X POST https://easycart-backend.onrender.com/api/seed
 curl https://easycart-backend.onrender.com/api/health
 
 # Test frontend
-https://easycart-frontend.onrender.com
+https://easycart-1-752r.onrender.com
 ```

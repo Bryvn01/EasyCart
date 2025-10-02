@@ -13,7 +13,7 @@
 - Render provides free SSL certificates for all deployments
 
 **Live URLs:**
-- Frontend: https://easycart-frontend.onrender.com  
+- Frontend: https://easycart-1-752r.onrender.com  
 - Backend: https://easycart-backend.onrender.com
 - Admin Dashboard: https://easycart-admin.onrender.com
 
