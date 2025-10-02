@@ -150,6 +150,12 @@ If you prefer manual setup or render.yaml doesn't work:
    ```
 5. Click "Create Static Site"
 
+**Note**: The frontend includes a `_redirects` file in the `public/` directory that ensures all routes are handled by React Router. This file contains:
+```
+/* /index.html 200
+```
+This is automatically copied to the build directory and tells Render to serve `index.html` for all routes, allowing client-side routing to work correctly.
+
 #### Admin Dashboard Service
 
 1. Click "New +" → "Static Site"
@@ -337,6 +343,25 @@ To access Django admin panel:
 1. Wait 30-60 seconds for initial request
 2. Consider upgrading to paid plan for instant-on
 3. Use external monitoring service to keep service warm
+
+### Direct URL Access Shows "Page Not Found"
+
+**Issue**: Visiting `/products` or other routes directly in the browser shows "Page Not Found" or returns a 404 error
+
+**Explanation**: This is a common issue with Single Page Applications (SPAs) deployed on static hosting. When you visit a direct URL, the server tries to find a static file at that path instead of serving the React app.
+
+**Solution**: The app includes a `_redirects` file that tells Render to serve `index.html` for all routes. This file is located in `frontend/public/_redirects` and contains:
+```
+/* /index.html 200
+```
+
+To verify this is working:
+1. Check that `_redirects` exists in the build output: `frontend/build/_redirects`
+2. Rebuild the frontend if necessary
+3. Ensure the Publish Directory is set to `build` (not `frontend/build`)
+4. Clear browser cache and try again
+
+The app also includes a wildcard route (`*`) in `App.js` that displays a NotFound page for unmatched routes on the client side.
 
 ### Static Files Not Loading
 
