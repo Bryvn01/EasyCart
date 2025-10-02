@@ -7,7 +7,6 @@ import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 
 const LandingPage = () => {
-  const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -29,7 +28,6 @@ const LandingPage = () => {
       const productsData = productsRes.data.results || productsRes.data || [];
       const categoriesData = categoriesRes.data.results || categoriesRes.data || [];
       
-      setProducts(productsData);
       setCategories(categoriesData.slice(0, 6)); // Top 6 categories
       
       // Featured products: top sellers or random selection
@@ -89,7 +87,6 @@ const LandingPage = () => {
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 text-white overflow-hidden">
           <div className="absolute inset-0 bg-black opacity-10"></div>
-          <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
           
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -143,14 +140,9 @@ const LandingPage = () => {
               <div className="hidden lg:block animate-slide-up">
                 <div className="relative">
                   <div className="absolute inset-0 bg-yellow-300 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-                  <img 
-                    src="/images/hero-shopping.png" 
-                    alt="Happy family shopping online" 
-                    className="relative w-full max-w-lg mx-auto drop-shadow-2xl"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
+                  <div className="relative w-full max-w-lg mx-auto">
+                    <div className="text-9xl text-center opacity-30">🛒</div>
+                  </div>
                 </div>
               </div>
             </div>
