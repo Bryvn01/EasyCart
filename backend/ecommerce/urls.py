@@ -27,7 +27,7 @@ def health_check(request):
 urlpatterns = [
     path('', api_root, name='api-root'),
     path('api/health/', health_check, name='health-check'),
-    # TODO: REMOVE THIS ROUTE AFTER TESTING - Temporary Cloudinary test endpoint
+    # TODO: Remove this endpoint after confirming Cloudinary integration.
     path('api/test-cloudinary/', test_cloudinary, name='test-cloudinary'),
     path('admin/', admin.site.urls),
     path('api/auth/', include('apps.accounts.urls')),
