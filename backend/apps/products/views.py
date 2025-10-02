@@ -171,7 +171,7 @@ class ProductListView(generics.ListCreateAPIView):
                 {
                     'error': 'Database connection error',
                     'message': 'Unable to connect to the database. Please try again later.',
-                    'details': str(e) if request.user.is_authenticated and getattr(request.user, 'is_admin', False) else None
+                    'details': None  # Do not expose exception details to external clients
                 },
                 status=status.HTTP_503_SERVICE_UNAVAILABLE
             )
@@ -182,7 +182,7 @@ class ProductListView(generics.ListCreateAPIView):
                 {
                     'error': 'Internal server error',
                     'message': 'An unexpected error occurred while fetching products.',
-                    'details': str(e) if request.user.is_authenticated and getattr(request.user, 'is_admin', False) else None
+                    'details': None  # Do not expose exception details to external clients
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
