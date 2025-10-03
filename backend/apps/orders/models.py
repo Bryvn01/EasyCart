@@ -19,6 +19,8 @@ class Order(models.Model):
         ('airtel', 'Airtel Money'),
         ('tkash', 'T-Kash'),
         ('card', 'Credit/Debit Card'),
+        ('stripe', 'Stripe'),
+        ('paypal', 'PayPal'),
         ('bank', 'Bank Transfer'),
         ('cash', 'Cash on Delivery'),
     ]

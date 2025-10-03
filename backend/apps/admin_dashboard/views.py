@@ -21,6 +21,23 @@ def dashboard_stats(request):
     total_orders = orders_qs.count()
     total_revenue = orders_qs.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     
+    # Payment method breakdown
+    payment_methods = (orders_qs
+                      .values('payment_method')
+                      .annotate(count=Count('id'), revenue=Sum('total_amount'))
+                      .order_by('-count'))
+    
+    # Payment status breakdown
+    payment_status = (orders_qs
+                     .values('payment_status')
+                     .annotate(count=Count('id'))
+                     .order_by('-count'))
+    
+    # Successful payments (completed)
+    completed_payments = orders_qs.filter(payment_status='completed').count()
+    failed_payments = orders_qs.filter(payment_status='failed').count()
+    pending_payments = orders_qs.filter(payment_status='pending').count()
+    
     top_products = (OrderItem.objects
                    .filter(order__created_at__gte=start_date)
                    .values('product__id', 'product__name', 'product__price')
@@ -30,13 +47,18 @@ def dashboard_stats(request):
     recent_orders = (Order.objects
                     .select_related('user')
                     .order_by('-created_at')[:10]
-                    .values('id', 'total_amount', 'status', 'user__email'))
+                    .values('id', 'total_amount', 'status', 'payment_status', 'payment_method', 'user__email', 'created_at'))
     
     active_customers = User.objects.filter(orders__created_at__gte=start_date).distinct().count()
     
     return Response({
         'totalOrders': total_orders,
         'totalRevenue': float(total_revenue),
+        'paymentMethods': list(payment_methods),
+        'paymentStatus': list(payment_status),
+        'completedPayments': completed_payments,
+        'failedPayments': failed_payments,
+        'pendingPayments': pending_payments,
         'topProducts': list(top_products),
         'recentOrders': list(recent_orders),
         'customerStats': {'active': active_customers}
