@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#2563eb"/>
+  
+  <!-- Shopping Cart Icon -->
+  <g transform="translate(102, 128) scale(2.67)">
+    <!-- Cart body -->
+    <path d="M 10 20 L 25 20 L 35 80 L 85 80 L 95 20 L 110 20" 
+          stroke="white" 
+          stroke-width="6" 
+          fill="none" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+    
+    <!-- Cart bottom -->
+    <path d="M 35 80 L 85 80" 
+          stroke="white" 
+          stroke-width="6" 
+          stroke-linecap="round"/>
+    
+    <!-- Wheel 1 -->
+    <circle cx="45" cy="95" r="7" fill="white"/>
+    
+    <!-- Wheel 2 -->
+    <circle cx="75" cy="95" r="7" fill="white"/>
+    
+    <!-- Items in cart -->
+    <rect x="45" y="40" width="15" height="15" fill="white" opacity="0.8" rx="2"/>
+    <rect x="62" y="35" width="15" height="20" fill="white" opacity="0.8" rx="2"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="256" y="435" 
+        font-family="Arial, sans-serif" 
+        font-size="41" 
+        font-weight="bold" 
+        fill="white" 
+        text-anchor="middle">EasyCart</text>
+</svg>
