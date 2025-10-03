@@ -61,6 +61,72 @@ def remove_from_cart(request, item_id):
     cart_item.delete()
     return Response({'message': 'Item removed from cart'})
 
+@api_view(['PATCH'])
+def update_cart_item(request, item_id):
+    cart = get_object_or_404(Cart, user=request.user)
+    # Sanitize item_id to prevent path traversal
+    safe_item_id = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c', '', str(item_id))
+    cart_item = get_object_or_404(CartItem, id=safe_item_id, cart=cart)
+    
+    quantity = request.data.get('quantity')
+    if quantity is None:
+        return Response({'error': 'Quantity is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        quantity = int(quantity)
+        if quantity < 1:
+            return Response({'error': 'Quantity must be at least 1'}, status=status.HTTP_400_BAD_REQUEST)
+        if quantity > 100:
+            return Response({'error': 'Quantity cannot exceed 100'}, status=status.HTTP_400_BAD_REQUEST)
+    except (ValueError, TypeError):
+        return Response({'error': 'Invalid quantity'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Check stock availability
+    if cart_item.product.stock < quantity:
+        return Response(
+            {'error': f'Only {cart_item.product.stock} items available in stock'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    cart_item.quantity = quantity
+    cart_item.save()
+    
+    serializer = CartItemSerializer(cart_item)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def move_to_wishlist(request, item_id):
+    """Move an item from cart to wishlist"""
+    from apps.products.wishlist_models import Wishlist, WishlistItem
+    
+    cart = get_object_or_404(Cart, user=request.user)
+    # Sanitize item_id to prevent path traversal
+    safe_item_id = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c', '', str(item_id))
+    cart_item = get_object_or_404(CartItem, id=safe_item_id, cart=cart)
+    
+    # Get or create wishlist
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    
+    # Check if item already exists in wishlist
+    if WishlistItem.objects.filter(wishlist=wishlist, product=cart_item.product).exists():
+        # Just remove from cart, don't add duplicate to wishlist
+        cart_item.delete()
+        return Response({'message': 'Item already in wishlist, removed from cart'}, status=status.HTTP_200_OK)
+    
+    # Add to wishlist
+    wishlist_item = WishlistItem.objects.create(
+        wishlist=wishlist,
+        product=cart_item.product
+    )
+    
+    # Remove from cart
+    cart_item.delete()
+    
+    return Response({
+        'message': 'Item moved to wishlist successfully',
+        'wishlist_item_id': wishlist_item.id
+    }, status=status.HTTP_200_OK)
+
 @api_view(['POST'])
 def checkout(request):
     cart = get_object_or_404(Cart, user=request.user)

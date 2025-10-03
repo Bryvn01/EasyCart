@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ordersAPI } from '../services/api';
 import { useCart } from '../context/CartContext';
 import PaymentModal from '../components/PaymentModal';
+import { ordersAPI } from '../services/api';
+import toast from 'react-hot-toast';
 
 const Cart = () => {
-  const [cart, setCart] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { cart, loading, fetchCart, updateCartItem, removeFromCart, moveToWishlist } = useCart();
+  const [localLoading, setLocalLoading] = useState(true);
   const [shippingAddress, setShippingAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('mpesa');
@@ -15,44 +16,61 @@ const Cart = () => {
   const [currentOrder, setCurrentOrder] = useState(null);
   
   const navigate = useNavigate();
-  const { fetchCartCount } = useCart();
 
   useEffect(() => {
-    fetchCart();
-  }, []);
+    const loadCart = async () => {
+      try {
+        await fetchCart();
+      } finally {
+        setLocalLoading(false);
+      }
+    };
+    loadCart();
+  }, [fetchCart]);
 
-  const fetchCart = async () => {
+  const handleRemoveFromCart = async (itemId) => {
     try {
-      const response = await ordersAPI.getCart();
-      setCart(response.data);
+      await removeFromCart(itemId);
+      toast.success('Item removed from cart');
     } catch (error) {
-      console.error('Error fetching cart:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error removing from cart:', error);
+      toast.error('Failed to remove item from cart');
     }
   };
 
-  const removeFromCart = async (itemId) => {
+  const handleUpdateQuantity = async (itemId, newQuantity) => {
+    if (newQuantity < 1) return;
+    
     try {
-      await ordersAPI.removeFromCart(itemId);
-      fetchCart();
-      fetchCartCount();
+      await updateCartItem(itemId, newQuantity);
+      toast.success('Cart updated');
     } catch (error) {
-      console.error('Error removing from cart:', error);
+      console.error('Error updating quantity:', error);
+      toast.error(error.response?.data?.error || 'Failed to update quantity');
+    }
+  };
+
+  const handleMoveToWishlist = async (itemId) => {
+    try {
+      await moveToWishlist(itemId);
+      toast.success('Item moved to wishlist');
+    } catch (error) {
+      console.error('Error moving to wishlist:', error);
+      toast.error(error.response?.data?.message || 'Failed to move to wishlist');
     }
   };
 
   const checkout = async () => {
     if (!shippingAddress.trim()) {
-      alert('Please enter shipping address');
+      toast.error('Please enter shipping address');
       return;
     }
     if (!phoneNumber.trim()) {
-      alert('Please enter phone number');
+      toast.error('Please enter phone number');
       return;
     }
     if (!/^\+?[1-9]\d{8,14}$/.test(phoneNumber.trim())) {
-      alert('Please enter a valid phone number');
+      toast.error('Please enter a valid phone number');
       return;
     }
 
@@ -66,25 +84,24 @@ const Cart = () => {
       
       setCurrentOrder(response.data);
       setShowPaymentModal(true);
-      fetchCartCount();
     } catch (error) {
       console.error('Error during checkout:', error);
       const errorMsg = error.response?.data?.error || 'Checkout failed. Please try again.';
-      alert(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setCheckoutLoading(false);
     }
   };
 
   const handlePaymentSuccess = () => {
-    alert('Payment initiated successfully! 🎉');
+    toast.success('Payment initiated successfully! 🎉');
     setCurrentOrder(null);
     setShippingAddress('');
     setPhoneNumber('');
     navigate('/orders');
   };
 
-  if (loading) {
+  if (localLoading || loading) {
     return (
       <div className="container py-16 text-center">
         <div style={{ fontSize: '2rem' }}>⏳</div>
@@ -176,30 +193,101 @@ const Cart = () => {
                     {/* Product Details */}
                     <div style={{ flex: 1 }}>
                       <h3 className="font-semibold mb-1">{item.product.name}</h3>
-                      <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem' }}>
-                        KSh {item.product.price} × {item.quantity}
+                      <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                        KSh {item.product.price} each
                       </p>
+                      
+                      {/* Quantity Controls */}
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.5rem',
+                        marginTop: '0.5rem'
+                      }}>
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                          disabled={item.quantity <= 1}
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            border: '1px solid var(--gray-300)',
+                            background: item.quantity <= 1 ? 'var(--gray-100)' : 'white',
+                            borderRadius: 'var(--radius-sm)',
+                            cursor: item.quantity <= 1 ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1rem',
+                            color: item.quantity <= 1 ? 'var(--gray-400)' : 'var(--gray-700)'
+                          }}
+                        >
+                          −
+                        </button>
+                        <span style={{ 
+                          minWidth: '30px', 
+                          textAlign: 'center',
+                          fontWeight: '500'
+                        }}>
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                          disabled={item.quantity >= item.product.stock}
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            border: '1px solid var(--gray-300)',
+                            background: item.quantity >= item.product.stock ? 'var(--gray-100)' : 'white',
+                            borderRadius: 'var(--radius-sm)',
+                            cursor: item.quantity >= item.product.stock ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1rem',
+                            color: item.quantity >= item.product.stock ? 'var(--gray-400)' : 'var(--gray-700)'
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                     
-                    {/* Price & Remove */}
+                    {/* Price & Actions */}
                     <div style={{ textAlign: 'right' }}>
-                      <div className="font-bold mb-2">
+                      <div className="font-bold mb-2" style={{ fontSize: '1.125rem' }}>
                         KSh {(item.product.price * item.quantity).toFixed(2)}
                       </div>
-                      <button
-                        onClick={() => removeFromCart(item.id)}
-                        style={{
-                          background: 'var(--error)',
-                          color: 'white',
-                          border: 'none',
-                          padding: 'var(--space-1) var(--space-2)',
-                          borderRadius: 'var(--radius-sm)',
-                          fontSize: '0.75rem',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Remove
-                      </button>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <button
+                          onClick={() => handleMoveToWishlist(item.id)}
+                          style={{
+                            background: 'var(--primary)',
+                            color: 'white',
+                            border: 'none',
+                            padding: 'var(--space-1) var(--space-3)',
+                            borderRadius: 'var(--radius-sm)',
+                            fontSize: '0.75rem',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
+                          💛 Wishlist
+                        </button>
+                        <button
+                          onClick={() => handleRemoveFromCart(item.id)}
+                          style={{
+                            background: 'var(--error)',
+                            color: 'white',
+                            border: 'none',
+                            padding: 'var(--space-1) var(--space-3)',
+                            borderRadius: 'var(--radius-sm)',
+                            fontSize: '0.75rem',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
