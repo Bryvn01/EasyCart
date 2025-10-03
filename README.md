@@ -22,6 +22,7 @@ A complete e-commerce solution with React frontend and unified Node.js/Express/M
 - [Admin Dashboard Integration Guide](ADMIN_DASHBOARD_INTEGRATION_GUIDE.md) - Frontend integration
 - [Django Deprecation Notice](DJANGO_DEPRECATION_NOTICE.md) - Migration information
 - [Implementation Summary](IMPLEMENTATION_COMPLETE_SUMMARY.md) - Complete overview
+- [Frontend Error Handling Guide](FRONTEND_ERROR_HANDLING_GUIDE.md) - **NEW!** Troubleshooting and diagnostics
 
 ## 🚀 Features
 
@@ -304,6 +305,23 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 If you have any questions or issues, please open an issue on GitHub.
+
+### 🔍 Troubleshooting
+
+If you're experiencing issues with product/category loading or other errors:
+
+1. Check the [Frontend Error Handling Guide](FRONTEND_ERROR_HANDLING_GUIDE.md) for detailed diagnostics
+2. Review error messages in browser console (F12)
+3. Verify API endpoint configuration
+4. Check backend service status if deployed
+5. Ensure CORS settings are correct
+
+**Common Issues:**
+- **"Network error"** - Check API URL and backend availability
+- **"CORS policy error"** - Verify frontend URL in backend CORS settings
+- **"Server error"** - Check backend logs for details
+
+See [FRONTEND_ERROR_HANDLING_GUIDE.md](FRONTEND_ERROR_HANDLING_GUIDE.md) for complete troubleshooting steps.
 
 ---
 
