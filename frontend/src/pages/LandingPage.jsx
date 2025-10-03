@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { productsAPI, ordersAPI } from '../services/api';
+import { productsAPI, ordersAPI, getApiBaseUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
+import { handleApiError, handleApiSuccess, retryWithBackoff, checkApiHealth, getDetailedErrorMessage } from '../utils/errorHandler';
 
 // Error Boundary Component
 const ErrorFallback = ({ error, resetErrorBoundary }) => (
@@ -158,6 +158,9 @@ const LandingPage = () => {
   const [loading, setLoading] = useState(true);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [error, setError] = useState(null);
+  const [errorDetails, setErrorDetails] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterLoading, setNewsletterLoading] = useState(false);
 
@@ -179,15 +182,31 @@ const LandingPage = () => {
     return icons[name] || '📦';
   }, []);
 
-  // Fetch data with proper error handling
+  // Fetch data with proper error handling and retry logic
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setErrorDetails(null);
+    setIsRetrying(retryCount > 0);
+    
     try {
-      const [productsRes, categoriesRes] = await Promise.all([
-        productsAPI.getProducts(),
-        productsAPI.getCategories()
-      ]);
+      // Check API health first
+      const apiBaseUrl = getApiBaseUrl();
+      const isHealthy = await checkApiHealth(apiBaseUrl);
+      
+      if (!isHealthy && process.env.NODE_ENV === 'development') {
+        console.warn('API health check failed, but continuing with request...');
+      }
+      
+      // Fetch data with retry logic
+      const [productsRes, categoriesRes] = await retryWithBackoff(
+        async () => Promise.all([
+          productsAPI.getProducts(),
+          productsAPI.getCategories()
+        ]),
+        2, // maxRetries
+        1500 // initialDelay in ms
+      );
 
       const productsData = productsRes.data.results || productsRes.data || [];
       const categoriesData = categoriesRes.data.results || categoriesRes.data || [];
@@ -207,14 +226,27 @@ const LandingPage = () => {
         .slice(0, 8);
       
       setFeaturedProducts(featured);
+      setRetryCount(0); // Reset retry count on success
     } catch (error) {
       console.error('Error fetching data:', error);
-      setError('Failed to load products and categories. Please try again.');
-      handleApiError(error, 'Failed to load page content');
+      
+      // Get detailed error information
+      const details = getDetailedErrorMessage(error, 'Failed to load products and categories');
+      setErrorDetails(details);
+      
+      // Set user-facing error message
+      setError(details.userMessage);
+      
+      // Show toast with specific error
+      handleApiError(error, details.userMessage);
+      
+      // Increment retry count
+      setRetryCount(prev => prev + 1);
     } finally {
       setLoading(false);
+      setIsRetrying(false);
     }
-  }, []);
+  }, [retryCount]);
 
   useEffect(() => {
     fetchData();
@@ -271,17 +303,83 @@ const LandingPage = () => {
 
   if (error && !loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="text-6xl mb-4">😞</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="max-w-2xl w-full bg-white rounded-xl shadow-lg p-8 text-center">
+          <div className="text-6xl mb-4">
+            {errorDetails?.type === 'NETWORK' ? '📡' : 
+             errorDetails?.type === 'CORS' ? '🚫' : 
+             errorDetails?.type === 'SERVER' ? '🔧' : '😞'}
+          </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Unable to Load Content</h2>
-          <p className="text-gray-600 mb-6 max-w-md">{error}</p>
-          <button
-            onClick={fetchData}
-            className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            Retry
-          </button>
+          <p className="text-gray-600 mb-2">{error}</p>
+          
+          {/* Technical details for development */}
+          {process.env.NODE_ENV === 'development' && errorDetails && (
+            <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left">
+              <h3 className="font-semibold text-sm text-gray-700 mb-2">Technical Details (dev only):</h3>
+              <div className="text-xs text-gray-600 space-y-1">
+                <p><strong>Error Type:</strong> {errorDetails.type}</p>
+                <p><strong>Can Retry:</strong> {errorDetails.canRetry ? 'Yes' : 'No'}</p>
+                <p><strong>Technical:</strong> {errorDetails.technical}</p>
+                <p><strong>API URL:</strong> {getApiBaseUrl()}</p>
+                <p><strong>Retry Count:</strong> {retryCount}</p>
+              </div>
+            </div>
+          )}
+          
+          {/* Action buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+            <button
+              onClick={fetchData}
+              disabled={isRetrying}
+              className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            >
+              {isRetrying ? 'Retrying...' : retryCount > 0 ? `Try Again (Attempt ${retryCount + 1})` : 'Try Again'}
+            </button>
+            <Link
+              to="/products"
+              className="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Browse Products Anyway
+            </Link>
+          </div>
+          
+          {/* Helpful suggestions based on error type */}
+          {errorDetails && (
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg text-left">
+              <h3 className="font-semibold text-sm text-blue-900 mb-2">What you can do:</h3>
+              <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                {errorDetails.type === 'NETWORK' && (
+                  <>
+                    <li>Check your internet connection</li>
+                    <li>Try disabling VPN or proxy if you're using one</li>
+                    <li>Refresh the page after a few moments</li>
+                  </>
+                )}
+                {errorDetails.type === 'CORS' && (
+                  <>
+                    <li>This appears to be a configuration issue</li>
+                    <li>Please contact support if the problem persists</li>
+                    <li>Try accessing the site in a different browser</li>
+                  </>
+                )}
+                {errorDetails.type === 'SERVER' && (
+                  <>
+                    <li>The server is experiencing issues</li>
+                    <li>Our team has been notified</li>
+                    <li>Please try again in a few minutes</li>
+                  </>
+                )}
+                {errorDetails.type === 'NO_RESPONSE' && (
+                  <>
+                    <li>The server may be temporarily unavailable</li>
+                    <li>Check if you can access other websites</li>
+                    <li>Try again in a few minutes</li>
+                  </>
+                )}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     );
