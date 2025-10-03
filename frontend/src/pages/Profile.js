@@ -152,6 +152,15 @@ const Profile = () => {
                 />
                 <small style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>
                   Email cannot be changed
+                  {profile.email_verified !== undefined && (
+                    <span style={{ 
+                      marginLeft: '0.5rem',
+                      color: profile.email_verified ? '#059669' : '#dc2626',
+                      fontWeight: '500'
+                    }}>
+                      {profile.email_verified ? '✓ Verified' : '✗ Not verified'}
+                    </span>
+                  )}
                 </small>
               </div>
               

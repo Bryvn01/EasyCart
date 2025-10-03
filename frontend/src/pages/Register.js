@@ -44,7 +44,12 @@ const Register = () => {
 
     try {
       await register(formData);
-      navigate('/');
+      // Show success message and redirect
+      navigate('/', { 
+        state: { 
+          message: 'Registration successful! Please check your email to verify your account.' 
+        } 
+      });
     } catch (err) {
       console.error('Registration error:', err);
       const errorMessage = err.response?.data?.message || 

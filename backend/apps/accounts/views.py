@@ -79,14 +79,45 @@ def forgot_password(request):
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         
-        # Hash the token before sending
-        from django.contrib.auth.hashers import make_password
-        hashed_token = make_password(token)
-
-        # In production, send actual email
-        # For now, just return success
         frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+        reset_url = f"{frontend_url}/reset-password?uid={uid}&token={token}"
+        
+        # Send email
+        subject = 'Reset Your Password - EasyCart'
+        message = f'''
+Hello {user.username},
 
+You requested to reset your password for your EasyCart account.
+
+Click the link below to reset your password:
+{reset_url}
+
+This link will expire in 24 hours.
+
+If you didn't request this password reset, please ignore this email.
+
+Best regards,
+The EasyCart Team
+'''
+        
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            # Log the error but don't expose it to the user
+            print(f"Failed to send email: {e}")
+            # In development, return the URL for testing
+            if settings.DEBUG:
+                return Response({
+                    'message': 'Password reset email sent',
+                    'reset_url': reset_url
+                }, status=status.HTTP_200_OK)
+        
         return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         # Don't reveal if email exists or not for security
@@ -133,14 +164,43 @@ def send_verification_email(request):
         frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
         verification_url = f"{frontend_url}/verify-email?uid={uid}&token={token}"
         
-        # In production, send actual email
-        # For now, just return success with the URL for testing
-        # TODO: Implement actual email sending with SendGrid or SMTP
+        # Send email
+        subject = 'Verify Your Email - EasyCart'
+        message = f'''
+Hello {user.username},
+
+Welcome to EasyCart! Please verify your email address to activate your account.
+
+Click the link below to verify your email:
+{verification_url}
+
+This link will expire in 24 hours.
+
+If you didn't create an account with EasyCart, please ignore this email.
+
+Best regards,
+The EasyCart Team
+'''
         
-        return Response({
-            'message': 'Verification email sent',
-            'verification_url': verification_url if settings.DEBUG else None
-        }, status=status.HTTP_200_OK)
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            # Log the error but don't expose it to the user
+            print(f"Failed to send email: {e}")
+            # In development, return the URL for testing
+            if settings.DEBUG:
+                return Response({
+                    'message': 'Verification email sent',
+                    'verification_url': verification_url
+                }, status=status.HTTP_200_OK)
+        
+        return Response({'message': 'Verification email sent'}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         # Don't reveal if email exists or not for security
         return Response({'message': 'Verification email sent'}, status=status.HTTP_200_OK)
