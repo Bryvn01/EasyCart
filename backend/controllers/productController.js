@@ -468,3 +468,19 @@ exports.getOutOfStockProducts = async (req, res) => {
     return sendResponse(res, 500, false, null, error.message);
   }
 };
+
+/**
+ * Get all unique brands
+ * @route GET /api/products/brands
+ */
+exports.getBrands = async (req, res) => {
+  try {
+    const brands = await Product.distinct('brand', { isActive: true });
+    const sortedBrands = brands.filter(Boolean).sort();
+    
+    return sendResponse(res, 200, true, sortedBrands, 'Brands retrieved successfully');
+  } catch (error) {
+    console.error('Error fetching brands:', error);
+    return sendResponse(res, 500, false, null, error.message);
+  }
+};

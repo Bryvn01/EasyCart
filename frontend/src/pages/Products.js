@@ -91,13 +91,9 @@ const Products = () => {
 
   const fetchBrands = async () => {
     try {
-      // Fetch all products and extract unique brands
-      const response = await productsAPI.getProducts({ limit: 1000 });
-      const productsData = response.data.data || response.data.results || response.data;
-      if (Array.isArray(productsData)) {
-        const uniqueBrands = [...new Set(productsData.map(p => p.brand).filter(Boolean))].sort();
-        setBrands(uniqueBrands);
-      }
+      const response = await productsAPI.getBrands();
+      const brandsData = response.data.data || response.data;
+      setBrands(Array.isArray(brandsData) ? brandsData : []);
     } catch (error) {
       console.error('Error fetching brands:', error);
       setBrands([]);
