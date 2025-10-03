@@ -1,33 +1,66 @@
 import React, { useState, useEffect } from 'react';
-import { productsAPI } from '../services/api';
+import { productsAPI, getApiBaseUrl } from '../services/api';
+import { handleApiError, retryWithBackoff, getDetailedErrorMessage, checkApiHealth } from '../utils/errorHandler';
 
 /**
  * ProductList Component
- * Fetches and displays products from the backend API
+ * Fetches and displays products from the backend API with enhanced error handling
  */
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [errorDetails, setErrorDetails] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    setError(null);
+    setErrorDetails(null);
+    setIsRetrying(retryCount > 0);
+    
+    try {
+      // Check API health first
+      const apiBaseUrl = getApiBaseUrl();
+      const isHealthy = await checkApiHealth(apiBaseUrl);
+      
+      if (!isHealthy && process.env.NODE_ENV === 'development') {
+        console.warn('API health check failed, but continuing with request...');
+      }
+      
+      // Fetch products with retry logic
+      const response = await retryWithBackoff(
+        async () => productsAPI.getProducts(),
+        2, // maxRetries
+        1500 // initialDelay in ms
+      );
+      
+      const productsData = response.data.results || response.data;
+      setProducts(Array.isArray(productsData) ? productsData : []);
+      setRetryCount(0); // Reset retry count on success
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      
+      // Get detailed error information
+      const details = getDetailedErrorMessage(err, 'Failed to fetch products');
+      setErrorDetails(details);
+      setError(details.userMessage);
+      
+      // Show toast with specific error
+      handleApiError(err, details.userMessage);
+      
+      // Increment retry count
+      setRetryCount(prev => prev + 1);
+    } finally {
+      setLoading(false);
+      setIsRetrying(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await productsAPI.getProducts();
-        const productsData = response.data.results || response.data;
-        setProducts(Array.isArray(productsData) ? productsData : []);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError(err.message || 'Failed to fetch products');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -41,16 +74,46 @@ const ProductList = () => {
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <div className="text-red-500 text-5xl mb-4">⚠️</div>
+      <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+        <div className="text-red-500 text-5xl mb-4">
+          {errorDetails?.type === 'NETWORK' ? '📡' : 
+           errorDetails?.type === 'CORS' ? '🚫' : 
+           errorDetails?.type === 'SERVER' ? '🔧' : '⚠️'}
+        </div>
         <h3 className="text-xl font-semibold text-red-600 mb-2">Error Loading Products</h3>
-        <p className="text-gray-600">{error}</p>
+        <p className="text-gray-600 mb-4">{error}</p>
+        
+        {/* Technical details for development */}
+        {process.env.NODE_ENV === 'development' && errorDetails && (
+          <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left max-w-md mx-auto">
+            <h4 className="font-semibold text-sm text-gray-700 mb-2">Technical Details (dev only):</h4>
+            <div className="text-xs text-gray-600 space-y-1">
+              <p><strong>Error Type:</strong> {errorDetails.type}</p>
+              <p><strong>Can Retry:</strong> {errorDetails.canRetry ? 'Yes' : 'No'}</p>
+              <p><strong>Technical:</strong> {errorDetails.technical}</p>
+              <p><strong>API URL:</strong> {getApiBaseUrl()}</p>
+            </div>
+          </div>
+        )}
+        
         <button 
-          onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition"
+          onClick={fetchProducts}
+          disabled={isRetrying}
+          className="mt-4 px-6 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark disabled:bg-gray-400 disabled:cursor-not-allowed transition"
         >
-          Try Again
+          {isRetrying ? 'Retrying...' : retryCount > 0 ? `Try Again (Attempt ${retryCount + 1})` : 'Try Again'}
         </button>
+        
+        {/* Helpful suggestions */}
+        {errorDetails && errorDetails.canRetry && (
+          <div className="mt-4 p-3 bg-blue-50 rounded text-left max-w-md mx-auto">
+            <p className="text-xs text-blue-800">
+              {errorDetails.type === 'NETWORK' && 'Check your internet connection and try again.'}
+              {errorDetails.type === 'SERVER' && 'The server is experiencing issues. Please try again in a moment.'}
+              {errorDetails.type === 'NO_RESPONSE' && 'Unable to reach the server. Please check back shortly.'}
+            </p>
+          </div>
+        )}
       </div>
     );
   }

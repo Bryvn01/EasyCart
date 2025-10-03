@@ -2,8 +2,21 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-backend.onrender.com/api';
+
+// Log API configuration in development
+if (process.env.NODE_ENV === 'development') {
+  console.log('API Configuration:', {
+    baseURL: API_BASE_URL,
+    env: process.env.REACT_APP_API_URL || '(using default)',
+  });
+}
+
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 30000, // 30 second timeout
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 // Add JWT token to all requests
@@ -13,18 +26,45 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Log request in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    }
+    
     return config;
   },
   (error) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Request interceptor error:', error);
+    }
     return Promise.reject(error);
   }
 );
 
 // Handle token refresh and errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Log successful response in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`API Response: ${response.config.method?.toUpperCase()} ${response.config.url} - Status: ${response.status}`);
+    }
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
+    
+    // Enhanced error logging in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('API Error:', {
+        url: originalRequest?.url,
+        method: originalRequest?.method,
+        status: error.response?.status,
+        message: error.message,
+        hasResponse: !!error.response,
+        hasRequest: !!error.request,
+      });
+    }
     
     // If token expired, try to refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -44,7 +84,11 @@ api.interceptors.response.use(
           // Refresh failed, logout user
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
-          window.location.href = '/login';
+          
+          // Only redirect if we're not already on login page
+          if (!window.location.pathname.includes('/login')) {
+            window.location.href = '/login';
+          }
           return Promise.reject(refreshError);
         }
       }
@@ -87,13 +131,40 @@ export const authAPI = {
 };
 
 export const productsAPI = {
-  getProducts: (params) => api.get('/products', { params }),
-  getProduct: (id) => api.get(`/products/${id}`),
-  getCategories: () => api.get('/products/categories'),
+  getProducts: (params) => {
+    return api.get('/products', { params })
+      .catch(error => {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch products:', error.message);
+        }
+        throw error;
+      });
+  },
+  getProduct: (id) => {
+    return api.get(`/products/${id}`)
+      .catch(error => {
+        if (process.env.NODE_ENV === 'development') {
+          console.error(`Failed to fetch product ${id}:`, error.message);
+        }
+        throw error;
+      });
+  },
+  getCategories: () => {
+    return api.get('/products/categories')
+      .catch(error => {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch categories:', error.message);
+        }
+        throw error;
+      });
+  },
   createProduct: (data) => api.post('/products', data),
   deleteProduct: (id) => api.delete(`/products/${id}`),
   updateProduct: (id, data) => api.put(`/products/${id}`, data),
 };
+
+// Export API base URL for health checks and debugging
+export const getApiBaseUrl = () => API_BASE_URL;
 
 export const ordersAPI = {
   getOrders: () => api.get('/orders/'),
