@@ -44,7 +44,6 @@ Summary of consolidation effort and recommendations
 | Endpoint | Status | Purpose |
 |----------|--------|---------|
 | `/api/health/` | ✅ | Health check and monitoring |
-| `/api/test-cloudinary/` | ✅ | Cloudinary integration test (temporary) |
 | `/api/products/` | ✅ | Product listing |
 | `/api/products/categories/` | ✅ | Category listing |
 | `/api/products/<id>/` | ✅ | Product details |
@@ -125,9 +124,6 @@ curl https://easycart-backend-0u8r.onrender.com/api/products/
 
 # Categories API
 curl https://easycart-backend-0u8r.onrender.com/api/products/categories/
-
-# Cloudinary test (if CLOUDINARY_URL is set)
-curl https://easycart-backend-0u8r.onrender.com/api/test-cloudinary/
 ```
 
 All endpoints should respond successfully.
@@ -293,7 +289,6 @@ For detailed instructions, see:
 - All backend code is already correct and up to date on main branch
 - The consolidation requires manual actions in Render dashboard
 - No code deployment is needed, only service configuration
-- The test endpoint `/api/test-cloudinary/` can be removed after Cloudinary integration is confirmed
 
 ## Next Steps
 
