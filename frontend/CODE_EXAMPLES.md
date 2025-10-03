@@ -283,7 +283,7 @@ REACT_APP_API_URL=http://localhost:8000/api
 ### For Production
 
 ```bash
-REACT_APP_API_URL=https://easycart-backend-0u8r.onrender.com/api
+REACT_APP_API_URL=https://easycart-backend.onrender.com/api
 ```
 
 ## API Service Reference
