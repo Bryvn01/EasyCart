@@ -4,16 +4,16 @@ const Category = require('../models/Category');
 
 // Fallback categories for when MongoDB is not available
 const fallbackCategories = [
-  { _id: '1', id: '1', name: 'Electronics', description: 'Electronic devices and gadgets', isActive: true },
-  { _id: '2', id: '2', name: 'Fashion', description: 'Clothing and accessories', isActive: true },
-  { _id: '3', id: '3', name: 'Home & Living', description: 'Home decor and furniture', isActive: true },
-  { _id: '4', id: '4', name: 'Food & Beverages', description: 'Food items and drinks', isActive: true },
-  { _id: '5', id: '5', name: 'Health & Beauty', description: 'Health and beauty products', isActive: true },
-  { _id: '6', id: '6', name: 'Sports & Fitness', description: 'Sports equipment and fitness gear', isActive: true },
-  { _id: '7', id: '7', name: 'Groceries', description: 'Daily grocery items', isActive: true },
-  { _id: '8', id: '8', name: 'Beverages', description: 'Drinks and beverages', isActive: true },
-  { _id: '9', id: '9', name: 'Household', description: 'Household cleaning and maintenance', isActive: true },
-  { _id: '10', id: '10', name: 'Personal Care', description: 'Personal hygiene and care products', isActive: true }
+  { _id: '1', id: '1', name: 'Electronics', description: 'Electronic devices and gadgets', image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&q=80', isActive: true },
+  { _id: '2', id: '2', name: 'Fashion', description: 'Clothing and accessories', image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80', isActive: true },
+  { _id: '3', id: '3', name: 'Home & Living', description: 'Home decor and furniture', image: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600&q=80', isActive: true },
+  { _id: '4', id: '4', name: 'Food & Beverages', description: 'Food items and drinks', image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&q=80', isActive: true },
+  { _id: '5', id: '5', name: 'Health & Beauty', description: 'Health and beauty products', image: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=600&q=80', isActive: true },
+  { _id: '6', id: '6', name: 'Sports & Fitness', description: 'Sports equipment and fitness gear', image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&q=80', isActive: true },
+  { _id: '7', id: '7', name: 'Groceries', description: 'Daily grocery items', image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80', isActive: true },
+  { _id: '8', id: '8', name: 'Beverages', description: 'Drinks and beverages', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80', isActive: true },
+  { _id: '9', id: '9', name: 'Household', description: 'Household cleaning and maintenance', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80', isActive: true },
+  { _id: '10', id: '10', name: 'Personal Care', description: 'Personal hygiene and care products', image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=600&q=80', isActive: true }
 ];
 
 // Get all categories
