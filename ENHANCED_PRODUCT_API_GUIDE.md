@@ -35,6 +35,17 @@ GET /api/products
 - `page` - Page number (default: 1)
 - `limit` - Items per page (default: 20)
 - `sort` - Sort field (default: -createdAt)
+  - Available sort options:
+    - `name` - Name A-Z
+    - `-name` - Name Z-A
+    - `price` - Price Low to High
+    - `-price` - Price High to Low
+    - `rating` - Rating Low to High
+    - `-rating` - Rating High to Low (Best Rated)
+    - `createdAt` - Oldest First
+    - `-createdAt` - Newest First (Default)
+    - `stock` - Stock Low to High
+    - `-stock` - Stock High to Low
 
 **Response:**
 ```json
@@ -150,6 +161,20 @@ GET /api/products/inventory/low-stock
 #### Get Out of Stock Products (Public)
 ```http
 GET /api/products/inventory/out-of-stock
+```
+
+#### Get All Brands (Public)
+```http
+GET /api/products/brands
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": ["Apple", "Samsung", "Sony", "Nike"],
+  "message": "Brands retrieved successfully"
+}
 ```
 
 ---
