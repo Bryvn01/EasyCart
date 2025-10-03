@@ -210,11 +210,6 @@ curl https://easycart-backend-0u8r.onrender.com/api/products/
 curl https://easycart-backend-0u8r.onrender.com/api/products/categories/
 
 # Should return JSON array of categories
-
-# Cloudinary test (if CLOUDINARY_URL is set)
-curl https://easycart-backend-0u8r.onrender.com/api/test-cloudinary/
-
-# Should return: {"secure_url": "https://res.cloudinary.com/..."}
 ```
 
 **Record test results:**

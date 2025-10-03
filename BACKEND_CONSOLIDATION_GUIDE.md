@@ -32,7 +32,6 @@ Based on repository documentation and the problem statement, the following backe
 ### Code Status
 
 ✅ **All code is current and correct:**
-- `/api/test-cloudinary/` endpoint: Present and functional
 - `/api/products/categories/` endpoint: Present
 - All product, order, auth, and admin endpoints: Present
 - Main branch: Up to date with all features
@@ -98,7 +97,6 @@ PYTHON_VERSION=3.11.0
 ✅ **Already Verified:**
 - All endpoints are present in the main branch:
   - ✅ `/api/health/` - Health check endpoint
-  - ✅ `/api/test-cloudinary/` - Cloudinary test endpoint (temporary)
   - ✅ `/api/products/` - Product listing
   - ✅ `/api/products/categories/` - Category listing
   - ✅ `/api/products/<id>/` - Product detail
@@ -137,18 +135,6 @@ Expected response:
   "status": "healthy",
   "service": "easycart-backend",
   "version": "1.0.0"
-}
-```
-
-#### Cloudinary Test
-```bash
-curl https://easycart-backend-0u8r.onrender.com/api/test-cloudinary/
-```
-
-Expected response (with CLOUDINARY_URL set):
-```json
-{
-  "secure_url": "https://res.cloudinary.com/your-cloud-name/image/upload/v1234567890/xxxxx.jpg"
 }
 ```
 
