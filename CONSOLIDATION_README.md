@@ -91,7 +91,6 @@ All required endpoints are implemented and functional in the main branch:
 | Admin Dashboard | ✅ | Statistics endpoint |
 | Wishlist | ✅ | Add, remove, check |
 | Reviews | ✅ | List, create, helpful |
-| Cloudinary Test | ✅ | Temporary test endpoint |
 
 **No code changes needed** - everything is ready on the main branch.
 
