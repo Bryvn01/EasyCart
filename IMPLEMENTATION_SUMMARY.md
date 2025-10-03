@@ -44,7 +44,7 @@ All requirements from the problem statement have been addressed:
 ```python
 # Production CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "https://easycart-1-752r.onrender.com",
+    "https://easycart-frontend-zge5.onrender.com",
     "https://easycart-admin.onrender.com"
 ]
 ```
@@ -237,7 +237,7 @@ curl https://easycart-backend.onrender.com/api/products/?search=unga
 ```
 
 ### Frontend Testing
-1. Visit `https://easycart-1-752r.onrender.com`
+1. Visit `https://easycart-frontend-zge5.onrender.com`
 2. Verify products are displayed on homepage
 3. Test search and filtering on /products page
 4. Test add to cart functionality
@@ -279,7 +279,7 @@ curl https://easycart-backend.onrender.com/api/products/?search=unga
    ```
 
 5. **Verify Deployment**:
-   - Frontend: https://easycart-1-752r.onrender.com
+   - Frontend: https://easycart-frontend-zge5.onrender.com
    - Admin: https://easycart-admin.onrender.com
    - API: https://easycart-backend.onrender.com/api/products/
 
