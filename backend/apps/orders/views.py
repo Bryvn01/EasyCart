@@ -14,7 +14,7 @@ import requests
 from .models import Order, Cart, CartItem
 from apps.products.models import Product
 from .serializers import OrderSerializer, CartSerializer, CartItemSerializer
-from .payment_service import MpesaPaymentService, CardPaymentService
+from .payment_service import MpesaPaymentService, CardPaymentService, StripePaymentService, PayPalPaymentService
 
 class OrderListView(generics.ListCreateAPIView):
     serializer_class = OrderSerializer
@@ -77,7 +77,7 @@ def checkout(request):
         return Response({'error': 'Valid shipping address is required'}, status=status.HTTP_400_BAD_REQUEST)
 
     payment_method = request.data.get('payment_method', 'mpesa')
-    if payment_method not in ['mpesa', 'airtel', 'tkash', 'card', 'bank', 'cash']:
+    if payment_method not in ['mpesa', 'airtel', 'tkash', 'card', 'stripe', 'paypal', 'bank', 'cash']:
         return Response({'error': 'Invalid payment method'}, status=status.HTTP_400_BAD_REQUEST)
 
     phone_number = escape(request.data.get('phone_number', '').strip())
@@ -169,6 +169,50 @@ def initiate_payment(request):
         except Exception as e:
             # Handle other unexpected errors
             print(f'Unexpected error processing card payment: {e}')
+            return Response({'success': False, 'message': 'Payment processing failed'},
+                          status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    elif payment_method == 'stripe':
+        stripe_service = StripePaymentService()
+        try:
+            result = stripe_service.initiate_payment(
+                order.total_amount,
+                request.user.email,
+                phone_number,
+                order_id
+            )
+            if result.get('status') == 'success':
+                order.payment_status = 'processing'
+                order.transaction_id = result.get('session_id')
+                order.save()
+                return Response({'success': True, 'payment_url': result.get('checkout_url')})
+            else:
+                return Response({'success': False, 'message': result.get('message', 'Payment initialization failed')},
+                              status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f'Error processing Stripe payment: {e}')
+            return Response({'success': False, 'message': 'Payment processing failed'},
+                          status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    elif payment_method == 'paypal':
+        paypal_service = PayPalPaymentService()
+        try:
+            result = paypal_service.initiate_payment(
+                order.total_amount,
+                request.user.email,
+                phone_number,
+                order_id
+            )
+            if result.get('status') == 'success':
+                order.payment_status = 'processing'
+                order.transaction_id = result.get('order_id')
+                order.save()
+                return Response({'success': True, 'payment_url': result.get('approval_url')})
+            else:
+                return Response({'success': False, 'message': result.get('message', 'Payment initialization failed')},
+                              status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f'Error processing PayPal payment: {e}')
             return Response({'success': False, 'message': 'Payment processing failed'},
                           status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
