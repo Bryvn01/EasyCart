@@ -2,9 +2,24 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import ProductList from '../components/ProductList';
 import * as api from '../services/api';
+import * as errorHandler from '../utils/errorHandler';
 
 // Mock the API module
 jest.mock('../services/api');
+
+// Mock the error handler utilities
+jest.mock('../utils/errorHandler', () => ({
+  handleApiError: jest.fn(),
+  retryWithBackoff: jest.fn((fn) => fn()), // Just execute the function directly in tests
+  getDetailedErrorMessage: jest.fn((error) => ({
+    type: 'UNKNOWN',
+    message: error.message || 'An error occurred',
+    userMessage: error.message || 'An error occurred',
+    technical: error.toString(),
+    canRetry: true
+  })),
+  checkApiHealth: jest.fn(() => Promise.resolve(true)),
+}));
 
 const mockProducts = {
   data: {
@@ -34,6 +49,8 @@ const mockProducts = {
 describe('ProductList Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Mock getApiBaseUrl
+    api.getApiBaseUrl = jest.fn(() => 'https://easycart-backend.onrender.com/api');
   });
 
   test('renders loading state initially', () => {
@@ -103,7 +120,7 @@ describe('ProductList Component', () => {
       expect(screen.getByText('Error Loading Products')).toBeInTheDocument();
     });
     
-    expect(screen.getByText('Try Again')).toBeInTheDocument();
+    expect(screen.getByText(/Try Again/)).toBeInTheDocument();
   });
 
   test('displays product categories', async () => {
