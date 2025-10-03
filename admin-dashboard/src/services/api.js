@@ -52,8 +52,9 @@ export const adminAPI = {
   deleteCategory: (id) => api.delete(`/categories/${id}`),
   
   // Order APIs
-  getOrders: (params) => api.get('/orders', { params }),
-  updateOrderStatus: (id, status) => api.patch(`/orders/${id}`, { status }),
+  getOrders: (params) => api.get('/admin/orders', { params }),
+  getOrder: (id) => api.get(`/admin/orders/${id}`),
+  updateOrderStatus: (id, status) => api.patch(`/admin/orders/${id}/status`, { status }),
   
   // User APIs
   getUsers: (params) => api.get('/users', { params }),

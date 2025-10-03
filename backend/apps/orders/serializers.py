@@ -3,6 +3,7 @@ from .models import Order, OrderItem, Cart, CartItem
 from apps.products.serializers import ProductSerializer
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
     product_name = serializers.CharField(source='product.name', read_only=True)
     
     class Meta:
@@ -11,10 +12,16 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+    user_username = serializers.CharField(source='user.username', read_only=True)
+    items_count = serializers.SerializerMethodField()
     
     class Meta:
         model = Order
         fields = '__all__'
+    
+    def get_items_count(self, obj):
+        return obj.items.count()
 
 class CartItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
