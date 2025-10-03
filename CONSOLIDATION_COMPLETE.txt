@@ -4,6 +4,10 @@
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
+⚠️  NOTE: This is a historical document from backend consolidation.
+    The temporary Cloudinary test endpoint referenced here has since been
+    removed. See VERIFICATION_COMPLETE.txt for cleanup details.
+
 PROJECT: EasyCart Backend Consolidation
 STATUS: ✅ Documentation Complete - Ready for Manual Execution
 DATE: $(date)
