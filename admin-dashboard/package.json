@@ -14,7 +14,7 @@
     "@mui/material": "^7.3.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/x-data-grid": "^6.6.0"
+    "@mui/x-data-grid": "^8.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
