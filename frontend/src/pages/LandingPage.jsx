@@ -28,7 +28,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => (
 // Skeleton Loaders
 const CategorySkeleton = () => (
   <div className="bg-white rounded-xl p-6 shadow-sm animate-pulse">
-    <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-3"></div>
+    <div className="aspect-square bg-gray-200 rounded-lg mx-auto mb-3"></div>
     <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
   </div>
 );
@@ -43,6 +43,57 @@ const ProductCardSkeleton = () => (
     </div>
   </div>
 );
+
+// Category Card Component
+const CategoryCard = React.memo(({ category, getCategoryIcon }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  const categoryImage = category.image;
+  const hasImage = categoryImage && !imageError;
+
+  return (
+    <Link
+      to={`/products?category=${category.id}`}
+      className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105 group focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+      aria-label={`Browse ${category.name} category`}
+    >
+      <div className="relative aspect-square mb-3 overflow-hidden rounded-lg bg-gray-100">
+        {hasImage ? (
+          <>
+            <img
+              src={categoryImage}
+              alt={category.name}
+              className={`w-full h-full object-cover transition-all duration-500 ${
+                imageLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-110'
+              }`}
+              loading="lazy"
+              onLoad={() => setImageLoading(false)}
+              onError={() => {
+                setImageError(true);
+                setImageLoading(false);
+              }}
+            />
+            {imageLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
+            {getCategoryIcon(category.name)}
+          </div>
+        )}
+      </div>
+      <h3 className="text-sm font-semibold text-gray-900 text-center group-hover:text-primary-600 transition-colors">
+        {category.name}
+      </h3>
+    </Link>
+  );
+});
+
+CategoryCard.displayName = 'CategoryCard';
 
 // Enhanced Product Card Component with React.memo
 const ProductCard = React.memo(({ product, onAddToCart }) => {
@@ -491,19 +542,11 @@ const LandingPage = () => {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
               {categories.map((category) => (
-                <Link
+                <CategoryCard
                   key={category.id}
-                  to={`/products?category=${category.id}`}
-                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105 group focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                  aria-label={`Browse ${category.name} category`}
-                >
-                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
-                    {getCategoryIcon(category.name)}
-                  </div>
-                  <h3 className="text-sm font-semibold text-gray-900 text-center group-hover:text-primary-600 transition-colors">
-                    {category.name}
-                  </h3>
-                </Link>
+                  category={category}
+                  getCategoryIcon={getCategoryIcon}
+                />
               ))}
             </div>
           )}
