@@ -11,6 +11,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
+import NetworkStatus from './components/NetworkStatus';
+import InstallPWA from './components/InstallPWA';
 import { usePerformance } from './hooks/usePerformance';
 import { analytics } from './services/analytics';
 import LandingPage from './pages/LandingPage';
@@ -99,6 +101,8 @@ function App() {
                   </main>
                   <Footer />
                   <SupportChat />
+                  <NetworkStatus />
+                  <InstallPWA />
                   <Toaster 
                     position="top-right"
                     toastOptions={{

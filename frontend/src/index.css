@@ -849,3 +849,192 @@ img {
 .object-center {
   object-position: center;
 }
+
+/* ===== PWA AND MOBILE TOUCH ENHANCEMENTS ===== */
+
+/* Touch-friendly tap targets (minimum 44x44px) */
+button,
+.btn,
+a.btn,
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+select {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+}
+
+/* Smooth scrolling for mobile */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Remove tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom tap highlight for interactive elements */
+button:active,
+.btn:active,
+a:active {
+  -webkit-tap-highlight-color: rgba(37, 99, 235, 0.1);
+}
+
+/* Pull-to-refresh disable for PWA */
+body {
+  overscroll-behavior-y: contain;
+}
+
+/* Safe area insets for notched devices (iPhone X+) */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+  
+  .navbar,
+  .footer {
+    padding-left: max(var(--space-4), env(safe-area-inset-left));
+    padding-right: max(var(--space-4), env(safe-area-inset-right));
+  }
+}
+
+/* Improved focus states for keyboard navigation */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* Hide focus ring on mouse interaction, show on keyboard */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Mobile-optimized input fields */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Larger tap targets on mobile */
+  .btn {
+    padding: var(--space-3) var(--space-6);
+    min-height: 48px;
+  }
+  
+  /* Touch-friendly spacing */
+  .product-card {
+    margin-bottom: var(--space-4);
+  }
+  
+  /* Optimize cards for touch */
+  .product-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Landscape orientation optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero-section {
+    min-height: auto;
+    padding: var(--space-8) 0;
+  }
+  
+  .navbar {
+    padding: var(--space-2) var(--space-4);
+  }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  img {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Performance: Reduce animations on low-end devices */
+@media (prefers-reduced-motion: reduce), (update: slow) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* PWA display mode adjustments */
+@media (display-mode: standalone) {
+  body {
+    /* App is installed, adjust UI accordingly */
+    user-select: none; /* Prevent text selection in PWA mode */
+  }
+  
+  a,
+  button,
+  input,
+  textarea {
+    user-select: auto; /* Allow selection in interactive elements */
+  }
+  
+  /* Hide browser-specific elements in standalone mode */
+  .install-pwa-prompt {
+    display: none !important;
+  }
+}
+
+/* Dark mode optimizations for PWA */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-50: #1e293b;
+    --gray-50: #0f172a;
+    --gray-900: #f1f5f9;
+  }
+  
+  body {
+    background-color: var(--gray-50);
+    color: var(--gray-900);
+  }
+}
+
+/* Loading states for slow networks */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--gray-200) 25%,
+    var(--gray-100) 50%,
+    var(--gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Connection-aware image loading */
+@media (prefers-reduced-data: reduce) {
+  img {
+    /* Lower quality on reduced data mode */
+    image-rendering: pixelated;
+  }
+}
