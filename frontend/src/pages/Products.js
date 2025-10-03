@@ -10,11 +10,15 @@ import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [minRating, setMinRating] = useState('');
+  const [inStock, setInStock] = useState('');
   const [loading, setLoading] = useState(true);
   
   const { isAuthenticated } = useAuth();
@@ -43,13 +47,16 @@ const Products = () => {
       try {
         const params = {};
         if (selectedCategory) params.category = selectedCategory;
+        if (selectedBrand) params.brand = selectedBrand;
         if (debouncedSearchTerm) params.search = debouncedSearchTerm;
-        if (sortBy) params.ordering = sortBy;
-        if (priceRange.min) params.price_min = priceRange.min;
-        if (priceRange.max) params.price_max = priceRange.max;
+        if (sortBy) params.sort = sortBy; // Changed from ordering to sort
+        if (priceRange.min) params.min_price = priceRange.min; // Changed from price_min
+        if (priceRange.max) params.max_price = priceRange.max; // Changed from price_max
+        if (minRating) params.rating = minRating;
+        if (inStock) params.inStock = inStock;
         
         const response = await productsAPI.getProducts(params);
-        let productsData = response.data.results || response.data;
+        let productsData = response.data.data || response.data.results || response.data;
         if (Array.isArray(productsData)) {
           productsData = productsData.map(p => ({ ...p, id: p._id || p.id, category: p.category || p.category_name }));
         }
@@ -63,10 +70,11 @@ const Products = () => {
     };
     
     fetchProducts();
-  }, [selectedCategory, debouncedSearchTerm, sortBy, priceRange.min, priceRange.max]);
+  }, [selectedCategory, selectedBrand, debouncedSearchTerm, sortBy, priceRange.min, priceRange.max, minRating, inStock]);
 
   useEffect(() => {
     fetchCategories();
+    fetchBrands();
   }, []);
 
   const fetchCategories = async () => {
@@ -78,6 +86,21 @@ const Products = () => {
     } catch (error) {
       console.error('Error fetching categories:', error);
       setCategories([]);
+    }
+  };
+
+  const fetchBrands = async () => {
+    try {
+      // Fetch all products and extract unique brands
+      const response = await productsAPI.getProducts({ limit: 1000 });
+      const productsData = response.data.data || response.data.results || response.data;
+      if (Array.isArray(productsData)) {
+        const uniqueBrands = [...new Set(productsData.map(p => p.brand).filter(Boolean))].sort();
+        setBrands(uniqueBrands);
+      }
+    } catch (error) {
+      console.error('Error fetching brands:', error);
+      setBrands([]);
     }
   };
 
@@ -128,7 +151,7 @@ const Products = () => {
       </div>
       
       {/* Active Filters Summary */}
-      {(selectedCategory || debouncedSearchTerm || sortBy || priceRange.min || priceRange.max) && (
+      {(selectedCategory || selectedBrand || debouncedSearchTerm || sortBy || priceRange.min || priceRange.max || minRating || inStock) && (
         <div style={{ 
           background: 'var(--primary-50)', 
           padding: 'var(--space-3)', 
@@ -141,17 +164,23 @@ const Products = () => {
           <div style={{ fontSize: '0.875rem', color: 'var(--primary-700)' }}>
             <strong>Active Filters:</strong>
             {selectedCategory && <span> Category: {categories.find(cat => cat.id === selectedCategory)?.name}</span>}
+            {selectedBrand && <span> Brand: {selectedBrand}</span>}
             {debouncedSearchTerm && <span> Search: "{debouncedSearchTerm}"</span>}
             {sortBy && <span> Sort: {sortBy.replace('-', '').replace('_', ' ')}</span>}
             {(priceRange.min || priceRange.max) && <span> Price: KES {priceRange.min || '0'} - {priceRange.max || '∞'}</span>}
+            {minRating && <span> Rating: {minRating}+ ⭐</span>}
+            {inStock && <span> Stock: {inStock === 'true' ? 'In Stock Only' : 'All'}</span>}
           </div>
           <button
             onClick={() => {
               setSelectedCategory('');
+              setSelectedBrand('');
               setSearchTerm('');
               setDebouncedSearchTerm('');
               setSortBy('');
               setPriceRange({ min: '', max: '' });
+              setMinRating('');
+              setInStock('');
             }}
             style={{
               background: 'var(--primary-600)',
@@ -170,13 +199,16 @@ const Products = () => {
       
       {/* Filters */}
       <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
-        <div className="grid grid-cols-5 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)' }}>
+          {/* Search */}
           <div>
             <SearchInput
               onSearch={setSearchTerm}
               placeholder="Search products..."
             />
           </div>
+          
+          {/* Category Filter */}
           <div>
             <select
               className="form-control"
@@ -185,12 +217,30 @@ const Products = () => {
             >
               <option value="">All Categories</option>
               {Array.isArray(categories) && categories.map(category => (
-                <option key={category.id} value={category.id}>
+                <option key={category.id || category._id} value={category.name}>
                   {category.name}
                 </option>
               ))}
             </select>
           </div>
+          
+          {/* Brand Filter */}
+          <div>
+            <select
+              className="form-control"
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+            >
+              <option value="">All Brands</option>
+              {Array.isArray(brands) && brands.map(brand => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Sort By */}
           <div>
             <select
               className="form-control"
@@ -198,14 +248,17 @@ const Products = () => {
               onChange={(e) => setSortBy(e.target.value)}
             >
               <option value="">Sort By</option>
-              <option value="name">Name A-Z</option>
-              <option value="-name">Name Z-A</option>
-              <option value="price">Price Low to High</option>
-              <option value="-price">Price High to Low</option>
-              <option value="-created_at">Newest First</option>
-              <option value="-view_count">Most Popular</option>
+              <option value="-createdAt">Newest First</option>
+              <option value="createdAt">Oldest First</option>
+              <option value="name">Name: A-Z</option>
+              <option value="-name">Name: Z-A</option>
+              <option value="price">Price: Low to High</option>
+              <option value="-price">Price: High to Low</option>
+              <option value="-rating">Highest Rated</option>
             </select>
           </div>
+          
+          {/* Min Price */}
           <div>
             <input
               type="number"
@@ -221,6 +274,8 @@ const Products = () => {
               }}
             />
           </div>
+          
+          {/* Max Price */}
           <div>
             <input
               type="number"
@@ -235,6 +290,33 @@ const Products = () => {
                 }
               }}
             />
+          </div>
+          
+          {/* Rating Filter */}
+          <div>
+            <select
+              className="form-control"
+              value={minRating}
+              onChange={(e) => setMinRating(e.target.value)}
+            >
+              <option value="">All Ratings</option>
+              <option value="4">4+ ⭐ & Above</option>
+              <option value="3">3+ ⭐ & Above</option>
+              <option value="2">2+ ⭐ & Above</option>
+              <option value="1">1+ ⭐ & Above</option>
+            </select>
+          </div>
+          
+          {/* Stock Availability */}
+          <div>
+            <select
+              className="form-control"
+              value={inStock}
+              onChange={(e) => setInStock(e.target.value)}
+            >
+              <option value="">All Products</option>
+              <option value="true">In Stock Only</option>
+            </select>
           </div>
         </div>
       </div>
@@ -314,6 +396,29 @@ const Products = () => {
               }}>
                 {product.name}
               </h3>
+              
+              {/* Rating Display */}
+              {product.rating && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-1)',
+                  marginBottom: 'var(--space-2)',
+                  fontSize: '0.875rem'
+                }}>
+                  <span style={{ color: '#FFA500' }}>
+                    {'⭐'.repeat(Math.round(product.rating))}
+                  </span>
+                  <span style={{ color: 'var(--gray-600)' }}>
+                    ({product.rating.toFixed(1)})
+                  </span>
+                  {product.reviewCount > 0 && (
+                    <span style={{ color: 'var(--gray-500)', fontSize: '0.75rem' }}>
+                      {product.reviewCount} reviews
+                    </span>
+                  )}
+                </div>
+              )}
               
               <p style={{
                 color: 'var(--gray-600)',
