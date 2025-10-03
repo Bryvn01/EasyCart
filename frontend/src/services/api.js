@@ -84,6 +84,9 @@ export const authAPI = {
   updateProfile: (data) => api.put('/auth/profile', data),
   forgotPassword: (data) => api.post('/auth/forgot-password', data),
   resetPassword: (data) => api.post('/auth/reset-password', data),
+  sendVerificationEmail: (data) => api.post('/auth/send-verification-email', data),
+  verifyEmail: (data) => api.post('/auth/verify-email', data),
+  changePassword: (data) => api.post('/auth/change-password', data),
 };
 
 export const productsAPI = {

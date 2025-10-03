@@ -9,9 +9,17 @@ const Profile = () => {
     phone: '',
     address: ''
   });
+  const [passwordData, setPasswordData] = useState({
+    old_password: '',
+    new_password: '',
+    confirm_password: ''
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
   const [message, setMessage] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState('');
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   
   // const { user } = useAuth();
 
@@ -52,6 +60,54 @@ const Profile = () => {
     }));
   };
 
+  const handlePasswordChange = (e) => {
+    setPasswordData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    setChangingPassword(true);
+    setPasswordMessage('');
+
+    // Validate passwords match
+    if (passwordData.new_password !== passwordData.confirm_password) {
+      setPasswordMessage('New passwords do not match');
+      setChangingPassword(false);
+      return;
+    }
+
+    // Validate password length
+    if (passwordData.new_password.length < 8) {
+      setPasswordMessage('Password must be at least 8 characters long');
+      setChangingPassword(false);
+      return;
+    }
+
+    try {
+      await authAPI.changePassword({
+        old_password: passwordData.old_password,
+        new_password: passwordData.new_password
+      });
+      setPasswordMessage('Password changed successfully!');
+      setPasswordData({
+        old_password: '',
+        new_password: '',
+        confirm_password: ''
+      });
+      setTimeout(() => {
+        setShowPasswordForm(false);
+        setPasswordMessage('');
+      }, 2000);
+    } catch (error) {
+      setPasswordMessage(error.response?.data?.error || 'Failed to change password');
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="container py-16 text-center">
@@ -66,8 +122,10 @@ const Profile = () => {
       <div style={{ maxWidth: '600px', margin: '0 auto' }}>
         <h1 className="text-3xl font-bold mb-8">My Profile</h1>
         
-        <div className="card">
+        {/* Profile Information Card */}
+        <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
           <div style={{ padding: 'var(--space-6)' }}>
+            <h2 className="text-xl font-bold mb-4">Profile Information</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label className="form-label">Username</label>
@@ -90,7 +148,11 @@ const Profile = () => {
                   value={profile.email}
                   onChange={handleChange}
                   required
+                  disabled
                 />
+                <small style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>
+                  Email cannot be changed
+                </small>
               </div>
               
               <div className="form-group">
@@ -138,6 +200,105 @@ const Profile = () => {
                 {saving ? 'Saving...' : 'Update Profile'}
               </button>
             </form>
+          </div>
+        </div>
+        
+        {/* Password Change Card */}
+        <div className="card">
+          <div style={{ padding: 'var(--space-6)' }}>
+            <h2 className="text-xl font-bold mb-4">Change Password</h2>
+            
+            {!showPasswordForm ? (
+              <button
+                onClick={() => setShowPasswordForm(true)}
+                className="btn btn-secondary"
+                style={{ width: '100%' }}
+              >
+                Change Password
+              </button>
+            ) : (
+              <form onSubmit={handlePasswordSubmit}>
+                <div className="form-group">
+                  <label className="form-label">Current Password</label>
+                  <input
+                    type="password"
+                    name="old_password"
+                    className="form-control"
+                    value={passwordData.old_password}
+                    onChange={handlePasswordChange}
+                    required
+                    placeholder="Enter current password"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label className="form-label">New Password</label>
+                  <input
+                    type="password"
+                    name="new_password"
+                    className="form-control"
+                    value={passwordData.new_password}
+                    onChange={handlePasswordChange}
+                    required
+                    minLength={8}
+                    placeholder="Enter new password (min 8 characters)"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label className="form-label">Confirm New Password</label>
+                  <input
+                    type="password"
+                    name="confirm_password"
+                    className="form-control"
+                    value={passwordData.confirm_password}
+                    onChange={handlePasswordChange}
+                    required
+                    minLength={8}
+                    placeholder="Confirm new password"
+                  />
+                </div>
+                
+                {passwordMessage && (
+                  <div style={{ 
+                    padding: 'var(--space-3)',
+                    borderRadius: 'var(--radius-md)',
+                    marginBottom: 'var(--space-4)',
+                    backgroundColor: passwordMessage.includes('success') ? '#d1fae5' : '#fee2e2',
+                    color: passwordMessage.includes('success') ? '#065f46' : '#991b1b'
+                  }}>
+                    {passwordMessage}
+                  </div>
+                )}
+                
+                <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPasswordForm(false);
+                      setPasswordData({
+                        old_password: '',
+                        new_password: '',
+                        confirm_password: ''
+                      });
+                      setPasswordMessage('');
+                    }}
+                    className="btn btn-secondary"
+                    style={{ flex: 1 }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={changingPassword}
+                    style={{ flex: 1 }}
+                  >
+                    {changingPassword ? 'Changing...' : 'Change Password'}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       </div>

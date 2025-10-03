@@ -114,3 +114,71 @@ def reset_password(request):
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
     except (User.DoesNotExist, ValueError):
         return Response({'error': 'Invalid reset link'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def send_verification_email(request):
+    email = request.data.get('email')
+    if not email:
+        return Response({'email': ['Email is required']}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.get(email=email)
+        if user.email_verified:
+            return Response({'message': 'Email is already verified'}, status=status.HTTP_200_OK)
+        
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        
+        frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+        verification_url = f"{frontend_url}/verify-email?uid={uid}&token={token}"
+        
+        # In production, send actual email
+        # For now, just return success with the URL for testing
+        # TODO: Implement actual email sending with SendGrid or SMTP
+        
+        return Response({
+            'message': 'Verification email sent',
+            'verification_url': verification_url if settings.DEBUG else None
+        }, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        # Don't reveal if email exists or not for security
+        return Response({'message': 'Verification email sent'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_email(request):
+    uid = request.data.get('uid')
+    token = request.data.get('token')
+    
+    if not all([uid, token]):
+        return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user_id = force_str(urlsafe_base64_decode(uid))
+        user = User.objects.get(pk=user_id)
+        
+        if default_token_generator.check_token(user, token):
+            user.email_verified = True
+            user.save()
+            return Response({'message': 'Email verified successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid or expired verification link'}, status=status.HTTP_400_BAD_REQUEST)
+    except (User.DoesNotExist, ValueError):
+        return Response({'error': 'Invalid verification link'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def change_password(request):
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+    
+    if not all([old_password, new_password]):
+        return Response({'error': 'Both old and new passwords are required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not request.user.check_password(old_password):
+        return Response({'error': 'Current password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    request.user.set_password(new_password)
+    request.user.save()
+    
+    return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
