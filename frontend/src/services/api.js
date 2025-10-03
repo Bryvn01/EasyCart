@@ -150,7 +150,7 @@ export const productsAPI = {
       });
   },
   getCategories: () => {
-    return api.get('/products/categories')
+    return api.get('/categories')
       .catch(error => {
         if (process.env.NODE_ENV === 'development') {
           console.error('Failed to fetch categories:', error.message);
