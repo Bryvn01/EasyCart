@@ -60,6 +60,12 @@ const mockCategories = {
   ]
 };
 
+const mockBrands = {
+  data: {
+    data: ['Test Brand', 'Test Brand 2', 'Another Brand']
+  }
+};
+
 const renderWithProviders = (component) => {
   return render(
     <BrowserRouter>
@@ -83,6 +89,7 @@ describe('Products Page', () => {
     // Setup API mocks
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
     api.productsAPI.getCategories.mockResolvedValue(mockCategories);
+    api.productsAPI.getBrands.mockResolvedValue(mockBrands);
     
     // Mock auth API to prevent AuthProvider from making API calls
     api.authAPI.getProfile.mockRejectedValue(new Error('Not authenticated'));
@@ -102,6 +109,7 @@ describe('Products Page', () => {
     // Verify API calls were made
     expect(api.productsAPI.getProducts).toHaveBeenCalled();
     expect(api.productsAPI.getCategories).toHaveBeenCalled();
+    expect(api.productsAPI.getBrands).toHaveBeenCalled();
     
     // Verify multiple products are rendered
     expect(screen.getByText('Test Product')).toBeInTheDocument();
@@ -112,6 +120,7 @@ describe('Products Page', () => {
     // Make API calls take longer to resolve
     api.productsAPI.getProducts.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(mockProducts), 100)));
     api.productsAPI.getCategories.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(mockCategories), 100)));
+    api.productsAPI.getBrands.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(mockBrands), 100)));
     
     renderWithProviders(<Products />);
     
@@ -167,12 +176,72 @@ describe('Products Page', () => {
     
     // Find and use category dropdown
     const categorySelect = screen.getByDisplayValue('All Categories');
-    fireEvent.change(categorySelect, { target: { value: '1' } });
+    fireEvent.change(categorySelect, { target: { value: 'Electronics' } });
     
     // Wait for API call with category filter
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(expect.objectContaining({
-        category: '1'
+        category: 'Electronics'
+      }));
+    });
+  });
+
+  test('filters products by brand', async () => {
+    renderWithProviders(<Products />);
+    
+    // Wait for component to load
+    await waitFor(() => {
+      expect(screen.getByText('Test Product')).toBeInTheDocument();
+    });
+    
+    // Find and use brand dropdown
+    const brandSelect = screen.getByDisplayValue('All Brands');
+    fireEvent.change(brandSelect, { target: { value: 'Test Brand' } });
+    
+    // Wait for API call with brand filter
+    await waitFor(() => {
+      expect(api.productsAPI.getProducts).toHaveBeenCalledWith(expect.objectContaining({
+        brand: 'Test Brand'
+      }));
+    });
+  });
+
+  test('filters products by rating', async () => {
+    renderWithProviders(<Products />);
+    
+    // Wait for component to load
+    await waitFor(() => {
+      expect(screen.getByText('Test Product')).toBeInTheDocument();
+    });
+    
+    // Find and use rating dropdown
+    const ratingSelect = screen.getByDisplayValue('All Ratings');
+    fireEvent.change(ratingSelect, { target: { value: '4' } });
+    
+    // Wait for API call with rating filter
+    await waitFor(() => {
+      expect(api.productsAPI.getProducts).toHaveBeenCalledWith(expect.objectContaining({
+        rating: '4'
+      }));
+    });
+  });
+
+  test('filters products by stock availability', async () => {
+    renderWithProviders(<Products />);
+    
+    // Wait for component to load
+    await waitFor(() => {
+      expect(screen.getByText('Test Product')).toBeInTheDocument();
+    });
+    
+    // Find and use stock availability dropdown
+    const stockSelect = screen.getByDisplayValue('All Products');
+    fireEvent.change(stockSelect, { target: { value: 'true' } });
+    
+    // Wait for API call with inStock filter
+    await waitFor(() => {
+      expect(api.productsAPI.getProducts).toHaveBeenCalledWith(expect.objectContaining({
+        inStock: 'true'
       }));
     });
   });
