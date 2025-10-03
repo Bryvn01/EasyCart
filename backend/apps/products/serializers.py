@@ -15,10 +15,20 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
+    rating = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = '__all__'
+
+    def get_rating(self, obj):
+        """Get average rating for the product"""
+        return round(obj.average_rating, 1) if obj.average_rating else 0
+
+    def get_review_count(self, obj):
+        """Get total number of reviews for the product"""
+        return obj.review_count
 
     def validate_name(self, value):
         if not value or not value.strip():
