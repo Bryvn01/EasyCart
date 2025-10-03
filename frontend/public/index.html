@@ -2,13 +2,52 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="E-Commerce Web Application" />
-    <title>Easycart - Your Online Supermarket</title>
+    
+    <!-- Viewport Configuration -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
+    
+    <!-- PWA Configuration -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="description" content="Shop groceries online with EasyCart. Fast delivery, fresh products, and great prices." />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="EasyCart" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/images/icons/icon-192.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    
+    <!-- Preconnect to API domains for better performance -->
+    <link rel="preconnect" href="https://app.posthog.com" />
+    <link rel="dns-prefetch" href="https://app.posthog.com" />
+    
+    <!-- Title -->
+    <title>EasyCart - Your Online Supermarket</title>
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="EasyCart - Your Online Supermarket" />
+    <meta property="og:description" content="Shop groceries online with EasyCart. Fast delivery, fresh products, and great prices." />
+    <meta property="og:image" content="%PUBLIC_URL%/images/icons/icon-512.png" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EasyCart - Your Online Supermarket" />
+    <meta name="twitter:description" content="Shop groceries online with EasyCart. Fast delivery, fresh products, and great prices." />
+    
+    <!-- Performance hints -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <div style="padding: 20px; text-align: center; font-family: sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>You need to enable JavaScript to run this app.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
   </body>
 </html>

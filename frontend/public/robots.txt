@@ -1,0 +1,8 @@
+# robots.txt for EasyCart
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://easycart-frontend.onrender.com/sitemap.xml
