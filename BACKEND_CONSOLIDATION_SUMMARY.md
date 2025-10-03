@@ -64,10 +64,6 @@ curl https://easycart-backend-0u8r.onrender.com/api/products/
 # Categories
 curl https://easycart-backend-0u8r.onrender.com/api/products/categories/
 # Expected: Category list JSON
-
-# Cloudinary (optional, if CLOUDINARY_URL set)
-curl https://easycart-backend-0u8r.onrender.com/api/test-cloudinary/
-# Expected: {"secure_url": "https://res.cloudinary.com/..."}
 ```
 
 ### Post-Consolidation
@@ -121,7 +117,6 @@ All these endpoints are present and functional in the main branch:
 | Category | Endpoints | Status |
 |----------|-----------|--------|
 | **Health** | `/api/health/` | ✅ |
-| **Testing** | `/api/test-cloudinary/` | ✅ (temporary) |
 | **Products** | `/api/products/` | ✅ |
 | | `/api/products/<id>/` | ✅ |
 | | `/api/products/categories/` | ✅ |
