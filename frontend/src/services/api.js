@@ -144,7 +144,7 @@ export const productsAPI = {
     return api.get(`/products/${id}`)
       .catch(error => {
         if (process.env.NODE_ENV === 'development') {
-          console.error(`Failed to fetch product ${id}:`, error.message);
+          console.error('Failed to fetch product:', id, error.message);
         }
         throw error;
       });
