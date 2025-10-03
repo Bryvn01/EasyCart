@@ -85,7 +85,7 @@ const NetworkStatus = () => {
             : 'You are offline. Some features may be limited.'}
         </span>
       </div>
-      <style jsx>{`
+      <style>{`
         @keyframes slideInRight {
           from {
             transform: translateX(100%);

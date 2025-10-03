@@ -219,7 +219,7 @@ const InstallPWA = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes slideUp {
           from {
             transform: translate(-50%, 100px);
