@@ -11,6 +11,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import NetworkStatus from './components/NetworkStatus';
 import { usePerformance } from './hooks/usePerformance';
 import { analytics } from './services/analytics';
 import LandingPage from './pages/LandingPage';
@@ -43,6 +45,7 @@ function App() {
             <ThemeProvider>
               <Router>
                 <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+                  <NetworkStatus />
                   <Navbar />
                   <main className="flex-1">
                     <Suspense fallback={<Loading size="lg" className="py-20" />}>
@@ -99,6 +102,7 @@ function App() {
                   </main>
                   <Footer />
                   <SupportChat />
+                  <PWAInstallPrompt />
                   <Toaster 
                     position="top-right"
                     toastOptions={{
