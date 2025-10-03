@@ -56,6 +56,57 @@ def remove_from_wishlist(request, item_id):
     
     return Response({'message': 'Item removed from wishlist'}, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def move_to_cart(request, item_id):
+    """Move an item from wishlist to cart"""
+    from apps.orders.models import Cart, CartItem
+    
+    wishlist = get_object_or_404(Wishlist, user=request.user)
+    # Sanitize item_id to prevent path traversal
+    safe_item_id = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c', '', escape(str(item_id)))
+    wishlist_item = get_object_or_404(WishlistItem, id=safe_item_id, wishlist=wishlist)
+    
+    # Get or create cart
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    
+    # Get quantity from request or default to 1
+    quantity = request.data.get('quantity', 1)
+    try:
+        quantity = int(quantity)
+        if quantity < 1:
+            quantity = 1
+        if quantity > 100:
+            quantity = 100
+    except (ValueError, TypeError):
+        quantity = 1
+    
+    # Check stock availability
+    if wishlist_item.product.stock < quantity:
+        return Response(
+            {'error': f'Only {wishlist_item.product.stock} items available in stock'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Add to cart
+    cart_item, cart_created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=wishlist_item.product,
+        defaults={'quantity': quantity}
+    )
+    
+    if not cart_created:
+        cart_item.quantity += quantity
+        cart_item.save()
+    
+    # Remove from wishlist
+    wishlist_item.delete()
+    
+    return Response({
+        'message': 'Item moved to cart successfully',
+        'cart_item_id': cart_item.id
+    }, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def check_wishlist_status(request, product_id):

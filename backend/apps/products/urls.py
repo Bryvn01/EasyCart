@@ -12,6 +12,7 @@ urlpatterns = [
     path('wishlist/', wishlist_views.WishlistView.as_view(), name='wishlist-detail'),
     path('wishlist/add/', wishlist_views.add_to_wishlist, name='wishlist-add'),
     path('wishlist/remove/<int:item_id>/', wishlist_views.remove_from_wishlist, name='wishlist-remove'),
+    path('wishlist/move-to-cart/<int:item_id>/', wishlist_views.move_to_cart, name='move-to-cart'),
     path('wishlist/check/<int:product_id>/', wishlist_views.check_wishlist_status, name='wishlist-check'),
 
     # Review endpoints

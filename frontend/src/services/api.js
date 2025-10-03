@@ -101,6 +101,8 @@ export const ordersAPI = {
   getCart: () => api.get('/orders/cart/'),
   addToCart: (data) => api.post('/orders/cart/add/', data),
   removeFromCart: (itemId) => api.delete(`/orders/cart/remove/${itemId}/`),
+  updateCartItem: (itemId, quantity) => api.patch(`/orders/cart/update/${itemId}/`, { quantity }),
+  moveToWishlist: (itemId) => api.post(`/orders/cart/move-to-wishlist/${itemId}/`),
   checkout: (data) => api.post('/orders/checkout/', data),
   initiatePayment: (data) => api.post('/orders/payment/initiate/', data),
   getPaymentStatus: (orderId) => api.get(`/orders/payment/status/${orderId}/`),
@@ -111,6 +113,7 @@ export const wishlistAPI = {
   getWishlist: () => api.get('/products/wishlist/'),
   addToWishlist: (productId) => api.post('/products/wishlist/add/', { product_id: productId }),
   removeFromWishlist: (itemId) => api.delete(`/products/wishlist/remove/${itemId}/`),
+  moveToCart: (itemId, quantity = 1) => api.post(`/products/wishlist/move-to-cart/${itemId}/`, { quantity }),
   checkWishlistStatus: (productId) => api.get(`/products/wishlist/check/${productId}/`),
 };
 
