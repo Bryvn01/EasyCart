@@ -19,13 +19,13 @@ SKIP_PREFLIGHT_CHECK=true
 
 # API Configuration
 # For local development: http://localhost:8000/api
-# For production: https://easycart-backend-0u8r.onrender.com/api
+# For production: https://easycart-backend.onrender.com/api
 REACT_APP_API_URL=http://localhost:8000/api
 ```
 
 **Important:** Change `REACT_APP_API_URL` based on your environment:
 - **Local Development:** `http://localhost:8000/api`
-- **Production:** `https://easycart-backend-0u8r.onrender.com/api`
+- **Production:** `https://easycart-backend.onrender.com/api`
 
 ## Components
 
