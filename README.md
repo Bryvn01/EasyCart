@@ -86,6 +86,7 @@ npm install
 # Configure environment
 cp .env.example .env
 # Edit .env with your MongoDB URI, JWT secret, and Cloudinary credentials
+# Set CLOUDINARY_URL for image uploads (get from your Cloudinary dashboard)
 
 # Start the server
 npm start
@@ -180,9 +181,13 @@ MONGO_URI=mongodb://localhost:27017/easycart
 JWT_SECRET=<your_jwt_secret>
 
 # Cloudinary (for image uploads)
-CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
-CLOUDINARY_API_KEY=<your_cloudinary_api_key>
-CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
+# Option 1: Use CLOUDINARY_URL (recommended for deployment)
+CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
+
+# Option 2: Use individual credentials (alternative)
+# CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
+# CLOUDINARY_API_KEY=<your_cloudinary_api_key>
+# CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
 
 # CORS
 FRONTEND_URL=http://localhost:3000
@@ -259,7 +264,16 @@ npm test
 2. Connect GitHub repository
 3. Build Command: `cd backend && npm install`
 4. Start Command: `cd backend && npm start`
-5. Add environment variables
+5. Add environment variables in Render Dashboard:
+   - `PORT` (e.g., 5000)
+   - `MONGO_URI` (MongoDB Atlas connection string)
+   - `JWT_SECRET` (strong random string)
+   - `CLOUDINARY_URL` (cloudinary://api_key:api_secret@cloud_name)
+   - `FRONTEND_URL` (your frontend URL)
+   
+   **Note**: For Cloudinary, you can use either:
+   - `CLOUDINARY_URL` (single connection string - recommended)
+   - Or individual variables: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
 
 **Frontend:**
 1. Create new Static Site on Render
