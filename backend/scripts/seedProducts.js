@@ -485,6 +485,358 @@ const kenyanProducts = [
     sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/shuka.jpg",
     stock: 25,
     tags: ["blanket", "traditional", "maasai"]
+  },
+
+  // Additional Kenyan Market Products
+  {
+    name: "Fresh Fri Cooking Oil 1L",
+    brand: "Fresh Fri",
+    category: "Staples",
+    price: 320,
+    description: "Pure vegetable cooking oil.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/oil.jpg",
+    stock: 100,
+    tags: ["cooking oil", "kitchen", "essentials"]
+  },
+  {
+    name: "Pishori Rice 2kg",
+    brand: "Pishori",
+    category: "Staples",
+    price: 450,
+    description: "Premium aromatic Pishori rice.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/rice.jpg",
+    stock: 120,
+    tags: ["rice", "pishori", "premium"]
+  },
+  {
+    name: "Exe All-Purpose Wheat Flour 2kg",
+    brand: "Exe",
+    category: "Staples",
+    price: 200,
+    description: "All-purpose wheat flour for chapati and baking.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/wheatflour.jpg",
+    stock: 150,
+    tags: ["flour", "wheat", "baking", "chapati"]
+  },
+  {
+    name: "Tamarind Brown Lentils 500g",
+    brand: "Tamarind",
+    category: "Staples",
+    price: 180,
+    description: "Brown lentils for making ndengu, a common stew.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/lentils.jpg",
+    stock: 100,
+    tags: ["lentils", "legumes", "ndengu", "protein"]
+  },
+  {
+    name: "Green Grams 500g",
+    brand: "Local",
+    category: "Staples",
+    price: 150,
+    description: "Dried green grams for making a nutritious stew.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/greengrams.jpg",
+    stock: 110,
+    tags: ["green grams", "legumes", "protein", "ndengu"]
+  },
+  {
+    name: "Royco Mchuzi Mix 50g",
+    brand: "Royco",
+    category: "Staples",
+    price: 35,
+    description: "The quintessential Kenyan curry and soup seasoning.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/royco.jpg",
+    stock: 200,
+    tags: ["seasoning", "mchuzi", "spices", "kenyan"]
+  },
+  {
+    name: "Ketepa Pride Tea 250g",
+    brand: "Ketepa",
+    category: "Beverages",
+    price: 150,
+    description: "Kenya's favorite black tea.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/tea.jpg",
+    stock: 130,
+    tags: ["tea", "beverages", "kenyan", "black tea"]
+  },
+  {
+    name: "Dormans Instant Coffee 100g",
+    brand: "Dormans",
+    category: "Beverages",
+    price: 450,
+    description: "Premium Kenyan instant coffee.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/coffee.jpg",
+    stock: 80,
+    tags: ["coffee", "instant", "kenyan", "premium"]
+  },
+  {
+    name: "Coca-Cola Soda 500ml",
+    brand: "Coca-Cola",
+    category: "Beverages",
+    price: 70,
+    description: "Classic fizzy drink.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/coke.jpg",
+    stock: 200,
+    tags: ["soda", "coca-cola", "beverages", "fizzy"]
+  },
+  {
+    name: "Dasani Bottled Water 1L",
+    brand: "Dasani",
+    category: "Beverages",
+    price: 60,
+    description: "Purified bottled water.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/water.jpg",
+    stock: 250,
+    tags: ["water", "bottled", "purified"]
+  },
+  {
+    name: "Del Monte Mango Juice 1L",
+    brand: "Del Monte",
+    category: "Beverages",
+    price: 180,
+    description: "Refreshing mango juice.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/juice.jpg",
+    stock: 100,
+    tags: ["juice", "mango", "fruit", "refreshing"]
+  },
+  {
+    name: "Brookside Fresh Milk 500ml",
+    brand: "Brookside",
+    category: "Dairy",
+    price: 65,
+    description: "Fresh pasteurized milk.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/milk.jpg",
+    stock: 120,
+    tags: ["milk", "dairy", "fresh", "pasteurized"]
+  },
+  {
+    name: "Daima Yoghurt 250ml",
+    brand: "Daima",
+    category: "Dairy",
+    price: 80,
+    description: "Creamy fruit yoghurt.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/yoghurt.jpg",
+    stock: 90,
+    tags: ["yoghurt", "dairy", "fruit", "creamy"]
+  },
+  {
+    name: "KCC Butter 500g",
+    brand: "KCC",
+    category: "Dairy",
+    price: 320,
+    description: "Creamy salted butter for cooking and spreading.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/butter.jpg",
+    stock: 70,
+    tags: ["butter", "dairy", "cooking", "spreading"]
+  },
+  {
+    name: "Supa Loaf Bread 400g",
+    brand: "Supa Loaf",
+    category: "Bakery",
+    price: 70,
+    description: "Soft white bread loaf.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/bread.jpg",
+    stock: 150,
+    tags: ["bread", "bakery", "white bread", "fresh"]
+  },
+  {
+    name: "Blue Band Margarine 500g",
+    brand: "Blue Band",
+    category: "Spreads",
+    price: 220,
+    description: "Classic margarine spread.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/blueband.jpg",
+    stock: 100,
+    tags: ["margarine", "spread", "classic", "baking"]
+  },
+  {
+    name: "Indomie Instant Noodles 70g",
+    brand: "Indomie",
+    category: "Snacks",
+    price: 50,
+    description: "Quick and tasty noodles.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/indomie.jpg",
+    stock: 200,
+    tags: ["noodles", "instant", "snacks", "quick meal"]
+  },
+  {
+    name: "Krackles Potato Crisps 50g",
+    brand: "Krackles",
+    category: "Snacks",
+    price: 60,
+    description: "Crunchy potato crisps.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/crisps.jpg",
+    stock: 180,
+    tags: ["crisps", "snacks", "potato", "crunchy"]
+  },
+  {
+    name: "Tropical Heat Biscuits (Nice)",
+    brand: "Tropical Heat",
+    category: "Snacks",
+    price: 120,
+    description: "Sweet Nice biscuits.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/biscuits.jpg",
+    stock: 150,
+    tags: ["biscuits", "snacks", "sweet", "nice"]
+  },
+  {
+    name: "Sukuma Wiki (Kale) Bunch",
+    brand: "Local Farm",
+    category: "Fresh Produce",
+    price: 20,
+    description: "A large bunch of fresh kale, Kenya's most popular green vegetable.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/sukumawiki.jpg",
+    stock: 100,
+    tags: ["kale", "sukuma wiki", "vegetables", "fresh", "greens"]
+  },
+  {
+    name: "Ripe Tomatoes 1kg",
+    brand: "Local Farm",
+    category: "Fresh Produce",
+    price: 100,
+    description: "Fresh, ripe tomatoes for cooking and salads.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/tomatoes.jpg",
+    stock: 120,
+    tags: ["tomatoes", "vegetables", "fresh", "cooking"]
+  },
+  {
+    name: "Red Onions 1kg",
+    brand: "Local Farm",
+    category: "Fresh Produce",
+    price: 80,
+    description: "Fresh red onions for cooking and garnishing.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/onions.jpg",
+    stock: 130,
+    tags: ["onions", "vegetables", "fresh", "cooking"]
+  },
+  {
+    name: "Irish Potatoes 1kg",
+    brand: "Local Farm",
+    category: "Fresh Produce",
+    price: 60,
+    description: "Fresh potatoes for boiling, frying, or mashing.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/potatoes.jpg",
+    stock: 150,
+    tags: ["potatoes", "vegetables", "fresh", "cooking"]
+  },
+  {
+    name: "Cooking Bananas (Ndizi) 1kg",
+    brand: "Local Farm",
+    category: "Fresh Produce",
+    price: 90,
+    description: "Green bananas for boiling or making matoke.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/ndizi.jpg",
+    stock: 80,
+    tags: ["bananas", "ndizi", "matoke", "fresh"]
+  },
+  {
+    name: "Beef Mince 500g",
+    brand: "Local Butcher",
+    category: "Meat & Poultry",
+    price: 350,
+    description: "Fresh lean beef mince for various dishes.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/beefmince.jpg",
+    stock: 50,
+    tags: ["beef", "mince", "meat", "fresh"]
+  },
+  {
+    name: "Whole Chicken (Frozen)",
+    brand: "Kenchic",
+    category: "Meat & Poultry",
+    price: 600,
+    description: "Frozen whole chicken for roasting or stewing.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/chicken.jpg",
+    stock: 60,
+    tags: ["chicken", "poultry", "frozen", "whole"]
+  },
+  {
+    name: "Tilapia Fish (Fresh)",
+    brand: "Local Fishery",
+    category: "Meat & Poultry",
+    price: 400,
+    description: "Fresh tilapia fish, a Kenyan favorite.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/fish.jpg",
+    stock: 40,
+    tags: ["fish", "tilapia", "fresh", "seafood"]
+  },
+  {
+    name: "Sunlight Bar Soap 800g",
+    brand: "Sunlight",
+    category: "Household",
+    price: 150,
+    description: "Multipurpose laundry bar.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/soap.jpg",
+    stock: 120,
+    tags: ["soap", "laundry", "household", "cleaning"]
+  },
+  {
+    name: "Ariel Washing Powder 1kg",
+    brand: "Ariel",
+    category: "Household",
+    price: 350,
+    description: "Powerful stain remover.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/ariel.jpg",
+    stock: 90,
+    tags: ["washing powder", "detergent", "household", "stain remover"]
+  },
+  {
+    name: "Omo Detergent 1kg",
+    brand: "Omo",
+    category: "Household",
+    price: 300,
+    description: "Popular washing powder for clean clothes.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/omo.jpg",
+    stock: 100,
+    tags: ["detergent", "washing powder", "household", "cleaning"]
+  },
+  {
+    name: "Bio Soap Bar 150g",
+    brand: "Bio",
+    category: "Household",
+    price: 50,
+    description: "Gentle bathing soap for personal hygiene.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/biosoap.jpg",
+    stock: 150,
+    tags: ["soap", "bathing", "personal care", "gentle"]
+  },
+  {
+    name: "Colgate Toothpaste 100ml",
+    brand: "Colgate",
+    category: "Personal Care",
+    price: 180,
+    description: "Fluoride toothpaste for fresh breath.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/colgate.jpg",
+    stock: 130,
+    tags: ["toothpaste", "dental", "personal care", "fluoride"]
+  },
+  {
+    name: "Geisha Beauty Soap 120g",
+    brand: "Geisha",
+    category: "Personal Care",
+    price: 70,
+    description: "Classic beauty soap for skin care.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/geisha.jpg",
+    stock: 140,
+    tags: ["soap", "beauty", "personal care", "skin care"]
+  },
+  {
+    name: "Lifebuoy Hand Sanitizer 250ml",
+    brand: "Lifebuoy",
+    category: "Personal Care",
+    price: 220,
+    description: "Alcohol-based hand sanitizer for protection.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/sanitizer.jpg",
+    stock: 110,
+    tags: ["sanitizer", "hand sanitizer", "personal care", "protection"]
+  },
+  {
+    name: "Always Sanitary Pads (10 pack)",
+    brand: "Always",
+    category: "Personal Care",
+    price: 180,
+    description: "Regular sanitary pads for feminine hygiene.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/pads.jpg",
+    stock: 100,
+    tags: ["sanitary pads", "feminine hygiene", "personal care"]
   }
 ];
 
@@ -493,6 +845,12 @@ const categories = [
   { name: 'Staples', description: 'Essential Kenyan food staples and basics' },
   { name: 'Groceries', description: 'Daily grocery items and food products' },
   { name: 'Beverages', description: 'Drinks, juices, and beverages' },
+  { name: 'Dairy', description: 'Dairy products including milk, yoghurt, and butter' },
+  { name: 'Bakery', description: 'Fresh baked goods and bread products' },
+  { name: 'Spreads', description: 'Spreads, jams, and condiments' },
+  { name: 'Snacks', description: 'Snacks, crisps, and quick bites' },
+  { name: 'Fresh Produce', description: 'Fresh fruits and vegetables' },
+  { name: 'Meat & Poultry', description: 'Fresh and frozen meat, poultry, and fish' },
   { name: 'Household', description: 'Household cleaning and maintenance products' },
   { name: 'Personal Care', description: 'Personal hygiene and care products' },
   { name: 'Electronics', description: 'Electronic devices and appliances' },
