@@ -198,6 +198,111 @@ REACT_APP_API_URL=http://localhost:5000/api
 REACT_APP_API_URL=http://localhost:5000/api
 ```
 
+## ☁️ Cloudinary Setup & Product Seeding
+
+### Setting Up Cloudinary
+
+EasyCart uses Cloudinary for cloud-based image storage and delivery. Follow these steps to set it up:
+
+1. **Create a Cloudinary Account**
+   - Sign up at [cloudinary.com](https://cloudinary.com)
+   - Navigate to your Dashboard to get your credentials
+
+2. **Configure Environment Variables**
+   
+   Add these to your `backend/.env` file:
+   ```env
+   CLOUDINARY_CLOUD_NAME=your-cloud-name
+   CLOUDINARY_API_KEY=your-api-key
+   CLOUDINARY_API_SECRET=your-api-secret
+   ```
+
+3. **Verify Configuration**
+   ```bash
+   cd backend
+   node -e "require('dotenv').config(); console.log('Cloudinary:', process.env.CLOUDINARY_CLOUD_NAME ? 'Configured ✓' : 'Not configured ✗')"
+   ```
+
+### Seeding Products with Images
+
+The project includes a comprehensive seed script that populates the database with authentic Kenyan supermarket products and uploads images to Cloudinary.
+
+**Run the Seed Script:**
+```bash
+cd backend
+node scripts/seedProducts.js
+```
+
+**Features:**
+- ✅ Automatically uploads product images to Cloudinary
+- ✅ Seeds 30+ authentic Kenyan products across multiple categories
+- ✅ Works with or without Cloudinary (falls back to source URLs)
+- ✅ Includes products from Groceries, Beverages, Electronics, Fashion, etc.
+- ✅ Sets up categories and featured products
+
+**Expected Output:**
+```
+🌱 Starting product seeding process...
+📦 Connecting to MongoDB...
+✅ Connected to MongoDB
+
+🧹 Clearing existing products and categories...
+✅ Cleared existing data
+
+📁 Inserting categories...
+✅ Inserted 8 categories
+
+☁️  Cloudinary is configured - will upload images
+
+🛒 Processing 30 products...
+
+[1/30] Processing: Ajab All Purpose Flour 2kg
+   ⬆️  Uploading to Cloudinary...
+   ✅ Uploaded successfully
+   💾 Saved to database
+
+...
+
+📊 SEEDING SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Successfully seeded: 30 products
+❌ Failed: 0 products
+📁 Categories: 8
+☁️  Cloudinary: Enabled
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 Product seeding completed successfully!
+```
+
+**Troubleshooting:**
+- If Cloudinary is not configured, the script will use source URLs directly
+- Check MongoDB connection if seeding fails
+- Ensure you have internet connection for image uploads
+- Images are uploaded to the `products/` folder in Cloudinary
+
+### Image Component Integration
+
+The frontend uses the `ImageWithFallback` component for optimal image rendering:
+
+**Features:**
+- ⚡ Lazy loading for better performance
+- 🎨 Skeleton loading states
+- 🔄 Automatic fallback on error
+- 📱 Responsive and mobile-optimized
+
+**Usage:**
+```jsx
+import ImageWithFallback from './components/ImageWithFallback';
+
+<ImageWithFallback
+  src={product.image}
+  alt={product.name}
+  fallbackCategory="product"
+  lazy
+  showSkeleton
+/>
+```
+
 ## 📚 API Documentation
 
 ### Quick Reference
