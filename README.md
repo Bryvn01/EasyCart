@@ -235,14 +235,16 @@ The project includes a comprehensive seed script that populates the database wit
 **Run the Seed Script:**
 ```bash
 cd backend
+npm run seed
+# OR
 node scripts/seedProducts.js
 ```
 
 **Features:**
 - ✅ Automatically uploads product images to Cloudinary
-- ✅ Seeds 30+ authentic Kenyan products across multiple categories
+- ✅ Seeds 79+ authentic Kenyan products across multiple categories
 - ✅ Works with or without Cloudinary (falls back to source URLs)
-- ✅ Includes products from Groceries, Beverages, Electronics, Fashion, etc.
+- ✅ Includes products from 15 categories: Staples, Beverages, Dairy, Bakery, Spreads, Snacks, Fresh Produce, Meat & Poultry, Household, Personal Care, Electronics, Fashion, and more
 - ✅ Sets up categories and featured products
 
 **Expected Output:**
@@ -255,13 +257,13 @@ node scripts/seedProducts.js
 ✅ Cleared existing data
 
 📁 Inserting categories...
-✅ Inserted 8 categories
+✅ Inserted 15 categories
 
 ☁️  Cloudinary is configured - will upload images
 
-🛒 Processing 30 products...
+🛒 Processing 79 products...
 
-[1/30] Processing: Ajab All Purpose Flour 2kg
+[1/79] Processing: Jogoo Maize Flour 2kg
    ⬆️  Uploading to Cloudinary...
    ✅ Uploaded successfully
    💾 Saved to database
@@ -270,14 +272,27 @@ node scripts/seedProducts.js
 
 📊 SEEDING SUMMARY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ Successfully seeded: 30 products
+✅ Successfully seeded: 79 products
 ❌ Failed: 0 products
-📁 Categories: 8
+📁 Categories: 15
 ☁️  Cloudinary: Enabled
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🎉 Product seeding completed successfully!
 ```
+
+**Categories Included:**
+- 🌾 **Staples**: Maize flour, rice, wheat flour, lentils, cooking oil (16 products)
+- 🥛 **Dairy**: Fresh milk, yoghurt, butter (3 products)
+- 🥤 **Beverages**: Tea, coffee, sodas, juices, water (11 products)
+- 🍞 **Bakery**: Fresh bread and baked goods (1 product)
+- 🧈 **Spreads**: Margarine and spreads (1 product)
+- 🍿 **Snacks**: Instant noodles, crisps, biscuits (3 products)
+- 🥬 **Fresh Produce**: Kale, tomatoes, onions, potatoes, bananas (5 products)
+- 🍖 **Meat & Poultry**: Beef, chicken, fish (3 products)
+- 🧼 **Household**: Detergents, soaps, cleaning products (10 products)
+- 🧴 **Personal Care**: Toothpaste, sanitizers, beauty products (11 products)
+- 📱 **Electronics**, 👕 **Fashion**, and more categories
 
 **Troubleshooting:**
 - If Cloudinary is not configured, the script will use source URLs directly
