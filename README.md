@@ -308,6 +308,152 @@ import ImageWithFallback from './components/ImageWithFallback';
 />
 ```
 
+## 🇰🇪 Kenyan Products Seeding
+
+The project includes a dedicated seeding script specifically for Kenyan retail products. This script is **non-destructive** and designed to supplement existing product data.
+
+### Purpose
+
+The `seedKenyaProducts.js` script allows you to:
+- ✅ Add authentic Kenyan retail products to your database
+- ✅ Populate products from a curated JSON data file
+- ✅ Optionally upload images to Cloudinary for optimal delivery
+- ✅ Create necessary product categories automatically
+- ✅ Skip products that already exist (safe to run multiple times)
+
+### Quick Start
+
+**Run the Kenyan Products Seed Script:**
+```bash
+cd backend
+npm run seed:kenya
+```
+
+Or directly:
+```bash
+cd backend
+node scripts/seedKenyaProducts.js
+```
+
+### Features
+
+- **Non-Destructive**: Only adds new products; never deletes existing data
+- **Data-Driven**: Products are loaded from `backend/data/products_kenya.json`
+- **Smart Duplicate Detection**: Skips products that already exist (by name + brand)
+- **Category Management**: Automatically creates missing categories
+- **Cloudinary Support**: Uploads images to Cloudinary if configured (optional)
+- **Fallback**: Uses source URLs if Cloudinary is not available
+- **Detailed Logging**: Progress tracking with success/skip/fail counts
+
+### Product Categories
+
+The script includes 44 authentic Kenyan products across these categories:
+- 🌾 **Staples**: Maize flour, sugar, rice, beans, etc.
+- 🛒 **Groceries**: Cooking oil, milk, tea, margarine, seasonings
+- 🥤 **Beverages**: Sodas, juices, tea, beer
+- 🧼 **Household**: Cleaning products, detergents, disinfectants
+- 💆 **Personal Care**: Soaps, lotions, shampoos, toiletries
+- 📺 **Electronics**: TVs, kitchen appliances, fans
+- 👕 **Fashion**: Shoes, bags, traditional fabrics
+
+### Expected Output
+
+```
+🇰🇪 Starting Kenyan products seeding process...
+
+📂 Loading products from data file...
+✅ Loaded 44 products from JSON
+
+📦 Connecting to MongoDB...
+✅ Connected to MongoDB
+
+📁 Processing categories...
+   ➕ Created category: Staples
+   ✓ Category already exists: Groceries
+   ✓ Category already exists: Beverages
+✅ Processed 7 categories
+
+☁️  Cloudinary is configured - will upload images
+
+🛒 Processing 44 products...
+
+[1/44] Processing: Jogoo Maize Flour 2kg
+   ⬆️  Uploading to Cloudinary...
+   ✅ Uploaded successfully
+   💾 Saved to database
+
+[2/44] Processing: Kabras Sugar 2kg
+   ⏭️  Product already exists, skipping
+
+...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 SEEDING SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Successfully seeded: 40 products
+⏭️  Skipped (already exist): 4 products
+❌ Failed: 0 products
+📁 Categories processed: 7
+☁️  Cloudinary: Enabled
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 Kenyan products seeding completed successfully!
+
+🔌 MongoDB connection closed
+```
+
+### Data File Location
+
+Products are stored in: `backend/data/products_kenya.json`
+
+This JSON file contains an array of product objects with the following structure:
+```json
+{
+  "name": "Product Name",
+  "brand": "Brand Name",
+  "category": "Category",
+  "price": 180,
+  "description": "Product description",
+  "sourceImageUrl": "https://...",
+  "stock": 150,
+  "tags": ["tag1", "tag2"]
+}
+```
+
+### Environment Variables
+
+**Required:**
+- `MONGO_URI` or `MONGODB_URI`: MongoDB connection string
+
+**Optional (for Cloudinary):**
+- `CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name
+- `CLOUDINARY_API_KEY`: Your Cloudinary API key
+- `CLOUDINARY_API_SECRET`: Your Cloudinary API secret
+
+### Troubleshooting
+
+**MongoDB Connection Issues:**
+- Ensure MongoDB is running locally or your Atlas connection string is correct
+- Check that `MONGO_URI` is set in your `.env` file
+
+**Cloudinary Not Working:**
+- If Cloudinary credentials are missing, the script will use source URLs directly
+- This is perfectly fine for development and testing
+
+**Products Not Appearing:**
+- Check the console output for errors
+- Verify MongoDB connection
+- Ensure the Product model is correctly defined
+
+**Script Comparison:**
+
+| Feature | `seedProducts.js` | `seedKenyaProducts.js` |
+|---------|-------------------|------------------------|
+| Clears existing data | ✅ Yes | ❌ No (non-destructive) |
+| Data source | Inline JS array | External JSON file |
+| Duplicate handling | Replaces all | Skips existing |
+| Use case | Fresh database setup | Adding more products |
+
 ## 📚 API Documentation
 
 ### Quick Reference
