@@ -8,17 +8,18 @@ import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 
 const Wishlist = () => {
-  const { wishlist, loading, error, removeFromWishlist } = useWishlist();
+  const { wishlist, loading, error, removeFromWishlist, moveToCart } = useWishlist();
   const { isAuthenticated } = useAuth();
-  const { addToCart } = useCart();
+  const { fetchCartCount } = useCart();
 
-  const handleAddToCart = async (product) => {
+  const handleMoveToCart = async (itemId, itemName) => {
     try {
-      await addToCart(product.id, 1);
-      toast.success('Added to cart!');
+      await moveToCart(itemId, 1);
+      await fetchCartCount();
+      toast.success(`${itemName} moved to cart!`);
     } catch (error) {
-      console.error('Error adding to cart:', error);
-      toast.error('Failed to add to cart');
+      console.error('Error moving to cart:', error);
+      toast.error(error.response?.data?.error || 'Failed to move to cart');
     }
   };
 
@@ -130,12 +131,12 @@ const Wishlist = () => {
                 
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => handleAddToCart({ id: item.product })}
+                    onClick={() => handleMoveToCart(item.id, item.product_name)}
                     disabled={item.product_stock === 0}
                     size="sm"
                     className="flex-1"
                   >
-                    {item.product_stock === 0 ? 'Sold Out' : 'Add to Cart'}
+                    {item.product_stock === 0 ? 'Sold Out' : '🛒 Move to Cart'}
                   </Button>
                   <Button
                     onClick={() => handleRemoveFromWishlist(item.id)}

@@ -72,6 +72,25 @@ export const WishlistProvider = ({ children }) => {
     }
   };
 
+  const moveToCart = async (itemId, quantity = 1) => {
+    if (!isAuthenticated) {
+      throw new Error('Please login to move items to cart');
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      await wishlistAPI.moveToCart(itemId, quantity);
+      await fetchWishlist(); // Refresh the wishlist
+    } catch (err) {
+      console.error('Error moving to cart:', err);
+      setError(err.response?.data?.error || 'Failed to move to cart');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const checkWishlistStatus = async (productId) => {
     if (!isAuthenticated) {
       return false;
@@ -104,6 +123,7 @@ export const WishlistProvider = ({ children }) => {
     error,
     addToWishlist,
     removeFromWishlist,
+    moveToCart,
     checkWishlistStatus,
     isInWishlist,
     refreshWishlist: fetchWishlist,
