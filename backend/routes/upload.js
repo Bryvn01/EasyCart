@@ -18,9 +18,10 @@ router.post('/image', adminAuth, upload.single('image'), async (req, res) => {
     }
 
     // Check if Cloudinary is configured
-    const useCloudinary = process.env.CLOUDINARY_CLOUD_NAME && 
-                          process.env.CLOUDINARY_API_KEY && 
-                          process.env.CLOUDINARY_API_SECRET;
+    const useCloudinary = process.env.CLOUDINARY_URL || 
+                          (process.env.CLOUDINARY_CLOUD_NAME && 
+                           process.env.CLOUDINARY_API_KEY && 
+                           process.env.CLOUDINARY_API_SECRET);
 
     if (useCloudinary) {
       // Optimize image before uploading to Cloudinary
@@ -77,9 +78,10 @@ router.post('/images', adminAuth, upload.array('images', 5), async (req, res) =>
     }
 
     // Check if Cloudinary is configured
-    const useCloudinary = process.env.CLOUDINARY_CLOUD_NAME && 
-                          process.env.CLOUDINARY_API_KEY && 
-                          process.env.CLOUDINARY_API_SECRET;
+    const useCloudinary = process.env.CLOUDINARY_URL || 
+                          (process.env.CLOUDINARY_CLOUD_NAME && 
+                           process.env.CLOUDINARY_API_KEY && 
+                           process.env.CLOUDINARY_API_SECRET);
 
     const uploadedImages = [];
 
