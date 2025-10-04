@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "npm install"
+    "build": "npm install",
+    "seed:kenya": "node scripts/seedKenyaProducts.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
