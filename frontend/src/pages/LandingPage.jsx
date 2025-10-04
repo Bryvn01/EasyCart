@@ -5,6 +5,7 @@ import { productsAPI, ordersAPI, getApiBaseUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess, retryWithBackoff, checkApiHealth, getDetailedErrorMessage } from '../utils/errorHandler';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 // Error Boundary Component
 const ErrorFallback = ({ error, resetErrorBoundary }) => (
@@ -46,11 +47,8 @@ const ProductCardSkeleton = () => (
 
 // Category Card Component
 const CategoryCard = React.memo(({ category, getCategoryIcon }) => {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
-
   const categoryImage = category.image;
-  const hasImage = categoryImage && !imageError;
+  const hasImage = !!categoryImage;
 
   return (
     <Link
@@ -60,26 +58,15 @@ const CategoryCard = React.memo(({ category, getCategoryIcon }) => {
     >
       <div className="relative aspect-square mb-3 overflow-hidden rounded-lg bg-gray-100">
         {hasImage ? (
-          <>
-            <img
-              src={categoryImage}
-              alt={category.name}
-              className={`w-full h-full object-cover transition-all duration-500 ${
-                imageLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-110'
-              }`}
-              loading="lazy"
-              onLoad={() => setImageLoading(false)}
-              onError={() => {
-                setImageError(true);
-                setImageLoading(false);
-              }}
-            />
-            {imageLoading && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            )}
-          </>
+          <ImageWithFallback
+            src={categoryImage}
+            alt={category.name}
+            fallbackCategory="category"
+            lazy
+            showSkeleton
+            className="w-full h-full group-hover:scale-110 transition-transform duration-300"
+            style={{ objectFit: 'cover' }}
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
             {getCategoryIcon(category.name)}

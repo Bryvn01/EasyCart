@@ -48,6 +48,37 @@ const uploadImage = async (base64Data, options = {}) => {
 };
 
 /**
+ * Upload image from URL to Cloudinary
+ * @param {string} imageUrl - Remote image URL
+ * @param {object} options - Upload options
+ * @returns {Promise<object>} Cloudinary upload result
+ */
+const uploadFromUrl = async (imageUrl, options = {}) => {
+  try {
+    const defaultOptions = {
+      folder: 'easycart/products',
+      resource_type: 'image',
+      quality: 'auto:good',
+      fetch_format: 'auto',
+      ...options
+    };
+
+    const result = await cloudinary.uploader.upload(imageUrl, defaultOptions);
+    return {
+      success: true,
+      url: result.secure_url,
+      publicId: result.public_id,
+      width: result.width,
+      height: result.height,
+      format: result.format
+    };
+  } catch (error) {
+    console.error('Cloudinary upload from URL error:', error);
+    throw new Error(`Failed to upload image from URL: ${error.message}`);
+  }
+};
+
+/**
  * Delete image from Cloudinary
  * @param {string} publicId - Cloudinary public ID
  * @returns {Promise<object>} Deletion result
@@ -115,6 +146,7 @@ const generateImageSizes = (publicId) => {
 module.exports = {
   cloudinary,
   uploadImage,
+  uploadFromUrl,
   deleteImage,
   deleteImages,
   getTransformedUrl,
