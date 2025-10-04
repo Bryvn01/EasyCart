@@ -10,6 +10,25 @@ const localStorageMock = {
 };
 global.localStorage = localStorageMock;
 
+// Mock IntersectionObserver
+class IntersectionObserverMock {
+  constructor(callback, options) {
+    this.callback = callback;
+    this.options = options;
+  }
+  observe() {
+    // Mock observe
+  }
+  unobserve() {
+    // Mock unobserve
+  }
+  disconnect() {
+    // Mock disconnect
+  }
+}
+
+global.IntersectionObserver = IntersectionObserverMock;
+
 // Mock axios globally
 jest.mock('axios', () => ({
   create: jest.fn(() => ({
