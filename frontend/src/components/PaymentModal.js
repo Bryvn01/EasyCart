@@ -33,7 +33,7 @@ const PaymentModal = (props) => {
       });
 
       if (response.data.success) {
-        if (paymentMethod === 'card' && response.data.payment_url) {
+        if ((paymentMethod === 'card' || paymentMethod === 'stripe' || paymentMethod === 'paypal') && response.data.payment_url) {
           window.open(response.data.payment_url, '_blank');
         } else if (paymentMethod === 'cash') {
           alert('Order confirmed! Pay cash on delivery.');
@@ -114,7 +114,9 @@ const PaymentModal = (props) => {
             >
               <option value="mpesa">M-Pesa</option>
               <option value="airtel">Airtel Money</option>
-              <option value="card">Credit/Debit Card</option>
+              <option value="card">Credit/Debit Card (Flutterwave)</option>
+              <option value="stripe">Credit/Debit Card (Stripe)</option>
+              <option value="paypal">PayPal</option>
               <option value="bank">Bank Transfer</option>
               <option value="cash">Cash on Delivery</option>
             </select>

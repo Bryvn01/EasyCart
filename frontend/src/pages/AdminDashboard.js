@@ -9,7 +9,12 @@ const AdminDashboard = () => {
     totalRevenue: 0,
     topProducts: [],
     recentOrders: [],
-    customerStats: {}
+    customerStats: {},
+    paymentMethods: [],
+    paymentStatus: [],
+    completedPayments: 0,
+    failedPayments: 0,
+    pendingPayments: 0
   });
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('30');
@@ -163,6 +168,90 @@ const AdminDashboard = () => {
             </div>
           </div>
 
+          {/* Payment Methods Breakdown */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Payment Methods</h2>
+            </div>
+            <div className="p-6">
+              {dashboardData.paymentMethods?.length > 0 ? (
+                <div className="space-y-3">
+                  {dashboardData.paymentMethods.map((method) => (
+                    <div key={method.payment_method} className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <span className="text-2xl mr-3">
+                          {method.payment_method === 'mpesa' ? '💳' : 
+                           method.payment_method === 'stripe' ? '💳' :
+                           method.payment_method === 'paypal' ? '💰' :
+                           method.payment_method === 'card' ? '💳' : '📱'}
+                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 capitalize">
+                            {method.payment_method === 'mpesa' ? 'M-Pesa' :
+                             method.payment_method === 'stripe' ? 'Stripe' :
+                             method.payment_method === 'paypal' ? 'PayPal' :
+                             method.payment_method}
+                          </p>
+                          <p className="text-xs text-gray-500">{method.count} orders</p>
+                        </div>
+                      </div>
+                      <p className="text-sm font-medium text-gray-900">KES {parseFloat(method.revenue).toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-8">No payment data available</p>
+              )}
+            </div>
+          </div>
+
+          {/* Payment Status */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Payment Status</h2>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-xl">✓</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Completed</p>
+                      <p className="text-xs text-gray-500">Successful payments</p>
+                    </div>
+                  </div>
+                  <p className="text-lg font-bold text-green-600">{dashboardData.completedPayments || 0}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-xl">⏳</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Pending</p>
+                      <p className="text-xs text-gray-500">Awaiting payment</p>
+                    </div>
+                  </div>
+                  <p className="text-lg font-bold text-yellow-600">{dashboardData.pendingPayments || 0}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-xl">✗</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Failed</p>
+                      <p className="text-xs text-gray-500">Payment errors</p>
+                    </div>
+                  </div>
+                  <p className="text-lg font-bold text-red-600">{dashboardData.failedPayments || 0}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Recent Orders */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             <div className="p-6 border-b border-gray-200">
@@ -172,13 +261,15 @@ const AdminDashboard = () => {
               {dashboardData.recentOrders?.length > 0 ? (
                 <div className="space-y-4">
                   {dashboardData.recentOrders.map((order) => (
-                    <div key={order.id} className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">Order #{order.id}</p>
-                        <p className="text-sm text-gray-500">{order.user_email}</p>
-                      </div>
-                      <div className="text-right">
+                    <div key={order.id} className="border-b border-gray-100 pb-3 last:border-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Order #{order.id}</p>
+                          <p className="text-xs text-gray-500">{order.user__email}</p>
+                        </div>
                         <p className="text-sm font-medium text-gray-900">KES {order.total_amount}</p>
+                      </div>
+                      <div className="flex items-center justify-between">
                         <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                           order.status === 'completed' ? 'bg-green-100 text-green-800' :
                           order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
@@ -187,6 +278,17 @@ const AdminDashboard = () => {
                         }`}>
                           {order.status}
                         </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500 capitalize">{order.payment_method}</span>
+                          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                            order.payment_status === 'completed' ? 'bg-green-100 text-green-800' :
+                            order.payment_status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                            order.payment_status === 'failed' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {order.payment_status}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
