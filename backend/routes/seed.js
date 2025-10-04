@@ -6,6 +6,7 @@ const User = require('../models/User');
 const router = express.Router();
 
 const categories = [
+  { name: 'Staples', description: 'Essential Kenyan food staples and basics' },
   { name: 'Electronics', description: 'Electronic devices and gadgets' },
   { name: 'Fashion', description: 'Clothing and accessories' },
   { name: 'Home & Living', description: 'Home decor and furniture' },

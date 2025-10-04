@@ -33,35 +33,117 @@ const isCloudinaryConfigured = () => {
 
 // Kenyan Product Data with Real Image URLs
 const kenyanProducts = [
-  // Groceries & Food
+  // Staples - Essential Kenyan Food Items
   {
-    name: "Ajab All Purpose Flour 2kg",
-    brand: "Ajab",
-    category: "Groceries",
-    price: 320,
-    description: "Ajab All Purpose Flour 2kg - perfect for chapati, mandazi, and baking. Soft, high quality, and trusted by Kenyan families.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800&q=80",
-    stock: 100,
-    tags: ["flour", "baking", "kenyan"]
+    name: "Jogoo Maize Flour 2kg",
+    brand: "Jogoo",
+    category: "Staples",
+    price: 180,
+    description: "Popular maize flour for ugali.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/jogoo.jpg",
+    stock: 150,
+    tags: ["maize", "flour", "ugali", "staple"]
+  },
+  {
+    name: "Kabras Sugar 2kg",
+    brand: "Kabras",
+    category: "Staples",
+    price: 250,
+    description: "Refined Kenyan sugar.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/sugar.jpg",
+    stock: 200,
+    tags: ["sugar", "sweetener", "kenyan"]
+  },
+  {
+    name: "Pembe Maize Flour 2kg",
+    brand: "Pembe",
+    category: "Staples",
+    price: 190,
+    description: "High-quality maize flour for traditional ugali.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/pembe-flour.jpg",
+    stock: 180,
+    tags: ["maize", "flour", "ugali"]
   },
   {
     name: "Mumias Sugar 2kg",
     brand: "Mumias",
-    category: "Groceries",
-    price: 440,
-    description: "Mumias Sugar 2kg - Kenya's favorite sugar for tea and baking. Pure, sweet, and locally produced.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1563171085-3e1363ca5c32?w=800&q=80",
-    stock: 120,
-    tags: ["sugar", "sweetener", "kenyan"]
+    category: "Staples",
+    price: 260,
+    description: "Premium Kenyan refined sugar.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/mumias-sugar.jpg",
+    stock: 170,
+    tags: ["sugar", "sweetener"]
   },
+  {
+    name: "Ajab Flour 2kg",
+    brand: "Ajab",
+    category: "Staples",
+    price: 200,
+    description: "All purpose flour for baking and cooking.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/ajab-flour.jpg",
+    stock: 160,
+    tags: ["flour", "baking"]
+  },
+  {
+    name: "Exe Atta Flour 2kg",
+    brand: "Exe",
+    category: "Staples",
+    price: 220,
+    description: "Wholemeal flour for healthy chapatis.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/exe-atta.jpg",
+    stock: 140,
+    tags: ["flour", "wholemeal", "healthy"]
+  },
+  {
+    name: "Ndengu (Green Grams) 1kg",
+    brand: "Local",
+    category: "Staples",
+    price: 150,
+    description: "Fresh green grams for traditional Kenyan dishes.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/ndengu.jpg",
+    stock: 120,
+    tags: ["legumes", "ndengu", "protein"]
+  },
+  {
+    name: "Red Kidney Beans 1kg",
+    brand: "Local",
+    category: "Staples",
+    price: 160,
+    description: "High-quality kidney beans.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/kidney-beans.jpg",
+    stock: 130,
+    tags: ["beans", "legumes", "protein"]
+  },
+  {
+    name: "White Rice 2kg",
+    brand: "Pishori",
+    category: "Staples",
+    price: 280,
+    description: "Premium Kenyan Pishori rice.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/pishori-rice.jpg",
+    stock: 150,
+    tags: ["rice", "pishori", "staple"]
+  },
+  {
+    name: "Spaghetti 500g",
+    brand: "Pasta",
+    category: "Staples",
+    price: 120,
+    description: "Quality pasta for quick meals.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/spaghetti.jpg",
+    stock: 200,
+    tags: ["pasta", "spaghetti"]
+  },
+
+  // Groceries & Food
   {
     name: "Fresh Fri Cooking Oil 3L",
     brand: "Fresh Fri",
     category: "Groceries",
     price: 950,
-    description: "Fresh Fri Pure Cooking Oil 3L - cholesterol free, ideal for deep frying and cooking.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&q=80",
-    stock: 60,
+    description: "Pure cooking oil ideal for deep frying and cooking.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/cooking-oil.jpg",
+    stock: 80,
     tags: ["cooking-oil", "kitchen", "essentials"]
   },
   {
@@ -69,9 +151,9 @@ const kenyanProducts = [
     brand: "Brookside",
     category: "Groceries",
     price: 65,
-    description: "Brookside Fresh Milk 500ml - pasteurized, creamy, and nutritious. Perfect for tea and drinking.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=800&q=80",
-    stock: 80,
+    description: "Pasteurized fresh milk.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/milk.jpg",
+    stock: 100,
     tags: ["dairy", "milk", "fresh"]
   },
   {
@@ -79,40 +161,30 @@ const kenyanProducts = [
     brand: "Ketepa",
     category: "Groceries",
     price: 280,
-    description: "Ketepa Pride Tea Leaves 250g - authentic Kenyan tea from the highlands. Rich flavor and aroma.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=800&q=80",
-    stock: 70,
+    description: "Authentic Kenyan tea from the highlands.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/ketepa-tea.jpg",
+    stock: 90,
     tags: ["tea", "beverages", "kenyan"]
   },
   {
-    name: "Exe Wholemeal Atta 2kg",
-    brand: "Exe",
+    name: "Blue Band Margarine 500g",
+    brand: "Blue Band",
     category: "Groceries",
-    price: 340,
-    description: "Exe Wholemeal Atta 2kg - nutritious, high-fiber flour for healthy chapatis and rotis.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
-    stock: 90,
-    tags: ["flour", "wholemeal", "healthy"]
+    price: 280,
+    description: "Quality margarine for cooking and baking.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/blueband.jpg",
+    stock: 110,
+    tags: ["margarine", "dairy", "baking"]
   },
   {
-    name: "Tropical Heat Maize Meal 2kg",
-    brand: "Tropical Heat",
+    name: "Royco Mchuzi Mix 400g",
+    brand: "Royco",
     category: "Groceries",
-    price: 180,
-    description: "Tropical Heat Maize Meal 2kg - traditional Kenyan staple for ugali. Finely milled and nutritious.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1584253687451-2b8a2767eb37?w=800&q=80",
-    stock: 150,
-    tags: ["maize", "ugali", "staple"]
-  },
-  {
-    name: "Kenya Cane Sugar 1kg",
-    brand: "Kenya Cane",
-    category: "Groceries",
-    price: 230,
-    description: "Kenya Cane Brown Sugar 1kg - natural brown sugar with rich molasses flavor.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1587241321921-91a834d82f0e?w=800&q=80",
-    stock: 100,
-    tags: ["sugar", "brown-sugar", "natural"]
+    price: 350,
+    description: "Authentic Kenyan seasoning for stews.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/royco.jpg",
+    stock: 120,
+    tags: ["seasoning", "spices", "kenyan"]
   },
 
   // Beverages
@@ -121,9 +193,9 @@ const kenyanProducts = [
     brand: "Coca-Cola",
     category: "Beverages",
     price: 120,
-    description: "Coca-Cola 1.25L - Kenya's favorite soft drink. Refreshing and perfect for any occasion.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800&q=80",
-    stock: 90,
+    description: "Kenya's favorite soft drink. Refreshing and perfect for any occasion.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/coca-cola.jpg",
+    stock: 150,
     tags: ["soda", "beverages", "refreshing"]
   },
   {
@@ -131,9 +203,9 @@ const kenyanProducts = [
     brand: "Minute Maid",
     category: "Beverages",
     price: 210,
-    description: "Minute Maid Mango Juice 1L - delicious, real fruit juice. No added preservatives.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=800&q=80",
-    stock: 60,
+    description: "Delicious real fruit juice, no added preservatives.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/mango-juice.jpg",
+    stock: 100,
     tags: ["juice", "mango", "fruit"]
   },
   {
@@ -141,9 +213,9 @@ const kenyanProducts = [
     brand: "Kericho Gold",
     category: "Beverages",
     price: 250,
-    description: "Kericho Gold Green Tea 25 Bags - premium Kenyan tea for a healthy lifestyle.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80",
-    stock: 40,
+    description: "Premium Kenyan tea for a healthy lifestyle.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/green-tea.jpg",
+    stock: 80,
     tags: ["tea", "green-tea", "healthy"]
   },
   {
@@ -151,10 +223,30 @@ const kenyanProducts = [
     brand: "Del Monte",
     category: "Beverages",
     price: 230,
-    description: "Del Monte Pineapple Juice 1L - made from real pineapples, no added sugar.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1589820296156-2454bb8a6ad1?w=800&q=80",
-    stock: 55,
+    description: "Made from real pineapples, no added sugar.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/pineapple-juice.jpg",
+    stock: 90,
     tags: ["juice", "pineapple", "tropical"]
+  },
+  {
+    name: "Tusker Lager 500ml",
+    brand: "Tusker",
+    category: "Beverages",
+    price: 180,
+    description: "Kenya's premium lager beer.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/tusker.jpg",
+    stock: 120,
+    tags: ["beer", "lager", "kenyan"]
+  },
+  {
+    name: "Stoney Tangawizi 300ml",
+    brand: "Stoney",
+    category: "Beverages",
+    price: 60,
+    description: "Ginger ale with a Kenyan twist.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/stoney.jpg",
+    stock: 200,
+    tags: ["soda", "ginger", "refreshing"]
   },
 
   // Household Items
@@ -163,9 +255,9 @@ const kenyanProducts = [
     brand: "Harpic",
     category: "Household",
     price: 210,
-    description: "Harpic Toilet Cleaner 500ml - powerful cleaning, removes stains and kills germs.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=800&q=80",
-    stock: 40,
+    description: "Powerful cleaning, removes stains and kills germs.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/harpic.jpg",
+    stock: 70,
     tags: ["cleaning", "bathroom", "household"]
   },
   {
@@ -173,9 +265,9 @@ const kenyanProducts = [
     brand: "Sunlight",
     category: "Household",
     price: 350,
-    description: "Sunlight Washing Powder 1kg - tough on stains, gentle on hands. Fresh fragrance.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?w=800&q=80",
-    stock: 60,
+    description: "Tough on stains, gentle on hands. Fresh fragrance.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/sunlight.jpg",
+    stock: 100,
     tags: ["laundry", "detergent", "cleaning"]
   },
   {
@@ -183,9 +275,9 @@ const kenyanProducts = [
     brand: "Dettol",
     category: "Household",
     price: 180,
-    description: "Dettol Antiseptic 250ml - trusted protection against germs for your family.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f?w=800&q=80",
-    stock: 50,
+    description: "Trusted protection against germs for your family.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/dettol.jpg",
+    stock: 80,
     tags: ["antiseptic", "hygiene", "health"]
   },
   {
@@ -193,10 +285,30 @@ const kenyanProducts = [
     brand: "Jik",
     category: "Household",
     price: 120,
-    description: "Jik Bleach 500ml - effective for cleaning, whitening, and disinfecting.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800&q=80",
-    stock: 70,
+    description: "Effective for cleaning, whitening, and disinfecting.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/jik.jpg",
+    stock: 90,
     tags: ["bleach", "disinfectant", "cleaning"]
+  },
+  {
+    name: "Vim Dishwashing Liquid 750ml",
+    brand: "Vim",
+    category: "Household",
+    price: 190,
+    description: "Powerful grease removal for sparkling dishes.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/vim.jpg",
+    stock: 110,
+    tags: ["dishwashing", "cleaning", "kitchen"]
+  },
+  {
+    name: "Omo Washing Powder 2kg",
+    brand: "Omo",
+    category: "Household",
+    price: 620,
+    description: "Deep cleaning power for the whole family.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/omo.jpg",
+    stock: 85,
+    tags: ["laundry", "detergent", "cleaning"]
   },
 
   // Personal Care
@@ -205,9 +317,9 @@ const kenyanProducts = [
     brand: "Geisha",
     category: "Personal Care",
     price: 70,
-    description: "Geisha Bar Soap 125g - gentle on skin, long-lasting fragrance.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=800&q=80",
-    stock: 100,
+    description: "Gentle on skin, long-lasting fragrance.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/geisha-soap.jpg",
+    stock: 150,
     tags: ["soap", "bathing", "personal-care"]
   },
   {
@@ -215,9 +327,9 @@ const kenyanProducts = [
     brand: "Nivea",
     category: "Personal Care",
     price: 520,
-    description: "Nivea Body Lotion 400ml - deep moisture care for smooth, healthy skin.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80",
-    stock: 30,
+    description: "Deep moisture care for smooth, healthy skin.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/nivea-lotion.jpg",
+    stock: 60,
     tags: ["lotion", "skincare", "moisturizer"]
   },
   {
@@ -225,20 +337,50 @@ const kenyanProducts = [
     brand: "Colgate",
     category: "Personal Care",
     price: 150,
-    description: "Colgate Toothpaste 100ml - fights cavities, freshens breath.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1622368443980-e3f1acd66b3a?w=800&q=80",
-    stock: 80,
+    description: "Fights cavities, freshens breath.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/colgate.jpg",
+    stock: 120,
     tags: ["toothpaste", "dental", "oral-care"]
   },
   {
-    name: "Always Sanitary Pads 8pcs",
+    name: "Always Sanitary Pads (10 pack)",
     brand: "Always",
     category: "Personal Care",
-    price: 120,
-    description: "Always Sanitary Pads 8pcs - comfort and protection for women.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=800&q=80",
-    stock: 60,
+    price: 180,
+    description: "Regular sanitary pads for feminine hygiene.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/pads.jpg",
+    stock: 100,
     tags: ["feminine-hygiene", "sanitary-pads", "women"]
+  },
+  {
+    name: "Vaseline Petroleum Jelly 250ml",
+    brand: "Vaseline",
+    category: "Personal Care",
+    price: 220,
+    description: "Pure petroleum jelly for skin protection.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/vaseline.jpg",
+    stock: 90,
+    tags: ["skincare", "moisturizer", "protection"]
+  },
+  {
+    name: "Clear Shampoo 400ml",
+    brand: "Clear",
+    category: "Personal Care",
+    price: 380,
+    description: "Anti-dandruff shampoo for healthy hair.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/clear-shampoo.jpg",
+    stock: 75,
+    tags: ["shampoo", "hair-care", "anti-dandruff"]
+  },
+  {
+    name: "Lux Body Wash 500ml",
+    brand: "Lux",
+    category: "Personal Care",
+    price: 420,
+    description: "Luxurious body wash for soft skin.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/lux-bodywash.jpg",
+    stock: 65,
+    tags: ["body-wash", "bathing", "skincare"]
   },
 
   // Electronics
@@ -247,9 +389,9 @@ const kenyanProducts = [
     brand: "Bruhm",
     category: "Electronics",
     price: 14500,
-    description: "Bruhm 32-inch Digital TV - HD Ready, USB, HDMI, energy saving.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&q=80",
-    stock: 20,
+    description: "HD Ready TV with USB, HDMI, energy saving.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/bruhm-tv.jpg",
+    stock: 25,
     tags: ["tv", "electronics", "entertainment"]
   },
   {
@@ -257,9 +399,9 @@ const kenyanProducts = [
     brand: "Ramtons",
     category: "Electronics",
     price: 9500,
-    description: "Ramtons Microwave 20L - compact, efficient, and easy to use.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1585515320310-259814833e62?w=800&q=80",
-    stock: 15,
+    description: "Compact, efficient, and easy to use microwave.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/microwave.jpg",
+    stock: 20,
     tags: ["microwave", "kitchen", "appliances"]
   },
   {
@@ -267,9 +409,9 @@ const kenyanProducts = [
     brand: "Mika",
     category: "Electronics",
     price: 4200,
-    description: "Mika Blender 1.5L - powerful motor, durable glass jar, multi-speed.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=800&q=80",
-    stock: 25,
+    description: "Powerful motor, durable glass jar, multi-speed.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/blender.jpg",
+    stock: 35,
     tags: ["blender", "kitchen", "appliances"]
   },
   {
@@ -277,10 +419,20 @@ const kenyanProducts = [
     brand: "Von Hotpoint",
     category: "Electronics",
     price: 2800,
-    description: "Von Hotpoint Electric Kettle 1.7L - fast boiling, auto shut-off, stainless steel.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1606929254400-6bdef0c1ee37?w=800&q=80",
-    stock: 35,
+    description: "Fast boiling, auto shut-off, stainless steel.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/kettle.jpg",
+    stock: 40,
     tags: ["kettle", "kitchen", "appliances"]
+  },
+  {
+    name: "Nunix Rechargeable Fan",
+    brand: "Nunix",
+    category: "Electronics",
+    price: 3500,
+    description: "Portable rechargeable fan with LED light.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/fan.jpg",
+    stock: 30,
+    tags: ["fan", "rechargeable", "portable"]
   },
 
   // Fashion
@@ -289,9 +441,9 @@ const kenyanProducts = [
     brand: "Bata",
     category: "Fashion",
     price: 2500,
-    description: "Bata School Shoes - durable leather, comfortable fit for students.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&q=80",
-    stock: 45,
+    description: "Durable leather shoes, comfortable fit for students.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/bata-shoes.jpg",
+    stock: 50,
     tags: ["shoes", "school", "fashion"]
   },
   {
@@ -299,9 +451,9 @@ const kenyanProducts = [
     brand: "Handmade",
     category: "Fashion",
     price: 1800,
-    description: "Traditional Kenyan Kiondo Bag - handwoven sisal, authentic African fashion.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=800&q=80",
-    stock: 20,
+    description: "Handwoven sisal bag, authentic African fashion.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/kiondo.jpg",
+    stock: 30,
     tags: ["bags", "traditional", "handmade"]
   },
   {
@@ -309,15 +461,36 @@ const kenyanProducts = [
     brand: "Local Artisan",
     category: "Fashion",
     price: 800,
-    description: "Authentic Kenyan Khanga - colorful patterns, versatile fabric for clothing and decor.",
-    sourceImageUrl: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80",
-    stock: 30,
+    description: "Colorful Kenyan Khanga for clothing and decor.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/khanga.jpg",
+    stock: 40,
     tags: ["fabric", "traditional", "kenyan"]
+  },
+  {
+    name: "Maasai Sandals",
+    brand: "Maasai",
+    category: "Fashion",
+    price: 1500,
+    description: "Traditional handmade leather sandals.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/maasai-sandals.jpg",
+    stock: 35,
+    tags: ["sandals", "traditional", "leather"]
+  },
+  {
+    name: "Lessos (Shuka) - Maasai Blanket",
+    brand: "Maasai",
+    category: "Fashion",
+    price: 1200,
+    description: "Traditional Maasai blanket with red patterns.",
+    sourceImageUrl: "https://res.cloudinary.com/dvpr5bcrp/image/upload/shuka.jpg",
+    stock: 25,
+    tags: ["blanket", "traditional", "maasai"]
   }
 ];
 
 // Category definitions
 const categories = [
+  { name: 'Staples', description: 'Essential Kenyan food staples and basics' },
   { name: 'Groceries', description: 'Daily grocery items and food products' },
   { name: 'Beverages', description: 'Drinks, juices, and beverages' },
   { name: 'Household', description: 'Household cleaning and maintenance products' },
