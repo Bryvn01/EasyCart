@@ -170,6 +170,8 @@ const ImageWithFallback = ({
   useEffect(() => {
     if (!lazy || !imageRef.current) return;
 
+    const currentImageRef = imageRef.current;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -190,13 +192,13 @@ const ImageWithFallback = ({
       }
     );
 
-    if (imageRef.current) {
-      observer.observe(imageRef.current);
+    if (currentImageRef) {
+      observer.observe(currentImageRef);
     }
 
     return () => {
-      if (imageRef.current) {
-        observer.unobserve(imageRef.current);
+      if (currentImageRef) {
+        observer.unobserve(currentImageRef);
       }
     };
   }, [lazy]);
