@@ -3,11 +3,10 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button, Card } from './ui';
 import PropTypes from 'prop-types';
-import { optimizeImage, imageFallback } from '../utils/images';
+import ImageWithFallback from './ImageWithFallback';
 
 const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => {
   const { t } = useTranslation();
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   if (!product) {
@@ -20,20 +19,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
 
   // Get product images - support multiple images
   const productImages = product.images && product.images.length > 0 
-    ? product.images 
+    ? product.images.map(img => typeof img === 'object' ? img.url : img)
     : [product.image || '/images/placeholder-product.jpg'];
 
-  const mainImage = optimizeImage(productImages[currentImageIndex]);
+  const currentImage = productImages[currentImageIndex];
   const hasMultipleImages = productImages.length > 1;
-
-  const handleImageError = (e) => {
-    imageFallback(e, 'product');
-    setImageLoaded(true);
-  };
-
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
 
   const handleQuickView = (e) => {
     e.preventDefault();
@@ -48,30 +38,20 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
     >
       {/* Product Image Section */}
       <div className="relative aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
-        <Link to={`/products/${product.id}`} className="block relative">
-          <img
-            src={mainImage}
+        <Link to={`/products/${product.id}`} className="block relative h-48">
+          <ImageWithFallback
+            src={currentImage}
             alt={product.name}
-            className={`h-48 w-full object-cover object-center transition-all duration-500 ${
-              imageLoaded 
-                ? 'opacity-100 group-hover:scale-105' 
-                : 'opacity-0'
-            }`}
-            onLoad={handleImageLoad}
-            onError={handleImageError}
-            loading="lazy"
+            fallbackCategory="product"
+            lazy
+            showSkeleton
+            className="w-full h-full"
+            style={{ objectFit: 'cover' }}
           />
           
-          {/* Loading Skeleton */}
-          {!imageLoaded && (
-            <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
-              <div className="text-gray-400">Loading...</div>
-            </div>
-          )}
-
           {/* Image Navigation Dots for Multiple Images */}
-          {hasMultipleImages && imageLoaded && (
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+          {hasMultipleImages && (
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
               {productImages.map((_, index) => (
                 <button
                   key={index}
@@ -85,6 +65,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
                       ? 'bg-white scale-125' 
                       : 'bg-white bg-opacity-50'
                   }`}
+                  aria-label={`View image ${index + 1}`}
                 />
               ))}
             </div>

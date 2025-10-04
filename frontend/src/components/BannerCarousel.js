@@ -1,4 +1,5 @@
 import React from 'react';
+import ImageWithFallback from './ImageWithFallback';
 
 const banners = [
   {
@@ -37,10 +38,13 @@ const BannerCarousel = () => {
           href={banner.link}
           className={`absolute inset-0 transition-opacity duration-700 ${idx === current ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
         >
-          <img
+          <ImageWithFallback
             src={banner.image}
             alt={banner.alt}
-            className="object-cover w-full h-full"
+            fallbackCategory="hero"
+            showSkeleton
+            className="w-full h-full"
+            style={{ objectFit: 'cover' }}
             draggable="false"
           />
         </a>
