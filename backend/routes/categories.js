@@ -4,6 +4,7 @@ const Category = require('../models/Category');
 
 // Fallback categories for when MongoDB is not available
 const fallbackCategories = [
+  { _id: '0', id: '0', name: 'Staples', description: 'Essential Kenyan food staples and basics', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&q=80', isActive: true },
   { _id: '1', id: '1', name: 'Electronics', description: 'Electronic devices and gadgets', image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&q=80', isActive: true },
   { _id: '2', id: '2', name: 'Fashion', description: 'Clothing and accessories', image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80', isActive: true },
   { _id: '3', id: '3', name: 'Home & Living', description: 'Home decor and furniture', image: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600&q=80', isActive: true },
