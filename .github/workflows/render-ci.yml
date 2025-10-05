@@ -47,11 +47,15 @@ jobs:
           npm ci
 
       - name: Run frontend tests
+        env:
+          REACT_APP_API_URL: http://localhost:8000/api
         run: |
           cd frontend
           npm test -- --watchAll=false
 
       - name: Build frontend
+        env:
+          REACT_APP_API_URL: http://localhost:8000/api
         run: |
           cd frontend
           npm run build
