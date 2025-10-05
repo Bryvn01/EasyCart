@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
+from apps.products.mongodb_utils import check_mongodb_connection
 
 def api_root(request):
     return JsonResponse({
@@ -10,18 +11,32 @@ def api_root(request):
         'admin': '/admin/',
         'endpoints': {
             'products': '/api/products/',
+            'categories': '/api/products/categories/',
             'auth': '/api/auth/',
-            'orders': '/api/orders/'
+            'orders': '/api/orders/',
+            'health': '/api/health/'
         }
     })
 
 def health_check(request):
     """Health check endpoint for monitoring and load balancers"""
-    return JsonResponse({
-        'status': 'healthy',
-        'service': 'easycart-backend',
-        'version': '1.0.0'
-    })
+    try:
+        # Check MongoDB connection
+        mongo_status = check_mongodb_connection()
+        
+        return JsonResponse({
+            'status': 'healthy',
+            'service': 'easycart-backend',
+            'version': '1.0.0',
+            'database': mongo_status
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'unhealthy',
+            'service': 'easycart-backend',
+            'version': '1.0.0',
+            'error': str(e)
+        }, status=500)
 
 urlpatterns = [
     path('', api_root, name='api-root'),

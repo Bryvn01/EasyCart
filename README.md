@@ -1,71 +1,78 @@
 # EasyCart - E-Commerce Web Application
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Node.js](https://img.shields.io/badge/node-18+-green.svg)
+![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![Django](https://img.shields.io/badge/django-3.2+-green.svg)
 ![React](https://img.shields.io/badge/react-18+-blue.svg)
 ![MongoDB](https://img.shields.io/badge/mongodb-7+-green.svg)
 
-A complete e-commerce solution with React frontend and unified Node.js/Express/MongoDB backend featuring advanced product management, real-time updates, and cloud-based image handling.
+A complete e-commerce solution with React frontend and Django REST Framework backend, featuring MongoDB Atlas integration for product data, JWT authentication, and production-ready architecture.
 
-## 🎉 Latest Updates (v2.0)
+## 🎉 Latest Updates (v3.0)
 
-**Major Backend Unification Complete!**
+**Django REST Framework + MongoDB Atlas Integration Complete!**
 
-- ✅ **Unified Node.js Backend**: Single Express + MongoDB backend (port 5000)
-- ✅ **Enhanced Product API**: SKU, multi-image, variants, SEO fields
-- ✅ **Real-Time Features**: Socket.io for live inventory and price updates
-- ✅ **Cloud Image Management**: Cloudinary integration with Sharp optimization
-- ✅ **Comprehensive Documentation**: Full API docs and integration guides
+- ✅ **Django REST Framework Backend**: Robust API with DRF (port 8000)
+- ✅ **MongoDB Atlas Integration**: Products fetched via PyMongo from MongoDB
+- ✅ **JWT Authentication**: Login, register, and refresh token endpoints
+- ✅ **Clean JSON Serialization**: Proper id, name, price, description, image_url, category fields
+- ✅ **Advanced Filtering**: Category, price range, and search filters with pagination
+- ✅ **CORS Configuration**: Frontend URL environment variable support
+- ✅ **Health Check Endpoint**: MongoDB connection status monitoring
+- ✅ **Startup Logging**: MongoDB connection verification on server start
 
-**📚 New Documentation:**
-- [Enhanced Product API Guide](ENHANCED_PRODUCT_API_GUIDE.md) - Complete API reference
-- [Admin Dashboard Integration Guide](ADMIN_DASHBOARD_INTEGRATION_GUIDE.md) - Frontend integration
-- [Django Deprecation Notice](DJANGO_DEPRECATION_NOTICE.md) - Migration information
+**📚 Documentation:**
+- [Django MongoDB Integration Guide](DJANGO_MONGODB_INTEGRATION.md) - **NEW!** Complete setup guide
+- [Enhanced Product API Guide](ENHANCED_PRODUCT_API_GUIDE.md) - API reference
+- [Admin Dashboard Integration](ADMIN_DASHBOARD_INTEGRATION_GUIDE.md) - Frontend integration
 - [Implementation Summary](IMPLEMENTATION_COMPLETE_SUMMARY.md) - Complete overview
-- [Frontend Error Handling Guide](FRONTEND_ERROR_HANDLING_GUIDE.md) - **NEW!** Troubleshooting and diagnostics
 
 ## 🚀 Features
 
-- **User Authentication**: JWT-based registration and login with role-based access control
-- **Advanced Product Catalog**: Browse products with multi-image galleries, variants, and SEO optimization
-- **Shopping Cart**: Add/remove items with real-time stock validation
-- **Order Management**: Complete checkout process with order tracking
-- **Enhanced Admin Dashboard**: Advanced product management with inventory alerts
-- **Multi-Image Upload**: Up to 5 optimized images per product with Cloudinary CDN
-- **Real-Time Updates**: Live inventory, price changes, and low stock alerts via Socket.io
-- **Wishlist**: Save favorite products
-- **Reviews & Ratings**: Product review system
-- **Responsive Design**: Mobile-first responsive UI
-- **SEO Optimized**: Auto-generated slugs, meta titles, and descriptions
+- **User Authentication**: JWT-based registration and login with djangorestframework-simplejwt
+- **Product Catalog**: Browse products from MongoDB Atlas with advanced filters
+- **Search & Filter**: Category filtering, price range, and full-text search
+- **Shopping Cart**: Add/remove items with localStorage persistence (frontend)
+- **Order Management**: Checkout flow with shipping and payment
+- **Product Detail Pages**: Rich product information with descriptions and images
+- **Responsive Design**: Mobile-first responsive UI with TailwindCSS/Material UI
+- **RESTful API**: Clean, well-documented endpoints following REST principles
+- **Pagination**: Efficient data loading with configurable page sizes
+- **Error Handling**: Graceful error responses with proper HTTP status codes
 
 ## 🛠️ Tech Stack
 
 **Frontend:**
 - React 18+ with Hooks
-- Context API for state management
-- Socket.io Client for real-time updates
-- CSS3 with responsive design
+- React Router for navigation
 - Axios for API calls
+- TailwindCSS / Material UI for styling
+- Context API for state management
+- localStorage for cart persistence
 
-**Backend (Unified Node.js):**
-- Node.js 18+ / Express 5+
-- MongoDB 7+ with Mongoose
-- Socket.io for real-time communication
-- JWT Authentication with RBAC
-- Cloudinary for cloud image storage
-- Sharp for image optimization
-- Multer for file uploads
-- Helmet for security headers
+**Backend (Django REST Framework):**
+- Django 3.2.x LTS
+- Django REST Framework 3.15+
+- PyMongo 3.12+ (MongoDB driver)
+- djangorestframework-simplejwt (JWT auth)
+- django-cors-headers (CORS support)
+- django-filter (filtering support)
+- Gunicorn (production server)
+
+**Database:**
+- MongoDB Atlas (products, categories)
+- SQLite/PostgreSQL (Django auth, sessions)
 
 **Infrastructure:**
-- MongoDB Atlas (production) / Local MongoDB (development)
-- Cloudinary CDN for image delivery
-- Socket.io for WebSocket connections
+- MongoDB Atlas for product data
+- Cloudinary CDN for image hosting (optional)
+- Render / Railway for deployment
 
 ## 📋 Prerequisites
 
-- Node.js 18+
-- MongoDB 7+ (local or Atlas)
+- Python 3.8+
+- MongoDB Atlas account (free tier available)
+- Node.js 18+ (for frontend)
 - npm or yarn
 - Git
 - Cloudinary account (optional, for image uploads)
@@ -78,25 +85,142 @@ git clone https://github.com/Bryvn01/EasyCart.git
 cd EasyCart
 ```
 
-### 2. Backend Setup (Node.js)
+### 2. Backend Setup (Django REST Framework)
 ```bash
 cd backend
-npm install
+pip install -r requirements.txt
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your MongoDB URI, JWT secret, and Cloudinary credentials
-# Set CLOUDINARY_URL for image uploads (get from your Cloudinary dashboard)
+# Edit .env with your MongoDB URI and Django settings:
+# MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/easycart
+# SECRET_KEY=your-django-secret-key
+# FRONTEND_URL=http://localhost:3000
+
+# Run migrations (for Django models)
+python manage.py migrate
+
+# Create superuser (optional, for Django admin)
+python manage.py createsuperuser
 
 # Start the server
-npm start
-# Server runs on http://localhost:5000
+python manage.py runserver
+# Server runs on http://localhost:8000
 ```
 
 ### 3. Frontend Setup
 ```bash
 cd frontend
 npm install
+
+# Configure API URL
+cp .env.example .env
+# Edit .env:
+# REACT_APP_API_URL=http://localhost:8000/api
+
+# Start development server
+npm start
+# Frontend runs on http://localhost:3000
+```
+
+### 4. Verify MongoDB Connection
+
+```bash
+cd backend
+python test_mongodb_integration.py
+```
+
+Expected output:
+```
+✅ MongoDB connection successful!
+   Database: easycart
+   Products Count: 37
+```
+
+## 📡 API Endpoints
+
+### Products API
+
+#### List Products with Filters
+```
+GET /api/products/
+```
+
+**Query Parameters:**
+- `page` - Page number (default: 1)
+- `page_size` - Results per page (default: 20)
+- `category` - Filter by category name (e.g., `Electronics`)
+- `search` - Search in name and description
+- `price_min` - Minimum price filter
+- `price_max` - Maximum price filter
+- `ordering` - Sort field (e.g., `-price`, `name`)
+
+**Example:**
+```bash
+curl http://localhost:8000/api/products/?category=Electronics&price_max=30000
+```
+
+**Response:**
+```json
+{
+  "count": 37,
+  "next": true,
+  "previous": false,
+  "results": [
+    {
+      "id": "507f1f77bcf86cd799439011",
+      "name": "Samsung Galaxy A14 128GB",
+      "price": 24999,
+      "description": "5G ready smartphone...",
+      "image_url": "https://res.cloudinary.com/.../galaxy.jpg",
+      "category": "Electronics",
+      "brand": "Samsung",
+      "stock": 28
+    }
+  ]
+}
+```
+
+#### Get Single Product
+```
+GET /api/products/<id>/
+```
+
+#### List Categories
+```
+GET /api/products/categories/
+```
+
+### Authentication API
+
+#### Register
+```
+POST /api/auth/register/
+```
+**Body:** `{ "email": "user@example.com", "password": "pass123", "first_name": "John", "last_name": "Doe" }`
+
+#### Login
+```
+POST /api/auth/login/
+```
+**Body:** `{ "email": "user@example.com", "password": "pass123" }`
+
+**Response:** Returns access and refresh JWT tokens
+
+#### Refresh Token
+```
+POST /api/auth/token/refresh/
+```
+**Body:** `{ "refresh": "refresh_token_here" }`
+
+### Health Check
+```
+GET /api/health/
+```
+
+Returns MongoDB connection status and database info.
+
+**Full API documentation:** See [DJANGO_MONGODB_INTEGRATION.md](DJANGO_MONGODB_INTEGRATION.md)
 
 # Setup environment variables
 cp .env.example .env
@@ -124,41 +248,44 @@ npm start
 
 ```
 EasyCart/
-├── backend/                    # Node.js/Express API
-│   ├── controllers/            # Business logic
-│   │   └── productController.js
-│   ├── models/                 # Mongoose schemas
-│   │   ├── Product.js          # Enhanced product model
-│   │   ├── User.js
-│   │   └── Category.js
-│   ├── routes/                 # API routes
-│   │   ├── products.js
-│   │   ├── upload.js
-│   │   ├── auth.js
-│   │   └── categories.js
-│   ├── middleware/             # Auth & validation
-│   │   └── auth.js
-│   ├── utils/                  # Utilities
-│   │   ├── cloudinary.js       # Image upload
-│   │   └── imageUpload.js      # Image processing
-│   ├── socket.js               # Real-time features
-│   ├── server.js               # Entry point
-│   └── package.json
+├── backend/                    # Django REST Framework API
+│   ├── apps/
+│   │   ├── products/           # Products app
+│   │   │   ├── views.py        # Product API views (MongoDB)
+│   │   │   ├── mongodb_utils.py # MongoDB connection utilities
+│   │   │   ├── serializers.py  # DRF serializers
+│   │   │   ├── models.py       # Django models (for ORM if needed)
+│   │   │   └── urls.py         # Product endpoints
+│   │   ├── accounts/           # Authentication app
+│   │   │   ├── views.py        # JWT auth views
+│   │   │   ├── serializers.py  # User serializers
+│   │   │   └── urls.py         # Auth endpoints
+│   │   └── orders/             # Orders app
+│   ├── ecommerce/              # Django project settings
+│   │   ├── settings.py         # Configuration
+│   │   ├── urls.py             # URL routing
+│   │   └── wsgi.py             # WSGI config
+│   ├── manage.py               # Django management
+│   ├── requirements.txt        # Python dependencies
+│   └── test_mongodb_integration.py  # MongoDB tests
 ├── frontend/                   # React application
 │   ├── src/
-│   │   ├── components/     # Reusable components
-│   │   ├── pages/          # Page components
-│   │   ├── context/        # React Context
-│   │   └── services/       # API services
+│   │   ├── components/         # Reusable components
+│   │   ├── pages/              # Page components
+│   │   │   ├── Products.js     # Product listing with filters
+│   │   │   ├── ProductDetail.js # Single product view
+│   │   │   ├── Cart.js         # Shopping cart
+│   │   │   └── Login.js        # Authentication
+│   │   ├── context/            # React Context (auth, cart)
+│   │   ├── services/           # API services
+│   │   │   └── api.js          # Axios configuration
+│   │   └── App.js              # Main app component
 │   └── package.json
-├── admin-dashboard/            # Admin React app
-│   ├── src/
-│   │   ├── pages/             # Admin pages
-│   │   ├── services/          # API services
-│   │   └── components/
-│   └── package.json
-├── ENHANCED_PRODUCT_API_GUIDE.md          # API documentation
-├── ADMIN_DASHBOARD_INTEGRATION_GUIDE.md   # Integration guide
+├── admin-dashboard/            # Admin React app (optional)
+├── DJANGO_MONGODB_INTEGRATION.md      # Django setup guide
+├── IMPLEMENTATION_SUMMARY.md           # Implementation details
+└── README.md                           # This file
+```
 ├── DJANGO_DEPRECATION_NOTICE.md           # Migration info
 ├── IMPLEMENTATION_COMPLETE_SUMMARY.md     # Overview
 └── README.md
@@ -170,38 +297,73 @@ EasyCart/
 
 **Backend (.env):**
 ```env
-# Server
-PORT=5000
+# MongoDB Atlas
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/easycart?retryWrites=true&w=majority
 
-# Database
-MONGO_URI=mongodb://localhost:27017/easycart
-# Or MongoDB Atlas: mongodb+srv://user:pass@cluster.mongodb.net/easycart
+# Django Security
+SECRET_KEY=your-strong-django-secret-key
+DEBUG=False
 
-# Authentication
-JWT_SECRET=your-secret-key-here
+# CORS (Frontend URLs)
+FRONTEND_URL=https://yourdomain.com
+CORS_ALLOWED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
 
-# Cloudinary (for image uploads)
-# Option 1: Use CLOUDINARY_URL (recommended for deployment)
-CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name
+# Allowed Hosts
+ALLOWED_HOSTS=localhost,127.0.0.1,yourdomain.com
 
-# Option 2: Use individual credentials (alternative)
-# CLOUDINARY_CLOUD_NAME=your-cloud-name
-# CLOUDINARY_API_KEY=your-api-key
-# CLOUDINARY_API_SECRET=your-api-secret
-
-# CORS
-FRONTEND_URL=http://localhost:3000
+# Optional: PostgreSQL for Django models
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=easycart
+DB_USER=postgres
+DB_PASSWORD=password
+DB_HOST=localhost
+DB_PORT=5432
 ```
 
 **Frontend (.env):**
 ```env
-REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_API_URL=http://localhost:8000/api
+# Production: https://easycart-backend.onrender.com/api
 ```
 
 **Admin Dashboard (.env):**
 ```env
-REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_API_URL=http://localhost:8000/api
 ```
+
+## 🚀 Deployment on Render
+
+### Backend (Django)
+
+1. Create a new Web Service on [Render](https://render.com)
+2. Connect your GitHub repository
+3. Configure:
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `cd backend && gunicorn ecommerce.wsgi:application`
+   - **Root Directory**: `backend`
+4. Add environment variables:
+   - `MONGO_URI` - Your MongoDB Atlas connection string
+   - `SECRET_KEY` - Django secret key
+   - `DEBUG` - `False`
+   - `ALLOWED_HOSTS` - Your Render domain
+   - `CORS_ALLOWED_ORIGINS` - Frontend URL
+
+### Frontend (React)
+
+1. Create a Static Site on Render
+2. Configure:
+   - **Build Command**: `cd frontend && npm install && npm run build`
+   - **Publish Directory**: `frontend/build`
+3. Add environment variable:
+   - `REACT_APP_API_URL` - Your backend API URL
+
+### MongoDB Atlas Setup
+
+1. Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create database user with password
+3. Whitelist IP addresses (0.0.0.0/0 for all IPs)
+4. Get connection string and add to `MONGO_URI`
+5. Use MongoDB Compass or seed script to populate data
 
 ## ☁️ Cloudinary Setup & Product Seeding
 
