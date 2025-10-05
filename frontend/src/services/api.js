@@ -203,3 +203,5 @@ export const adminAPI = {
   updateOrderStatus: (id, status) => api.patch(`/admin/orders/${id}/`, { status }),
 };
 
+// Export the configured axios instance for advanced use cases
+export default api;
