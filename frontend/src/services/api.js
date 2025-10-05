@@ -3,6 +3,14 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-backend.onrender.com/api';
 
+// Log API configuration always (not just in development)
+console.log('🔧 [API Config] Initialized with:', {
+  baseURL: API_BASE_URL,
+  envVarSet: !!process.env.REACT_APP_API_URL,
+  envValue: process.env.REACT_APP_API_URL || '(using default)',
+  nodeEnv: process.env.NODE_ENV
+});
+
 // Log API configuration in development
 if (process.env.NODE_ENV === 'development') {
   console.log('API Configuration:', {
@@ -132,8 +140,24 @@ export const authAPI = {
 
 export const productsAPI = {
   getProducts: (params) => {
+    console.log('🔗 [productsAPI] GET /products with params:', params);
     return api.get('/products', { params })
+      .then(response => {
+        console.log('✅ [productsAPI] Response received, status:', response.status);
+        return response;
+      })
       .catch(error => {
+        console.error('❌ [productsAPI] Failed to fetch products');
+        console.error('❌ [productsAPI] Error details:', {
+          message: error.message,
+          code: error.code,
+          url: error.config?.url,
+          baseURL: error.config?.baseURL,
+          fullURL: error.config?.baseURL + error.config?.url,
+          hasResponse: !!error.response,
+          status: error.response?.status,
+          data: error.response?.data
+        });
         if (process.env.NODE_ENV === 'development') {
           console.error('Failed to fetch products:', error.message);
         }

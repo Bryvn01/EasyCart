@@ -29,17 +29,41 @@ const Homepage = () => {
   // Fetch products from backend
   const fetchProducts = async () => {
     setLoading(true);
+    console.log('🔍 [Homepage] Fetching products...');
+    console.log('🌐 [Homepage] API Base URL:', process.env.REACT_APP_API_URL);
     try {
       const res = await productsAPI.getProducts();
-      setProducts(res.data.results || res.data || []);
+      console.log('✅ [Homepage] API Response received:', res.data);
+      console.log('📊 [Homepage] Response structure:', {
+        hasResults: !!res.data.results,
+        hasData: !!res.data.data,
+        isArray: Array.isArray(res.data),
+        resultsLength: res.data.results?.length,
+        dataLength: res.data.data?.length,
+        arrayLength: Array.isArray(res.data) ? res.data.length : 0
+      });
+      
+      // Try multiple possible response structures
+      let productsData = res.data.results || res.data.data || res.data || [];
+      console.log('📦 [Homepage] Products extracted:', productsData.length, 'items');
+      
+      setProducts(productsData);
     } catch (error) {
+      console.error('❌ [Homepage] Error fetching products:', error);
+      console.error('❌ [Homepage] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
       handleApiError(error, 'Failed to load products');
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    console.log('🚀 [Homepage] Component mounted, initiating product fetch');
     fetchProducts();
   }, []);
 
@@ -177,7 +201,26 @@ const Homepage = () => {
       {/* Full Product Grid */}
       <section className="my-8">
         <h2 className="text-2xl font-bold mb-4">All Products</h2>
-        <ProductGrid products={selectedCategory ? products.filter(categorySections[selectedCategory]?.filter || (() => true)) : products} onAddToCart={handleAddToCart} loading={loading} />
+        {!loading && products.length === 0 ? (
+          <div className="text-center py-16 bg-gray-50 rounded-lg">
+            <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>📦</div>
+            <h3 className="text-xl font-semibold mb-2">No products found</h3>
+            <p className="text-gray-600 mb-4">
+              Products from the backend API are not loading. This could be due to:
+            </p>
+            <ul className="text-left max-w-md mx-auto text-sm text-gray-600 space-y-1">
+              <li>• Backend API is not responding</li>
+              <li>• No products seeded in MongoDB Atlas</li>
+              <li>• CORS or network configuration issue</li>
+              <li>• Incorrect API URL configuration</li>
+            </ul>
+            <p className="text-xs text-gray-500 mt-4">
+              Check browser console for detailed error logs
+            </p>
+          </div>
+        ) : (
+          <ProductGrid products={selectedCategory ? products.filter(categorySections[selectedCategory]?.filter || (() => true)) : products} onAddToCart={handleAddToCart} loading={loading} />
+        )}
       </section>
 
       {/* Top Picks Section */}

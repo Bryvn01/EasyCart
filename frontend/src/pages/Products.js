@@ -40,6 +40,14 @@ const Products = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      console.log('🔍 [Products] Fetching products with params:', {
+        category: selectedCategory,
+        search: debouncedSearchTerm,
+        sort: sortBy,
+        priceRange
+      });
+      console.log('🌐 [Products] API Base URL:', process.env.REACT_APP_API_URL);
+      
       try {
         const params = {};
         if (selectedCategory) params.category = selectedCategory;
@@ -49,13 +57,31 @@ const Products = () => {
         if (priceRange.max) params.price_max = priceRange.max;
         
         const response = await productsAPI.getProducts(params);
-        let productsData = response.data.results || response.data;
+        console.log('✅ [Products] API Response:', response.data);
+        console.log('📊 [Products] Response structure:', {
+          hasResults: !!response.data.results,
+          hasData: !!response.data.data,
+          isArray: Array.isArray(response.data),
+          resultsLength: response.data.results?.length,
+          dataLength: response.data.data?.length,
+          arrayLength: Array.isArray(response.data) ? response.data.length : 0
+        });
+        
+        let productsData = response.data.results || response.data.data || response.data;
+        console.log('📦 [Products] Extracted products:', Array.isArray(productsData) ? productsData.length : 0, 'items');
+        
         if (Array.isArray(productsData)) {
           productsData = productsData.map(p => ({ ...p, id: p._id || p.id, category: p.category || p.category_name }));
         }
         setProducts(Array.isArray(productsData) ? productsData : []);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('❌ [Products] Error fetching products:', error);
+        console.error('❌ [Products] Error details:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+          url: error.config?.url
+        });
         setProducts([]);
       } finally {
         setLoading(false);
