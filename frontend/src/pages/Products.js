@@ -63,7 +63,7 @@ const Products = () => {
     };
     
     fetchProducts();
-  }, [selectedCategory, debouncedSearchTerm, sortBy, priceRange.min, priceRange.max]);
+  }, [selectedCategory, debouncedSearchTerm, sortBy, priceRange]);
 
   useEffect(() => {
     fetchCategories();
