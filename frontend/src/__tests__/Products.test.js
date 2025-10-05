@@ -209,4 +209,151 @@ describe('Products Page', () => {
     // Check that clear all button is present
     expect(screen.getByText('Clear All')).toBeInTheDocument();
   });
+
+  test('renders pagination controls when there are multiple pages', async () => {
+    // Mock response with more products to trigger pagination
+    const manyProducts = {
+      data: {
+        count: 25, // More than 12 items (pageSize)
+        results: Array.from({ length: 12 }, (_, i) => ({
+          id: i + 1,
+          name: `Product ${i + 1}`,
+          price: 100 * (i + 1),
+          category: 'Electronics',
+          image: 'test.jpg',
+          description: 'Test description',
+          stock: 10
+        }))
+      }
+    };
+
+    api.productsAPI.getProducts.mockResolvedValue(manyProducts);
+    renderWithProviders(<Products />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Product 1')).toBeInTheDocument();
+    });
+
+    // Check for pagination controls
+    expect(screen.getByText('Previous')).toBeInTheDocument();
+    expect(screen.getByText('Next')).toBeInTheDocument();
+    expect(screen.getByText(/Page 1 of/)).toBeInTheDocument();
+  });
+
+  test('navigates to next page when Next button is clicked', async () => {
+    const manyProducts = {
+      data: {
+        count: 25,
+        results: Array.from({ length: 12 }, (_, i) => ({
+          id: i + 1,
+          name: `Product ${i + 1}`,
+          price: 100,
+          category: 'Electronics',
+          image: 'test.jpg',
+          description: 'Test description',
+          stock: 10
+        }))
+      }
+    };
+
+    api.productsAPI.getProducts.mockResolvedValue(manyProducts);
+    renderWithProviders(<Products />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Product 1')).toBeInTheDocument();
+    });
+
+    const nextButton = screen.getByText('Next');
+    fireEvent.click(nextButton);
+
+    // Wait for new page to load
+    await waitFor(() => {
+      expect(screen.getByText(/Page 2 of/)).toBeInTheDocument();
+    });
+  });
+
+  test('disables Previous button on first page', async () => {
+    const manyProducts = {
+      data: {
+        count: 25,
+        results: Array.from({ length: 12 }, (_, i) => ({
+          id: i + 1,
+          name: `Product ${i + 1}`,
+          price: 100,
+          category: 'Electronics',
+          image: 'test.jpg',
+          description: 'Test description',
+          stock: 10
+        }))
+      }
+    };
+
+    api.productsAPI.getProducts.mockResolvedValue(manyProducts);
+    renderWithProviders(<Products />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Product 1')).toBeInTheDocument();
+    });
+
+    const prevButton = screen.getByText('Previous');
+    expect(prevButton).toBeDisabled();
+  });
+
+  test('handles image load error with fallback', async () => {
+    renderWithProviders(<Products />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Product')).toBeInTheDocument();
+    });
+
+    // Find the image element using alt text
+    const firstImage = screen.getAllByRole('img')[0];
+    
+    // Simulate image error
+    fireEvent.error(firstImage);
+
+    // Check that image is hidden (display: none)
+    expect(firstImage.style.display).toBe('none');
+  });
+
+  test('resets to first page when search term changes', async () => {
+    const manyProducts = {
+      data: {
+        count: 25,
+        results: Array.from({ length: 12 }, (_, i) => ({
+          id: i + 1,
+          name: `Product ${i + 1}`,
+          price: 100,
+          category: 'Electronics',
+          image: 'test.jpg',
+          description: 'Test description',
+          stock: 10
+        }))
+      }
+    };
+
+    api.productsAPI.getProducts.mockResolvedValue(manyProducts);
+    renderWithProviders(<Products />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Product 1')).toBeInTheDocument();
+    });
+
+    // Navigate to page 2
+    const nextButton = screen.getByText('Next');
+    fireEvent.click(nextButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Page 2 of/)).toBeInTheDocument();
+    });
+
+    // Now search for something
+    const searchInput = screen.getByTestId('search-input');
+    fireEvent.change(searchInput, { target: { value: 'Laptop' } });
+
+    // Should reset to page 1
+    await waitFor(() => {
+      expect(screen.getByText(/Page 1 of/)).toBeInTheDocument();
+    }, { timeout: 1000 });
+  });
 });
