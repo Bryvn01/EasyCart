@@ -1,18 +1,45 @@
 """
 Django management command to seed MongoDB Atlas with authentic Kenyan products.
 
-Usage: python manage.py seed_products [--clear]
+USAGE:
+    python manage.py seed_products [--clear]
 
-This command populates MongoDB Atlas with categories and products relevant to the Kenyan market,
-including groceries, electronics, fashion, and essentials. Images are uploaded to Cloudinary
-with fallback to placeholder images.
+DESCRIPTION:
+    This command populates MongoDB Atlas with categories and products relevant to the Kenyan market,
+    including groceries, electronics, fashion, and essentials. Images are uploaded to Cloudinary
+    with fallback to placeholder images.
 
-Requirements:
-- MONGO_URI environment variable must be set (MongoDB Atlas connection string)
-- CLOUDINARY_URL environment variable (optional, falls back to placeholder if not set)
+ARGUMENTS:
+    --clear    Clear existing products and categories before seeding (optional)
 
-The command ensures idempotency - running it multiple times will not create duplicates.
-Products are uniquely identified by their name field.
+ENVIRONMENT VARIABLES REQUIRED:
+    MONGO_URI           MongoDB Atlas connection string (REQUIRED)
+                        Example: mongodb+srv://user:pass@cluster.mongodb.net/easycart
+
+    CLOUDINARY_URL      Cloudinary configuration URL (OPTIONAL)
+                        Format: cloudinary://api_key:api_secret@cloud_name
+                        If not set, placeholder images will be used
+
+EXAMPLES:
+    # Seed products with existing data preserved (idempotent)
+    python manage.py seed_products
+
+    # Clear all existing products and seed fresh data
+    python manage.py seed_products --clear
+
+FEATURES:
+    - Idempotent: Running multiple times won't create duplicates
+    - Products are uniquely identified by their name field
+    - Comprehensive logging for success/failure tracking
+    - Cloudinary integration with automatic fallback to placeholders
+    - Prices in Kenyan Shillings (KES)
+    - Authentic Kenyan brands and products
+
+NOTES:
+    - Uses PyMongo to directly interact with MongoDB Atlas (not Django ORM)
+    - Django ORM is not used because Djongo is incompatible with Django 4.x
+    - This is the recommended approach for the dual-backend architecture
+    - Seeded data is stored in MongoDB 'products' and 'categories' collections
 """
 
 import logging
