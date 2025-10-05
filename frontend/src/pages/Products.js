@@ -22,7 +22,7 @@ const Products = () => {
   const location = useLocation();
 
   // Use the products hook
-  const { products, loading, error, pagination, refresh } = useProducts({
+  const { products, loading, pagination } = useProducts({
     page: currentPage,
     pageSize: 12,
     search: debouncedSearchTerm,
