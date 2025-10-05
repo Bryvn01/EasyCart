@@ -306,12 +306,10 @@ describe('Products Page', () => {
       expect(screen.getByText('Test Product')).toBeInTheDocument();
     });
 
-    // Find the image element
-    const images = document.querySelectorAll('img');
-    expect(images.length).toBeGreaterThan(0);
-
+    // Find the image element using alt text
+    const firstImage = screen.getAllByRole('img')[0];
+    
     // Simulate image error
-    const firstImage = images[0];
     fireEvent.error(firstImage);
 
     // Check that image is hidden (display: none)
