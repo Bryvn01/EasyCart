@@ -149,6 +149,12 @@ const sendResponse = (res, statusCode, success, data, message, pagination = null
  */
 exports.getAllProducts = async (req, res) => {
   try {
+    // Debug logging for MongoDB connection
+    const mongoose = require('mongoose');
+    console.log('🔍 [DEBUG] Fetching products from MongoDB');
+    console.log('📊 [DEBUG] Database:', mongoose.connection.name || 'Unknown');
+    console.log('🔗 [DEBUG] Connection state:', mongoose.connection.readyState, '(1=connected, 0=disconnected)');
+    
     const {
       search,
       category,
@@ -248,13 +254,22 @@ exports.getAllProducts = async (req, res) => {
       hasPrevPage: pageNum > 1
     };
 
+    // Debug logging for results
+    console.log(`✅ [DEBUG] Retrieved ${products.length} products (Total in DB: ${total})`);
+    console.log('📦 [DEBUG] First product:', products[0] ? `${products[0].name} - KES ${products[0].price}` : 'No products found');
+    if (total === 37) {
+      console.log('✅ [DEBUG] CORRECT: Expected 37 products found in database');
+    } else if (total === 0) {
+      console.log('⚠️  [DEBUG] WARNING: 0 products found - database may not be seeded');
+    }
+
     return sendResponse(res, 200, true, products, 'Products retrieved successfully', pagination);
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error('❌ [DEBUG] Error fetching products:', error.name, '-', error.message);
     
     // Return fallback products when MongoDB is unavailable
     if (error.name === 'MongooseError' || error.message.includes('buffering timed out')) {
-      console.log('MongoDB not available, using fallback products');
+      console.log('⚠️  [DEBUG] MongoDB not available, using fallback products (8 items)');
       const { page = 1, limit = 20 } = req.query;
       const pageNum = parseInt(page);
       const limitNum = parseInt(limit);
