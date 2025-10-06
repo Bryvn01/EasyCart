@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
-from apps.products.mongodb_utils import check_mongodb_connection
+from apps.products.health_views import health_check, liveness_probe, readiness_probe
 
 def api_root(request):
     return JsonResponse({
@@ -14,33 +14,17 @@ def api_root(request):
             'categories': '/api/products/categories/',
             'auth': '/api/auth/',
             'orders': '/api/orders/',
-            'health': '/api/health/'
+            'health': '/api/health/',
+            'liveness': '/api/health/live/',
+            'readiness': '/api/health/ready/'
         }
     })
-
-def health_check(request):
-    """Health check endpoint for monitoring and load balancers"""
-    try:
-        # Check MongoDB connection
-        mongo_status = check_mongodb_connection()
-        
-        return JsonResponse({
-            'status': 'healthy',
-            'service': 'easycart-backend',
-            'version': '1.0.0',
-            'database': mongo_status
-        })
-    except Exception as e:
-        return JsonResponse({
-            'status': 'unhealthy',
-            'service': 'easycart-backend',
-            'version': '1.0.0',
-            'error': str(e)
-        }, status=500)
 
 urlpatterns = [
     path('', api_root, name='api-root'),
     path('api/health/', health_check, name='health-check'),
+    path('api/health/live/', liveness_probe, name='liveness-probe'),
+    path('api/health/ready/', readiness_probe, name='readiness-probe'),
     path('admin/', admin.site.urls),
     path('api/auth/', include('apps.accounts.urls')),
     path('api/products/', include('apps.products.urls')),
