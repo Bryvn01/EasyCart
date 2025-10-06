@@ -23,10 +23,11 @@
     "framer-motion": "^12.23.12",
     "i18next": "^22.5.1",
     "lodash": "^4.17.21",
+    "next": "^14.2.33",
     "posthog-js": "^1.261.0",
     "prop-types": "^15.8.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^16.0.0",
@@ -45,9 +46,11 @@
     "build:ts": "tsc",
     "prepublishOnly": "npm test && npm run build",
     "eject": "react-scripts eject",
-
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "next:dev": "next dev",
+    "next:build": "next build",
+    "next:start": "next start"
   },
   "eslintConfig": {
     "extends": [
@@ -83,16 +86,20 @@
     "@babel/core": "^7.14.0",
     "@babel/preset-env": "^7.14.0",
     "@babel/preset-react": "^7.14.0",
+    "@babel/preset-typescript": "^7.27.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.7.0",
+    "@types/react": "^19.2.0",
     "babel-jest": "^30.2.0",
     "eslint": "^8.0.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
-    "jsdom": "^27.0.0"
+    "jsdom": "^27.0.0",
+    "typescript": "^5.9.3"
   }
 }
