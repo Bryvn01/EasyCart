@@ -8,7 +8,10 @@
     "dev": "nodemon server.js",
     "build": "npm install",
     "seed:kenya": "node scripts/seedKenyaProducts.js",
-    "seed": "node scripts/seedProducts.js"
+    "seed": "node scripts/seedProducts.js",
+    "seed:idempotent": "node scripts/seedProducts.js --idempotent",
+    "test": "jest tests/*.test.js --forceExit",
+    "test:products": "jest tests/products.test.js --forceExit"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -26,6 +29,17 @@
     "socket.io": "^4.8.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testTimeout": 30000
   },
   "engines": {
     "node": "18.x"
