@@ -10,8 +10,9 @@
     "seed:kenya": "node scripts/seedKenyaProducts.js",
     "seed": "node scripts/seedProducts.js",
     "seed:idempotent": "node scripts/seedProducts.js --idempotent",
-    "test": "jest tests/*.test.js --forceExit",
-    "test:products": "jest tests/products.test.js --forceExit"
+    "test": "jest tests/smoke.test.js --forceExit",
+    "test:integration": "jest tests/products.test.js --forceExit",
+    "test:all": "jest tests/*.test.js --forceExit"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -32,7 +33,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.4"
   },
   "jest": {
     "testEnvironment": "node",
