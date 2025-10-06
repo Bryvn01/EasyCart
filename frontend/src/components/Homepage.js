@@ -7,7 +7,7 @@ import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
-import { optimizeImage, imageFallback } from '../utils/images';
+import { imageFallback } from '../utils/images';
 
 import { Helmet } from 'react-helmet-async';
 
