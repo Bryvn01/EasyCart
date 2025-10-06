@@ -10,6 +10,29 @@ A complete e-commerce solution with React frontend and Django REST Framework bac
 
 ---
 
+## 🏥 Health Check Enhancement (Latest)
+
+**Enhanced health monitoring for production deployments!**
+
+Both Node.js and Django backends now include comprehensive health check endpoints with:
+- ✅ **Component-based Health Reporting**: Database, memory, and runtime monitoring
+- ✅ **Kubernetes Support**: Liveness and readiness probes
+- ✅ **Detailed Status Information**: Uptime, response time, version info
+- ✅ **Load Balancer Ready**: Proper HTTP status codes (200/503)
+
+**📚 Health Check Documentation:**
+- [Health Check Enhancement Guide](HEALTH_CHECK_ENHANCEMENT_PHASE1.md) - Complete implementation details
+- [Quick Reference](HEALTH_CHECK_QUICK_REFERENCE.md) - Commands and examples
+- [Architecture Diagram](HEALTH_CHECK_ARCHITECTURE.md) - Visual overview
+
+**Endpoints:**
+- Node.js: `GET /api/health` (port 5000)
+- Django: `GET /api/health/` (port 8000)
+- Django Liveness: `GET /api/health/live/` (Kubernetes)
+- Django Readiness: `GET /api/health/ready/` (Kubernetes)
+
+---
+
 ## 🔧 Products Display Fix (Latest)
 
 **Issue**: Products not displaying on frontend?  
