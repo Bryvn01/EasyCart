@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-j6ue.onrender.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-j6ue.onrender.com/api/v1';
 
 // Log API configuration in development
 if (process.env.NODE_ENV === 'development') {
@@ -184,6 +184,10 @@ export const adminAPI = {
   getDashboardStats: (days = 30) => api.get(`/admin/dashboard/?days=${days}`),
   getOrdersAdmin: (params) => api.get('/admin/orders/', { params }),
   updateOrderStatus: (id, status) => api.patch(`/admin/orders/${id}/`, { status }),
+};
+
+export const newsletterAPI = {
+  subscribe: (email) => api.post('/newsletter/subscribe/', { email }),
 };
 
 export default api;

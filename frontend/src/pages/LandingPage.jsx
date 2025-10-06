@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { productsAPI, ordersAPI, getApiBaseUrl } from '../services/api';
+import { productsAPI, ordersAPI, newsletterAPI, getApiBaseUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess, retryWithBackoff, checkApiHealth, getDetailedErrorMessage } from '../utils/errorHandler';
@@ -313,12 +313,12 @@ const LandingPage = () => {
 
     setNewsletterLoading(true);
     try {
-      // Simulate API call - replace with actual newsletter subscription
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      handleApiSuccess('Successfully subscribed to newsletter!');
+      const response = await newsletterAPI.subscribe(newsletterEmail);
+      handleApiSuccess(response.data.message || 'Successfully subscribed to newsletter!');
       setNewsletterEmail('');
     } catch (error) {
-      handleApiError(error, 'Failed to subscribe to newsletter');
+      const errorMsg = error.response?.data?.error || error.response?.data?.message || 'Failed to subscribe to newsletter';
+      handleApiError({ message: errorMsg });
     } finally {
       setNewsletterLoading(false);
     }

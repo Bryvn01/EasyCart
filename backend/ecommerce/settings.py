@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.products',
     'apps.orders',
+    'apps.newsletter',
     'sslserver',  # Enables HTTPS for local development
     'django_extensions',
 ]

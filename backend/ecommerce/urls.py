@@ -10,11 +10,12 @@ def api_root(request):
         'message': 'E-Commerce API',
         'admin': '/admin/',
         'endpoints': {
-            'products': '/api/products/',
-            'categories': '/api/products/categories/',
-            'auth': '/api/auth/',
-            'orders': '/api/orders/',
-            'health': '/api/health/'
+            'products': '/api/v1/products/',
+            'categories': '/api/v1/products/categories/',
+            'auth': '/api/v1/auth/',
+            'orders': '/api/v1/orders/',
+            'health': '/api/v1/health/',
+            'newsletter': '/api/v1/newsletter/'
         }
     })
 
@@ -40,12 +41,13 @@ def health_check(request):
 
 urlpatterns = [
     path('', api_root, name='api-root'),
-    path('api/health/', health_check, name='health-check'),
+    path('api/v1/health/', health_check, name='health-check'),
     path('admin/', admin.site.urls),
-    path('api/auth/', include('apps.accounts.urls')),
-    path('api/products/', include('apps.products.urls')),
-    path('api/orders/', include('apps.orders.urls')),
-    path('api/admin/', include('apps.admin_dashboard.urls')),
+    path('api/v1/auth/', include('apps.accounts.urls')),
+    path('api/v1/products/', include('apps.products.urls')),
+    path('api/v1/orders/', include('apps.orders.urls')),
+    path('api/v1/admin/', include('apps.admin_dashboard.urls')),
+    path('api/v1/newsletter/', include('apps.newsletter.urls')),
 ]
 
 if settings.DEBUG:

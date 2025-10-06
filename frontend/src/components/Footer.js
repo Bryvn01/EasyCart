@@ -163,10 +163,10 @@ const Footer = () => (
           {/* Payment Methods */}
           <div className="mt-6">
             <div className="text-gray-400 text-xs mb-2">We Accept</div>
-            <div className="flex gap-2 flex-wrap">
-              <span className="px-2 py-1 bg-gray-800 rounded text-xs font-medium">M-Pesa</span>
-              <span className="px-2 py-1 bg-gray-800 rounded text-xs font-medium">Visa</span>
-              <span className="px-2 py-1 bg-gray-800 rounded text-xs font-medium">Mastercard</span>
+            <div className="flex gap-2 flex-wrap items-center">
+              <img src="/assets/brands/mpesa.svg" alt="M-Pesa" className="h-6" />
+              <img src="/assets/brands/visa.svg" alt="Visa" className="h-6" />
+              <img src="/assets/brands/mastercard.svg" alt="Mastercard" className="h-6" />
             </div>
           </div>
         </div>
