@@ -223,7 +223,3 @@ describe('Products API Integration Tests', () => {
   });
 });
 
-// Run tests if this file is executed directly
-if (require.main === module) {
-  console.log('Running products API tests...\n');
-}
