@@ -1,7 +1,6 @@
-
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-backend.onrender.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-j6ue.onrender.com/api';
 
 // Log API configuration in development
 if (process.env.NODE_ENV === 'development') {
@@ -26,12 +25,12 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     // Log request in development
     if (process.env.NODE_ENV === 'development') {
       console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
     }
-    
+
     return config;
   },
   (error) => {
@@ -53,7 +52,7 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    
+
     // Enhanced error logging in development
     if (process.env.NODE_ENV === 'development') {
       console.error('API Error:', {
@@ -65,15 +64,15 @@ api.interceptors.response.use(
         hasRequest: !!error.request,
       });
     }
-    
+
     // If token expired, try to refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       const refreshToken = localStorage.getItem('refresh_token');
       if (refreshToken) {
         try {
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+          const response = await axios.post(`${API_BASE_URL}/auth/refresh/`, {
             refresh: refreshToken
           });
           const { access } = response.data;
@@ -84,7 +83,7 @@ api.interceptors.response.use(
           // Refresh failed, logout user
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
-          
+
           // Only redirect if we're not already on login page
           if (!window.location.pathname.includes('/login')) {
             window.location.href = '/login';
@@ -93,77 +92,61 @@ api.interceptors.response.use(
         }
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
 
-
-
-
-
-
-
-
-
-
 export const authAPI = {
   register: async (userData) => {
     try {
-      return await api.post('/auth/register', userData);
+      return await api.post('/auth/register/', userData);
     } catch (error) {
-  console.warn('Backend unavailable, registration failed');
-  throw error;
+      console.warn('Backend unavailable, registration failed');
+      throw error;
     }
   },
   login: async (credentials) => {
     try {
-      return await api.post('/auth/login', credentials);
+      return await api.post('/auth/login/', credentials);
     } catch (error) {
-  console.warn('Backend unavailable, login failed');
-  throw error;
+      console.warn('Backend unavailable, login failed');
+      throw error;
     }
   },
-  getProfile: () => api.get('/auth/profile'),
-  updateProfile: (data) => api.put('/auth/profile', data),
-  forgotPassword: (data) => api.post('/auth/forgot-password', data),
-  resetPassword: (data) => api.post('/auth/reset-password', data),
+  getProfile: () => api.get('/auth/profile/'),
+  updateProfile: (data) => api.put('/auth/profile/', data),
+  forgotPassword: (data) => api.post('/auth/forgot-password/', data),
+  resetPassword: (data) => api.post('/auth/reset-password/', data),
 };
 
 export const productsAPI = {
-  getProducts: (params) => {
-    return api.get('/products', { params })
-      .catch(error => {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Failed to fetch products:', error.message);
-        }
-        throw error;
-      });
-  },
-  getProduct: (id) => {
-    return api.get(`/products/${id}`)
-      .catch(error => {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Failed to fetch product:', id, error.message);
-        }
-        throw error;
-      });
-  },
-  getCategories: () => {
-    return api.get('/categories')
-      .catch(error => {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Failed to fetch categories:', error.message);
-        }
-        throw error;
-      });
-  },
-  createProduct: (data) => api.post('/products', data),
-  deleteProduct: (id) => api.delete(`/products/${id}`),
-  updateProduct: (id, data) => api.put(`/products/${id}`, data),
+  getProducts: (params) =>
+    api.get('/products/', { params }).catch(error => {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch products:', error.message);
+      }
+      throw error;
+    }),
+  getProduct: (id) =>
+    api.get(`/products/${id}/`).catch(error => {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch product:', id, error.message);
+      }
+      throw error;
+    }),
+  getCategories: () =>
+    api.get('/products/categories/').catch(error => {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch categories:', error.message);
+      }
+      throw error;
+    }),
+  createProduct: (data) => api.post('/products/', data),
+  deleteProduct: (id) => api.delete(`/products/${id}/`),
+  updateProduct: (id, data) => api.put(`/products/${id}/`, data),
 };
 
-// Export API base URL for health checks and debugging
 export const getApiBaseUrl = () => API_BASE_URL;
 
 export const ordersAPI = {
@@ -203,5 +186,4 @@ export const adminAPI = {
   updateOrderStatus: (id, status) => api.patch(`/admin/orders/${id}/`, { status }),
 };
 
-// Export the configured axios instance for advanced use cases
 export default api;
