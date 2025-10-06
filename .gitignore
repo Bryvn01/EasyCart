@@ -94,3 +94,6 @@ frontend/coverage/
 *.key
 *.crt
 *.cert
+# Next.js
+.next/
+out/
