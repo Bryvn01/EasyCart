@@ -116,12 +116,16 @@ class ProductListView(APIView):
             # Transform products to match expected JSON format
             transformed_products = []
             for product in products:
+                # Get image URL from either 'image' or 'image_url' field
+                image_url = product.get('image_url') or product.get('image', '')
+                
                 transformed_product = {
                     'id': product.get('id'),
                     'name': product.get('name'),
                     'price': product.get('price'),
                     'description': product.get('description'),
-                    'image_url': product.get('image') or product.get('image_url', ''),
+                    'image': image_url,  # Primary field for frontend consumption
+                    'image_url': image_url,  # Keep for backward compatibility
                     'category': product.get('category'),
                     'brand': product.get('brand', ''),
                     'stock': product.get('stock', 0),
@@ -186,12 +190,16 @@ class ProductDetailView(APIView):
                 )
             
             # Transform product to match expected JSON format
+            # Get image URL from either 'image' or 'image_url' field
+            image_url = product.get('image_url') or product.get('image', '')
+            
             transformed_product = {
                 'id': product.get('id'),
                 'name': product.get('name'),
                 'price': product.get('price'),
                 'description': product.get('description'),
-                'image_url': product.get('image') or product.get('image_url', ''),
+                'image': image_url,  # Primary field for frontend consumption
+                'image_url': image_url,  # Keep for backward compatibility
                 'category': product.get('category'),
                 'brand': product.get('brand', ''),
                 'stock': product.get('stock', 0),
