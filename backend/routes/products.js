@@ -3,10 +3,20 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const { adminAuth } = require('../middleware/auth');
 const Category = require('../models/Category');
+const rateLimit = require('express-rate-limit');
+
+// Create a rate limiter for the database access route
+const categoriesRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many requests, please try again later.' }
+});
 
 // Public routes
 router.get('/', productController.getAllProducts);
-router.get('/categories/', async (req, res) => {
+router.get('/categories/', categoriesRateLimiter, async (req, res) => {
   try {
     const categories = await Category.find({ isActive: true }).sort({ name: 1 });
     res.json({ success: true, data: { results: categories } });
