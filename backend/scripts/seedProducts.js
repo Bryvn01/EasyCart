@@ -861,26 +861,64 @@ const categories = [
 
 /**
  * Seed database with products and Cloudinary images
+ * @param {Object} options - Seeding options
+ * @param {boolean} options.clearExisting - Whether to clear existing data (default: true)
+ * @param {boolean} options.skipExisting - Whether to skip existing products (default: false)
  */
-async function seedProducts() {
+async function seedProducts(options = {}) {
+  const { clearExisting = true, skipExisting = false } = options;
+  
   try {
     console.log('🌱 Starting product seeding process...\n');
+    console.log(`   Mode: ${clearExisting ? 'Full Reset' : (skipExisting ? 'Idempotent (Skip Existing)' : 'Upsert')}\n`);
 
     // Connect to MongoDB
     console.log('📦 Connecting to MongoDB...');
     await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/easycart');
-    console.log('✅ Connected to MongoDB\n');
+    console.log('✅ Connected to MongoDB');
+    console.log(`   Database: ${mongoose.connection.db.databaseName}\n`);
 
-    // Clear existing data
-    console.log('🧹 Clearing existing products and categories...');
-    await Product.deleteMany({});
-    await Category.deleteMany({});
-    console.log('✅ Cleared existing data\n');
+    // Verify we're using the 'easycart' database
+    if (mongoose.connection.db.databaseName !== 'easycart') {
+      console.error('❌ ERROR: Connected to wrong database!');
+      console.error(`   Expected: easycart`);
+      console.error(`   Got: ${mongoose.connection.db.databaseName}`);
+      console.error('   Please update MONGO_URI to use database name "easycart"\n');
+      process.exit(1);
+    }
+
+    // Clear existing data (only if clearExisting is true)
+    if (clearExisting) {
+      console.log('🧹 Clearing existing products and categories...');
+      await Product.deleteMany({});
+      await Category.deleteMany({});
+      console.log('✅ Cleared existing data\n');
+    } else {
+      const existingProductCount = await Product.countDocuments();
+      const existingCategoryCount = await Category.countDocuments();
+      console.log(`📊 Existing data: ${existingProductCount} products, ${existingCategoryCount} categories\n`);
+    }
 
     // Insert categories
     console.log('📁 Inserting categories...');
-    await Category.insertMany(categories);
-    console.log(`✅ Inserted ${categories.length} categories\n`);
+    if (clearExisting) {
+      await Category.insertMany(categories);
+      console.log(`✅ Inserted ${categories.length} categories\n`);
+    } else {
+      // Idempotent: Insert only missing categories
+      let insertedCount = 0;
+      let skippedCount = 0;
+      for (const cat of categories) {
+        const exists = await Category.findOne({ name: cat.name });
+        if (!exists) {
+          await Category.create(cat);
+          insertedCount++;
+        } else {
+          skippedCount++;
+        }
+      }
+      console.log(`✅ Categories: ${insertedCount} inserted, ${skippedCount} already exist\n`);
+    }
 
     // Check Cloudinary configuration
     const useCloudinary = isCloudinaryConfigured();
@@ -898,6 +936,7 @@ async function seedProducts() {
     console.log(`🛒 Processing ${kenyanProducts.length} products...\n`);
     let successCount = 0;
     let failCount = 0;
+    let skippedCount = 0;
 
     for (let i = 0; i < kenyanProducts.length; i++) {
       const productData = kenyanProducts[i];
@@ -905,6 +944,19 @@ async function seedProducts() {
       
       try {
         console.log(`[${productNum}/${kenyanProducts.length}] Processing: ${productData.name}`);
+        
+        // Check if product exists (by name and brand)
+        if (skipExisting && !clearExisting) {
+          const existingProduct = await Product.findOne({ 
+            name: productData.name, 
+            brand: productData.brand 
+          });
+          if (existingProduct) {
+            console.log(`   ⏭️  Product already exists, skipping\n`);
+            skippedCount++;
+            continue;
+          }
+        }
         
         let imageUrl = productData.sourceImageUrl;
 
@@ -956,9 +1008,13 @@ async function seedProducts() {
     console.log('📊 SEEDING SUMMARY');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log(`✅ Successfully seeded: ${successCount} products`);
+    if (skippedCount > 0) {
+      console.log(`⏭️  Skipped (already exist): ${skippedCount} products`);
+    }
     console.log(`❌ Failed: ${failCount} products`);
     console.log(`📁 Categories: ${categories.length}`);
     console.log(`☁️  Cloudinary: ${useCloudinary ? 'Enabled' : 'Disabled'}`);
+    console.log(`🗄️  Database: ${mongoose.connection.db.databaseName}`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     console.log('🎉 Product seeding completed successfully!');
@@ -976,7 +1032,40 @@ async function seedProducts() {
 
 // Run the seed function
 if (require.main === module) {
-  seedProducts();
+  // Parse command line arguments
+  const args = process.argv.slice(2);
+  const options = {
+    clearExisting: !args.includes('--no-clear') && !args.includes('--idempotent'),
+    skipExisting: args.includes('--skip-existing') || args.includes('--idempotent')
+  };
+  
+  // Show help
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log(`
+Product Seeding Script
+=====================
+
+Usage: node scripts/seedProducts.js [options]
+
+Options:
+  --no-clear         Don't clear existing data before seeding
+  --skip-existing    Skip products that already exist (checks by name + brand)
+  --idempotent       Alias for --no-clear --skip-existing (safe for migrations)
+  --help, -h         Show this help message
+
+Examples:
+  node scripts/seedProducts.js                    # Full reset (default)
+  node scripts/seedProducts.js --idempotent       # Safe mode (no data loss)
+  node scripts/seedProducts.js --no-clear         # Add to existing data
+
+Environment Variables:
+  MONGO_URI          MongoDB connection string (must use 'easycart' database)
+  CLOUDINARY_*       Cloudinary credentials (optional)
+`);
+    process.exit(0);
+  }
+  
+  seedProducts(options);
 }
 
 module.exports = { seedProducts, kenyanProducts, categories };
