@@ -16,7 +16,7 @@ const sanitizeString = (str) => {
   return str
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
-    .replace(/javascript:/gi, '')
+    .replace(/\b(javascript|data|vbscript):/gi, '')
     .trim();
 };
 
