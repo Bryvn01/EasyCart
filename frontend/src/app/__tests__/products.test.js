@@ -82,10 +82,8 @@ describe('Next.js Products Page', () => {
     // Mock fetch error
     global.fetch.mockRejectedValueOnce(new Error('Network error'));
 
-    try {
-      await fetch('http://localhost:8000/api/products/');
-    } catch (error) {
-      expect(error.message).toBe('Network error');
-    }
+    await expect(
+      fetch('http://localhost:8000/api/products/')
+    ).rejects.toThrow('Network error');
   });
 });
