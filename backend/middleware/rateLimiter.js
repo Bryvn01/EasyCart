@@ -142,16 +142,11 @@ const slowDown = require('express-slow-down');
 const apiSlowDown = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 50, // Allow 50 requests per windowMs without delay
-  delayMs: 500, // Add 500ms delay per request after delayAfter
+  delayMs: () => 500, // Add 500ms delay per request after delayAfter
   maxDelayMs: 20000, // Maximum delay of 20 seconds
   skipSuccessfulRequests: false,
   skipFailedRequests: false,
-  onLimitReached: (req, res, options) => {
-    logger.warn('Slow down threshold reached', {
-      ip: req.ip,
-      path: req.path
-    });
-  }
+  validate: { delayMs: false } // Disable deprecation warning
 });
 
 module.exports = {
