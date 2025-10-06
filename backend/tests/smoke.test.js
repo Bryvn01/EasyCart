@@ -154,5 +154,3 @@ describe('Backend Smoke Tests', () => {
     expect(schema.paths).toHaveProperty('description');
   });
 });
-
-console.log('✅ Backend smoke tests completed');
