@@ -149,10 +149,10 @@ const Homepage = () => {
         </div>
         <div className="hidden md:block absolute right-0 bottom-0 z-0">
           <img 
-            src="/images/hero-shopping.jpg" 
-            alt="Happy Kenyan family shopping online with EasyCart" 
+            src="https://images.pexels.com/photos/9705823/pexels-photo-9705823.jpeg?auto=compress&cs=tinysrgb&w=800" 
+            alt="Shopping cart filled with fresh groceries and produce" 
             className="w-96 max-w-xs md:max-w-md lg:max-w-lg opacity-90 rounded-lg shadow-xl" 
-            loading="eager"
+            loading="lazy"
             onError={(e) => imageFallback(e, 'hero')}
           />
         </div>

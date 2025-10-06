@@ -3,24 +3,28 @@ import ImageWithFallback from './ImageWithFallback';
 
 const banners = [
   {
-    image: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.VGlj6JIHNUYt3mgQvyQGOQHaEO%3Fpid%3DApi&f=1&ipt=1c3dee8b72e82617a1cf02129407e401a51f6158e91c74a3b00f31a810d197f1&ipo=images',
-    alt: 'Flash Sale',
+    image: 'https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1280',
+    alt: 'Fresh bananas and tropical fruits at market',
     link: '/flash-sales',
+    photographer: 'Kai Pilger',
   },
   {
-    image: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.eQcgkOfW3IIcPMsY6nFU6gHaEo%3Fpid%3DApi&f=1&ipt=875cd6398badb3dfc0c8c0a5031bdbaa13259c90523543a2e0a7bfb47af00aba&ipo=images',
-    alt: 'Grocery Essentials',
+    image: 'https://images.pexels.com/photos/365810/pexels-photo-365810.jpeg?auto=compress&cs=tinysrgb&w=1280',
+    alt: 'Variety of fresh vegetables and produce on display',
     link: '/groceries',
+    photographer: 'Laura James',
   },
   {
-    image: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.-8D-aTX5L3YKOqk0cVtsbgHaGu%3Fpid%3DApi&f=1&ipt=cc6b19ac478a979118cdaee5def31c9b855e54307d13506874eaf540267d490a&ipo=images',
-    alt: 'TV Deals',
+    image: 'https://images.pexels.com/photos/3714083/pexels-photo-3714083.jpeg?auto=compress&cs=tinysrgb&w=1280',
+    alt: 'Modern electronics and gadgets display',
     link: '/tv-deals',
+    photographer: 'Tom Fisk',
   },
   {
-    image: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.vvXM54xN_PBcWrAOP0wXtgHaEL%3Fpid%3DApi&f=1&ipt=a575c8ec5fdca17e77b8e254690eed911cb8997d5dcc60679cb3c38400d94bdc&ipo=images',
-    alt: 'Phone Deals',
+    image: 'https://images.pexels.com/photos/7129147/pexels-photo-7129147.jpeg?auto=compress&cs=tinysrgb&w=1280',
+    alt: 'Variety of drinks and beverages on display',
     link: '/phone-deals',
+    photographer: 'Igor Starkov',
   },
 ];
 

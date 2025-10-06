@@ -491,7 +491,12 @@ const LandingPage = () => {
                 <div className="relative">
                   <div className="absolute inset-0 bg-yellow-300 rounded-full blur-3xl opacity-20 animate-pulse"></div>
                   <div className="relative w-full max-w-lg mx-auto">
-                    <div className="text-9xl text-center opacity-30">🛒</div>
+                    <img 
+                      src="https://images.pexels.com/photos/2449665/pexels-photo-2449665.jpeg?auto=compress&cs=tinysrgb&w=800" 
+                      alt="Modern shopping experience with technology and convenience" 
+                      className="w-full h-auto rounded-2xl shadow-2xl"
+                      loading="eager"
+                    />
                   </div>
                 </div>
               </div>
@@ -677,41 +682,52 @@ const LandingPage = () => {
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16"
           aria-labelledby="newsletter-heading"
         >
-          <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl p-8 md:p-12 text-center">
-            <h2 id="newsletter-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Stay Updated with Our Latest Deals
-            </h2>
-            <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
-              Subscribe to our newsletter and get exclusive offers, new arrivals, and special discounts delivered to your inbox.
-            </p>
-            <form 
-              onSubmit={handleNewsletterSubmit}
-              className="max-w-md mx-auto flex flex-col sm:flex-row gap-3"
-              noValidate
-            >
-              <div className="flex-1">
-                <label htmlFor="newsletter-email" className="sr-only">
-                  Email address
-                </label>
-                <input
-                  id="newsletter-email"
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  className="w-full px-6 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-                  required
-                  disabled={newsletterLoading}
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={newsletterLoading || !newsletterEmail}
-                className="px-8 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 whitespace-nowrap focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          <div className="relative bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl p-8 md:p-12 text-center overflow-hidden">
+            {/* Background Image with Overlay */}
+            <div className="absolute inset-0 opacity-10">
+              <img 
+                src="https://images.pexels.com/photos/24029952/pexels-photo-24029952.jpeg?auto=compress&cs=tinysrgb&w=1280"
+                alt="Shopping background"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div className="relative z-10">
+              <h2 id="newsletter-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Stay Updated with Our Latest Deals
+              </h2>
+              <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+                Subscribe to our newsletter and get exclusive offers, new arrivals, and special discounts delivered to your inbox.
+              </p>
+              <form 
+                onSubmit={handleNewsletterSubmit}
+                className="max-w-md mx-auto flex flex-col sm:flex-row gap-3"
+                noValidate
               >
-                {newsletterLoading ? 'Subscribing...' : 'Subscribe'}
-              </button>
-            </form>
+                <div className="flex-1">
+                  <label htmlFor="newsletter-email" className="sr-only">
+                    Email address
+                  </label>
+                  <input
+                    id="newsletter-email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    className="w-full px-6 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                    required
+                    disabled={newsletterLoading}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={newsletterLoading || !newsletterEmail}
+                  className="px-8 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 whitespace-nowrap focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                >
+                  {newsletterLoading ? 'Subscribing...' : 'Subscribe'}
+                </button>
+              </form>
+            </div>
           </div>
         </section>
       </main>
