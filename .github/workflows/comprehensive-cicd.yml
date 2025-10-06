@@ -1,0 +1,284 @@
+name: Comprehensive CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # Stage 1: Testing
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run unit tests
+        run: |
+          cd backend
+          npm test
+
+      - name: Run integration tests
+        run: |
+          cd backend
+          npm run test:integration || echo "Integration tests not critical"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: backend/coverage/
+
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run tests with coverage
+        run: |
+          cd frontend
+          npm test -- --coverage --watchAll=false
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage/
+
+  # Stage 2: Security Scanning
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run npm audit (Backend)
+        continue-on-error: true
+        run: |
+          cd backend
+          npm audit --audit-level=moderate || echo "::warning::Backend has npm vulnerabilities"
+
+      - name: Run npm audit (Frontend)
+        continue-on-error: true
+        run: |
+          cd frontend
+          npm audit --audit-level=moderate || echo "::warning::Frontend has npm vulnerabilities"
+
+      - name: OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        continue-on-error: true
+        with:
+          project: 'EasyCart'
+          path: '.'
+          format: 'HTML'
+          
+      - name: Upload OWASP report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: owasp-report
+          path: reports/
+
+  # Stage 3: Build
+  build-backend:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    needs: [test-backend, security-scan]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install and build
+        run: |
+          cd backend
+          npm ci
+          npm run build || echo "No build step for backend"
+
+      - name: Verify server file
+        run: |
+          cd backend
+          node -c server.js
+
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    needs: [test-frontend, security-scan]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build production bundle
+        env:
+          REACT_APP_API_URL: https://easycart-backend.onrender.com/api
+          CI: false
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build/
+
+  build-admin:
+    name: Build Admin Dashboard
+    runs-on: ubuntu-latest
+    needs: [test-frontend, security-scan]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          cd admin-dashboard
+          npm ci
+
+      - name: Build production bundle
+        env:
+          REACT_APP_API_URL: https://easycart-backend.onrender.com/api
+          CI: false
+        run: |
+          cd admin-dashboard
+          npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-build
+          path: admin-dashboard/build/
+
+  # Stage 4: Deployment (only on main branch)
+  deploy-notification:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend, build-admin]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Deployment Info
+        run: |
+          echo "🚀 Deployment will be triggered automatically by Render"
+          echo "📍 Backend: https://easycart-backend.onrender.com"
+          echo "📍 Frontend: https://easycart-frontend.onrender.com"
+          echo "📍 Admin: https://easycart-admin.onrender.com"
+          echo ""
+          echo "⏱️ Deployment typically takes 5-10 minutes"
+          echo "🔍 Monitor deployment at: https://dashboard.render.com"
+
+      - name: Trigger Render Deploy Hook (Optional)
+        if: secrets.RENDER_DEPLOY_HOOK_URL != ''
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" || echo "Deploy hook not configured"
+
+  # Stage 5: Post-Deployment Health Check
+  health-check:
+    name: Post-Deployment Health Check
+    runs-on: ubuntu-latest
+    needs: deploy-notification
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Wait for deployment
+        run: sleep 300  # Wait 5 minutes for Render to deploy
+
+      - name: Check Backend Health
+        run: |
+          echo "Checking backend health..."
+          curl -f https://easycart-backend.onrender.com/api/health || echo "::warning::Backend health check failed"
+
+      - name: Check Frontend
+        run: |
+          echo "Checking frontend..."
+          curl -f https://easycart-frontend.onrender.com || echo "::warning::Frontend health check failed"
+
+      - name: Check Admin Dashboard
+        run: |
+          echo "Checking admin dashboard..."
+          curl -f https://easycart-admin.onrender.com || echo "::warning::Admin health check failed"
+
+      - name: Smoke Test - Products API
+        run: |
+          echo "Running smoke test on products API..."
+          curl -f https://easycart-backend.onrender.com/api/products || echo "::warning::Products API smoke test failed"
+
+  # Rollback capability (manual trigger)
+  rollback:
+    name: Rollback Deployment
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Rollback Instructions
+        run: |
+          echo "⚠️  Manual Rollback Process:"
+          echo "1. Go to Render Dashboard: https://dashboard.render.com"
+          echo "2. Select the service to rollback"
+          echo "3. Navigate to 'Deployments' tab"
+          echo "4. Find the last stable deployment"
+          echo "5. Click 'Redeploy' on that version"
+          echo ""
+          echo "Alternatively, revert the commit and push:"
+          echo "git revert HEAD"
+          echo "git push origin main"

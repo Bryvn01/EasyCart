@@ -2,18 +2,56 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { auth } = require('../middleware/auth');
+const { authRateLimiter, registrationRateLimiter } = require('../middleware/rateLimiter');
+const { validateInput } = require('../middleware/validation');
+const { asyncHandler } = require('../middleware/errorHandler');
 
 const router = express.Router();
 
+// Validation schemas
+const registerSchema = {
+  email: {
+    required: true,
+    type: 'string',
+    schema: 'email',
+    maxLength: 255
+  },
+  username: {
+    required: true,
+    type: 'string',
+    minLength: 3,
+    maxLength: 50,
+    pattern: /^[a-zA-Z0-9_-]+$/
+  },
+  password: {
+    required: true,
+    type: 'string',
+    minLength: 6,
+    maxLength: 100
+  },
+  password_confirm: {
+    required: true,
+    type: 'string'
+  }
+};
+
+const loginSchema = {
+  email: {
+    required: true,
+    type: 'string'
+  },
+  password: {
+    required: true,
+    type: 'string'
+  }
+};
+
 // Register
-router.post('/register', async (req, res) => {
-  try {
+router.post('/register', 
+  registrationRateLimiter,
+  validateInput(registerSchema),
+  asyncHandler(async (req, res) => {
     const { email, password, username, phone, address, password_confirm } = req.body;
-    
-    // Validation
-    if (!email || !password || !username) {
-      return res.status(400).json({ message: 'Email, password, and username are required' });
-    }
     
     if (password !== password_confirm) {
       return res.status(400).json({ message: 'Passwords do not match' });
@@ -51,14 +89,14 @@ router.post('/register', async (req, res) => {
         is_admin: user.role === 'admin'
       }
     });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  })
+);
 
 // Login
-router.post('/login', async (req, res) => {
-  try {
+router.post('/login',
+  authRateLimiter,
+  validateInput(loginSchema),
+  asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     
     const user = await User.findOne({ $or: [{ email }, { username: email }] });
@@ -81,13 +119,11 @@ router.post('/login', async (req, res) => {
         is_admin: user.role === 'admin'
       }
     });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  })
+);
 
 // Get profile
-router.get('/profile', auth, async (req, res) => {
+router.get('/profile', auth, asyncHandler(async (req, res) => {
   res.json({
     user: { 
       id: req.user._id, 
@@ -96,6 +132,6 @@ router.get('/profile', auth, async (req, res) => {
       role: req.user.role 
     }
   });
-});
+}));
 
 module.exports = router;
