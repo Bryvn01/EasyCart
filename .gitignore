@@ -89,6 +89,11 @@ ecommerce_db
 coverage/
 frontend/coverage/
 
+# Test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+
 # SSL Certificates (Render handles SSL at the edge)
 *.pem
 *.key
