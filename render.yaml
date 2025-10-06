@@ -12,9 +12,10 @@ services:
     rootDir: backend
     buildCommand: |
       pip install -r requirements.txt
-      python manage.py collectstatic --no-input
-      python manage.py migrate --no-input
     startCommand: gunicorn ecommerce.wsgi:application --bind 0.0.0.0:$PORT
+    releaseCommand: |
+      python manage.py migrate --noinput
+      python manage.py collectstatic --noinput
     healthCheckPath: /api/health/
     envVars:
       - key: PYTHON_VERSION
@@ -35,7 +36,7 @@ services:
         value: ecommerce.settings
       - key: WEB_CONCURRENCY
         value: 2
-    
+  
   # React Frontend Static Site
   - type: web
     name: easycart-frontend
@@ -69,7 +70,7 @@ services:
         value: 18.17.0
       - key: REACT_APP_SITE_NAME
         value: EasyCart
-  
+
   # Admin Dashboard Static Site
   - type: web
     name: easycart-admin
