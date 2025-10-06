@@ -134,22 +134,22 @@ const Homepage = () => {
           </div>
           <div className="flex flex-wrap gap-3 md:gap-4">
             <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
-              <img src="/icons/secure-payment.svg" alt="Secure Payment" className="w-5 h-5" onError={(e) => imageFallback(e, 'icon')} />
+              <img src="/images/icons/secure-payment.svg" alt="Secure Payment" className="w-5 h-5" onError={(e) => imageFallback(e, 'icon')} />
               <span className="text-sm font-medium text-gray-700">M-Pesa Secure</span>
             </div>
             <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
-              <img src="/icons/fast-delivery.svg" alt="Fast Delivery" className="w-5 h-5" onError={(e) => imageFallback(e, 'icon')} />
+              <img src="/images/icons/fast-delivery.svg" alt="Fast Delivery" className="w-5 h-5" onError={(e) => imageFallback(e, 'icon')} />
               <span className="text-sm font-medium text-gray-700">Same-Day Nairobi</span>
             </div>
             <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
-              <img src="/icons/fresh-guarantee.svg" alt="Fresh Guarantee" className="w-5 h-5" onError={(e) => imageFallback(e, 'icon')} />
+              <img src="/images/icons/fresh-guarantee.svg" alt="Fresh Guarantee" className="w-5 h-5" onError={(e) => imageFallback(e, 'icon')} />
               <span className="text-sm font-medium text-gray-700">100% Fresh Guarantee</span>
             </div>
           </div>
         </div>
         <div className="hidden md:block absolute right-0 bottom-0 z-0">
           <img 
-            src="/images/hero-shopping.jpg" 
+            src="/images/hero-shopping.svg" 
             alt="Happy Kenyan family shopping online with EasyCart" 
             className="w-96 max-w-xs md:max-w-md lg:max-w-lg opacity-90 rounded-lg shadow-xl" 
             loading="eager"
@@ -211,19 +211,19 @@ const Homepage = () => {
           <h3 className="text-2xl font-bold text-gray-900 mb-4">We Accept</h3>
           <div className="flex flex-wrap justify-center gap-4 items-center">
             <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 flex items-center gap-2 hover:shadow-md transition-shadow">
-              <img src="/icons/mpesa-logo.png" alt="M-Pesa" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
+              <img src="/images/icons/mpesa-logo.svg" alt="M-Pesa" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
               <span className="font-semibold text-green-700">M-Pesa</span>
             </div>
             <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 flex items-center gap-2 hover:shadow-md transition-shadow">
-              <img src="/icons/visa-logo.png" alt="Visa" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
+              <img src="/images/icons/visa-logo.svg" alt="Visa" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
               <span className="font-semibold text-blue-700">Visa</span>
             </div>
             <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 flex items-center gap-2 hover:shadow-md transition-shadow">
-              <img src="/icons/mastercard-logo.png" alt="Mastercard" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
+              <img src="/images/icons/mastercard-logo.svg" alt="Mastercard" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
               <span className="font-semibold text-red-700">Mastercard</span>
             </div>
             <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 flex items-center gap-2 hover:shadow-md transition-shadow">
-              <img src="/icons/airtel-money-logo.png" alt="Airtel Money" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
+              <img src="/images/icons/airtel-money-logo.svg" alt="Airtel Money" className="w-8 h-8" onError={(e) => imageFallback(e, 'icon')} />
               <span className="font-semibold text-orange-700">Airtel Money</span>
             </div>
           </div>
@@ -239,19 +239,19 @@ const Homepage = () => {
       {/* Enhanced Trust badges with Icons */}
       <section className="flex flex-wrap gap-4 justify-center my-12" aria-label="Trust Badges">
         <div className="flex items-center gap-2 bg-white border rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow">
-          <img src="/icons/verified-store.svg" alt="Verified Store" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
+          <img src="/images/icons/verified-store.svg" alt="Verified Store" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
           <span className="text-sm font-medium text-gray-700">Official Store</span>
         </div>
         <div className="flex items-center gap-2 bg-white border rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow">
-          <img src="/icons/warranty.svg" alt="Warranty Protected" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
+          <img src="/images/icons/warranty.svg" alt="Warranty Protected" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
           <span className="text-sm font-medium text-gray-700">Warranty Protected</span>
         </div>
         <div className="flex items-center gap-2 bg-white border rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow">
-          <img src="/icons/fast-delivery.svg" alt="Fast Delivery" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
+          <img src="/images/icons/fast-delivery.svg" alt="Fast Delivery" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
           <span className="text-sm font-medium text-gray-700">Fast Delivery</span>
         </div>
         <div className="flex items-center gap-2 bg-white border rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow">
-          <img src="/icons/happy-customers.svg" alt="Happy Customers" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
+          <img src="/images/icons/happy-customers.svg" alt="Happy Customers" className="w-6 h-6" onError={(e) => imageFallback(e, 'icon')} />
           <span className="text-sm font-medium text-gray-700">5000+ Happy Customers</span>
         </div>
       </section>
