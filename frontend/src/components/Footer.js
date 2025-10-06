@@ -192,6 +192,83 @@ const Footer = () => (
             </Link>
           </div>
         </div>
+        {/* Pexels Attribution */}
+        <div className="mt-4 pt-4 border-t border-gray-800 text-xs text-gray-500 text-center">
+          <p>
+            Photos by{' '}
+            <a 
+              href="https://www.pexels.com/@kai-pilger-1341279/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary-400 transition-colors"
+            >
+              Kai Pilger
+            </a>
+            ,{' '}
+            <a 
+              href="https://www.pexels.com/@laura-james-83951/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary-400 transition-colors"
+            >
+              Laura James
+            </a>
+            ,{' '}
+            <a 
+              href="https://www.pexels.com/@tomfisk/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary-400 transition-colors"
+            >
+              Tom Fisk
+            </a>
+            ,{' '}
+            <a 
+              href="https://www.pexels.com/@igorstarkoff/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary-400 transition-colors"
+            >
+              Igor Starkov
+            </a>
+            ,{' '}
+            <a 
+              href="https://www.pexels.com/@tara-winstead/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary-400 transition-colors"
+            >
+              Tara Winstead
+            </a>
+            ,{' '}
+            <a 
+              href="https://www.pexels.com/@cottonbro/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary-400 transition-colors"
+            >
+              cottonbro studio
+            </a>
+            ,{' '}
+            <a 
+              href="https://www.pexels.com/@shvets-production/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary-400 transition-colors"
+            >
+              SHVETS production
+            </a>
+            {' '}from{' '}
+            <a 
+              href="https://www.pexels.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary-400 transition-colors font-medium"
+            >
+              Pexels
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   </footer>
