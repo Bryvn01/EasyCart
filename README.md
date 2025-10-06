@@ -8,6 +8,25 @@
 
 A complete e-commerce solution with React frontend and Django REST Framework backend, featuring MongoDB Atlas integration for product data, JWT authentication, and production-ready architecture.
 
+---
+
+## 🔧 Products Display Fix (Latest)
+
+**Issue**: Products not displaying on frontend?  
+**Quick Fix**: [See QUICKSTART_PRODUCTS_FIX.md](QUICKSTART_PRODUCTS_FIX.md)
+
+**Key Changes:**
+- Frontend `.env` must use port **5000** (Node.js backend), not 8000 (Django)
+- Database name must be **easycart** in MONGO_URI
+- Run validation: `node validate-setup.js`
+
+📚 **Documentation:**
+- [Quick Start Guide](QUICKSTART_PRODUCTS_FIX.md) - 5-minute fix
+- [Complete Fix Details](PRODUCTS_DISPLAY_FIX.md) - Full documentation
+- [Seeding Guide](SEEDING_GUIDE.md) - Database setup
+
+---
+
 ## 🎉 Latest Updates (v3.0)
 
 **Django REST Framework + MongoDB Atlas Integration Complete!**
