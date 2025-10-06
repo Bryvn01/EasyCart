@@ -599,6 +599,177 @@ const LandingPage = () => {
           </div>
         </section>
 
+        {/* Featured Gallery Section */}
+        <section 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-white"
+          aria-labelledby="gallery-heading"
+        >
+          <div className="text-center mb-10">
+            <h2 id="gallery-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+              Shop the Look
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Discover trending styles and find your inspiration
+            </p>
+          </div>
+
+          {/* Gallery Grid - 8 Images representing Pinterest inspiration
+              Original Pinterest URLs provided by user:
+              1. https://pin.it/2MDY6GQuA - Fashion & Style
+              2. https://pin.it/7CTGr5mI8 - Trendy Apparel
+              3. https://pin.it/4sYX2bRJq - Product Showcase
+              4. https://pin.it/2bNcHcRn9 - Home Decor
+              5. https://pin.it/6kxpfS0mE - Lifestyle Products
+              6. https://pin.it/vXXNgOXEl - Fashion Accessories
+              7. https://pin.it/2FirO6R3e - Tech & Gadgets
+              8. https://pin.it/366MrpOgw - Beauty & Wellness
+              
+              Using high-quality Unsplash images to represent these categories
+          */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {/* Image 1 - Fashion & Style */}
+            <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+              <img
+                src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop&q=80"
+                alt="Fashion inspiration - trendy clothing and accessories"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/600x800/6366f1/ffffff?text=Fashion+Style'; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white text-sm font-semibold">Shop Fashion</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image 2 - Trendy Apparel */}
+            <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+              <img
+                src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&h=800&fit=crop&q=80"
+                alt="Trendy apparel and style inspiration"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/600x800/8b5cf6/ffffff?text=Trendy+Apparel'; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white text-sm font-semibold">Shop Apparel</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image 3 - Product Showcase */}
+            <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+              <img
+                src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=800&fit=crop&q=80"
+                alt="Product showcase - featured items"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/600x800/ec4899/ffffff?text=Products'; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white text-sm font-semibold">Shop Products</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image 4 - Home Decor */}
+            <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+              <img
+                src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&h=800&fit=crop&q=80"
+                alt="Home decor inspiration - furniture and living"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/600x800/10b981/ffffff?text=Home+Decor'; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white text-sm font-semibold">Shop Home</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image 5 - Lifestyle Products */}
+            <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+              <img
+                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=800&fit=crop&q=80"
+                alt="Lifestyle products - headphones and accessories"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/600x800/f59e0b/ffffff?text=Lifestyle'; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white text-sm font-semibold">Shop Lifestyle</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image 6 - Fashion Accessories */}
+            <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+              <img
+                src="https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=600&h=800&fit=crop&q=80"
+                alt="Fashion accessories - bags and style items"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/600x800/ef4444/ffffff?text=Accessories'; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white text-sm font-semibold">Shop Accessories</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image 7 - Tech & Gadgets */}
+            <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+              <img
+                src="https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=600&h=800&fit=crop&q=80"
+                alt="Tech gadgets - electronics and devices"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/600x800/3b82f6/ffffff?text=Tech+Gadgets'; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white text-sm font-semibold">Shop Electronics</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image 8 - Beauty & Wellness */}
+            <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+              <img
+                src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=800&fit=crop&q=80"
+                alt="Beauty and wellness products"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/600x800/a855f7/ffffff?text=Beauty+Wellness'; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white text-sm font-semibold">Shop Beauty</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <Link 
+              to="/products"
+              className="inline-flex items-center px-8 py-3 text-lg font-semibold bg-primary-600 text-white rounded-lg shadow-md hover:bg-primary-700 hover:shadow-lg transition-all duration-300 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              aria-label="Browse all collections"
+            >
+              Browse All Collections
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+        </section>
+
         {/* Trust Signals Section */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
