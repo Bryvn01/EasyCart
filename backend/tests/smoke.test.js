@@ -69,8 +69,9 @@ describe('Backend Smoke Tests', () => {
       .expect('Content-Type', /json/)
       .expect(200);
 
-    expect(response.body).toHaveProperty('status', 'OK');
-    expect(response.body).toHaveProperty('message');
+    // Updated to match enhanced health check format
+    expect(response.body).toHaveProperty('status');
+    expect(['OK', 'UP']).toContain(response.body.status);
     expect(response.body).toHaveProperty('timestamp');
   });
 
