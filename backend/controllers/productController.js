@@ -144,6 +144,24 @@ const sendResponse = (res, statusCode, success, data, message, pagination = null
 };
 
 /**
+ * Products-specific response format helper (DRF-compatible)
+ * Includes both 'data' and 'results' keys for compatibility
+ */
+const sendProductsResponse = (res, statusCode, success, products, message, pagination = null) => {
+  const response = { 
+    success, 
+    message,
+    data: products,
+    results: products,  // DRF-compatible key
+    count: pagination ? pagination.total : products.length,  // DRF-compatible total count
+    next: pagination ? pagination.hasNextPage : false,
+    previous: pagination ? pagination.hasPrevPage : false
+  };
+  if (pagination) response.pagination = pagination;
+  return res.status(statusCode).json(response);
+};
+
+/**
  * Get all products with advanced filtering, search, and pagination
  * @route GET /api/products
  */
@@ -151,9 +169,16 @@ exports.getAllProducts = async (req, res) => {
   try {
     // Debug logging for MongoDB connection
     const mongoose = require('mongoose');
+    const connectionStates = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting'
+    };
+    const state = mongoose.connection.readyState;
     console.log('🔍 [DEBUG] Fetching products from MongoDB');
     console.log('📊 [DEBUG] Database:', mongoose.connection.name || 'Unknown');
-    console.log('🔗 [DEBUG] Connection state:', mongoose.connection.readyState, '(1=connected, 0=disconnected)');
+    console.log(`🔗 [DEBUG] Connection state: ${state} (${connectionStates[state]})`);
     
     const {
       search,
@@ -263,7 +288,7 @@ exports.getAllProducts = async (req, res) => {
       console.log('⚠️  [DEBUG] WARNING: 0 products found - database may not be seeded');
     }
 
-    return sendResponse(res, 200, true, products, 'Products retrieved successfully', pagination);
+    return sendProductsResponse(res, 200, true, products, 'Products retrieved successfully', pagination);
   } catch (error) {
     console.error('❌ [DEBUG] Error fetching products:', error.name, '-', error.message);
     
@@ -289,10 +314,11 @@ exports.getAllProducts = async (req, res) => {
         hasPrevPage: pageNum > 1
       };
       
-      return sendResponse(res, 200, true, paginatedProducts, 'Products retrieved successfully (fallback)', pagination);
+      return sendProductsResponse(res, 200, true, paginatedProducts, 'Products retrieved successfully (fallback)', pagination);
     }
     
-    return sendResponse(res, 500, false, null, error.message);
+    // For other errors, return error response with proper format
+    return sendResponse(res, 500, false, null, error.message || 'Failed to fetch products');
   }
 };
 
