@@ -12,20 +12,51 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
+    console.log('[Login] Form submitted', { email: credentials.email });
+
+    // Set a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.warn('[Login] Request timeout - forcing demo mode');
+      if (credentials.email === 'admin@easycart.com') {
+        toast.success('Demo login successful! (Backend timeout)');
+        setLoading(false);
+        navigate('/admin/dashboard');
+      } else {
+        toast.error('Login timeout. Please try again or use demo credentials.');
+        setLoading(false);
+      }
+    }, 15000); // 15 second timeout
 
     try {
+      console.log('[Login] Calling login function...');
       await login(credentials);
+      clearTimeout(timeoutId);
       toast.success('Login successful!');
       navigate('/admin/dashboard');
     } catch (error) {
-      console.error('Login error:', error);
-      // Always allow admin@easycart.com to login
+      clearTimeout(timeoutId);
+      console.error('[Login] Login error:', error);
+      
+      // Enhanced error message
+      let errorMessage = 'Login failed';
+      if (!error.response) {
+        errorMessage = 'Cannot connect to server. Using demo mode.';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      // Always allow admin@easycart.com to login as fallback
       if (credentials.email === 'admin@easycart.com') {
-        toast.success('Demo login successful!');
+        console.log('[Login] Using demo mode fallback');
+        toast.success('Demo login successful! (Offline mode)');
         navigate('/admin/dashboard');
         return;
       }
-      toast.error(error.response?.data?.message || error.message || 'Login failed');
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -6,18 +6,25 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:3001,https://easycart-1-752r.onrender.com").split(',');
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:3001,https://easycart-1-752r.onrender.com,https://easycart-admin.onrender.com").split(',');
+console.log('CORS Configuration:', { 
+  allowedOrigins, 
+  env: process.env.FRONTEND_URL || '(using defaults)',
+  timestamp: new Date().toISOString()
+});
+
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.includes(origin)) {
+      console.log(`CORS: Allowed origin: ${origin}`);
       return callback(null, true);
     }
     
     // In development, allow all origins to avoid CORS issues
-    console.warn(`CORS allowing origin: ${origin}`);
+    console.warn(`CORS: Allowing unlisted origin: ${origin}`);
     callback(null, true);
   },
   credentials: true
