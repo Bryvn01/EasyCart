@@ -31,10 +31,25 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/easycart')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB connection error:', err));
+// MongoDB Connection with improved error handling
+const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/easycart';
+console.log('MongoDB Configuration:', {
+  uri: mongoUri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@'), // Mask password
+  timestamp: new Date().toISOString()
+});
+
+mongoose.connect(mongoUri, {
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+})
+  .then(() => {
+    console.log('✅ MongoDB connected successfully');
+    console.log('📊 Database:', mongoose.connection.name);
+  })
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+    console.log('⚠️  Server will continue with fallback data');
+  });
 
 // Mongoose connection events
 mongoose.connection.on('connected', () => {
