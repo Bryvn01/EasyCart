@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { adminAPI } from '../services/api';
 import { Package, ShoppingCart, Users, DollarSign } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -21,17 +22,14 @@ const Dashboard = () => {
       const response = await adminAPI.getDashboardStats();
       setStats(response.data);
     } catch (error) {
-      // Mock data for demo
+      console.error('Failed to fetch dashboard stats:', error);
+      toast.error('Unable to load dashboard data. Please try again.');
       setStats({
-        totalProducts: 156,
-        totalOrders: 89,
-        totalUsers: 234,
-        totalRevenue: 45670,
-        recentOrders: [
-          { id: 1, customer: 'John Doe', total: 299.99, status: 'pending' },
-          { id: 2, customer: 'Jane Smith', total: 149.50, status: 'completed' },
-          { id: 3, customer: 'Bob Johnson', total: 89.99, status: 'processing' }
-        ]
+        totalProducts: 0,
+        totalOrders: 0,
+        totalUsers: 0,
+        totalRevenue: 0,
+        recentOrders: []
       });
     } finally {
       setLoading(false);
