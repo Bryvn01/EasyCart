@@ -1,0 +1,74 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/health",
+      "dest": "/api/health.js"
+    },
+    {
+      "src": "/api/auth/register",
+      "dest": "/api/auth/register.js"
+    },
+    {
+      "src": "/api/auth/login",
+      "dest": "/api/auth/login.js"
+    },
+    {
+      "src": "/api/auth/profile",
+      "dest": "/api/auth/profile.js"
+    },
+    {
+      "src": "/api/products/categories",
+      "dest": "/api/products/categories.js"
+    },
+    {
+      "src": "/api/products/(.*)",
+      "dest": "/api/products/[id].js"
+    },
+    {
+      "src": "/api/products",
+      "dest": "/api/products/index.js"
+    },
+    {
+      "src": "/api/categories/(.*)",
+      "dest": "/api/categories/[id].js"
+    },
+    {
+      "src": "/api/categories",
+      "dest": "/api/categories/index.js"
+    },
+    {
+      "src": "/api/upload/image",
+      "dest": "/api/upload/image.js"
+    },
+    {
+      "src": "/api/upload/images",
+      "dest": "/api/upload/images.js"
+    },
+    {
+      "src": "/api/seed",
+      "dest": "/api/seed.js"
+    }
+  ],
+  "env": {
+    "MONGO_URI": "@mongo_uri",
+    "JWT_SECRET": "@jwt_secret",
+    "FRONTEND_URL": "@frontend_url",
+    "CLOUDINARY_URL": "@cloudinary_url",
+    "CLOUDINARY_CLOUD_NAME": "@cloudinary_cloud_name",
+    "CLOUDINARY_API_KEY": "@cloudinary_api_key",
+    "CLOUDINARY_API_SECRET": "@cloudinary_api_secret"
+  },
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
+}

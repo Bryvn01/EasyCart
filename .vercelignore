@@ -1,0 +1,62 @@
+# Vercel ignore file
+# Don't deploy these files/directories to Vercel
+
+# Backend Express server (not needed for serverless)
+backend/server.js
+backend/api/index.js
+
+# Django files
+backend/apps/
+backend/ecommerce/
+backend/manage.py
+backend/*.py
+backend/requirements.txt
+
+# Tests
+backend/tests/
+*.test.js
+
+# Documentation
+*.md
+!README.md
+
+# Development files
+.env.local
+.env.development
+.env.test
+
+# Build artifacts
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git files
+.git/
+.gitignore
+.github/
+
+# Scripts
+scripts/
+*.sh
+
+# Frontend build (if deploying separately)
+frontend/
+admin-dashboard/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

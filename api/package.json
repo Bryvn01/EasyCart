@@ -1,0 +1,20 @@
+{
+  "name": "easycart-serverless-api",
+  "version": "1.0.0",
+  "description": "EasyCart Serverless API Functions for Vercel",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel",
+    "deploy:prod": "vercel --prod"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^8.19.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
