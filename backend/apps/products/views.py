@@ -8,7 +8,10 @@ from .serializers import ProductSerializer, CategorySerializer
 from .mongodb_utils import (
     get_products_from_mongodb,
     get_product_by_id_from_mongodb,
-    get_categories_from_mongodb
+    get_categories_from_mongodb,
+    create_product_in_mongodb,
+    update_product_in_mongodb,
+    delete_product_from_mongodb
 )
 import logging
 
@@ -164,7 +167,6 @@ class ProductListView(APIView):
             )
         
         try:
-            from .mongodb_utils import create_product_in_mongodb
             product_data = request.data
             product_id = create_product_in_mongodb(product_data)
             logger.info(f"✅ Product created with ID: {product_id}")
@@ -237,7 +239,6 @@ class ProductDetailView(APIView):
             )
         
         try:
-            from .mongodb_utils import update_product_in_mongodb
             product_data = request.data
             success = update_product_in_mongodb(str(pk), product_data)
             if success:
@@ -272,7 +273,6 @@ class ProductDetailView(APIView):
             )
         
         try:
-            from .mongodb_utils import delete_product_from_mongodb
             success = delete_product_from_mongodb(str(pk))
             if success:
                 logger.info(f"✅ Product {pk} deleted successfully")
