@@ -284,3 +284,115 @@ def check_mongodb_connection() -> Dict[str, Any]:
             'status': 'disconnected',
             'error': str(e)
         }
+
+
+def create_product_in_mongodb(product_data: Dict) -> str:
+    """
+    Create a new product in MongoDB.
+    
+    Args:
+        product_data: Dictionary containing product information
+    
+    Returns:
+        String ID of the created product
+    """
+    try:
+        from datetime import datetime
+        
+        mongo_conn = get_mongodb_connection()
+        products_collection = mongo_conn.get_collection('products')
+        
+        # Generate a new ID for the product
+        product_data['id'] = str(ObjectId())
+        product_data['createdAt'] = datetime.utcnow()
+        product_data['updatedAt'] = datetime.utcnow()
+        
+        # Insert the product
+        result = products_collection.insert_one(product_data)
+        
+        logger.info(f"✅ Created product with ID: {product_data['id']}")
+        return product_data['id']
+        
+    except Exception as e:
+        logger.error(f"❌ Error creating product in MongoDB: {str(e)}")
+        raise
+
+
+def update_product_in_mongodb(product_id: str, product_data: Dict) -> bool:
+    """
+    Update an existing product in MongoDB.
+    
+    Args:
+        product_id: Product ID (string or ObjectId)
+        product_data: Dictionary containing updated product information
+    
+    Returns:
+        Boolean indicating success
+    """
+    try:
+        from datetime import datetime
+        
+        mongo_conn = get_mongodb_connection()
+        products_collection = mongo_conn.get_collection('products')
+        
+        # Add updated timestamp
+        product_data['updatedAt'] = datetime.utcnow()
+        
+        # Try to find by ObjectId first, then by string id field
+        try:
+            query = {'_id': ObjectId(product_id)}
+        except:
+            query = {'id': product_id}
+        
+        # Update the product
+        result = products_collection.update_one(
+            query,
+            {'$set': product_data}
+        )
+        
+        if result.modified_count > 0 or result.matched_count > 0:
+            logger.info(f"✅ Updated product {product_id}")
+            return True
+        else:
+            logger.warning(f"⚠️ Product {product_id} not found for update")
+            return False
+            
+    except Exception as e:
+        logger.error(f"❌ Error updating product {product_id} in MongoDB: {str(e)}")
+        raise
+
+
+def delete_product_from_mongodb(product_id: str) -> bool:
+    """
+    Delete a product from MongoDB.
+    
+    Args:
+        product_id: Product ID (string or ObjectId)
+    
+    Returns:
+        Boolean indicating success
+    """
+    try:
+        mongo_conn = get_mongodb_connection()
+        products_collection = mongo_conn.get_collection('products')
+        
+        # Try to find by ObjectId first, then by string id field
+        try:
+            query = {'_id': ObjectId(product_id)}
+        except:
+            query = {'id': product_id}
+        
+        # Delete the product
+        result = products_collection.delete_one(query)
+        
+        if result.deleted_count > 0:
+            logger.info(f"✅ Deleted product {product_id}")
+            return True
+        else:
+            logger.warning(f"⚠️ Product {product_id} not found for deletion")
+            return False
+            
+    except Exception as e:
+        logger.error(f"❌ Error deleting product {product_id} from MongoDB: {str(e)}")
+        raise
+
