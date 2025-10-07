@@ -20,6 +20,7 @@ else:
         "https://localhost:3000",
         "https://easycart-1-752r.onrender.com",
         "https://easycart-frontend-zge5.onrender.com",
+        "https://easycart-front.vercel.app", 
         "https://easycart-admin.onrender.com"
     ]
 
