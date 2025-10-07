@@ -165,7 +165,29 @@ npm start
 # Frontend runs on http://localhost:3000
 ```
 
-### 4. Verify MongoDB Connection
+### 4. Seed Products to MongoDB
+
+**Important:** The application requires products in MongoDB to display on the homepage.
+
+```bash
+cd backend
+python manage.py seed_products
+```
+
+Expected output:
+```
+✓ Connected to MongoDB: easycart
+✓ Cloudinary configured (or using placeholders)
+✓ Seeding complete!
+  - Successfully created: 40+ products
+  - Total in database: 40+
+```
+
+**Note:** The seed script is idempotent - running it multiple times won't create duplicates.
+
+### 5. Verify Setup
+
+Check that products are in MongoDB and images are accessible:
 
 ```bash
 cd backend
@@ -176,8 +198,19 @@ Expected output:
 ```
 ✅ MongoDB connection successful!
    Database: easycart
-   Products Count: 37
+   Products Count: 40+
 ```
+
+**Test the API directly:**
+```bash
+# Local testing
+curl http://localhost:8000/api/products/
+
+# Production testing
+curl https://easycart-j6ue.onrender.com/api/products/
+```
+
+Verify the response includes products with both `image` and `image_url` fields.
 
 ## 📡 API Endpoints
 
@@ -364,9 +397,20 @@ DB_PORT=5432
 
 **Frontend (.env):**
 ```env
+# For Local Development:
 REACT_APP_API_URL=http://localhost:8000/api
-# Production: https://easycart-backend.onrender.com/api
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+
+# For Production (Vercel/Render):
+REACT_APP_API_URL=https://easycart-j6ue.onrender.com/api
+NEXT_PUBLIC_API_URL=https://easycart-j6ue.onrender.com/api
 ```
+
+**Important Notes:**
+- The backend API runs on **port 8000** (Django REST Framework)
+- Ensure `REACT_APP_API_URL` matches your deployed backend URL for production
+- For Vercel deployment, set `NEXT_PUBLIC_API_URL` in the Vercel dashboard
+- Both environment variables should point to the same backend API endpoint
 
 **Admin Dashboard (.env):**
 ```env
@@ -804,6 +848,73 @@ If you're experiencing issues with product/category loading or other errors:
 - **"Network error"** - Check API URL and backend availability
 - **"CORS policy error"** - Verify frontend URL in backend CORS settings
 - **"Server error"** - Check backend logs for details
+
+#### No Products Displaying on Homepage
+
+**Symptoms:** Homepage is blank or shows "No products available"
+
+**Solutions:**
+1. **Seed the database:**
+   ```bash
+   cd backend
+   python manage.py seed_products
+   ```
+
+2. **Verify API URL is correct:**
+   - Check `frontend/.env` has: `REACT_APP_API_URL=http://localhost:8000/api`
+   - For production: `REACT_APP_API_URL=https://easycart-j6ue.onrender.com/api`
+   - For Vercel: Set `NEXT_PUBLIC_API_URL` in Vercel dashboard
+
+3. **Test backend API directly:**
+   ```bash
+   curl http://localhost:8000/api/products/
+   # or for production:
+   curl https://easycart-j6ue.onrender.com/api/products/
+   ```
+   Should return JSON with products array
+
+4. **Check MongoDB connection:**
+   ```bash
+   cd backend
+   python test_mongodb_integration.py
+   ```
+
+#### Product Images Not Rendering
+
+**Symptoms:** Products display but images show placeholder boxes or 404 errors
+
+**Solutions:**
+1. **Verify image field mapping:**
+   - Backend API should return both `image` and `image_url` fields
+   - Check API response: `curl http://localhost:8000/api/products/ | jq '.[0]'`
+
+2. **Check Cloudinary configuration (optional):**
+   - Images work with placeholder URLs by default
+   - For Cloudinary: Set `CLOUDINARY_URL` in backend `.env`
+   - Format: `cloudinary://api_key:api_secret@cloud_name`
+
+3. **Verify image URLs in MongoDB:**
+   - Images should be full URLs starting with `https://`
+   - Run seed script again if images are missing: `python manage.py seed_products --clear`
+
+4. **Frontend fallback is working:**
+   - ProductList component shows 📦 emoji when image fails
+   - Check browser console for 404 image errors
+
+#### API URL Misconfigurations
+
+**For local development:**
+- Backend runs on: `http://localhost:8000`
+- Frontend API URL: `http://localhost:8000/api`
+
+**For production:**
+- Backend deployed at: `https://easycart-j6ue.onrender.com`
+- Frontend API URL: `https://easycart-j6ue.onrender.com/api`
+- Set in Vercel dashboard or `.env` file
+
+**Vercel-specific:**
+- Use `NEXT_PUBLIC_API_URL` instead of `REACT_APP_API_URL` for Next.js
+- Set in: Vercel Dashboard → Project Settings → Environment Variables
 
 See [FRONTEND_ERROR_HANDLING_GUIDE.md](FRONTEND_ERROR_HANDLING_GUIDE.md) for complete troubleshooting steps.
 

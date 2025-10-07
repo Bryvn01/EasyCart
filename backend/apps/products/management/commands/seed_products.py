@@ -584,7 +584,8 @@ class Command(BaseCommand):
                     'category': prod_data['category'],
                     'stock': prod_data.get('stock', 50),
                     'brand': prod_data.get('brand', ''),
-                    'image': image_url,
+                    'image': image_url,  # Primary field for frontend consumption
+                    'image_url': image_url,  # Keep for backward compatibility
                     'images': [image_url],  # Array for compatibility with frontend
                     'isActive': True,
                     'isFeatured': False,
