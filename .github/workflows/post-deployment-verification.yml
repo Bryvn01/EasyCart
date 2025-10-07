@@ -1,0 +1,222 @@
+name: Post-Deployment Verification
+
+on:
+  # Run after deployment to main
+  workflow_dispatch:
+  # Or schedule daily
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  # Or after successful deployment
+  workflow_run:
+    workflows: ["CI/CD Pipeline"]
+    types:
+      - completed
+    branches: [main]
+
+jobs:
+  verify-deployment:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y curl jq
+    
+    - name: Wait for deployment to stabilize
+      run: sleep 30
+    
+    - name: Check Backend Health
+      id: backend-health
+      run: |
+        echo "Checking backend health..."
+        response=$(curl -s -w "\n%{http_code}" https://easycart-backend.onrender.com/api/health)
+        http_code=$(echo "$response" | tail -n1)
+        body=$(echo "$response" | sed '$d')
+        
+        if [ "$http_code" = "200" ]; then
+          echo "✅ Backend health check passed"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Backend health check failed (Status: $http_code)"
+          echo "Response: $body"
+          echo "status=failure" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: Check Products API
+      id: products-api
+      run: |
+        echo "Checking products API..."
+        response=$(curl -s https://easycart-backend.onrender.com/api/products)
+        
+        # Check if response has results field
+        if echo "$response" | jq -e '.results' > /dev/null 2>&1; then
+          count=$(echo "$response" | jq -r '.count')
+          echo "✅ Products API working (Total: $count products)"
+          echo "count=$count" >> $GITHUB_OUTPUT
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Products API response invalid"
+          echo "Response: $response"
+          echo "status=failure" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: Check Pagination
+      id: pagination
+      run: |
+        echo "Checking pagination..."
+        response=$(curl -s "https://easycart-backend.onrender.com/api/products?page=1&page_size=10")
+        
+        # Verify pagination fields
+        if echo "$response" | jq -e '.count, .results' > /dev/null 2>&1; then
+          echo "✅ Pagination working"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Pagination not working"
+          echo "status=failure" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: Check Search Functionality
+      id: search
+      run: |
+        echo "Checking search functionality..."
+        response=$(curl -s "https://easycart-backend.onrender.com/api/products?search=unga")
+        
+        if echo "$response" | jq -e '.results' > /dev/null 2>&1; then
+          echo "✅ Search working"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Search not working"
+          echo "status=failure" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: Check Filter Functionality
+      id: filters
+      run: |
+        echo "Checking filter functionality..."
+        
+        # Test category filter
+        cat_response=$(curl -s "https://easycart-backend.onrender.com/api/products?category=1")
+        
+        # Test price range filter
+        price_response=$(curl -s "https://easycart-backend.onrender.com/api/products?price_min=100&price_max=1000")
+        
+        if echo "$cat_response" | jq -e '.results' > /dev/null 2>&1 && \
+           echo "$price_response" | jq -e '.results' > /dev/null 2>&1; then
+          echo "✅ Filters working"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Filters not working"
+          echo "status=failure" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: Check Frontend Accessibility
+      id: frontend
+      run: |
+        echo "Checking frontend accessibility..."
+        status_code=$(curl -s -o /dev/null -w "%{http_code}" https://easycart-1-752r.onrender.com)
+        
+        if [ "$status_code" = "200" ]; then
+          echo "✅ Frontend accessible"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Frontend not accessible (Status: $status_code)"
+          echo "status=failure" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: Check CORS Configuration
+      id: cors
+      run: |
+        echo "Checking CORS configuration..."
+        cors_headers=$(curl -s -I -X OPTIONS \
+          -H "Origin: https://easycart-1-752r.onrender.com" \
+          -H "Access-Control-Request-Method: GET" \
+          https://easycart-backend.onrender.com/api/products | grep -i "access-control-allow-origin")
+        
+        if [ -n "$cors_headers" ]; then
+          echo "✅ CORS headers present"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️  CORS headers might be missing"
+          echo "status=warning" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Measure Response Time
+      id: performance
+      run: |
+        echo "Measuring API response time..."
+        start_time=$(date +%s%N)
+        curl -s https://easycart-backend.onrender.com/api/products > /dev/null
+        end_time=$(date +%s%N)
+        response_time=$(( (end_time - start_time) / 1000000 ))
+        
+        echo "Response Time: ${response_time}ms"
+        echo "response_time=$response_time" >> $GITHUB_OUTPUT
+        
+        if [ $response_time -lt 3000 ]; then
+          echo "✅ Performance acceptable"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️  Response time high: ${response_time}ms"
+          echo "status=warning" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Generate Summary Report
+      if: always()
+      run: |
+        echo "# 📊 Post-Deployment Verification Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Deployment:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Test | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Backend Health | ${{ steps.backend-health.outputs.status == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Products API | ${{ steps.products-api.outputs.status == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Pagination | ${{ steps.pagination.outputs.status == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Search | ${{ steps.search.outputs.status == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Filters | ${{ steps.filters.outputs.status == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Frontend | ${{ steps.frontend.outputs.status == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| CORS | ${{ steps.cors.outputs.status == 'success' && '✅' || steps.cors.outputs.status == 'warning' && '⚠️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Performance | ${{ steps.performance.outputs.status == 'success' && '✅' || steps.performance.outputs.status == 'warning' && '⚠️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Metrics" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Total Products:** ${{ steps.products-api.outputs.count }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Response Time:** ${{ steps.performance.outputs.response_time }}ms" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## URLs" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Backend:** https://easycart-backend.onrender.com" >> $GITHUB_STEP_SUMMARY
+        echo "- **Frontend:** https://easycart-1-752r.onrender.com" >> $GITHUB_STEP_SUMMARY
+        echo "- **Admin:** https://easycart-admin.onrender.com" >> $GITHUB_STEP_SUMMARY
+    
+    - name: Notify on Failure
+      if: failure()
+      run: |
+        echo "⚠️  Post-deployment verification failed!"
+        echo "Please check the logs and investigate the issues."
+        echo "Run manual verification: ./scripts/verify-production.sh"
+    
+    - name: Success Message
+      if: success()
+      run: |
+        echo "✅ All post-deployment checks passed!"
+        echo "The application is ready for production use."
