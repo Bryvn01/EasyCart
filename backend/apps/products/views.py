@@ -8,7 +8,10 @@ from .serializers import ProductSerializer, CategorySerializer
 from .mongodb_utils import (
     get_products_from_mongodb,
     get_product_by_id_from_mongodb,
-    get_categories_from_mongodb
+    get_categories_from_mongodb,
+    create_product_in_mongodb,
+    update_product_in_mongodb,
+    delete_product_from_mongodb
 )
 import logging
 
@@ -156,25 +159,34 @@ class ProductListView(APIView):
             )
     
     def post(self, request):
-        """Create product (admin only) - Not implemented for MongoDB."""
-        # For now, return a message that product creation should be done via admin dashboard
+        """Create product (admin only)."""
         if not (request.user.is_authenticated and getattr(request.user, 'is_admin', False)):
             return Response(
                 {'error': 'Admin authentication required'},
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        return Response(
-            {'message': 'Product creation via MongoDB admin dashboard'},
-            status=status.HTTP_501_NOT_IMPLEMENTED
-        )
+        try:
+            product_data = request.data
+            product_id = create_product_in_mongodb(product_data)
+            logger.info(f"✅ Product created with ID: {product_id}")
+            return Response(
+                {'id': product_id, 'message': 'Product created successfully'},
+                status=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            logger.error(f"❌ Failed to create product: {str(e)}")
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 class ProductDetailView(APIView):
     """
     Retrieve a single product from MongoDB Atlas by ID.
     GET: Retrieve product
-    PUT/PATCH: Update product (admin only - not implemented)
-    DELETE: Delete product (admin only - not implemented)
+    PUT/PATCH: Update product (admin only)
+    DELETE: Delete product (admin only)
     """
     permission_classes = [AllowAny]
     
@@ -216,4 +228,67 @@ class ProductDetailView(APIView):
             return Response(
                 {'error': 'Failed to fetch product', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def put(self, request, pk):
+        """Update product (admin only)."""
+        if not (request.user.is_authenticated and getattr(request.user, 'is_admin', False)):
+            return Response(
+                {'error': 'Admin authentication required'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        try:
+            product_data = request.data
+            success = update_product_in_mongodb(str(pk), product_data)
+            if success:
+                logger.info(f"✅ Product {pk} updated successfully")
+                return Response(
+                    {'message': 'Product updated successfully'},
+                    status=status.HTTP_200_OK
+                )
+            else:
+                logger.warning(f"⚠️ Product {pk} not found")
+                return Response(
+                    {'error': 'Product not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        except Exception as e:
+            logger.error(f"❌ Failed to update product {pk}: {str(e)}")
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
+    def patch(self, request, pk):
+        """Partially update product (admin only)."""
+        return self.put(request, pk)
+    
+    def delete(self, request, pk):
+        """Delete product (admin only)."""
+        if not (request.user.is_authenticated and getattr(request.user, 'is_admin', False)):
+            return Response(
+                {'error': 'Admin authentication required'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        try:
+            success = delete_product_from_mongodb(str(pk))
+            if success:
+                logger.info(f"✅ Product {pk} deleted successfully")
+                return Response(
+                    {'message': 'Product deleted successfully'},
+                    status=status.HTTP_200_OK
+                )
+            else:
+                logger.warning(f"⚠️ Product {pk} not found")
+                return Response(
+                    {'error': 'Product not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        except Exception as e:
+            logger.error(f"❌ Failed to delete product {pk}: {str(e)}")
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
             )

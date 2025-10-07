@@ -86,34 +86,10 @@ const Products = () => {
         // Only show message if it's genuinely empty, not filtered
       }
     } catch (error) {
-      console.warn('API connection failed, using demo data:', error.message);
-      
-      // Fallback data for development/demo
-      const mockData = [
-        { id: 1, name: 'Sample Product 1', price: 299.99, stock: 50, category: 'Electronics', description: 'Sample description', image: 'https://via.placeholder.com/300' },
-        { id: 2, name: 'Sample Product 2', price: 149.50, stock: 25, category: 'Fashion', description: 'Sample description', image: 'https://via.placeholder.com/300' },
-        { id: 3, name: 'Sample Product 3', price: 99.99, stock: 75, category: 'Home & Living', description: 'Sample description', image: 'https://via.placeholder.com/300' }
-      ];
-      
-      // Apply client-side filtering for demo
-      let filtered = mockData;
-      if (searchTerm) {
-        filtered = filtered.filter(p => 
-          p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.description.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-      if (categoryFilter) {
-        filtered = filtered.filter(p => p.category === categoryFilter);
-      }
-      
-      setProducts(filtered);
-      setTotalPages(Math.ceil(filtered.length / itemsPerPage));
-      
-      // Only show error toast once, not on every search/filter
-      if (!searchTerm && !categoryFilter && currentPage === 1) {
-        toast.error('Could not connect to API. Showing demo data.', { id: 'api-error' });
-      }
+      console.error('Failed to fetch products:', error);
+      toast.error('Unable to connect to API. Please check backend connection.');
+      setProducts([]);
+      setTotalPages(1)
     } finally {
       setLoading(false);
     }
@@ -205,17 +181,8 @@ const Products = () => {
       closeModal();
       fetchProducts(); // Refresh to get latest data
     } catch (error) {
-      // Fallback for demo - still update UI
-      const productData = { ...formData, image: imagePreview || formData.image };
-      if (editingProduct) {
-        setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...productData } : p));
-        toast.success('Product updated successfully (demo mode)');
-      } else {
-        const newProduct = { id: Date.now(), ...productData };
-        setProducts([newProduct, ...products]);
-        toast.success('Product created successfully (demo mode)');
-      }
-      closeModal();
+      console.error('Failed to save product:', error);
+      toast.error(editingProduct ? 'Failed to update product' : 'Failed to create product');
     } finally {
       setUploading(false);
     }
@@ -326,11 +293,8 @@ const Products = () => {
           fetchProducts();
         }
       } catch (error) {
-        // Fallback for demo mode
-        setProducts(products.filter(p => !selectedProducts.has(p.id)));
-        setSelectedProducts(new Set());
-        setSelectAll(false);
-        toast.success(`Successfully deleted ${selectedProducts.size} products (demo mode)`);
+        console.error('Failed to delete products:', error);
+        toast.error('Failed to delete products. Please try again.');
       } finally {
         setLoading(false);
       }
