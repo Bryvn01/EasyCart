@@ -12,9 +12,7 @@ const cloudinary = require('cloudinary').v2;
 
 // Configure Cloudinary
 if (process.env.CLOUDINARY_URL) {
-  cloudinary.config({
-    cloudinary_url: process.env.CLOUDINARY_URL
-  });
+  cloudinary.config(process.env.CLOUDINARY_URL);
 } else {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
