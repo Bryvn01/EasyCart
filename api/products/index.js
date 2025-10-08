@@ -3,7 +3,7 @@
 // Also handles POST for creating products (admin only)
 
 const mongoose = require('mongoose');
-const { connectToDatabase } = require('./_utils/mongodb');
+const { connectToDatabase } = require('../_utils/mongodb');
 const { setCorsHeaders } = require('./_utils/cors');
 const { requireAdmin } = require('./_utils/auth');
 
