@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { adminAPI } from '../services/api';
-import { Plus, Edit, Trash2, X, Upload, Search, Filter, ChevronLeft, ChevronRight, Package, Download, CheckSquare, Square } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Upload, Search, Filter, ChevronLeft, ChevronRight, Package, Download, CheckSquare, Square, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
+import BulkImageUpload from '../components/BulkImageUpload';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showBulkUploadModal, setShowBulkUploadModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
@@ -367,6 +369,13 @@ const Products = () => {
           >
             <Download className="h-4 w-4 mr-2" />
             Export CSV
+          </button>
+          <button
+            onClick={() => setShowBulkUploadModal(true)}
+            className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            <ImageIcon className="h-4 w-4 mr-2" />
+            Bulk Upload Images
           </button>
           <button
             onClick={() => openModal()}
@@ -807,6 +816,50 @@ const Products = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Image Upload Modal */}
+      {showBulkUploadModal && (
+        <div 
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" 
+          onClick={(e) => e.target === e.currentTarget && setShowBulkUploadModal(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="bulk-upload-title"
+        >
+          <div className="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white m-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 id="bulk-upload-title" className="text-lg font-medium text-gray-900">
+                Bulk Image Upload
+              </h3>
+              <button 
+                onClick={() => setShowBulkUploadModal(false)} 
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100 transition-colors"
+                aria-label="Close modal"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <BulkImageUpload
+              maxFiles={20}
+              onUploadComplete={(uploadedImages) => {
+                toast.success(`${uploadedImages.length} images uploaded successfully!`);
+                console.log('Uploaded images:', uploadedImages);
+                // You can store these URLs or use them for products
+              }}
+            />
+            
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setShowBulkUploadModal(false)}
+                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
