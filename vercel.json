@@ -56,15 +56,6 @@
       "dest": "/api/seed.js"
     }
   ],
-  "env": {
-    "MONGO_URI": "@mongo_uri",
-    "JWT_SECRET": "@jwt_secret",
-    "FRONTEND_URL": "@frontend_url",
-    "CLOUDINARY_URL": "@cloudinary_url",
-    "CLOUDINARY_CLOUD_NAME": "@cloudinary_cloud_name",
-    "CLOUDINARY_API_KEY": "@cloudinary_api_key",
-    "CLOUDINARY_API_SECRET": "@cloudinary_api_secret"
-  },
   "functions": {
     "api/**/*.js": {
       "memory": 1024,
