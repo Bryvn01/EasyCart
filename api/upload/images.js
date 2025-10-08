@@ -10,11 +10,9 @@ const { connectToDatabase } = require('../_utils/mongodb');
 const cloudinary = require('cloudinary').v2;
 
 // Configure Cloudinary
-if (process.env.CLOUDINARY_URL) {
-  cloudinary.config({
-    cloudinary_url: process.env.CLOUDINARY_URL
-  });
-} else {
+// If CLOUDINARY_URL is set, Cloudinary SDK will auto-configure from the environment variable.
+// Only configure manually if individual credentials are present.
+if (!process.env.CLOUDINARY_URL && process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
