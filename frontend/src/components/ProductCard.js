@@ -90,7 +90,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
         )}
 
         {/* Quick View Button */}
-        {product.stock > 0 && imageLoaded && (
+        {product.stock > 0 && (
           <button
             onClick={handleQuickView}
             className="absolute top-2 left-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
