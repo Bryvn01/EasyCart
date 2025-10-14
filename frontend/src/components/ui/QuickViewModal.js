@@ -1,4 +1,5 @@
 import React from 'react';
+import { getProductImageUrl } from '../../utils/imageUtils';
 
 const QuickViewModal = ({ product, onClose, onAddToCart }) => {
   if (!product) return null;
@@ -14,13 +15,14 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => {
         </button>
         <div className="flex flex-col items-center">
           <img
-            src={product.image_url || product.image || '/placeholder.png'}
+            src={getProductImageUrl(product, '/placeholder.png')}
             alt={product.name}
             className="w-40 h-40 object-cover rounded mb-4"
             loading="lazy"
+            crossOrigin="anonymous"
           />
           <h2 className="text-xl font-bold mb-2">{product.name}</h2>
-          <div className="text-gray-500 text-sm mb-1">{product.category}</div>
+          <div className="text-gray-500 text-sm mb-1">{product.category?.name || product.category_name || 'Uncategorized'}</div>
           <div className="text-gray-400 text-xs mb-2">{product.brand}</div>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg font-bold text-primary">KSh {product.price?.toLocaleString()}</span>

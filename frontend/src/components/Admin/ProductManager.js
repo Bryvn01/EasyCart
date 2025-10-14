@@ -203,7 +203,9 @@ const ProductManager = () => {
               style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '6px' }}
             />
             <h4 style={{ margin: '12px 0 6px 0', fontSize: '16px' }}>{product.name}</h4>
-            <p style={{ color: '#6c757d', fontSize: '14px', margin: '4px 0' }}>{product.category}</p>
+            <p style={{ color: '#6c757d', fontSize: '14px', margin: '4px 0' }}>
+              {product.category?.name || product.category_name || 'Uncategorized'}
+            </p>
             <p style={{ fontWeight: 'bold', color: '#007bff', margin: '6px 0', fontSize: '18px' }}>
               KSh {product.price}
             </p>

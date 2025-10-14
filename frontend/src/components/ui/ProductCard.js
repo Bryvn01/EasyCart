@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { getProductImageUrl } from '../../utils/imageUtils';
 
 
 const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isInWishlist = false }) => {
@@ -19,10 +20,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
     >
       <div className="relative w-full aspect-[1/1] overflow-hidden rounded-t-lg min-h-[160px] sm:min-h-[180px] md:min-h-[200px]">
         <img
-          src={product.image_url || product.image || '/placeholder.png'}
+          src={getProductImageUrl(product, '/placeholder.png')}
           alt={product.name}
           className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-200"
           loading="lazy"
+          crossOrigin="anonymous"
         />
         {product.is_flash_sale && (
           <span className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg animate-pulse">Flash Sale</span>
@@ -40,7 +42,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
         )}
       </div>
       <div className="flex-1 flex flex-col p-3">
-        <div className="text-sm text-gray-500 mb-1">{product.category}</div>
+        <div className="text-sm text-gray-500 mb-1">{product.category?.name || product.category_name || 'Uncategorized'}</div>
         <h3 className="font-semibold text-base mb-1 truncate" title={product.name}>{product.name}</h3>
         <div className="text-xs text-gray-400 mb-1">{product.brand}</div>
         <div className="flex items-center gap-2 mb-2">

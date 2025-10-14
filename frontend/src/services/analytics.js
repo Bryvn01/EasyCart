@@ -32,7 +32,7 @@ export const trackEvent = {
   productView: (product) => analytics.track('Product Viewed', {
     product_id: product.id,
     product_name: product.name,
-    category: product.category,
+    category: product.category?.name || product.category_name || product.category,
     price: product.price
   }),
   

@@ -20,7 +20,7 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
         name: product.name || '',
         description: product.description || '',
         price: product.price || '',
-        category: product.category || '',
+        category: product.category?.id || product.category || '',
         stock: product.stock || '',
         is_active: product.is_active !== undefined ? product.is_active : true
       });
