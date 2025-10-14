@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { productsAPI } from '../services/api';
+import { normalizeImageUrl } from '../utils/imageUtils';
 
 /**
  * Custom hook for fetching products with pagination, search, and category filtering
@@ -60,7 +61,8 @@ export const useProducts = ({
         productsData = productsData.map(p => ({
           ...p,
           id: p._id || p.id,
-          category: p.category || p.category_name,
+          // Keep category object as is, and add category_name for backwards compatibility
+          category_name: p.category?.name || p.category_name || 'Uncategorized',
           // Normalize image URL for Cloudinary
           image: normalizeImageUrl(p.image || p.image_url)
         }));
@@ -112,30 +114,6 @@ export const useProducts = ({
     pagination,
     refresh
   };
-};
-
-/**
- * Normalize image URL to handle Cloudinary and fallback images
- * @param {string} imageUrl - Original image URL
- * @returns {string} - Normalized image URL
- */
-const normalizeImageUrl = (imageUrl) => {
-  if (!imageUrl) return null;
-
-  // If it's already a full URL (http/https), return as is
-  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-    return imageUrl;
-  }
-
-  // If it starts with a slash, it's a relative path from backend
-  if (imageUrl.startsWith('/')) {
-    const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://easycart-j6ue.onrender.com/api';
-    const baseUrl = apiBaseUrl.replace('/api', '');
-    return `${baseUrl}${imageUrl}`;
-  }
-
-  // Otherwise, assume it's a relative path
-  return imageUrl;
 };
 
 export default useProducts;

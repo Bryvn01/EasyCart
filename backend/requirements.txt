@@ -1,8 +1,10 @@
 # Django 3.2.x LTS - Compatible with Python 3.8+
-# For Ubuntu/Debian: sudo apt-get install python3-django python3-pymongo
+# For Ubuntu/Debian: sudo apt-get install python3-django
 # For pip: These versions are flexible to allow system packages or PyPI
 Django>=3.2,<4.0
-# PyMongo for MongoDB support (compatible with Django 3.x)
+# PostgreSQL adapter for Python (required for production)
+psycopg2-binary>=2.9.9
+# PyMongo for MongoDB support (legacy - transitioning to PostgreSQL)
 pymongo>=3.12,<5.0
 # Core dependencies
 python-decouple==3.8

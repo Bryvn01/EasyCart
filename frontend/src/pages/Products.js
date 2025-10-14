@@ -7,6 +7,7 @@ import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 import { useProducts } from '../hooks/useProducts';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
@@ -243,8 +244,9 @@ const Products = () => {
             }}>
               {product.image ? (
                 <img
-                  src={product.image}
+                  src={getProductImageUrl(product, '/placeholder.png')}
                   alt={product.name}
+                  crossOrigin="anonymous"
                   style={{
                     width: '100%',
                     height: '100%',
@@ -296,7 +298,7 @@ const Products = () => {
                 fontWeight: '500',
                 marginBottom: 'var(--space-1)'
               }}>
-                {product.category}
+                {product.category?.name || product.category_name || 'Uncategorized'}
               </div>
               
               <h3 style={{
@@ -314,7 +316,7 @@ const Products = () => {
                 marginBottom: 'var(--space-4)',
                 lineHeight: '1.4'
               }}>
-                {product.description.substring(0, 80)}...
+                {product.description ? product.description.substring(0, 80) + '...' : 'No description available'}
               </p>
               
               <div className="flex justify-between items-center">

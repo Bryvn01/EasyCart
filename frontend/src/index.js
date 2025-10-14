@@ -15,12 +15,16 @@ root.render(
   </React.StrictMode>
 );
 
-// Register service worker for PWA functionality
-serviceWorkerRegistration.register({
-  onSuccess: () => {
-    console.log('Service worker registered successfully. App is ready for offline use.');
-  },
-  onUpdate: (registration) => {
-    console.log('New version available! Please refresh the page.');
-  }
-});
+// DISABLED: Service worker causes caching issues during development
+// Uncomment for production PWA functionality
+// serviceWorkerRegistration.register({
+//   onSuccess: () => {
+//     console.log('Service worker registered successfully. App is ready for offline use.');
+//   },
+//   onUpdate: (registration) => {
+//     console.log('New version available! Please refresh the page.');
+//   }
+// });
+
+// Unregister any existing service workers to clear cache
+serviceWorkerRegistration.unregister();

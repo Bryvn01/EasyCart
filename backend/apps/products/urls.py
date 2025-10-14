@@ -4,9 +4,12 @@ from . import wishlist_views
 from . import review_views
 
 urlpatterns = [
+    # Categories must come before <str:pk> to avoid conflict
+    path('categories/', views.CategoryListView.as_view(), name='category-list'),
+    
+    # Product list and detail
     path('', views.ProductListView.as_view(), name='product-list'),
     path('<str:pk>/', views.ProductDetailView.as_view(), name='product-detail'),
-    path('categories/', views.CategoryListView.as_view(), name='category-list'),
 
     # Wishlist endpoints
     path('wishlist/', wishlist_views.WishlistView.as_view(), name='wishlist-detail'),

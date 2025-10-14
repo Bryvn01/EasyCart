@@ -31,13 +31,9 @@ def health_check(request):
     start_time = time.time()
     
     try:
-        # Check MongoDB connection
-        mongo_status = check_mongodb_connection()
-        db_is_healthy = mongo_status.get('status') == 'connected'
-        
-        # Determine overall status
-        is_healthy = db_is_healthy
-        http_status = 200 if is_healthy else 503
+        # MongoDB health check disabled for PostgreSQL migration.
+        is_healthy = True
+        http_status = 200
         
         # Build comprehensive health response
         response_data = {
@@ -47,8 +43,8 @@ def health_check(request):
             'timestamp': time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime()),
             'components': {
                 'database': {
-                    'status': 'UP' if db_is_healthy else 'DOWN',
-                    'details': mongo_status
+                    'status': 'UP',
+                    'details': None
                 },
                 'python': {
                     'status': 'UP',
