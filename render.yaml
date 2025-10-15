@@ -1,6 +1,9 @@
+
 # Render.com Infrastructure-as-Code Blueprint
 # This file defines all services needed for EasyCart deployment on Render
 # Automatically deploys backend, frontend, and admin dashboard
+#
+# NOTE: This deployment is for a PostgreSQL-backed Django backend. All MongoDB references are obsolete.
 
 services:
   # Django Backend API Service
@@ -28,8 +31,7 @@ services:
         value: easycart-backend.onrender.com,.onrender.com
       - key: CORS_ALLOWED_ORIGINS
         value: https://easycart-1-752r.onrender.com,https://easycart-frontend-zge5.onrender.com,https://easycart-admin.onrender.com
-      - key: MONGODB_URI
-        sync: false  # Set manually in Render dashboard
+      # PostgreSQL is used. No MongoDB configuration required.
       - key: JWT_SECRET
         generateValue: true
       - key: DJANGO_SETTINGS_MODULE
@@ -105,16 +107,23 @@ services:
       - key: REACT_APP_SITE_NAME
         value: EasyCart Admin
 
+
 # Database configuration notes:
-# - MongoDB Atlas is recommended for production (free tier available)
-# - Set MONGODB_URI manually in Render dashboard for security
-# - Format: mongodb+srv://<username>:<password>@cluster.mongodb.net/easycart?retryWrites=true&w=majority
+# - PostgreSQL is used for all production deployments.
+# - Set DB_ENGINE, DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT in backend environment variables.
+# - Example:
+#   DB_ENGINE=django.db.backends.postgresql
+#   DB_NAME=easycart
+#   DB_USER=easycart_user
+#   DB_PASSWORD=your_password
+#   DB_HOST=your_postgres_host
+#   DB_PORT=5432
 
 # Deployment instructions:
 # 1. Push this file to your GitHub repository
 # 2. Connect your repo to Render
 # 3. Render will automatically detect render.yaml and create all services
-# 4. Set MONGODB_URI in backend service environment variables
+# 4. Set PostgreSQL environment variables in backend service environment variables
 # 5. Services will auto-deploy on every push to main branch
 
 # Health check endpoint:
