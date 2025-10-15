@@ -178,9 +178,13 @@ SIMPLE_JWT = {
 }
 
 # CORS Settings
+
+# === CORS: Only allow production frontends and admin dashboard ===
+
+# === CORS: Allow all production frontends and admin dashboards ===
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000,http://127.0.0.1:3000,https://localhost:3000',
+    default='https://easycart-frontend-wj9x.onrender.com,https://easycart-admin-dashboard.onrender.com,https://easycart-admin-08xf.onrender.com',
     cast=Csv()
 )
 

@@ -1,7 +1,12 @@
 import axios from 'axios';
 
-// Default to Node.js backend (port 5000) for local dev, or production backend
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-backend-0u8r.onrender.com/api';
+
+// === IMPORTANT: Always use .env for production API URL ===
+// Never use demo/mock mode or fallback URL in production!
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+if (!API_BASE_URL) {
+  throw new Error('REACT_APP_API_URL is not set! Please check your .env file.');
+}
 
 // Log API configuration for debugging
 console.log('Admin Dashboard API Configuration:', {

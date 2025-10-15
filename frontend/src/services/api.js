@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://easycart-j6ue.onrender.com/api';
+
+// === IMPORTANT: Always use .env for production API URL ===
+// Never use demo/mock mode or fallback URL in production!
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+if (!API_BASE_URL) {
+  throw new Error('REACT_APP_API_URL is not set! Please check your .env file.');
+}
 
 // Log API configuration in development
 if (process.env.NODE_ENV === 'development') {

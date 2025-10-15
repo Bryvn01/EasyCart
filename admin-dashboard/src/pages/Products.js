@@ -102,8 +102,7 @@ const Products = () => {
         setProducts(products.filter(p => p.id !== id));
         toast.success('Product deleted successfully');
       } catch (error) {
-        setProducts(products.filter(p => p.id !== id));
-        toast.success('Product deleted successfully');
+        toast.error('Failed to delete product. Please check your connection or try again.');
       }
     }
   };
