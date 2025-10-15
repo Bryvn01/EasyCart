@@ -23,7 +23,7 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('price', 'stock', 'is_active')
         }),
         ('Media', {
-            'fields': ('image',)
+            'fields': ('image', 'image_url')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
