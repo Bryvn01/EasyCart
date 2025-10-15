@@ -25,7 +25,7 @@ urlpatterns = [
     path('api/health/', health_check, name='health-check'),
     path('api/health/live/', liveness_probe, name='liveness-probe'),
     path('api/health/ready/', readiness_probe, name='readiness-probe'),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='django-admin'),
     path('api/auth/', include('apps.accounts.urls')),
     path('api/products/', include('apps.products.urls')),
     path('api/orders/', include('apps.orders.urls')),

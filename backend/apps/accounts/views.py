@@ -13,6 +13,7 @@ import re
 import os
 from .models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
+from .permissions import IsSuperAdminUser
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -98,14 +99,14 @@ def reset_password(request):
     uid = request.data.get('uid')
     token = request.data.get('token')
     password = request.data.get('password')
-    
+
     if not all([uid, token, password]):
         return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     try:
         user_id = force_str(urlsafe_base64_decode(uid))
         user = User.objects.get(pk=user_id)
-        
+
         if default_token_generator.check_token(user, token):
             user.set_password(password)
             user.save()
@@ -114,3 +115,34 @@ def reset_password(request):
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
     except (User.DoesNotExist, ValueError):
         return Response({'error': 'Invalid reset link'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsSuperAdminUser])
+def django_admin_access(request):
+    """
+    Provide access to Django admin interface for superadmin users.
+    Returns admin URL and session info.
+    """
+    from django.conf import settings
+    from django.contrib.sessions.models import Session
+    from django.contrib.auth import login
+    import datetime
+
+    # Get admin URL from settings
+    admin_url = getattr(settings, 'ADMIN_URL', 'admin/')
+
+    # Create admin URL
+    base_url = request.build_absolute_uri('/')[:-1]  # Remove trailing slash
+    full_admin_url = f"{base_url}/{admin_url}"
+
+    return Response({
+        'admin_url': full_admin_url,
+        'message': 'Superadmin access granted to Django admin',
+        'user': {
+            'id': request.user.id,
+            'username': request.user.username,
+            'email': request.user.email,
+            'is_superuser': request.user.is_superuser,
+            'is_staff': request.user.is_staff
+        }
+    }, status=status.HTTP_200_OK)
