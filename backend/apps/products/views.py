@@ -41,14 +41,17 @@ class CategoryListView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+from .serializers import ProductSerializer, CategorySerializer, ProductCreateUpdateSerializer
+from apps.accounts.permissions import IsAdminOrReadOnly
+
 class ProductListView(APIView):
     """
     List products from PostgreSQL with filtering, search, and pagination.
     GET: List products
     POST: Create product (admin only)
     """
-    permission_classes = [AllowAny]
-    
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request):
         """Fetch products from PostgreSQL with filters and pagination."""
         try:
@@ -141,19 +144,13 @@ class ProductListView(APIView):
     
     def post(self, request):
         """Create product (admin only)."""
-        if not (request.user.is_authenticated and getattr(request.user, 'is_admin', False)):
-            return Response(
-                {'error': 'Admin authentication required'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
         try:
-            serializer = ProductSerializer(data=request.data)
+            serializer = ProductCreateUpdateSerializer(data=request.data)
             if serializer.is_valid():
                 product = serializer.save()
                 logger.info(f"✅ Product created with ID: {product.id}")
                 return Response(
-                    serializer.data,
+                    ProductSerializer(product).data,
                     status=status.HTTP_201_CREATED
                 )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -171,8 +168,8 @@ class ProductDetailView(APIView):
     PUT/PATCH: Update product (admin only)
     DELETE: Delete product (admin only)
     """
-    permission_classes = [AllowAny]
-    
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request, pk):
         """Fetch single product from PostgreSQL by ID."""
         try:
@@ -199,12 +196,6 @@ class ProductDetailView(APIView):
     
     def put(self, request, pk):
         """Update product (admin only)."""
-        if not (request.user.is_authenticated and getattr(request.user, 'is_admin', False)):
-            return Response(
-                {'error': 'Admin authentication required'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
         try:
             product = Product.objects.filter(id=pk).first()
             if not product:
@@ -212,12 +203,11 @@ class ProductDetailView(APIView):
                     {'error': 'Product not found'},
                     status=status.HTTP_404_NOT_FOUND
                 )
-            
-            serializer = ProductSerializer(product, data=request.data, partial=False)
+            serializer = ProductCreateUpdateSerializer(product, data=request.data, partial=False)
             if serializer.is_valid():
-                serializer.save()
+                product = serializer.save()
                 logger.info(f"✅ Product {pk} updated successfully")
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error(f"❌ Failed to update product {pk}: {str(e)}")
@@ -228,12 +218,6 @@ class ProductDetailView(APIView):
     
     def patch(self, request, pk):
         """Partially update product (admin only)."""
-        if not (request.user.is_authenticated and getattr(request.user, 'is_admin', False)):
-            return Response(
-                {'error': 'Admin authentication required'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
         try:
             product = Product.objects.filter(id=pk).first()
             if not product:
@@ -241,12 +225,11 @@ class ProductDetailView(APIView):
                     {'error': 'Product not found'},
                     status=status.HTTP_404_NOT_FOUND
                 )
-            
-            serializer = ProductSerializer(product, data=request.data, partial=True)
+            serializer = ProductCreateUpdateSerializer(product, data=request.data, partial=True)
             if serializer.is_valid():
-                serializer.save()
+                product = serializer.save()
                 logger.info(f"✅ Product {pk} updated successfully")
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error(f"❌ Failed to update product {pk}: {str(e)}")
@@ -257,12 +240,6 @@ class ProductDetailView(APIView):
     
     def delete(self, request, pk):
         """Delete product (admin only)."""
-        if not (request.user.is_authenticated and getattr(request.user, 'is_admin', False)):
-            return Response(
-                {'error': 'Admin authentication required'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
         try:
             product = Product.objects.filter(id=pk).first()
             if not product:
@@ -270,7 +247,6 @@ class ProductDetailView(APIView):
                     {'error': 'Product not found'},
                     status=status.HTTP_404_NOT_FOUND
                 )
-            
             product_name = product.name
             product.delete()
             logger.info(f"✅ Product {pk} ({product_name}) deleted successfully")
