@@ -1,3 +1,28 @@
+# Recent Changes (October 2025)
+
+## Major Improvements
+
+- **Superadmin CRUD Robustness:**
+   - Ensured all superadmin CRUD operations are persistent and reflected in the frontend.
+   - Improved backend permissions and admin dashboard integration.
+
+- **Environment & CORS Fixes:**
+   - Audited and updated all `.env` files for backend, frontend, and admin dashboard.
+   - Centralized environment variable documentation and ensured production-ready settings.
+   - Fixed CORS and `ALLOWED_HOSTS` for local and deployed environments.
+
+- **Image Handling:**
+   - Normalized image URL support in backend and frontend.
+   - Added robust Cloudinary integration for product images.
+   - Improved frontend image fallback and error handling.
+
+- **Deployment & Docs:**
+   - Updated deployment instructions for Django/PostgreSQL/Render.
+   - Canonicalized `README.md`, `DEPLOY.md`, and environment docs.
+   - Added onboarding and troubleshooting guidance.
+
+---
+
 # Changes Summary - API Integration
 
 ## Overview
