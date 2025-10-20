@@ -1,8 +1,8 @@
-# 🚀 Render Deployment Guide
+# 🚀 Render Deployment Guide (Django + PostgreSQL)
 
 ## Current Status
 - ✅ Frontend: https://easycart-1-752r.onrender.com/ (Working)
-- ✅ Backend: https://easycart-backend.onrender.com/ (Working)  
+- ✅ Backend: https://easycart-backend.onrender.com/ (Working)
 - ✅ Admin: https://easycart-admin.onrender.com/ (Working)
 
 ## Deploy to Render
@@ -17,19 +17,34 @@
 3. Configure:
    - **Service Name:** `easycart-backend`
    - **Root Directory:** `backend`
-   - **Runtime:** Node
-   - **Build Command:** `npm install`
-   - **Start Command:** `npm start`
+   - **Runtime:** Python 3.10+
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `gunicorn ecommerce.wsgi:application`
 
 ### Step 3: Add Backend Environment Variables
 ```
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/easycart?retryWrites=true&w=majority
-JWT_SECRET=<your_jwt_secret>
-NODE_ENV=production
+# PostgreSQL
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=easycart
+DB_USER=postgres
+DB_PASSWORD=yourpassword
+DB_HOST=your-postgres-host
+DB_PORT=5432
+
+# Django
+SECRET_KEY=<your_django_secret_key>
+DEBUG=False
+ALLOWED_HOSTS=easycart-backend.onrender.com,localhost,127.0.0.1
+CORS_ALLOWED_ORIGINS=https://easycart-1-752r.onrender.com,https://easycart-admin.onrender.com
 FRONTEND_URL=https://easycart-1-752r.onrender.com
+
+# Cloudinary (optional, for images)
+CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
+CLOUDINARY_API_KEY=<your_cloudinary_api_key>
+CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
 ```
 
-### Step 4: Deploy Frontend (Static Site)  
+### Step 4: Deploy Frontend (Static Site)
 1. Click "New +" → "Static Site"
 2. Connect same GitHub repository
 3. Configure:
@@ -45,7 +60,7 @@ REACT_APP_API_URL=https://easycart-backend.onrender.com/api
 
 ### Step 6: Deploy Admin (Static Site)
 1. Click "New +" → "Static Site"
-2. Connect same GitHub repository  
+2. Connect same GitHub repository
 3. Configure:
    - **Site Name:** `easycart-admin`
    - **Root Directory:** `admin-dashboard`
@@ -56,23 +71,23 @@ REACT_APP_API_URL=https://easycart-backend.onrender.com/api
 ```
 REACT_APP_API_URL=https://easycart-backend.onrender.com/api
 ```
-```
 
 ## Test After Deployment
 
 ### Seed Database
 ```bash
-curl -X POST https://easycart-backend.onrender.com/api/seed
+# SSH into your backend service or use the Render shell
+python manage.py migrate
+python manage.py seed_products
 ```
 
 ### Test Admin Login
 - URL: https://easycart-admin.onrender.com/admin/manage
-- Email: admin@easycart.com
-- Password: admin123
+- Use your created superuser credentials
 
 ### Test API Health
 ```bash
-curl https://easycart-backend.onrender.com/api/health
+curl https://easycart-backend.onrender.com/api/health/
 ```
 
 ### Test Frontend
@@ -80,15 +95,15 @@ curl https://easycart-backend.onrender.com/api/health
 
 ## Benefits of Render
 
-✅ **Automatic HTTPS** - All deployments get SSL certificates  
-✅ **Auto-deploy on push** - Automatically builds and deploys from Git  
-✅ **Environment variables** - Managed securely in dashboard  
-✅ **Free tier** - 750 hours/month included  
-✅ **Built-in monitoring** - Logs and metrics included  
-✅ **No cold starts** - For static sites  
+✅ **Automatic HTTPS** - All deployments get SSL certificates
+✅ **Auto-deploy on push** - Automatically builds and deploys from Git
+✅ **Environment variables** - Managed securely in dashboard
+✅ **Free tier** - 750 hours/month included
+✅ **Built-in monitoring** - Logs and metrics included
+✅ **No cold starts** - For static sites
 
 ## Live URLs
 
-- **Frontend:** https://easycart-1-752r.onrender.com  
-- **Backend:** https://easycart-backend.onrender.com  
+- **Frontend:** https://easycart-1-752r.onrender.com
+- **Backend:** https://easycart-backend.onrender.com
 - **Admin:** https://easycart-admin.onrender.com

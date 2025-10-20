@@ -1,20 +1,22 @@
 # EasyCart - E-Commerce Web Application
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-![Django](https://img.shields.io/badge/django-3.2+-green.svg)
-![React](https://img.shields.io/badge/react-18+-blue.svg)
-![MongoDB](https://img.shields.io/badge/mongodb-7+-green.svg)
 
-A complete e-commerce solution with React frontend and Django REST Framework backend, featuring MongoDB Atlas integration for product data, JWT authentication, and production-ready architecture.
+![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
+![Django](https://img.shields.io/badge/django-4.2+-green.svg)
+![React](https://img.shields.io/badge/react-18+-blue.svg)
+![PostgreSQL](https://img.shields.io/badge/postgresql-14+-blue.svg)
+
+A complete e-commerce solution with a React frontend and Django REST Framework backend, featuring PostgreSQL for production data, JWT authentication, Cloudinary image support, and production-ready deployment on Render.
 
 ---
+
 
 ## 🏥 Health Check Enhancement (Latest)
 
 **Enhanced health monitoring for production deployments!**
 
-Both Node.js and Django backends now include comprehensive health check endpoints with:
+Django backend includes comprehensive health check endpoints with:
 - ✅ **Component-based Health Reporting**: Database, memory, and runtime monitoring
 - ✅ **Kubernetes Support**: Liveness and readiness probes
 - ✅ **Detailed Status Information**: Uptime, response time, version info
@@ -26,45 +28,46 @@ Both Node.js and Django backends now include comprehensive health check endpoint
 - [Architecture Diagram](HEALTH_CHECK_ARCHITECTURE.md) - Visual overview
 
 **Endpoints:**
-- Node.js: `GET /api/health` (port 5000)
 - Django: `GET /api/health/` (port 8000)
 - Django Liveness: `GET /api/health/live/` (Kubernetes)
 - Django Readiness: `GET /api/health/ready/` (Kubernetes)
 
 ---
 
+
 ## 🔧 Products Display Fix (Latest)
 
-**Issue**: Products not displaying on frontend?  
-**Quick Fix**: [See QUICKSTART_PRODUCTS_FIX.md](QUICKSTART_PRODUCTS_FIX.md)
+**Issue**: Products not displaying on frontend?
+**Quick Fix**: Ensure backend is running on Django (port 8000), environment variables are set, and database is seeded.
 
-**Key Changes:**
-- Frontend `.env` must use port **5000** (Node.js backend), not 8000 (Django)
-- Database name must be **easycart** in MONGO_URI
-- Run validation: `node validate-setup.js`
+**Key Checks:**
+- Frontend `.env` must use port **8000** (Django backend)
+- Backend must be connected to PostgreSQL (production) or SQLite (dev)
+- Run validation: `python manage.py check` and `python manage.py seed_products`
 
 📚 **Documentation:**
 - [Quick Start Guide](QUICKSTART_PRODUCTS_FIX.md) - 5-minute fix
 - [Complete Fix Details](PRODUCTS_DISPLAY_FIX.md) - Full documentation
-- [Seeding Guide](SEEDING_GUIDE.md) - Database setup
+- [Seeding Guide](DATABASE_SEEDING_GUIDE.md) - Database setup
 
 ---
 
-## 🎉 Latest Updates (v3.0)
 
-**Django REST Framework + MongoDB Atlas Integration Complete!**
+## 🎉 Latest Updates (v4.0)
+
+**Django REST Framework + PostgreSQL Production Integration Complete!**
 
 - ✅ **Django REST Framework Backend**: Robust API with DRF (port 8000)
-- ✅ **MongoDB Atlas Integration**: Products fetched via PyMongo from MongoDB
+- ✅ **PostgreSQL Integration**: Products and users stored in PostgreSQL (production)
 - ✅ **JWT Authentication**: Login, register, and refresh token endpoints
 - ✅ **Clean JSON Serialization**: Proper id, name, price, description, image_url, category fields
 - ✅ **Advanced Filtering**: Category, price range, and search filters with pagination
 - ✅ **CORS Configuration**: Frontend URL environment variable support
-- ✅ **Health Check Endpoint**: MongoDB connection status monitoring
-- ✅ **Startup Logging**: MongoDB connection verification on server start
+- ✅ **Health Check Endpoint**: Database connection status monitoring
+- ✅ **Startup Logging**: Database connection verification on server start
 
 **📚 Documentation:**
-- [Django MongoDB Integration Guide](DJANGO_MONGODB_INTEGRATION.md) - **NEW!** Complete setup guide
+- [Django Integration Guide](DJANGO_MONGODB_INTEGRATION.md) - Setup guide (update for PostgreSQL)
 - [Enhanced Product API Guide](ENHANCED_PRODUCT_API_GUIDE.md) - API reference
 - [Admin Dashboard Integration](ADMIN_DASHBOARD_INTEGRATION_GUIDE.md) - Frontend integration
 - [Implementation Summary](IMPLEMENTATION_COMPLETE_SUMMARY.md) - Complete overview
@@ -101,19 +104,21 @@ Both Node.js and Django backends now include comprehensive health check endpoint
 - django-filter (filtering support)
 - Gunicorn (production server)
 
+
 **Database:**
-- MongoDB Atlas (products, categories)
-- SQLite/PostgreSQL (Django auth, sessions)
+- PostgreSQL (production)
+- SQLite (development)
+
 
 **Infrastructure:**
-- MongoDB Atlas for product data
 - Cloudinary CDN for image hosting (optional)
-- Render / Railway for deployment
+- Render for deployment
+
 
 ## 📋 Prerequisites
 
-- Python 3.8+
-- MongoDB Atlas account (free tier available)
+- Python 3.10+
+- PostgreSQL (for production)
 - Node.js 18+ (for frontend)
 - npm or yarn
 - Git
@@ -127,22 +132,31 @@ git clone https://github.com/Bryvn01/EasyCart.git
 cd EasyCart
 ```
 
+
 ### 2. Backend Setup (Django REST Framework)
 ```bash
 cd backend
+python -m venv .venv
+. .venv/Scripts/activate  # On Windows
+# Or: source .venv/bin/activate  # On Mac/Linux
 pip install -r requirements.txt
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your MongoDB URI and Django settings:
-# MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/easycart
+# Edit .env with your PostgreSQL URI and Django settings:
+# DB_ENGINE=django.db.backends.postgresql
+# DB_NAME=easycart
+# DB_USER=postgres
+# DB_PASSWORD=yourpassword
+# DB_HOST=localhost
+# DB_PORT=5432
 # SECRET_KEY=<your_django_secret_key>
 # FRONTEND_URL=http://localhost:3000
 
 # Run migrations (for Django models)
 python manage.py migrate
 
-# Create superuser (optional, for Django admin)
+# Create superuser (for Django admin)
 python manage.py createsuperuser
 
 # Start the server
@@ -165,9 +179,10 @@ npm start
 # Frontend runs on http://localhost:3000
 ```
 
-### 4. Seed Products to MongoDB
 
-**Important:** The application requires products in MongoDB to display on the homepage.
+### 4. Seed Products to Database
+
+**Important:** The application requires products in the database to display on the homepage.
 
 ```bash
 cd backend
@@ -176,11 +191,11 @@ python manage.py seed_products
 
 Expected output:
 ```
-✓ Connected to MongoDB: easycart
+✓ Connected to PostgreSQL: easycart
 ✓ Cloudinary configured (or using placeholders)
 ✓ Seeding complete!
-  - Successfully created: 40+ products
-  - Total in database: 40+
+   - Successfully created: 40+ products
+   - Total in database: 40+
 ```
 
 **Note:** The seed script is idempotent - running it multiple times won't create duplicates.
@@ -200,6 +215,7 @@ Expected output:
    Database: easycart
    Products Count: 40+
 ```
+
 
 **Test the API directly:**
 ```bash
@@ -370,10 +386,16 @@ EasyCart/
 
 ### Environment Variables
 
+
 **Backend (.env):**
 ```env
-# MongoDB Atlas
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/easycart?retryWrites=true&w=majority
+# PostgreSQL (production)
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=easycart
+DB_USER=postgres
+DB_PASSWORD=yourpassword
+DB_HOST=localhost
+DB_PORT=5432
 
 # Django Security
 SECRET_KEY=<your_django_secret_key>
@@ -385,25 +407,16 @@ CORS_ALLOWED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
 
 # Allowed Hosts
 ALLOWED_HOSTS=localhost,127.0.0.1,yourdomain.com
-
-# Optional: PostgreSQL for Django models
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=easycart
-DB_USER=postgres
-DB_PASSWORD=password
-DB_HOST=localhost
-DB_PORT=5432
 ```
+
 
 **Frontend (.env):**
 ```env
 # For Local Development:
 REACT_APP_API_URL=http://localhost:8000/api
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
 
-# For Production (Vercel/Render):
+# For Production (Render):
 REACT_APP_API_URL=https://easycart-j6ue.onrender.com/api
-NEXT_PUBLIC_API_URL=https://easycart-j6ue.onrender.com/api
 ```
 
 **Important Notes:**
@@ -412,6 +425,7 @@ NEXT_PUBLIC_API_URL=https://easycart-j6ue.onrender.com/api
 - For Vercel deployment, set `NEXT_PUBLIC_API_URL` in the Vercel dashboard
 - Both environment variables should point to the same backend API endpoint
 
+
 **Admin Dashboard (.env):**
 ```env
 REACT_APP_API_URL=http://localhost:8000/api
@@ -419,20 +433,22 @@ REACT_APP_API_URL=http://localhost:8000/api
 
 ## 🚀 Deployment on Render
 
+
 ### Backend (Django)
 
 1. Create a new Web Service on [Render](https://render.com)
 2. Connect your GitHub repository
 3. Configure:
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `cd backend && gunicorn ecommerce.wsgi:application`
+   - **Start Command**: `gunicorn ecommerce.wsgi:application`
    - **Root Directory**: `backend`
 4. Add environment variables:
-   - `MONGO_URI` - Your MongoDB Atlas connection string
+   - `DB_ENGINE`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` (PostgreSQL)
    - `SECRET_KEY` - Django secret key
    - `DEBUG` - `False`
    - `ALLOWED_HOSTS` - Your Render domain
    - `CORS_ALLOWED_ORIGINS` - Frontend URL
+
 
 ### Frontend (React)
 
@@ -443,13 +459,13 @@ REACT_APP_API_URL=http://localhost:8000/api
 3. Add environment variable:
    - `REACT_APP_API_URL` - Your backend API URL
 
-### MongoDB Atlas Setup
+### PostgreSQL Setup
 
-1. Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create database user with password
-3. Whitelist IP addresses (0.0.0.0/0 for all IPs)
-4. Get connection string and add to `MONGO_URI`
-5. Use MongoDB Compass or seed script to populate data
+1. Create a PostgreSQL database (locally or on a managed service)
+2. Create a database user with password
+3. Add connection details to your backend `.env` file
+4. Run migrations: `python manage.py migrate`
+5. Seed products: `python manage.py seed_products`
 
 ## ☁️ Cloudinary Setup & Product Seeding
 
@@ -480,12 +496,11 @@ EasyCart uses Cloudinary for cloud-based image storage and delivery. Follow thes
 
 The project includes a comprehensive seed script that populates the database with authentic Kenyan supermarket products and uploads images to Cloudinary.
 
+
 **Run the Seed Script:**
 ```bash
 cd backend
-npm run seed
-# OR
-node scripts/seedProducts.js
+python manage.py seed_products
 ```
 
 **Features:**
@@ -542,9 +557,10 @@ node scripts/seedProducts.js
 - 🧴 **Personal Care**: Toothpaste, sanitizers, beauty products (11 products)
 - 📱 **Electronics**, 👕 **Fashion**, and more categories
 
+
 **Troubleshooting:**
 - If Cloudinary is not configured, the script will use source URLs directly
-- Check MongoDB connection if seeding fails
+- Check PostgreSQL connection if seeding fails
 - Ensure you have internet connection for image uploads
 - Images are uploaded to the `products/` folder in Cloudinary
 
@@ -665,6 +681,7 @@ The script includes 44 authentic Kenyan products across these categories:
 🔌 MongoDB connection closed
 ```
 
+
 ### Data File Location
 
 Products are stored in: `backend/data/products_kenya.json`
@@ -672,21 +689,22 @@ Products are stored in: `backend/data/products_kenya.json`
 This JSON file contains an array of product objects with the following structure:
 ```json
 {
-  "name": "Product Name",
-  "brand": "Brand Name",
-  "category": "Category",
-  "price": 180,
-  "description": "Product description",
-  "sourceImageUrl": "https://...",
-  "stock": 150,
-  "tags": ["tag1", "tag2"]
+   "name": "Product Name",
+   "brand": "Brand Name",
+   "category": "Category",
+   "price": 180,
+   "description": "Product description",
+   "sourceImageUrl": "https://...",
+   "stock": 150,
+   "tags": ["tag1", "tag2"]
 }
 ```
 
 ### Environment Variables
 
+
 **Required:**
-- `MONGO_URI` or `MONGODB_URI`: MongoDB connection string
+- PostgreSQL connection variables (see backend `.env`)
 
 **Optional (for Cloudinary):**
 - `CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name
@@ -695,9 +713,10 @@ This JSON file contains an array of product objects with the following structure
 
 ### Troubleshooting
 
-**MongoDB Connection Issues:**
-- Ensure MongoDB is running locally or your Atlas connection string is correct
-- Check that `MONGO_URI` is set in your `.env` file
+
+**PostgreSQL Connection Issues:**
+- Ensure PostgreSQL is running locally or your connection string is correct
+- Check that `DB_NAME`, `DB_USER`, `DB_PASSWORD`, etc. are set in your `.env` file
 
 **Cloudinary Not Working:**
 - If Cloudinary credentials are missing, the script will use source URLs directly
@@ -708,12 +727,13 @@ This JSON file contains an array of product objects with the following structure
 - Verify MongoDB connection
 - Ensure the Product model is correctly defined
 
+
 **Script Comparison:**
 
-| Feature | `seedProducts.js` | `seedKenyaProducts.js` |
-|---------|-------------------|------------------------|
+| Feature | `seed_products` (Django) | `seedKenyaProducts.js` (legacy) |
+|---------|--------------------------|------------------------|
 | Clears existing data | ✅ Yes | ❌ No (non-destructive) |
-| Data source | Inline JS array | External JSON file |
+| Data source | Django fixtures/ORM | External JSON file |
 | Duplicate handling | Replaces all | Skips existing |
 | Use case | Fresh database setup | Adding more products |
 
@@ -746,19 +766,15 @@ For complete API documentation, see [ENHANCED_PRODUCT_API_GUIDE.md](ENHANCED_PRO
 
 ## 🧪 Testing
 
-```bash
-# Verify backend syntax
-cd backend
-node -c server.js
-node -c models/Product.js
-node -c controllers/productController.js
 
-# Start backend for testing
-npm start
+```bash
+# Backend tests
+cd backend
+python manage.py test
 
 # Test API endpoints
-curl http://localhost:5000/api/products
-curl http://localhost:5000/api/health
+curl http://localhost:8000/api/products
+curl http://localhost:8000/api/health
 
 # Frontend tests
 cd frontend
@@ -771,23 +787,19 @@ npm test
 
 ## 📦 Deployment
 
+
 ### Render.com Deployment
 
 **Backend:**
 1. Create new Web Service on Render
 2. Connect GitHub repository
-3. Build Command: `cd backend && npm install`
-4. Start Command: `cd backend && npm start`
+3. Build Command: `pip install -r requirements.txt`
+4. Start Command: `gunicorn ecommerce.wsgi:application`
 5. Add environment variables in Render Dashboard:
-   - `PORT` (e.g., 5000)
-   - `MONGO_URI` (MongoDB Atlas connection string)
-   - `JWT_SECRET` (strong random string)
-   - `CLOUDINARY_URL` (cloudinary://api_key:api_secret@cloud_name)
+   - `DB_ENGINE`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` (PostgreSQL)
+   - `SECRET_KEY` (strong random string)
+   - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (optional)
    - `FRONTEND_URL` (your frontend URL)
-   
-   **Note**: For Cloudinary, you can use either:
-   - `CLOUDINARY_URL` (single connection string - recommended)
-   - Or individual variables: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
 
 **Frontend:**
 1. Create new Static Site on Render
@@ -803,12 +815,13 @@ See deployment guides for detailed instructions.
 
 ## 🔄 Migration from Django
 
-If you're migrating from the old Django backend:
+
+If you're migrating from the old Django or Node.js backend:
 
 1. **Read**: [DJANGO_DEPRECATION_NOTICE.md](DJANGO_DEPRECATION_NOTICE.md)
 2. **Export data**: Use Django's dumpdata if needed
-3. **Import to MongoDB**: Create migration script or manually re-create products
-4. **Update frontend**: Already configured for Node.js backend
+3. **Import to PostgreSQL**: Use Django ORM or fixtures
+4. **Update frontend**: Ensure API URLs point to Django backend
 5. **Test thoroughly**: Ensure all features work
 
 ## 🤝 Contributing
@@ -919,5 +932,6 @@ If you're experiencing issues with product/category loading or other errors:
 See [FRONTEND_ERROR_HANDLING_GUIDE.md](FRONTEND_ERROR_HANDLING_GUIDE.md) for complete troubleshooting steps.
 
 ---
+
 
 **Note**: This is a demo application. For production use, ensure proper security configurations and testing.
