@@ -34,7 +34,7 @@ function App() {
   usePerformance();
   
   useEffect(() => {
-    analytics.page('App Loaded');
+  // analytics.page('App Loaded');
   }, []);
   
   return (

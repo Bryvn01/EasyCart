@@ -1,3 +1,16 @@
+// --- Customer Management API ---
+export const customersAPI = {
+  // Admin: list all customers
+  list: (params) => api.get('/auth/customers/', { params }),
+  // Admin or self: get customer by id
+  retrieve: (id) => api.get(`/auth/customers/${id}/`),
+  // Admin or self: update customer
+  update: (id, data) => api.put(`/auth/customers/${id}/`, data),
+  // Admin or self: partial update
+  partialUpdate: (id, data) => api.patch(`/auth/customers/${id}/`, data),
+  // Admin or self: delete customer
+  delete: (id) => api.delete(`/auth/customers/${id}/`),
+};
 import axios from 'axios';
 
 
@@ -135,9 +148,6 @@ export const adminAPI = {
   getOrders: (params) => api.get('/orders', { params }),
   updateOrderStatus: (id, status) => api.patch(`/orders/${id}`, { status }),
   
-  // User APIs
-  getUsers: (params) => api.get('/users', { params }),
-  updateUser: (id, data) => api.patch(`/users/${id}`, data),
 };
 
 export default api;

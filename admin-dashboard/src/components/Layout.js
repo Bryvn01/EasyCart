@@ -24,7 +24,7 @@ const Layout = ({ children }) => {
     { name: 'Products', href: '/admin/products', icon: Package },
     { name: 'Categories', href: '/admin/categories', icon: Tag },
     { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
-    { name: 'Users', href: '/admin/users', icon: Users },
+  { name: 'Users', href: '/users', icon: Users },
     { name: 'Reports', href: '/admin/reports', icon: BarChart3 },
   ];
 
