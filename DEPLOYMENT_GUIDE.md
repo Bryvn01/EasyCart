@@ -71,6 +71,7 @@ aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --path
 
 ## Environment Setup
 
+
 ### Production Environment Variables
 
 Create `.env` file in backend:
@@ -84,7 +85,21 @@ DB_USER=ecommerce_user
 DB_PASSWORD=secure_password_123
 DB_HOST=your-db-host
 REDIS_URL=redis://your-redis-host:6379/1
+
+# Cloudinary (optional, for file uploads)
+CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
+CLOUDINARY_API_KEY=<your_cloudinary_api_key>
+CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
+
+# CORS and frontend
+FRONTEND_URL=https://your-frontend-domain.com
+CORS_ALLOWED_ORIGINS=https://your-frontend-domain.com
+
+# Media storage (for local file uploads)
+MEDIA_ROOT=media/
+MEDIA_URL=/media/
 ```
+
 
 ### Database Migration
 
@@ -208,9 +223,10 @@ certbot --nginx -d yourdomain.com -d www.yourdomain.com
 
 **Note for Render/Railway/Heroku deployments:** These platforms automatically provide SSL certificates. You do NOT need to configure SSL manually - just deploy your app serving plain HTTP and the platform handles the rest.
 
+
 ## Go-Live Checklist
 
-- [ ] Environment variables configured
+- [ ] Environment variables configured (including Cloudinary for file uploads, if needed)
 - [ ] Database migrations applied
 - [ ] Static files collected
 - [ ] SSL certificate installed (only for self-hosted; platforms like Render handle this automatically)
@@ -220,6 +236,9 @@ certbot --nginx -d yourdomain.com -d www.yourdomain.com
 - [ ] Performance testing completed
 - [ ] Security audit passed
 - [ ] Error tracking configured
+- [ ] **Verify product image handling:**
+	- [ ] Test both file upload and image URL for product images in admin and frontend
+	- [ ] Ensure images display correctly in all environments
 
 ## Post-Deployment
 

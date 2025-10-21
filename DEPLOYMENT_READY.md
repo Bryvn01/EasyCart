@@ -195,6 +195,7 @@ curl https://easycart-j6ue.onrender.com/api/products/
 
 ## ✅ Verification Checklist
 
+
 ### Backend Verification
 - [x] Seed script updated to set both `image` and `image_url` fields
 - [x] Backend views.py already returns both fields (per IMAGE_URL_FIX_SUMMARY.md)
@@ -202,6 +203,8 @@ curl https://easycart-j6ue.onrender.com/api/products/
 - [ ] Test API: `curl http://localhost:8000/api/products/`
 - [ ] Verify JSON response includes `image` and `image_url` fields
 - [ ] Both fields have same value (placeholder or Cloudinary URL)
+- [ ] **Test product creation and update with both file upload and image URL (see IMAGE_UPLOAD_GUIDE.md)**
+
 
 ### Frontend Verification
 - [x] `.env` file created with API URL
@@ -213,6 +216,7 @@ curl https://easycart-j6ue.onrender.com/api/products/
 - [ ] Navigate to http://localhost:3000
 - [ ] Verify products display on homepage
 - [ ] Verify images render or show fallback (📦)
+- [ ] **Test product creation and update with both file upload and image URL in ProductEditModal**
 - [ ] Check browser console for errors
 
 ### Production Verification

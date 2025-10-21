@@ -59,55 +59,45 @@ GET /api/products/:id
 ```
 - Supports both MongoDB ID and slug
 
+
 #### Create Product (Admin Only)
 ```http
 POST /api/products
 Authorization: Bearer <admin_token>
 ```
 
-**Request Body:**
+**Supports both file upload and image URL:**
+
+- To upload an image **file**, send as `multipart/form-data` with a file field named `image` (or `images` for multiple).
+- To use an **image URL**, send as JSON with an `image_url` or `images` array containing URLs.
+- Only one (file or URL) is used per image; if both are provided, file takes precedence.
+
+**Request Body (JSON, for image URL):**
 ```json
 {
   "name": "Product Name",
-  "description": "Product description",
-  "price": 299.99,
-  "comparePrice": 399.99,
-  "costPerItem": 150.00,
-  "category": "Electronics",
-  "brand": "BrandName",
-  "sku": "PRD-12345",
-  "stock": 100,
-  "manageStock": true,
-  "lowStockThreshold": 10,
-  "images": [
-    {
-      "url": "https://cloudinary.com/image1.jpg",
-      "alt": "Product image",
-      "isPrimary": true
-    }
-  ],
-  "variants": [
-    {
-      "name": "Size",
-      "options": ["Small", "Medium", "Large"]
-    }
-  ],
-  "weight": "1.5kg",
-  "dimensions": "30x20x10 cm",
-  "tags": ["electronics", "gadgets"],
-  "metaTitle": "SEO Title",
-  "metaDescription": "SEO Description",
-  "isActive": true,
-  "isFeatured": false
+  "image_url": "https://example.com/image.jpg"
 }
 ```
+
+**Request Body (multipart/form-data, for file upload):**
+```
+image: <file>
+name: Product Name
+...
+```
+
+**Frontend usage:**
+- The product edit modal allows users to either upload a file or provide an image URL (not both).
+- The frontend automatically chooses the correct API format.
+
 
 #### Update Product (Admin Only)
 ```http
 PUT /api/products/:id
 Authorization: Bearer <admin_token>
 ```
-- Same body structure as Create Product
+- Same as Create Product: supports both file upload (multipart/form-data) and image URL (JSON)
 
 #### Delete Product (Admin Only)
 ```http
@@ -274,12 +264,14 @@ socket.on('inventoryAlert', (data) => {
 - `manageStock` (Boolean) - Whether to track stock
 - `lowStockThreshold` (Number) - Threshold for low stock alerts
 
+
 ### Images
 - `images` (Array of Objects)
-  - `url` (String) - Image URL
+  - `url` (String) - Image URL (from file upload or direct URL)
   - `alt` (String) - Alt text for accessibility
   - `isPrimary` (Boolean) - Whether this is the primary image
 - `image` (String) - Legacy field for backward compatibility
+- `image_url` (String) - Direct image URL (used if file not provided)
 
 ### Classification
 - `category` (String, required) - Product category
@@ -511,7 +503,7 @@ curl -X POST http://localhost:5000/api/upload/image \
 
 ## 🎓 Best Practices
 
-1. **Always upload images first**, then use URLs in product creation
+1. **You can either upload images or use image URLs** in product creation and update. Only one is required per image.
 2. **Use SKU for inventory tracking** instead of just IDs
 3. **Set appropriate lowStockThreshold** for each product
 4. **Use tags for better searchability**
