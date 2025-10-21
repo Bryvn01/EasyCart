@@ -1,7 +1,8 @@
 import { Helmet } from 'react-helmet-async';
 import React, { useState } from 'react';
 import ProductCard from './ui/ProductCard';
-import QuickViewModal from './ui/QuickViewModal';
+import dynamic from 'next/dynamic';
+const QuickViewModal = dynamic(() => import('./ui/QuickViewModal'), { ssr: false, loading: () => <div className="fixed inset-0 flex items-center justify-center z-50"><div className="bg-white rounded-lg shadow-lg p-8 animate-pulse w-96 h-64" /></div> });
 
 const ProductGrid = ({ products, onAddToCart, loading }) => {
   const [quickViewProduct, setQuickViewProduct] = useState(null);

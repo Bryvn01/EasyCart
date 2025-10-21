@@ -1,0 +1,15 @@
+{
+  "addToCart": "Add to Cart",
+  "outOfStock": "Out of Stock",
+  "onlyLeft": "Only {{count}} left",
+  "inStock": "In stock",
+  "productNotAvailable": "Product not available",
+  "noProducts": "No products available",
+  "checkBackLater": "Check back later for new products!",
+  "loadingProducts": "Loading products...",
+  "errorLoadingProducts": "Error Loading Products",
+  "tryAgain": "Try Again",
+  "retrying": "Retrying...",
+  "productAddedToCart": "Product added to cart! 🛒",
+  "pleaseLoginToAdd": "Please login to add items to cart"
+}

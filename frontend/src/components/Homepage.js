@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import ProductGrid from './ProductGrid';
 import CategoryNav from './CategoryNav';
-import BannerCarousel from './BannerCarousel';
+import dynamic from 'next/dynamic';
+const BannerCarousel = dynamic(() => import('./BannerCarousel'), { ssr: false, loading: () => <div className="h-40 bg-gray-100 animate-pulse rounded-lg mb-8" /> });
 import WhatsAppButton from './WhatsAppButton';
 import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -19,43 +21,41 @@ const sectionMap = [
   { title: 'Beauty & Baby', filter: p => p.category_name?.toLowerCase().includes('beauty') || p.category_name?.toLowerCase().includes('baby') },
 ];
 
+
 const Homepage = () => {
-  const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
 
-  // Fetch products from backend
   const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const res = await productsAPI.getProducts();
-      setProducts(res.data.results || res.data || []);
-    } catch (error) {
-      handleApiError(error, 'Failed to load products');
-    } finally {
-      setLoading(false);
-    }
+    const res = await productsAPI.getProducts();
+    return res.data.results || res.data || [];
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const {
+    data: products = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery(['products'], fetchProducts, {
+    retry: 2,
+    refetchOnWindowFocus: false,
+  });
 
   // Refetch products after admin CRUD (optional: use context/event for real-time)
   useEffect(() => {
-    const handleProductsUpdated = () => fetchProducts();
+    const handleProductsUpdated = () => refetch();
     window.addEventListener('easycart-products-updated', handleProductsUpdated);
     return () => window.removeEventListener('easycart-products-updated', handleProductsUpdated);
-  }, []);
+  }, [refetch]);
+
 
   const handleAddToCart = async (product) => {
     if (!isAuthenticated) {
       handleApiError({ message: 'Please login to add items to cart' });
       return;
     }
-
     try {
       await ordersAPI.addToCart({ product_id: product.id, quantity: 1 });
       fetchCartCount();
@@ -67,7 +67,7 @@ const Homepage = () => {
 
   const renderSection = (section) => {
     const filtered = products.filter(section.filter);
-    if (loading) {
+    if (isLoading) {
       return (
         <section key={section.title} className="mb-10">
           <div className="flex items-center justify-between mb-3">
@@ -88,7 +88,7 @@ const Homepage = () => {
           <h2 className="text-xl font-bold">{section.title}</h2>
           <a href={`/${section.title.toLowerCase().replace(/\s/g, '-')}`} className="text-primary text-sm hover:underline">See All</a>
         </div>
-        <ProductGrid products={filtered.slice(0, 10)} onAddToCart={handleAddToCart} loading={loading} />
+        <ProductGrid products={filtered.slice(0, 10)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
     );
   };
@@ -107,6 +107,25 @@ const Homepage = () => {
       document.getElementById(selectedCategory.replace(/\s/g, '-')).scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [selectedCategory]);
+
+  // Error state for product fetching
+  if (isError) {
+    return (
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 md:px-8" role="main">
+        <div className="bg-white rounded-lg shadow-sm p-8 text-center mt-12">
+          <div className="text-red-500 text-5xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold text-red-600 mb-2">Failed to load products</h3>
+          <p className="text-gray-600 mb-4">{error?.message || 'An unknown error occurred.'}</p>
+          <button
+            onClick={() => refetch()}
+            className="mt-4 px-6 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition"
+          >
+            Try Again
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="max-w-7xl mx-auto px-2 sm:px-4 md:px-8" role="main">
@@ -171,32 +190,32 @@ const Homepage = () => {
       {/* Deals Carousel/Section */}
       <section className="my-8">
         <h2 className="text-2xl font-bold mb-4">Today's Deals</h2>
-        <ProductGrid products={products.filter(p => p.is_flash_sale).slice(0, 10)} onAddToCart={handleAddToCart} loading={loading} />
+        <ProductGrid products={products.filter(p => p.is_flash_sale).slice(0, 10)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Full Product Grid */}
       <section className="my-8">
         <h2 className="text-2xl font-bold mb-4">All Products</h2>
-        <ProductGrid products={selectedCategory ? products.filter(categorySections[selectedCategory]?.filter || (() => true)) : products} onAddToCart={handleAddToCart} loading={loading} />
+        <ProductGrid products={selectedCategory ? products.filter(categorySections[selectedCategory]?.filter || (() => true)) : products} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Top Picks Section */}
       <section className="my-8">
         <h2 className="text-xl font-semibold mb-4">Top Picks</h2>
-        <ProductGrid products={products.filter(p => p.is_top_seller).slice(0, 8)} onAddToCart={handleAddToCart} loading={loading} />
+        <ProductGrid products={products.filter(p => p.is_top_seller).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Essentials Section */}
       <section className="my-8">
         <h2 className="text-xl font-semibold mb-4">Essentials</h2>
-        <ProductGrid products={products.filter(p => p.category_name && ['Groceries', 'Baby & Kids', 'Beauty & Personal Care', 'Essentials'].some(cat => p.category_name.includes(cat))).slice(0, 8)} onAddToCart={handleAddToCart} loading={loading} />
+        <ProductGrid products={products.filter(p => p.category_name && ['Groceries', 'Baby & Kids', 'Beauty & Personal Care', 'Essentials'].some(cat => p.category_name.includes(cat))).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Popular in Selected Category */}
       {selectedCategory && (
         <section className="my-8">
           <h2 className="text-xl font-semibold mb-4">Popular in {selectedCategory}</h2>
-          <ProductGrid products={products.filter(categorySections[selectedCategory]?.filter || (() => true)).slice(0, 8)} onAddToCart={handleAddToCart} loading={loading} />
+          <ProductGrid products={products.filter(categorySections[selectedCategory]?.filter || (() => true)).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
         </section>
       )}
 

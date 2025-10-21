@@ -1,0 +1,15 @@
+{
+  "addToCart": "Ongeza kwenye Kikapu",
+  "outOfStock": "Imeisha Stoo",
+  "onlyLeft": "Zimesalia {{count}} tu",
+  "inStock": "Zipo stoo",
+  "productNotAvailable": "Bidhaa haipatikani",
+  "noProducts": "Hakuna bidhaa kwa sasa",
+  "checkBackLater": "Rudi baadaye kwa bidhaa mpya!",
+  "loadingProducts": "Inapakia bidhaa...",
+  "errorLoadingProducts": "Hitilafu Kupakia Bidhaa",
+  "tryAgain": "Jaribu Tena",
+  "retrying": "Inajaribu tena...",
+  "productAddedToCart": "Bidhaa imeongezwa kwenye kikapu! 🛒",
+  "pleaseLoginToAdd": "Tafadhali ingia kuongeza bidhaa kwenye kikapu"
+}
