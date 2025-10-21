@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useFadeOutOnSuccess } from '../hooks/useFadeOutOnSuccess';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -16,6 +17,9 @@ const Register = () => {
   
   const { register } = useAuth();
   const navigate = useNavigate();
+  const [registerBtnRef, registerBtnHidden, triggerRegisterFadeOut] = useFadeOutOnSuccess();
+  const successMsgRef = useRef(null);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -44,7 +48,13 @@ const Register = () => {
 
     try {
       await register(formData);
-      navigate('/');
+      triggerRegisterFadeOut(() => {
+        setRegisterSuccess(true);
+        setTimeout(() => {
+          if (successMsgRef.current) successMsgRef.current.focus();
+          setTimeout(() => navigate('/'), 800);
+        }, 10);
+      });
     } catch (err) {
       console.error('Registration error:', err);
       const errorMessage = err.response?.data?.message || 
@@ -225,18 +235,40 @@ const Register = () => {
           </div>
           
           <button
+            ref={registerBtnRef}
             type="submit"
             className="btn btn-primary"
             style={{ 
               width: '100%',
               padding: 'var(--space-3)',
               fontSize: '1rem',
-              fontWeight: '600'
+              fontWeight: '600',
+              transition: 'opacity 0.4s',
+              opacity: registerBtnHidden ? 0 : 1,
+              display: registerBtnHidden ? 'none' : undefined
             }}
             disabled={loading}
           >
             {loading ? 'Creating Account...' : 'Create Account'}
           </button>
+          {registerSuccess && (
+            <div
+              ref={successMsgRef}
+              tabIndex={-1}
+              aria-live="polite"
+              style={{
+                marginTop: '1rem',
+                background: 'var(--success, #22c55e)',
+                color: 'white',
+                padding: 'var(--space-3)',
+                borderRadius: 'var(--radius-md)',
+                fontWeight: 600,
+                outline: 'none',
+              }}
+            >
+              Registration successful! Redirecting...
+            </div>
+          )}
         </form>
         
         {/* Footer */}
