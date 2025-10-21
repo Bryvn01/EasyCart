@@ -14,33 +14,31 @@ const PaymentModal = (props) => {
     isLoading: loading,
     error: paymentError,
     reset: resetPaymentError
-  } = useMutation(
-    async (paymentData) => {
+  } = useMutation({
+    mutationFn: async (paymentData) => {
       return await ordersAPI.initiatePayment(paymentData);
     },
-    {
-      onSuccess: (response, variables) => {
-        if (response.data.success) {
-          const { payment_method } = variables;
-          if ((payment_method === 'card' || payment_method === 'stripe' || payment_method === 'paypal') && response.data.payment_url) {
-            window.open(response.data.payment_url, '_blank');
-          } else if (payment_method === 'cash') {
-            toast.success('Order confirmed! Pay cash on delivery.');
-          } else {
-            toast.success('Payment initiated! Please check your phone for payment prompt.');
-          }
-          if (onPaymentSuccess) onPaymentSuccess();
-          onClose();
+    onSuccess: (response, variables) => {
+      if (response.data.success) {
+        const { payment_method } = variables;
+        if ((payment_method === 'card' || payment_method === 'stripe' || payment_method === 'paypal') && response.data.payment_url) {
+          window.open(response.data.payment_url, '_blank');
+        } else if (payment_method === 'cash') {
+          toast.success('Order confirmed! Pay cash on delivery.');
         } else {
-          toast.error(response.data.message || 'Payment failed');
+          toast.success('Payment initiated! Please check your phone for payment prompt.');
         }
-      },
-      onError: (error) => {
-        const errorMsg = error.response?.data?.message || 'Payment failed. Please try again.';
-        toast.error(errorMsg);
+        if (onPaymentSuccess) onPaymentSuccess();
+        onClose();
+      } else {
+        toast.error(response.data.message || 'Payment failed');
       }
+    },
+    onError: (error) => {
+      const errorMsg = error.response?.data?.message || 'Payment failed. Please try again.';
+      toast.error(errorMsg);
     }
-  );
+  });
 
   const handlePayment = (e) => {
     e.preventDefault();

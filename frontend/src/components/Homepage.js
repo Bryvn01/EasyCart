@@ -38,7 +38,10 @@ const Homepage = () => {
     isError,
     error,
     refetch,
-  } = useQuery(['products'], fetchProducts, {
+  } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+    staleTime: 5 * 60 * 1000,
     retry: 2,
     refetchOnWindowFocus: false,
   });
