@@ -1,52 +1,71 @@
-name: CI/CD Pipeline
-
+name: CI-CD-Pipeline
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - develop
+      - 'feature/*'
   pull_request:
-    branches: [ main ]
-
+    branches:
+      - main
+      - develop
 jobs:
-  test:
+  build-test-lint:
     runs-on: ubuntu-latest
-    
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: easycart
+          POSTGRES_PASSWORD: easycart
+          POSTGRES_DB: easycart
+        ports:
+          - 5432:5432
+      mongo:
+        image: mongo:6
+        ports:
+          - 27017:27017
+    env:
+      DJANGO_SETTINGS_MODULE: backend.settings
+      DATABASE_URL: postgres://easycart:easycart@localhost:5432/easycart
+      MONGODB_URL: mongodb://localhost:27017/easycart
+      SECRET_KEY: testsecretkey
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: frontend/package-lock.json
-    
-    - name: Install frontend dependencies
-      run: |
-        cd frontend
-        npm ci
-    
-    - name: Run tests
-      run: |
-        cd frontend
-        npm test -- --coverage --watchAll=false
-    
-    - name: Build frontend
-      run: |
-        cd frontend
-        npm run build
-    
-    - name: Install backend dependencies
-      run: |
-        cd backend
-        npm ci
-    
-    - name: Test backend
-      run: |
-        cd backend
-        npm test || echo "No backend tests yet"
-
-  # Deployment handled automatically by Render on push to main branch
-  # Services deployed:
-  # - Frontend: https://easycart-frontend.onrender.com
-  # - Backend: https://easycart-backend.onrender.com
-  # - Admin: https://easycart-admin.onrender.com
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install backend dependencies
+        run: cd backend && pip install -r requirements.txt
+      - name: Install frontend dependencies
+        run: cd frontend && npm ci
+      - name: Lint backend
+        run: cd backend && flake8 .
+      - name: Security scan (Bandit)
+        run: cd backend && pip install bandit && bandit -r apps/ -f txt || true
+      - name: Lint frontend
+        run: cd frontend && npm run lint
+      - name: Run backend tests
+        run: cd backend && pytest --cov=apps --cov-report=xml
+      - name: Run frontend tests
+        run: cd frontend && npm test -- --coverage --watchAll=false
+      - name: Upload backend coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: backend/coverage.xml
+          flags: backend
+      - name: Upload frontend coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: frontend/coverage/lcov.info
+          flags: frontend
+      - name: Build frontend
+        run: cd frontend && npm run build
+      - name: Build backend (collectstatic)
+        run: cd backend && python manage.py collectstatic --noinput

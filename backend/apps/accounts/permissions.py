@@ -1,4 +1,48 @@
+
 from rest_framework import permissions
+
+class IsSuperAdmin(permissions.BasePermission):
+    """
+    Allows access only to users with role 'superadmin'.
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) == 'superadmin'
+
+class IsManager(permissions.BasePermission):
+    """
+    Allows access only to users with role 'manager' or higher.
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) in ['superadmin', 'manager']
+
+class IsEditor(permissions.BasePermission):
+    """
+    Allows access only to users with role 'editor' or higher.
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) in ['superadmin', 'manager', 'editor']
+
+class IsViewer(permissions.BasePermission):
+    """
+    Allows access to any authenticated user (viewer or higher).
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) in ['superadmin', 'manager', 'editor', 'viewer']
+
+class IsRoleOrReadOnly(permissions.BasePermission):
+    """
+    Allows read-only access to everyone, but write access only to users with a minimum role.
+    Usage: set 'required_role' attribute on the view (superadmin, manager, editor, viewer).
+    """
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        required_role = getattr(view, 'required_role', 'editor')
+        role_hierarchy = ['viewer', 'editor', 'manager', 'superadmin']
+        user_role = getattr(request.user, 'role', None)
+        if user_role not in role_hierarchy:
+            return False
+        return role_hierarchy.index(user_role) >= role_hierarchy.index(required_role)
 
 class IsAdminUser(permissions.BasePermission):
     """

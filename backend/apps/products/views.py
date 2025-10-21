@@ -41,64 +41,52 @@ class CategoryListView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+
 from .serializers import ProductSerializer, CategorySerializer, ProductCreateUpdateSerializer
-from apps.accounts.permissions import IsAdminOrReadOnly
+from apps.accounts.permissions import IsRoleOrReadOnly
+
 
 class ProductListView(APIView):
     """
     List products from PostgreSQL with filtering, search, and pagination.
     GET: List products
-    POST: Create product (admin only)
+    POST: Create product (editor or higher)
     """
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsRoleOrReadOnly]
+    required_role = 'editor'  # Only editors, managers, superadmins can create
 
     def get(self, request):
         """Fetch products from PostgreSQL with filters and pagination."""
         try:
-            # Start with all products
             queryset = Product.objects.all()
-            
-            # Get query parameters
             category = request.query_params.get('category')
             search = request.query_params.get('search')
             ordering = request.query_params.get('ordering', '-created_at')
-            
-            # Get pagination parameters
             page = int(request.query_params.get('page', 1))
             page_size = int(request.query_params.get('page_size', 20))
-            
-            # Apply category filter
             if category:
                 queryset = queryset.filter(category__name__iexact=category)
-            
-            # Apply search filter
             if search:
                 queryset = queryset.filter(name__icontains=search) | queryset.filter(description__icontains=search)
-            
-            # Price range filtering with validation
             price_min_str = request.query_params.get('price_min')
             if price_min_str:
                 try:
                     if price_min_str.lower() not in ['nan', 'inf', '-inf', 'infinity', '-infinity', '+infinity']:
                         price_min_val = float(price_min_str)
-                        if price_min_val == price_min_val:  # Check for NaN
+                        if price_min_val == price_min_val:
                             queryset = queryset.filter(price__gte=price_min_val)
                 except (ValueError, TypeError, OverflowError):
-                    pass  # Skip invalid values
-            
+                    pass
             price_max_str = request.query_params.get('price_max')
             if price_max_str:
                 try:
                     if price_max_str.lower() not in ['nan', 'inf', '-inf', 'infinity', '-infinity', '+infinity']:
                         price_max_val = float(price_max_str)
-                        if price_max_val == price_max_val:  # Check for NaN
+                        if price_max_val == price_max_val:
                             queryset = queryset.filter(price__lte=price_max_val)
                 except (ValueError, TypeError, OverflowError):
-                    pass  # Skip invalid values
-            
-            # Apply ordering
+                    pass
             if ordering:
-                # Map frontend field names to model field names
                 ordering_map = {
                     '-createdAt': '-created_at',
                     'createdAt': 'created_at',
@@ -109,39 +97,27 @@ class ProductListView(APIView):
                 }
                 ordering_field = ordering_map.get(ordering, '-created_at')
                 queryset = queryset.order_by(ordering_field)
-            
-            # Get total count before pagination
             total_count = queryset.count()
-            
-            # Apply pagination
             start = (page - 1) * page_size
             end = start + page_size
             products = queryset[start:end]
-            
-            # Serialize products
             serializer = ProductSerializer(products, many=True)
-            
-            # Build pagination info
             total_pages = (total_count + page_size - 1) // page_size
-            
             response_data = {
                 'count': total_count,
                 'next': page < total_pages,
                 'previous': page > 1,
                 'results': serializer.data
             }
-            
             logger.info(f"✅ Returned {len(serializer.data)} products from PostgreSQL (page {page}/{total_pages})")
-            
             return Response(response_data, status=status.HTTP_200_OK)
-            
         except Exception as e:
             logger.error(f"❌ Error in ProductListView: {str(e)}")
             return Response(
                 {'error': 'Failed to fetch products', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-    
+
     def post(self, request):
         """Create product (admin only)."""
         try:
@@ -161,39 +137,36 @@ class ProductListView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
 class ProductDetailView(APIView):
     """
     Retrieve a single product from PostgreSQL by ID.
     GET: Retrieve product
-    PUT/PATCH: Update product (admin only)
-    DELETE: Delete product (admin only)
+    PUT/PATCH: Update product (editor or higher)
+    DELETE: Delete product (editor or higher)
     """
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsRoleOrReadOnly]
+    required_role = 'editor'  # Only editors, managers, superadmins can update/delete
 
     def get(self, request, pk):
         """Fetch single product from PostgreSQL by ID."""
         try:
             product = Product.objects.filter(id=pk).first()
-            
             if not product:
                 return Response(
                     {'error': 'Product not found'},
                     status=status.HTTP_404_NOT_FOUND
                 )
-            
             serializer = ProductSerializer(product)
-            
             logger.info(f"✅ Returned product: {product.name}")
-            
             return Response(serializer.data, status=status.HTTP_200_OK)
-            
         except Exception as e:
             logger.error(f"❌ Error in ProductDetailView: {str(e)}")
             return Response(
                 {'error': 'Failed to fetch product', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-    
+
     def put(self, request, pk):
         """Update product (admin only)."""
         try:
@@ -215,7 +188,7 @@ class ProductDetailView(APIView):
                 {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-    
+
     def patch(self, request, pk):
         """Partially update product (admin only)."""
         try:
@@ -237,7 +210,7 @@ class ProductDetailView(APIView):
                 {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-    
+
     def delete(self, request, pk):
         """Delete product (admin only)."""
         try:
