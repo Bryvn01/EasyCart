@@ -14,7 +14,34 @@ import re
 import os
 from .models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
-from .permissions import IsSuperAdminUser
+from .permissions import IsSuperAdmin, IsAdminUser
+from rest_framework import generics, permissions
+
+# --- Customer Management API Views ---
+from .models import User
+from .serializers import UserSerializer
+
+class CustomerListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
+    search_fields = ['username', 'email', 'phone']
+
+class CustomerDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # Admins can access any user; users can only access/update themselves
+        obj = super().get_object()
+        user = self.request.user
+        if user.is_superuser or getattr(user, 'is_admin', False):
+            return obj
+        if obj.pk != user.pk:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("You do not have permission to access this user.")
+        return obj
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -119,7 +146,7 @@ def reset_password(request):
         return Response({'error': 'Invalid reset link'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([IsSuperAdminUser])
+@permission_classes([IsSuperAdmin])
 def django_admin_access(request):
     """
     Provide access to Django admin interface for superadmin users.
