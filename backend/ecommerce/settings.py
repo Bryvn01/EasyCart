@@ -202,7 +202,7 @@ SIMPLE_JWT = {
 # === CORS: Allow all production frontends and admin dashboards ===
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='https://easycart-frontend-wj9x.onrender.com,https://easycart-admin-dashboard.onrender.com,https://easycart-admin-08xf.onrender.com',
+    default='https://easycart-frontend-wj9x.onrender.com,https://easycart-admin-08xf.onrender.com',
     cast=Csv()
 )
 

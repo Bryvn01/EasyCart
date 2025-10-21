@@ -1,5 +1,9 @@
 # EasyCart Frontend (Next.js)
 
+## Latest Enhancements (2025-10-21)
+- Mobile sidebar auto-hides after search or navigation (try on your phone!)
+- Product edit modal supports direct image URLs (no upload needed for FYP/demo)
+
 This is the production-ready frontend for EasyCart, built with Next.js and React. It is designed for robust, secure, and accessible e-commerce experiences, following best practices for FYP/local deployment.
 
 ---
@@ -68,7 +72,9 @@ This is the production-ready frontend for EasyCart, built with Next.js and React
   - Start the app, open Chrome DevTools → Lighthouse tab, run audit.
   - Use a11y tools/extensions for deeper checks.
 
-## Deployment
+## Deployment & Mobile Testing
+
+After pushing to GitHub, the app will auto-deploy (Render.com). Open the deployed site on your phone to test the sidebar and all enhancements live.
 - **Vercel (recommended):**
   - Set root to `frontend`, add `NEXT_PUBLIC_API_URL` env var.
 - **Docker/Nginx:**

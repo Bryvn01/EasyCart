@@ -100,10 +100,10 @@ The dashboard connects to the existing EasyCart backend:
    - Set publish directory to `build`
    - Add environment variables:
      ```
-     REACT_APP_API_URL=https://easycart-backend.onrender.com/api
+   REACT_APP_API_URL=https://easycart-backend-2k8l.onrender.com/api
      ```
 
-**Live URL:** https://easycart-admin.onrender.com
+**Live URL:** https://easycart-admin-08xf.onrender.com
 
 ## Routes
 

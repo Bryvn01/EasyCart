@@ -1,9 +1,9 @@
 # 🚀 Render Deployment Guide (Django + PostgreSQL)
 
 ## Current Status
-- ✅ Frontend: https://easycart-1-752r.onrender.com/ (Working)
-- ✅ Backend: https://easycart-backend.onrender.com/ (Working)
-- ✅ Admin: https://easycart-admin.onrender.com/ (Working)
+- ✅ Frontend: https://easycart-frontend-wj9x.onrender.com/ (Active)
+- ✅ Backend: https://easycart-backend-2k8l.onrender.com/ (Active)
+- ✅ Admin: https://easycart-admin-08xf.onrender.com/ (Active)
 
 ## Deploy to Render
 
@@ -34,9 +34,9 @@ DB_PORT=5432
 # Django
 SECRET_KEY=<your_django_secret_key>
 DEBUG=False
-ALLOWED_HOSTS=easycart-backend.onrender.com,localhost,127.0.0.1
-CORS_ALLOWED_ORIGINS=https://easycart-1-752r.onrender.com,https://easycart-admin.onrender.com
-FRONTEND_URL=https://easycart-1-752r.onrender.com
+ALLOWED_HOSTS=easycart-backend-2k8l.onrender.com,localhost,127.0.0.1
+CORS_ALLOWED_ORIGINS=https://easycart-frontend-wj9x.onrender.com,https://easycart-admin-08xf.onrender.com
+FRONTEND_URL=https://easycart-frontend-wj9x.onrender.com
 
 # Cloudinary (optional, for images)
 CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
@@ -55,7 +55,7 @@ CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
 
 ### Step 5: Add Frontend Environment Variables
 ```
-REACT_APP_API_URL=https://easycart-backend.onrender.com/api
+REACT_APP_API_URL=https://easycart-backend-2k8l.onrender.com/api
 ```
 
 ### Step 6: Deploy Admin (Static Site)
@@ -104,6 +104,6 @@ curl https://easycart-backend.onrender.com/api/health/
 
 ## Live URLs
 
-- **Frontend:** https://easycart-1-752r.onrender.com
-- **Backend:** https://easycart-backend.onrender.com
-- **Admin:** https://easycart-admin.onrender.com
+- **Frontend:** https://easycart-frontend-wj9x.onrender.com
+- **Backend:** https://easycart-backend-2k8l.onrender.com
+- **Admin:** https://easycart-admin-08xf.onrender.com
