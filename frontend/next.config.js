@@ -8,10 +8,10 @@ const nextConfig = withPWA({
   i18n,
   reactStrictMode: true,
   images: {
-    domains: ['res.cloudinary.com', 'easycart-j6ue.onrender.com'],
+  domains: ['res.cloudinary.com', 'easycart-backend-2k8l.onrender.com', 'easycart-frontend-wj9x.onrender.com', 'easycart-admin-08xf.onrender.com'],
   },
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://easycart-j6ue.onrender.com/api',
+  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://easycart-backend-2k8l.onrender.com/api',
   },
   pageExtensions: ['tsx', 'ts'],
   eslint: {
@@ -24,7 +24,7 @@ const nextConfig = withPWA({
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://easycart-j6ue.onrender.com;"
+            value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://easycart-backend-2k8l.onrender.com https://easycart-frontend-wj9x.onrender.com https://easycart-admin-08xf.onrender.com;"
           },
           {
             key: 'X-Frame-Options',

@@ -65,7 +65,7 @@ Django backend includes comprehensive health check endpoints with:
 ---
 
 
-## 🔧 Products Display Fix (Latest)
+## 🔧 Products Display & Mobile Sidebar Enhancement (Latest)
 
 **Issue**: Products not displaying on frontend?
 **Quick Fix**: Ensure backend is running on Django (port 8000), environment variables are set, and database is seeded.
@@ -74,6 +74,7 @@ Django backend includes comprehensive health check endpoints with:
 - Frontend `.env` must use port **8000** (Django backend)
 - Backend must be connected to PostgreSQL (production) or SQLite (dev)
 - Run validation: `python manage.py check` and `python manage.py seed_products`
+- **Mobile Sidebar:** On mobile, the sidebar now auto-hides after a search or navigation link is clicked for a smoother user experience.
 
 📚 **Documentation:**
 - [Quick Start Guide](QUICKSTART_PRODUCTS_FIX.md) - 5-minute fix
@@ -83,7 +84,13 @@ Django backend includes comprehensive health check endpoints with:
 ---
 
 
-## 🎉 Latest Updates (v4.0)
+## 🎉 Latest Updates (v4.0+)
+
+**Frontend Robustness & Mobile Optimization:**
+- Sidebar auto-hides on mobile after search/nav
+- Product edit modal supports direct image URLs (no upload needed for FYP/demo)
+- PWA, a11y, analytics, error boundaries, React Query, Storybook, Prettier, Husky, lint-staged, TypeScript strict mode
+- All enhancements tested and ready for mobile demo
 
 **Django REST Framework + PostgreSQL Production Integration Complete!**
 
@@ -121,7 +128,7 @@ EasyCart now supports robust role-based permissions for all admin and API operat
    - **Read**: Allowed for all roles
 - User registration via API always defaults to `viewer` unless created by a superadmin/manager.
 - Custom permission classes (`IsRoleOrReadOnly`, etc.) are used in DRF views for granular control.
-
+ curl https://easycart-backend-2k8l.onrender.com/api/products/
 **Admin Workflow:**
 - Superadmins can assign or change roles for any user in Django admin.
 - Managers can assign roles up to `editor`.
@@ -141,7 +148,7 @@ EasyCart now supports robust role-based permissions for all admin and API operat
 
 See also: [ADMIN_DASHBOARD_GUIDE.md](ADMIN_DASHBOARD_GUIDE.md) for dashboard usage and [ADMIN_DASHBOARD_API_FIX_SUMMARY.md](ADMIN_DASHBOARD_API_FIX_SUMMARY.md) for API details.
 
-## 🚀 Features
+## 🚀 Features & Mobile Testing
 
 - **User Authentication**: JWT-based registration and login with djangorestframework-simplejwt
 - **Product Catalog**: Browse products from MongoDB Atlas with advanced filters
@@ -150,6 +157,7 @@ See also: [ADMIN_DASHBOARD_GUIDE.md](ADMIN_DASHBOARD_GUIDE.md) for dashboard usa
 - **Order Management**: Checkout flow with shipping and payment
 - **Product Detail Pages**: Rich product information with descriptions and images
 - **Responsive Design**: Mobile-first responsive UI with TailwindCSS/Material UI
+- **Mobile Sidebar**: Sidebar auto-hides after search or navigation (see on your phone!)
 - **RESTful API**: Clean, well-documented endpoints following REST principles
 - **Pagination**: Efficient data loading with configurable page sizes
 - **Error Handling**: Graceful error responses with proper HTTP status codes
@@ -193,13 +201,6 @@ See also: [ADMIN_DASHBOARD_GUIDE.md](ADMIN_DASHBOARD_GUIDE.md) for dashboard usa
 - Git
 - Cloudinary account (optional, for image uploads)
 
-## 🚀 Quick Start
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/Bryvn01/EasyCart.git
-cd EasyCart
-```
 
 
 ### 2. Backend Setup (Django REST Framework)
@@ -286,9 +287,6 @@ Expected output:
 ```
 
 
-**Test the API directly:**
-```bash
-# Local testing
 curl http://localhost:8000/api/products/
 
 # Production testing
@@ -332,9 +330,6 @@ curl http://localhost:8000/api/products/?category=Electronics&price_max=30000
       "name": "Samsung Galaxy A14 128GB",
       "price": 24999,
       "description": "5G ready smartphone...",
-      "image_url": "https://res.cloudinary.com/.../galaxy.jpg",
-      "category": "Electronics",
-      "brand": "Samsung",
       "stock": 28
     }
   ]
