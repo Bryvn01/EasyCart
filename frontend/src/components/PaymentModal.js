@@ -1,56 +1,66 @@
 import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { ordersAPI } from '../services/api';
+import toast from 'react-hot-toast';
 
 const PaymentModal = (props) => {
   const { isOpen, onClose, order, onPaymentSuccess } = props;
   const [paymentMethod, setPaymentMethod] = useState('mpesa');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
-  const handlePayment = async (e) => {
+  // React Query mutation for payment
+  const {
+    mutate: initiatePayment,
+    isLoading: loading,
+    error: paymentError,
+    reset: resetPaymentError
+  } = useMutation(
+    async (paymentData) => {
+      return await ordersAPI.initiatePayment(paymentData);
+    },
+    {
+      onSuccess: (response, variables) => {
+        if (response.data.success) {
+          const { payment_method } = variables;
+          if ((payment_method === 'card' || payment_method === 'stripe' || payment_method === 'paypal') && response.data.payment_url) {
+            window.open(response.data.payment_url, '_blank');
+          } else if (payment_method === 'cash') {
+            toast.success('Order confirmed! Pay cash on delivery.');
+          } else {
+            toast.success('Payment initiated! Please check your phone for payment prompt.');
+          }
+          if (onPaymentSuccess) onPaymentSuccess();
+          onClose();
+        } else {
+          toast.error(response.data.message || 'Payment failed');
+        }
+      },
+      onError: (error) => {
+        const errorMsg = error.response?.data?.message || 'Payment failed. Please try again.';
+        toast.error(errorMsg);
+      }
+    }
+  );
+
+  const handlePayment = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
+    resetPaymentError();
 
     if ((paymentMethod === 'mpesa' || paymentMethod === 'airtel') && !phoneNumber.trim()) {
-      setError('Phone number is required for mobile money payments');
-      setLoading(false);
+      toast.error('Phone number is required for mobile money payments');
       return;
     }
 
     if (phoneNumber && !/^\+?[1-9]\d{8,14}$/.test(phoneNumber.trim())) {
-      setError('Please enter a valid phone number');
-      setLoading(false);
+      toast.error('Please enter a valid phone number');
       return;
     }
 
-    try {
-      const response = await ordersAPI.initiatePayment({
-        order_id: order.id,
-        payment_method: paymentMethod,
-        phone_number: phoneNumber.trim()
-      });
-
-      if (response.data.success) {
-        if ((paymentMethod === 'card' || paymentMethod === 'stripe' || paymentMethod === 'paypal') && response.data.payment_url) {
-          window.open(response.data.payment_url, '_blank');
-        } else if (paymentMethod === 'cash') {
-          alert('Order confirmed! Pay cash on delivery.');
-        } else {
-          alert('Payment initiated! Please check your phone for payment prompt.');
-        }
-        onPaymentSuccess();
-        onClose();
-      } else {
-        setError(response.data.message || 'Payment failed');
-      }
-    } catch (error) {
-      const errorMsg = error.response?.data?.message || 'Payment failed. Please try again.';
-      setError(errorMsg);
-    } finally {
-      setLoading(false);
-    }
+    initiatePayment({
+      order_id: order.id,
+      payment_method: paymentMethod,
+      phone_number: phoneNumber.trim()
+    });
   };
 
   if (!isOpen) return null;
@@ -144,7 +154,7 @@ const PaymentModal = (props) => {
             </div>
           )}
 
-          {error && (
+          {paymentError && (
             <div style={{
               color: 'var(--error)',
               marginBottom: 'var(--space-4)',
@@ -152,7 +162,7 @@ const PaymentModal = (props) => {
               backgroundColor: '#fee',
               borderRadius: 'var(--radius-sm)'
             }}>
-              {error}
+              {paymentError.response?.data?.message || paymentError.message || 'Payment failed'}
             </div>
           )}
 

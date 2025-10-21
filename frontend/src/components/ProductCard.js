@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button, Card } from './ui';
 import PropTypes from 'prop-types';
-import ImageWithFallback from './ImageWithFallback';
+import OptimizedImage from './OptimizedImage';
 
 const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => {
   const { t } = useTranslation();
@@ -12,7 +12,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
   if (!product) {
     return (
       <Card className="p-4">
-        <div className="text-center text-gray-500">Product not available</div>
+        <div className="text-center text-gray-500">{t('productNotAvailable', 'Product not available')}</div>
       </Card>
     );
   }
@@ -39,14 +39,13 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
       {/* Product Image Section */}
       <div className="relative aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
         <Link to={`/products/${product.id}`} className="block relative h-48">
-          <ImageWithFallback
+          <OptimizedImage
             src={currentImage}
             alt={product.name}
-            fallbackCategory="product"
-            lazy
-            showSkeleton
-            className="w-full h-full"
+            width={400}
+            height={400}
             style={{ objectFit: 'cover' }}
+            className="w-full h-full"
           />
           
           {/* Image Navigation Dots for Multiple Images */}
@@ -76,7 +75,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
         {product.stock === 0 && (
           <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
             <span className="bg-red-600 text-white px-3 py-2 rounded-lg font-semibold text-sm">
-              Out of Stock
+              {t('outOfStock', 'Out of Stock')}
             </span>
           </div>
         )}
@@ -84,17 +83,17 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
         {product.stock > 0 && product.stock < 10 && (
           <div className="absolute top-2 right-2">
             <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-sm">
-              Only {product.stock} left
+              {t('onlyXLeft', { count: product.stock, defaultValue: 'Only {{count}} left' })}
             </span>
           </div>
         )}
 
         {/* Quick View Button */}
-        {product.stock > 0 && imageLoaded && (
+        {product.stock > 0 && (
           <button
             onClick={handleQuickView}
             className="absolute top-2 left-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
-            title="Quick View"
+            title={t('quickView', 'Quick View')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -106,7 +105,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
         {/* Discount Badge */}
         {product.discount_percentage > 0 && (
           <div className="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm">
-            -{product.discount_percentage}%
+            {t('discountPercent', { percent: product.discount_percentage, defaultValue: '-{{percent}}%' })}
           </div>
         )}
       </div>
@@ -120,7 +119,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
         </Link>
 
         <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 min-h-[2.5rem]">
-          {product.description || 'Quality product with guaranteed satisfaction'}
+          {product.description || t('defaultProductDescription', 'Quality product with guaranteed satisfaction')}
         </p>
 
         {/* Price Section */}
@@ -141,11 +140,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
-                In stock
+                {t('inStock', 'In stock')}
               </span>
             ) : (
               <span className="text-xs text-red-600 dark:text-red-400 font-medium">
-                Out of stock
+                {t('outOfStock', 'Out of stock')}
               </span>
             )}
           </div>
@@ -157,7 +156,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
             size="sm"
             className="shrink-0 transition-all hover:scale-105 bg-primary-600 hover:bg-primary-700 border-primary-600"
           >
-            {product.stock === 0 ? 'Out of Stock' : t('addToCart') || 'Add to Cart'}
+            {product.stock === 0 ? t('outOfStock', 'Out of Stock') : t('addToCart', 'Add to Cart')}
           </Button>
         </div>
 

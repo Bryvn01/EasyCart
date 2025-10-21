@@ -45,6 +45,8 @@ jobs:
         run: cd backend && pip install -r requirements.txt
       - name: Install frontend dependencies
         run: cd frontend && npm ci
+      - name: Run npm audit (frontend)
+        run: cd frontend && npm audit --audit-level=high --production
       - name: Lint backend
         run: cd backend && flake8 .
       - name: Security scan (Bandit)

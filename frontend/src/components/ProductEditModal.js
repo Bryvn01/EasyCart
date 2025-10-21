@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { productsAPI } from '../services/api';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
   const [formData, setFormData] = useState({
@@ -8,11 +9,21 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
     price: '',
     category: '',
     stock: '',
+    image_url: '',
     is_active: true
   });
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Fetch categories with React Query
+  const { data: categories = [], isLoading: categoriesLoading, isError: categoriesError } = useQuery(
+    ['categories'],
+    async () => {
+      const response = await productsAPI.getCategories();
+      return response.data;
+    },
+    { staleTime: 5 * 60 * 1000 }
+  );
 
   useEffect(() => {
     if (product) {
@@ -22,20 +33,11 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
         price: product.price || '',
         category: product.category?.id || product.category || '',
         stock: product.stock || '',
+        image_url: product.image_url || '',
         is_active: product.is_active !== undefined ? product.is_active : true
       });
     }
-    fetchCategories();
   }, [product]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await productsAPI.getCategories();
-      setCategories(response.data);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -45,7 +47,27 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+
+  // React Query mutation for updating product
+  const updateProductMutation = useMutation(
+    async (updateData) => {
+      return productsAPI.updateProduct(product.id, updateData).then(res => res.data);
+    },
+    {
+      onSuccess: (updatedProduct) => {
+        onUpdate(updatedProduct);
+        onClose();
+        alert('Product updated successfully! ✅');
+      },
+      onError: (err) => {
+        setError('Failed to update product');
+        console.error('Error updating product:', err);
+      },
+      onSettled: () => setLoading(false),
+    }
+  );
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -67,36 +89,13 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
       return;
     }
 
-    try {
-      const updateData = {
-        ...formData,
-        price: parseFloat(formData.price),
-        stock: parseInt(formData.stock)
-      };
-      
-      const response = await fetch(`http://localhost:8000/api/products/${product.id}/`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-        body: JSON.stringify(updateData)
-      });
-
-      if (response.ok) {
-        const updatedProduct = await response.json();
-        onUpdate(updatedProduct);
-        onClose();
-        alert('Product updated successfully! ✅');
-      } else {
-        throw new Error('Failed to update product');
-      }
-    } catch (error) {
-      setError('Failed to update product');
-      console.error('Error updating product:', error);
-    } finally {
-      setLoading(false);
-    }
+    const updateData = {
+      ...formData,
+      price: parseFloat(formData.price),
+      stock: parseInt(formData.stock),
+      image_url: formData.image_url?.trim() || ''
+    };
+    updateProductMutation.mutate(updateData);
   };
 
   if (!isOpen) return null;
@@ -236,6 +235,28 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
               </div>
             </div>
 
+            {/* Image URL Field */}
+            <div className="form-group mt-4">
+              <label style={{
+                display: 'block',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                marginBottom: 'var(--space-2)',
+                color: 'var(--gray-700)'
+              }}>
+                Image URL
+              </label>
+              <input
+                type="url"
+                name="image_url"
+                className="form-control"
+                placeholder="https://example.com/image.jpg"
+                value={formData.image_url}
+                onChange={handleChange}
+              />
+              <small className="text-gray-500">Paste a direct image link (e.g., from Unsplash, Cloudinary, Imgur, etc.)</small>
+            </div>
+
             <div className="form-group">
               <label style={{
                 display: 'block',
@@ -253,7 +274,9 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
                 onChange={handleChange}
               >
                 <option value="">Select Category</option>
-                {categories.map(category => (
+                {categoriesLoading && <option>Loading...</option>}
+                {categoriesError && <option>Error loading categories</option>}
+                {!categoriesLoading && !categoriesError && categories.map(category => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>

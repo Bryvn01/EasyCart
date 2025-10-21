@@ -4,24 +4,17 @@
   "description": "Shop groceries online with EasyCart. Fast delivery, fresh products, and great prices.",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "images/icons/icon-192.svg",
-      "type": "image/svg+xml",
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "images/icons/icon-512.svg",
-      "type": "image/svg+xml",
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "purpose": "any"
+      "type": "image/png"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#2563eb",
   "background_color": "#ffffff",
