@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { useFadeOutOnSuccess } from '../../hooks/useFadeOutOnSuccess';
 import { motion } from 'framer-motion';
 import { getProductImageUrl } from '../../utils/imageUtils';
 
 
 const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isInWishlist = false }) => {
-
+  const [addToCartBtnRef, addToCartBtnHidden, triggerAddToCartFadeOut] = useFadeOutOnSuccess();
+  const successMsgRef = useRef(null);
+  const [addToCartSuccess, setAddToCartSuccess] = useState(false);
 
   return (
     <motion.article
@@ -61,12 +64,46 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
         )}
         <div className="flex gap-2 mt-auto">
           <button
+            ref={addToCartBtnRef}
             className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded transition w-full opacity-100 group-hover:scale-105 group-hover:shadow-lg focus:opacity-100"
-            onClick={e => { e.stopPropagation(); onAddToCart(product); }}
+            style={{ transition: 'opacity 0.4s', opacity: addToCartBtnHidden ? 0 : 1, display: addToCartBtnHidden ? 'none' : undefined }}
+            onClick={async e => {
+              e.stopPropagation();
+              try {
+                await onAddToCart(product);
+                triggerAddToCartFadeOut(() => {
+                  setAddToCartSuccess(true);
+                  setTimeout(() => {
+                    if (successMsgRef.current) successMsgRef.current.focus();
+                  }, 10);
+                });
+              } catch (err) {
+                // Don't hide the button on failure; parent should handle UI feedback
+                console.error('Add to cart failed', err);
+              }
+            }}
             aria-label={`Add ${product.name} to cart`}
           >
             Add to Cart
           </button>
+          {addToCartSuccess && (
+            <div
+              ref={successMsgRef}
+              tabIndex={-1}
+              aria-live="polite"
+              style={{
+                marginTop: '0.5rem',
+                background: 'var(--success, #22c55e)',
+                color: 'white',
+                padding: 'var(--space-2)',
+                borderRadius: 'var(--radius-md)',
+                fontWeight: 600,
+                outline: 'none',
+              }}
+            >
+              Added to cart!
+            </div>
+          )}
           <button
             className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded transition w-full opacity-100 group-hover:scale-105 group-hover:shadow focus:opacity-100"
             onClick={e => { e.stopPropagation(); if (typeof onQuickView === 'function') onQuickView(); }}

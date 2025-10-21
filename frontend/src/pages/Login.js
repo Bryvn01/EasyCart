@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useFadeOutOnSuccess } from '../hooks/useFadeOutOnSuccess';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -13,6 +14,9 @@ const Login = () => {
   
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [loginBtnRef, loginBtnHidden, triggerLoginFadeOut] = useFadeOutOnSuccess();
+  const successMsgRef = useRef(null);
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -28,7 +32,14 @@ const Login = () => {
 
     try {
       await login(formData);
-      navigate('/');
+      triggerLoginFadeOut(() => {
+        setLoginSuccess(true);
+        setTimeout(() => {
+          if (successMsgRef.current) successMsgRef.current.focus();
+          // Give user a moment to see the message, then navigate
+          setTimeout(() => navigate('/'), 800);
+        }, 10);
+      });
     } catch (err) {
       const errorMsg = err.response?.data?.non_field_errors?.[0] || 'Login failed';
       setError(errorMsg);
@@ -137,18 +148,40 @@ const Login = () => {
           )}
           
           <button
+            ref={loginBtnRef}
             type="submit"
             className="btn btn-primary"
             style={{ 
               width: '100%',
               padding: 'var(--space-3)',
               fontSize: '1rem',
-              fontWeight: '600'
+              fontWeight: '600',
+              transition: 'opacity 0.4s',
+              opacity: loginBtnHidden ? 0 : 1,
+              display: loginBtnHidden ? 'none' : undefined
             }}
             disabled={loading}
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+          {loginSuccess && (
+            <div
+              ref={successMsgRef}
+              tabIndex={-1}
+              aria-live="polite"
+              style={{
+                marginTop: '1rem',
+                background: 'var(--success, #22c55e)',
+                color: 'white',
+                padding: 'var(--space-3)',
+                borderRadius: 'var(--radius-md)',
+                fontWeight: 600,
+                outline: 'none',
+              }}
+            >
+              Login successful! Redirecting...
+            </div>
+          )}
         </form>
         
         {/* Footer */}
