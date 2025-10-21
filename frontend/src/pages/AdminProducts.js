@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { productsAPI } from '../services/api';
+import { getProductImageUrl } from '../utils/imageUtils';
 import ProductEditModal from '../components/ProductEditModal';
 import { useAuth } from '../context/AuthContext';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
@@ -135,9 +136,9 @@ const AdminProducts = () => {
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                        {product.image ? (
+                        {getProductImageUrl(product) ? (
                           <img
-                            src={`http://localhost:8000${product.image}`}
+                            src={getProductImageUrl(product)}
                             alt={product.name}
                             style={{
                               width: '100%',

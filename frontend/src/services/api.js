@@ -14,12 +14,10 @@ export const customersAPI = {
 import axios from 'axios';
 
 
+
 // === IMPORTANT: Always use .env for production API URL ===
 // Never use demo/mock mode or fallback URL in production!
 const API_BASE_URL = process.env.REACT_APP_API_URL;
-if (!API_BASE_URL) {
-  throw new Error('REACT_APP_API_URL is not set! Please check your .env file.');
-}
 
 // Log API configuration in development
 if (process.env.NODE_ENV === 'development') {
@@ -30,12 +28,23 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL || '',
   timeout: 30000, // 30 second timeout
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Add a request interceptor to throw if baseURL is missing at call time
+api.interceptors.request.use(
+  (config) => {
+    if (!API_BASE_URL) {
+      throw new Error('REACT_APP_API_URL is not set! Please check your .env file.');
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // Add JWT token to all requests
 api.interceptors.request.use(
@@ -161,9 +170,41 @@ export const productsAPI = {
       }
       throw error;
     }),
-  createProduct: (data) => api.post('/products/', data),
+  createProduct: (data) => {
+    // If image_file is present, use FormData
+    if (data.image_file) {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === 'image_file' && value) {
+          formData.append('image', value); // Backend expects 'image'
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, value);
+        }
+      });
+      return api.post('/products/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+    // Otherwise, send as JSON
+    return api.post('/products/', data);
+  },
   deleteProduct: (id) => api.delete(`/products/${id}/`),
-  updateProduct: (id, data) => api.put(`/products/${id}/`, data),
+  updateProduct: (id, data) => {
+    if (data.image_file) {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === 'image_file' && value) {
+          formData.append('image', value);
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, value);
+        }
+      });
+      return api.put(`/products/${id}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+    return api.put(`/products/${id}/`, data);
+  },
 };
 
 export const getApiBaseUrl = () => API_BASE_URL;

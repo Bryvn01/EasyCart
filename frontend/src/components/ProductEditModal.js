@@ -16,14 +16,18 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
   const [error, setError] = useState('');
 
   // Fetch categories with React Query
-  const { data: categories = [], isLoading: categoriesLoading, isError: categoriesError } = useQuery(
-    ['categories'],
-    async () => {
+  const {
+    data: categories = [],
+    isLoading: categoriesLoading,
+    isError: categoriesError
+  } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
       const response = await productsAPI.getCategories();
       return response.data;
     },
-    { staleTime: 5 * 60 * 1000 }
-  );
+    staleTime: 5 * 60 * 1000
+  });
 
   useEffect(() => {
     if (product) {
@@ -49,23 +53,21 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
 
 
   // React Query mutation for updating product
-  const updateProductMutation = useMutation(
-    async (updateData) => {
+  const updateProductMutation = useMutation({
+    mutationFn: async (updateData) => {
       return productsAPI.updateProduct(product.id, updateData).then(res => res.data);
     },
-    {
-      onSuccess: (updatedProduct) => {
-        onUpdate(updatedProduct);
-        onClose();
-        alert('Product updated successfully! ✅');
-      },
-      onError: (err) => {
-        setError('Failed to update product');
-        console.error('Error updating product:', err);
-      },
-      onSettled: () => setLoading(false),
-    }
-  );
+    onSuccess: (updatedProduct) => {
+      onUpdate(updatedProduct);
+      onClose();
+      alert('Product updated successfully! ✅');
+    },
+    onError: (err) => {
+      setError('Failed to update product');
+      console.error('Error updating product:', err);
+    },
+    onSettled: () => setLoading(false),
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -235,7 +237,7 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
               </div>
             </div>
 
-            {/* Image URL Field */}
+            {/* Image Upload or URL Field with Preview and Validation */}
             <div className="form-group mt-4">
               <label style={{
                 display: 'block',
@@ -244,17 +246,71 @@ const ProductEditModal = ({ product, isOpen, onClose, onUpdate }) => {
                 marginBottom: 'var(--space-2)',
                 color: 'var(--gray-700)'
               }}>
-                Image URL
+                Product Image
               </label>
-              <input
-                type="url"
-                name="image_url"
-                className="form-control"
-                placeholder="https://example.com/image.jpg"
-                value={formData.image_url}
-                onChange={handleChange}
-              />
-              <small className="text-gray-500">Paste a direct image link (e.g., from Unsplash, Cloudinary, Imgur, etc.)</small>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  name="image_file"
+                  className="form-control"
+                  onChange={e => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      if (!file.type.startsWith('image/')) {
+                        setError('Selected file is not an image.');
+                        return;
+                      }
+                      if (file.size > 5 * 1024 * 1024) {
+                        setError('Image file size must be less than 5MB.');
+                        return;
+                      }
+                    }
+                    setError('');
+                    setFormData(prev => ({
+                      ...prev,
+                      image_file: file,
+                      image_url: '' // Clear URL if file is chosen
+                    }));
+                  }}
+                  aria-label="Upload product image file"
+                  style={{ flex: 1 }}
+                />
+                <span style={{ color: 'var(--gray-500)', fontSize: '0.9em' }}>or</span>
+                <input
+                  type="url"
+                  name="image_url"
+                  className="form-control"
+                  placeholder="https://example.com/image.jpg"
+                  value={formData.image_url}
+                  onChange={e => {
+                    setError('');
+                    setFormData(prev => ({
+                      ...prev,
+                      image_url: e.target.value,
+                      image_file: undefined // Clear file if URL is entered
+                    }));
+                  }}
+                  aria-label="Paste image URL"
+                  style={{ flex: 2 }}
+                />
+              </div>
+              <small className="text-gray-500">Upload an image file (max 5MB) or paste a direct image link (e.g., from Unsplash, Cloudinary, Imgur, etc.). Only one will be used.</small>
+              {/* Preview Section */}
+              {(formData.image_file || formData.image_url) && (
+                <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <span style={{ fontSize: '0.9em', color: 'var(--gray-700)' }}>Preview:</span>
+                  <img
+                    src={formData.image_file ? URL.createObjectURL(formData.image_file) : formData.image_url}
+                    alt="Product preview"
+                    style={{ maxWidth: 80, maxHeight: 80, borderRadius: 8, border: '1px solid #eee', background: '#fafafa' }}
+                    onError={e => { e.target.style.display = 'none'; }}
+                  />
+                  {formData.image_file && (
+                    <span style={{ fontSize: '0.85em', color: 'var(--gray-500)' }}>{formData.image_file.name}</span>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="form-group">

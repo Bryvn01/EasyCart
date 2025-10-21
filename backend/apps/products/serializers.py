@@ -15,7 +15,47 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
-        fields = ['id', 'image', 'alt_text', 'is_primary', 'order']
+        fields = ['id', 'image', 'image_url', 'alt_text', 'is_primary', 'order']
+
+    def validate(self, data):
+        image = data.get('image')
+        image_url = data.get('image_url')
+        if not image and not image_url:
+            raise serializers.ValidationError('Either image file or image_url must be provided.')
+        return data
+
+    def create(self, validated_data):
+        image_url = validated_data.pop('image_url', None)
+        image = validated_data.get('image', None)
+        if image_url and not image:
+            # Fetch image from URL and save to image field
+            from django.core.files.base import ContentFile
+            import requests
+            import os
+            try:
+                response = requests.get(image_url)
+                response.raise_for_status()
+                file_name = os.path.basename(image_url.split('?')[0])
+                validated_data['image'] = ContentFile(response.content, name=file_name)
+            except Exception as e:
+                raise serializers.ValidationError({'image_url': f'Failed to fetch image from URL: {e}'})
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        image_url = validated_data.pop('image_url', None)
+        image = validated_data.get('image', None)
+        if image_url and not image:
+            from django.core.files.base import ContentFile
+            import requests
+            import os
+            try:
+                response = requests.get(image_url)
+                response.raise_for_status()
+                file_name = os.path.basename(image_url.split('?')[0])
+                instance.image.save(file_name, ContentFile(response.content), save=False)
+            except Exception as e:
+                raise serializers.ValidationError({'image_url': f'Failed to fetch image from URL: {e}'})
+        return super().update(instance, validated_data)
 
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
@@ -47,16 +87,45 @@ class ProductCreateUpdateSerializer(serializers.ModelSerializer):
             'category', 'image', 'image_url', 'stock', 'weight', 'dimensions',
             'brand', 'is_active', 'is_featured', 'meta_title', 'meta_description'
         ]
-    
-    def validate_price(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("Price must be greater than 0")
-        return value
-    
-    def validate_stock(self, value):
-        if value < 0:
-            raise serializers.ValidationError("Stock cannot be negative")
-        return value
+
+    def validate(self, data):
+        image = data.get('image')
+        image_url = data.get('image_url')
+        if not image and not image_url:
+            raise serializers.ValidationError('Either image file or image_url must be provided.')
+        return data
+
+    def create(self, validated_data):
+        image_url = validated_data.pop('image_url', None)
+        image = validated_data.get('image', None)
+        if image_url and not image:
+            from django.core.files.base import ContentFile
+            import requests
+            import os
+            try:
+                response = requests.get(image_url)
+                response.raise_for_status()
+                file_name = os.path.basename(image_url.split('?')[0])
+                validated_data['image'] = ContentFile(response.content, name=file_name)
+            except Exception as e:
+                raise serializers.ValidationError({'image_url': f'Failed to fetch image from URL: {e}'})
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        image_url = validated_data.pop('image_url', None)
+        image = validated_data.get('image', None)
+        if image_url and not image:
+            from django.core.files.base import ContentFile
+            import requests
+            import os
+            try:
+                response = requests.get(image_url)
+                response.raise_for_status()
+                file_name = os.path.basename(image_url.split('?')[0])
+                instance.image.save(file_name, ContentFile(response.content), save=False)
+            except Exception as e:
+                raise serializers.ValidationError({'image_url': f'Failed to fetch image from URL: {e}'})
+        return super().update(instance, validated_data)
 
 class BulkProductUpdateSerializer(serializers.Serializer):
     product_ids = serializers.ListField(
