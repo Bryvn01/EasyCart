@@ -21,7 +21,33 @@ Authorization: Bearer <your-jwt-token>
 
 ## Endpoints
 
-### 1. Get All Products
+
+### 0. Add or Update Product Images (File Upload & Image URL)
+
+**The API supports both file uploads and image URLs for product images.**
+
+- To upload an image file, send as `multipart/form-data` with a file field named `image` (or `images` for multiple).
+- To use an image URL, send as JSON with an `image_url` or `images` array containing URLs.
+- Only one (file or URL) is used per image; if both are provided, file takes precedence.
+
+**Frontend usage:**
+- The product edit modal allows users to either upload a file or provide an image URL (not both).
+- The frontend automatically chooses the correct API format.
+
+**Example: Add product with image URL (JSON):**
+```json
+{
+  "name": "Sample Product",
+  "image_url": "https://example.com/image.jpg"
+}
+```
+
+**Example: Add product with file upload (multipart/form-data):**
+```
+image: <file>
+name: Sample Product
+...
+```
 
 Fetch a paginated list of products with optional filtering, searching, and sorting.
 
@@ -125,6 +151,7 @@ curl http://localhost:5000/api/products?inStock=true
 ```
 
 ---
+
 
 ### 2. Get Product by ID
 

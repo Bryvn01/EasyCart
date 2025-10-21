@@ -141,14 +141,16 @@ If deployment fails:
 - **React Docs**: https://reactjs.org/docs
 - **MongoDB Atlas**: https://www.mongodb.com/docs/atlas/
 
-## 🎯 Success Indicators
 
-✅ Deployment successful when:
+##  Success Indicators
+
+ Deployment successful when:
 - No CORS errors in browser console
 - Products display on homepage
 - Categories show in navigation
 - API calls return 200 status
 - "Unable to Load Content" error gone
+- **Product image upload and image URL both work in admin and frontend (see IMAGE_UPLOAD_GUIDE.md)**
 
 ## 📈 Version History
 

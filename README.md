@@ -826,7 +826,7 @@ This JSON file contains an array of product objects with the following structure
 - `POST /api/auth/login` - User login
 - `GET /api/auth/profile` - Get user profile (auth required)
 
-For complete API documentation, see [ENHANCED_PRODUCT_API_GUIDE.md](ENHANCED_PRODUCT_API_GUIDE.md)
+For complete API documentation, see [ENHANCED_PRODUCT_API_GUIDE.md](ENHANCED_PRODUCT_API_GUIDE.md) and [IMAGE_UPLOAD_GUIDE.md](IMAGE_UPLOAD_GUIDE.md)
 
 ## 🧪 Testing
 

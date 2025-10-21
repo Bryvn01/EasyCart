@@ -78,6 +78,7 @@ Accessible form inputs with:
 />
 ```
 
+
 #### ProductCard Component (`/components/ProductCard.js`)
 Enhanced product display with:
 - Image lazy loading
@@ -85,6 +86,16 @@ Enhanced product display with:
 - Out of stock overlay
 - Smooth hover animations
 - Price formatting
+- Robust image fallback (shows placeholder if image fails)
+
+#### ProductEditModal Component (`/components/ProductEditModal.js`)
+**Flexible image handling:**
+- Users can either upload an image file (JPG, PNG, GIF, under 5MB) or provide an image URL (must be a direct link to an image)
+- Only one (file or URL) is accepted at a time; uploading a file clears the URL and vice versa
+- Image preview updates live as the user selects a file or enters a URL
+- Client-side validation for file type, size, and URL format
+- Accessible error messages and alt text for previews
+- Form automatically submits the correct format to the backend (FormData for file, JSON for URL)
 
 #### ProductGridSkeleton (`/components/ui/ProductSkeleton.js`)
 Loading state placeholder:
@@ -228,10 +239,12 @@ handleApiSuccess('Done!');
 
 ## 🚀 Performance Optimizations
 
+
 ### Image Loading
 - Lazy loading with `loading="lazy"`
 - Responsive images
 - Placeholder images
+- Robust fallback for missing or broken images
 
 ### Code Splitting
 - React.lazy for route-based splitting
@@ -242,11 +255,13 @@ handleApiSuccess('Done!');
 - Optimized production build
 - Tree shaking enabled
 
+
 ## 🧪 Testing
 
 ### Current Coverage
 - 7/7 tests passing
 - Products page fully tested
+- ProductEditModal tested for file upload, image URL, preview, and validation
 - Loading states verified
 - Error handling covered
 

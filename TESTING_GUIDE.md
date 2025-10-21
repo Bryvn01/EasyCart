@@ -68,9 +68,21 @@ curl -X POST http://localhost:8000/api/products/reviews/helpful/ \
 
 ## Frontend UI Testing
 
+
 ### Test Scenarios
 
-#### 1. Wishlist Functionality
+#### 1. Product Image Upload & Image URL (ProductEditModal)
+- [ ] Open ProductEditModal for a new or existing product
+- [ ] Upload a valid image file (JPG, PNG, GIF, <5MB)
+- [ ] Verify image preview updates and file is accepted
+- [ ] Enter a valid image URL (direct link to image)
+- [ ] Verify image preview updates and URL is accepted
+- [ ] Try to provide both file and URL (should only accept one)
+- [ ] Submit with only file, only URL, and with neither (test validation)
+- [ ] Check for accessible error messages and alt text
+- [ ] Verify product displays correct image after save
+
+#### 2. Wishlist Functionality
 - [ ] Login to the application
 - [ ] Navigate to Products page
 - [ ] Click "Wishlist" button on multiple products
@@ -81,7 +93,7 @@ curl -X POST http://localhost:8000/api/products/reviews/helpful/ \
 - [ ] Test "Add to Cart" button from wishlist
 - [ ] Test wishlist persistence after logout/login
 
-#### 2. Review Functionality
+#### 3. Review Functionality
 - [ ] Navigate to Product Detail page
 - [ ] Verify review section is visible
 - [ ] Submit a review (requires purchase verification)
@@ -89,7 +101,7 @@ curl -X POST http://localhost:8000/api/products/reviews/helpful/ \
 - [ ] Test "Helpful" button functionality
 - [ ] Verify reviews display correctly with user info
 
-#### 3. Error Handling
+#### 4. Error Handling
 - [ ] Test wishlist actions without authentication
 - [ ] Test adding duplicate items to wishlist
 - [ ] Test invalid product IDs
