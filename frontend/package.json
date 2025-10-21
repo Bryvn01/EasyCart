@@ -54,8 +54,7 @@
     "next:start": "next start",
     "analyze": "ANALYZE=true next build --config next.config.mjs",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "prepare": "husky install"
+  "build-storybook": "storybook build"
   },
   "eslintConfig": {
     "extends": [
