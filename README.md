@@ -1,4 +1,34 @@
-# EasyCart - E-Commerce Web Application
+Microsoft Windows [Version 10.0.19045.6456]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\hp>cd c:\easycart\backend
+
+c:\EasyCart\backend>python manage.py migrate
+Traceback (most recent call last):
+  File "c:\EasyCart\backend\manage.py", line 22, in <module>
+    main()
+  File "c:\EasyCart\backend\manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\management\__init__.py", line 419, in execute_from_command_line
+    utility.execute()
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\management\__init__.py", line 395, in execute
+    django.setup()
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\apps\registry.py", line 91, in populate
+    app_config = AppConfig.create(entry)
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\apps\config.py", line 224, in create
+    import_module(entry)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1324, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'simple_history'
+
+c:\EasyCart\backend># EasyCart - E-Commerce Web Application
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
@@ -71,6 +101,45 @@ Django backend includes comprehensive health check endpoints with:
 - [Enhanced Product API Guide](ENHANCED_PRODUCT_API_GUIDE.md) - API reference
 - [Admin Dashboard Integration](ADMIN_DASHBOARD_INTEGRATION_GUIDE.md) - Frontend integration
 - [Implementation Summary](IMPLEMENTATION_COMPLETE_SUMMARY.md) - Complete overview
+
+
+## 🔒 Role-Based Permissions (Admin & API)
+
+EasyCart now supports robust role-based permissions for all admin and API operations. User roles are enforced both in the Django admin and via API endpoints.
+
+**User Roles:**
+- `superadmin`: Full access to all admin and API features, including user management and role assignment.
+- `manager`: Can manage products, categories, and orders, but cannot assign roles or manage superadmins.
+- `editor`: Can create, update, and delete products and categories, but cannot manage users or roles.
+- `viewer`: Read-only access to products and categories.
+
+**How Permissions Work:**
+- All users are assigned a role (`role` field on User model).
+- Role is visible and editable in Django admin (by superadmin/manager only).
+- API endpoints for products and categories enforce minimum role requirements:
+   - **Create/Update/Delete**: Requires `editor` or higher
+   - **Read**: Allowed for all roles
+- User registration via API always defaults to `viewer` unless created by a superadmin/manager.
+- Custom permission classes (`IsRoleOrReadOnly`, etc.) are used in DRF views for granular control.
+
+**Admin Workflow:**
+- Superadmins can assign or change roles for any user in Django admin.
+- Managers can assign roles up to `editor`.
+- Editors and viewers cannot change roles.
+- All role changes are audit-logged (see audit logging section).
+
+**API Example:**
+```json
+{
+   "id": 1,
+   "username": "admin",
+   "email": "admin@example.com",
+   "role": "superadmin",
+   ...
+}
+```
+
+See also: [ADMIN_DASHBOARD_GUIDE.md](ADMIN_DASHBOARD_GUIDE.md) for dashboard usage and [ADMIN_DASHBOARD_API_FIX_SUMMARY.md](ADMIN_DASHBOARD_API_FIX_SUMMARY.md) for API details.
 
 ## 🚀 Features
 
@@ -935,3 +1004,45 @@ See [FRONTEND_ERROR_HANDLING_GUIDE.md](FRONTEND_ERROR_HANDLING_GUIDE.md) for com
 
 
 **Note**: This is a demo application. For production use, ensure proper security configurations and testing.
+
+## Monitoring & Observability
+
+- **Backend logs:** See `backend/logs/django.log` or use `docker compose logs backend`.
+- **Frontend errors:** Use browser console (F12 > Console tab).
+- **Optional:** Integrate Sentry for error tracking (see `docs/monitoring.md`).
+
+#
+# EasyCart Security, Rate Limiting, and DevOps Documentation
+#
+
+## Security & Rate Limiting
+- All API endpoints are protected by global rate limiting (100 requests/min/IP) using `django-ratelimit`.
+- Login endpoint is protected with 5 attempts/min/IP to prevent brute-force attacks.
+- Security headers (HSTS, X-Frame-Options, XSS, etc.) and SSL are enforced in production.
+- JWT authentication and role-based permissions are used for all sensitive endpoints.
+- Audit logging is enabled via `django-simple-history` and rotating log files.
+- Input is sanitized to prevent injection and path traversal.
+- Automated security scanning (Bandit) is run in CI.
+- CSRF protection and CORS restrictions are enabled.
+- File upload limits are enforced.
+
+## DevOps & CI/CD
+- GitHub Actions CI runs lint, tests, coverage, and Bandit security scan on every push.
+- Docker and Docker Compose are used for local and production deployments.
+- Monitoring and logging are documented in `docs/monitoring.md`.
+- All environment variables are managed via `.env` and documented in `ENVIRONMENT_VARIABLES_QUICK_REFERENCE.md`.
+
+## GitHub Usage
+- All changes are committed and pushed to the `main` branch.
+- Pull requests are recommended for major features or fixes.
+- CI status must be green before merging.
+
+---
+
+For more details, see:
+- `docs/SECURITY.md` (security best practices)
+- `docs/monitoring.md` (monitoring/logging)
+- `ENVIRONMENT_VARIABLES_QUICK_REFERENCE.md` (env vars)
+- `.github/workflows/ci.yml` (CI/CD config)
+- `backend/ecommerce/settings.py` (Django settings)
+- `README.md` (project overview)

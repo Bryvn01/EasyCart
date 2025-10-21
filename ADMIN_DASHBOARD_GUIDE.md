@@ -4,7 +4,31 @@
 
 The EasyCart Admin Dashboard is a comprehensive web application for managing products, categories, orders, and users in the EasyCart e-commerce platform. It features a modern, responsive design with accessibility support and robust error handling.
 
-## Features
+
+## 🔒 Role-Based Permissions (Admin Dashboard)
+
+The EasyCart Admin Dashboard enforces role-based permissions for all management operations. User roles are assigned in the backend and determine what actions are available in the dashboard UI.
+
+**Roles:**
+- `superadmin`: Full access to all dashboard features, including user management and role assignment.
+- `manager`: Can manage products, categories, and orders, but cannot assign roles or manage superadmins.
+- `editor`: Can create, update, and delete products and categories, but cannot manage users or roles.
+- `viewer`: Read-only access to products and categories.
+
+**Dashboard Behavior:**
+- UI elements for restricted actions (edit, delete, add) are hidden or disabled for users without sufficient role.
+- API requests for restricted actions will be rejected by the backend if the user's role is insufficient.
+- User role is displayed in the profile section.
+- Only superadmins and managers can access user management features (if enabled).
+
+**How to Assign Roles:**
+- Roles are assigned in the Django admin by superadmins or managers.
+- New users registered via the dashboard/API are assigned the `viewer` role by default.
+
+**Audit Logging:**
+- All role changes and sensitive actions are audit-logged and visible in the Django admin history.
+
+See the main [README.md](../README.md) for technical details and API-level enforcement.
 
 ### Product Management
 - ✅ **Complete CRUD Operations**: Create, Read, Update, Delete products

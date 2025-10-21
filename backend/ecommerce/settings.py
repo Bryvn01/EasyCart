@@ -1,3 +1,5 @@
+# Allow test client host
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 import os
 import sys
 from pathlib import Path
@@ -35,6 +37,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_extensions',
     'sslserver',
+    'simple_history',
     
     # Local apps
     'apps.accounts',
@@ -52,8 +55,23 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
     'ecommerce.middleware.ErrorHandlingMiddleware',
 ]
+# --- Rate Limiting ---
+# Default: 100 requests per minute per IP for API endpoints
+RATELIMIT_VIEW = 'rest_framework.exceptions.Throttled'
+RATELIMIT_ENABLE = True
+RATELIMIT_CACHE = 'default'
+RATELIMIT_RATE = '100/m'
+RATELIMIT_BLOCK = True
+
+# --- Brute-force Protection ---
+# For login endpoints, use @ratelimit(key='ip', rate='5/m', method='POST', block=True)
+# See docs: https://django-ratelimit.readthedocs.io/en/stable/usage.html
+
+# --- Audit Logging ---
+# Already enabled via django-simple-history and logging config
 
 ROOT_URLCONF = 'ecommerce.urls'
 

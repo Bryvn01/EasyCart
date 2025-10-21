@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils.html import escape
 from django.db.models import Avg
+from simple_history.models import HistoricalRecords
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -11,6 +12,8 @@ class Category(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name_plural = 'Categories'
         ordering = ['name']
@@ -47,6 +50,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    history = HistoricalRecords()
+
     class Meta:
         ordering = ['-created_at']
         indexes = [
