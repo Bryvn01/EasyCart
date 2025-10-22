@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useProducts } from '../useProducts';
 import { productsAPI } from '../../services/api';
 
@@ -9,6 +9,7 @@ describe('useProducts hook', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+
 
   it('should fetch products successfully with DRF-compatible response', async () => {
     // Mock API response with both 'data' and 'results' keys (backend format)
@@ -68,39 +69,45 @@ describe('useProducts hook', () => {
 
     productsAPI.getProducts.mockResolvedValue(mockResponse);
 
-    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
+    let result;
+    await act(async () => {
+      result = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
+    });
 
     // Initially loading
-    expect(result.current.loading).toBe(true);
-    expect(result.current.products).toEqual([]);
+    expect(result.result.current.loading).toBe(true);
+    expect(result.result.current.products).toEqual([]);
 
     // Wait for data to load
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.result.current.loading).toBe(false);
     });
 
     // Verify products are loaded
-    expect(result.current.products).toHaveLength(2);
-    expect(result.current.products[0].name).toBe('iPhone 14 Pro');
-    expect(result.current.products[1].name).toBe('Samsung Galaxy S23');
+    expect(result.result.current.products).toHaveLength(2);
+    expect(result.result.current.products[0].name).toBe('iPhone 14 Pro');
+    expect(result.result.current.products[1].name).toBe('Samsung Galaxy S23');
 
     // Verify pagination
-    expect(result.current.pagination.totalCount).toBe(2);
-    expect(result.current.pagination.currentPage).toBe(1);
-    expect(result.current.pagination.hasNext).toBe(false);
+    expect(result.result.current.pagination.totalCount).toBe(2);
+    expect(result.result.current.pagination.currentPage).toBe(1);
+    expect(result.result.current.pagination.hasNext).toBe(false);
   });
 
   it('should handle API errors gracefully', async () => {
     const mockError = new Error('Network error');
     productsAPI.getProducts.mockRejectedValue(mockError);
 
-    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+    let result;
+    await act(async () => {
+      result = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
     });
 
-    expect(result.current.error).toBeTruthy();
-    expect(result.current.products).toEqual([]);
+    await waitFor(() => {
+      expect(result.result.current.loading).toBe(false);
+    });
+
+    expect(result.result.current.error).toBeTruthy();
+    expect(result.result.current.products).toEqual([]);
   });
 });
