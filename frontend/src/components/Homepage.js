@@ -1,17 +1,18 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ProductGrid from './ProductGrid';
 import CategoryNav from './CategoryNav';
 import dynamic from 'next/dynamic';
-const BannerCarousel = dynamic(() => import('./BannerCarousel'), { ssr: false, loading: () => <div className="h-40 bg-gray-100 animate-pulse rounded-lg mb-8" /> });
 import WhatsAppButton from './WhatsAppButton';
 import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 import { imageFallback } from '../utils/images';
-
 import { Helmet } from 'react-helmet-async';
+
+const BannerCarousel = dynamic(() => import('./BannerCarousel'), { ssr: false, loading: () => <div className="h-40 bg-gray-100 animate-pulse rounded-lg mb-8" /> });
 
 const sectionMap = [
   { title: 'Flash Sales', filter: p => p.is_flash_sale },
