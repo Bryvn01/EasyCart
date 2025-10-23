@@ -4,26 +4,41 @@ updates:
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps):"
+    rebase-strategy: "auto"
+    ignore:
+      - dependency-name: "react-scripts"
+        versions: ["0.0.0"]
 
   # Django backend (npm deps)
   - package-ecosystem: "npm"
     directory: "/backend"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps):"
+    rebase-strategy: "auto"
 
   # Admin dashboard
   - package-ecosystem: "npm"
     directory: "/admin-dashboard"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps):"
+    rebase-strategy: "auto"
 
   # Django backend (pip deps)
   - package-ecosystem: "pip"
     directory: "/backend"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps):"
+    rebase-strategy: "auto"

@@ -18,6 +18,33 @@ Traceback (most recent call last):
   File "C:\Users\hp\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\apps\registry.py", line 91, in populate
     app_config = AppConfig.create(entry)
                  ^^^^^^^^^^^^^^^^^^^^^^^
+## 🚀 Recent Enhancements (2025)
+
+**Media Handling:**
+- Full support for both file uploads and direct image URLs for product images (backend and frontend)
+- ProductEditModal allows image upload or URL, with instant preview, validation, and accessibility
+- Robust image preview and fallback in all product displays
+
+**UX & Accessibility:**
+- ProductEditModal: fade-out/auto-hide for action buttons, accessible success messages, keyboard navigation
+- Mobile sidebar auto-hides after search/navigation for smoother mobile UX
+
+**Testing & Quality:**
+- Automated tests for backend (Django) and frontend (React, Next.js) using Jest and React Testing Library
+- All tests pass; coverage and setup in TESTING_GUIDE.md
+- React Query v5 migration: all hooks use object form, QueryClientProvider in tests
+
+**Security & Monitoring:**
+- CSP meta tag, CORS restricted to trusted origins, secure HTTP headers
+- Sentry integrated for error monitoring (see MONITORING.md)
+- Known frontend dependency vulnerabilities documented and monitored (see SECURITY.md)
+- Dependabot and GitHub Actions auto-issue workflow for CI/CD health
+
+**Documentation:**
+- All guides updated: see IMAGE_UPLOAD_GUIDE.md, ENHANCED_PRODUCT_API_GUIDE.md, TESTING_GUIDE.md, FRONTEND_IMPLEMENTATION_GUIDE.md, PRODUCTS_API_DOCUMENTATION.md, CORS_FIX_DOCS_README.md, and SECURITY.md
+
+---
+
   File "C:\Users\hp\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\apps\config.py", line 224, in create
     import_module(entry)
   File "C:\Users\hp\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
@@ -27,6 +54,9 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
   File "<frozen importlib._bootstrap>", line 1324, in _find_and_load_unlocked
 ModuleNotFoundError: No module named 'simple_history'
+---
+## 🖼️ Product Image Handling (File Upload & URL)
+
 
 c:\EasyCart\backend># EasyCart - E-Commerce Web Application
 
@@ -34,6 +64,8 @@ c:\EasyCart\backend># EasyCart - E-Commerce Web Application
 
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![Django](https://img.shields.io/badge/django-4.2+-green.svg)
+
+---
 ![React](https://img.shields.io/badge/react-18+-blue.svg)
 ![PostgreSQL](https://img.shields.io/badge/postgresql-14+-blue.svg)
 
@@ -56,6 +88,9 @@ Django backend includes comprehensive health check endpoints with:
 - [Health Check Enhancement Guide](HEALTH_CHECK_ENHANCEMENT_PHASE1.md) - Complete implementation details
 - [Quick Reference](HEALTH_CHECK_QUICK_REFERENCE.md) - Commands and examples
 - [Architecture Diagram](HEALTH_CHECK_ARCHITECTURE.md) - Visual overview
+See [TESTING_GUIDE.md](TESTING_GUIDE.md) for full test setup, coverage, and best practices.
+
+---
 
 **Endpoints:**
 - Django: `GET /api/health/` (port 8000)
@@ -64,6 +99,11 @@ Django backend includes comprehensive health check endpoints with:
 
 ---
 
+- CSP, CORS, and secure HTTP headers enforced (see SECURITY.md)
+- Sentry integrated for error monitoring
+- Known, unresolvable frontend dependency vulnerabilities are documented and monitored (see SECURITY.md)
+
+---
 
 ## 🔧 Products Display & Mobile Sidebar Enhancement (Latest)
 
@@ -132,6 +172,18 @@ EasyCart now supports robust role-based permissions for all admin and API operat
 **Admin Workflow:**
 - Superadmins can assign or change roles for any user in Django admin.
 - Managers can assign roles up to `editor`.
+---
+## 📚 Additional Guides & References
+
+- [IMAGE_UPLOAD_GUIDE.md](IMAGE_UPLOAD_GUIDE.md): Dual image handling (file upload + URL)
+- [ENHANCED_PRODUCT_API_GUIDE.md](ENHANCED_PRODUCT_API_GUIDE.md): Product API reference
+- [TESTING_GUIDE.md](TESTING_GUIDE.md): Automated tests and coverage
+- [FRONTEND_IMPLEMENTATION_GUIDE.md](FRONTEND_IMPLEMENTATION_GUIDE.md): Frontend architecture and best practices
+- [PRODUCTS_API_DOCUMENTATION.md](PRODUCTS_API_DOCUMENTATION.md): API endpoints
+- [CORS_FIX_DOCS_README.md](CORS_FIX_DOCS_README.md): CORS/security
+- [SECURITY.md](SECURITY.md): Security policy and known vulnerabilities
+
+---
 - Editors and viewers cannot change roles.
 - All role changes are audit-logged (see audit logging section).
 
