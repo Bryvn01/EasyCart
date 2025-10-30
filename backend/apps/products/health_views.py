@@ -8,7 +8,6 @@ import time
 import sys
 from django.http import JsonResponse
 from django.conf import settings
-from .mongodb_utils import check_mongodb_connection
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +18,6 @@ def health_check(request):
     
     Returns detailed health information including:
     - Overall service status (UP/DOWN)
-    - MongoDB connection status
     - Database statistics
     - Service metadata (version, environment)
     - Response time
@@ -31,7 +29,6 @@ def health_check(request):
     start_time = time.time()
     
     try:
-        # MongoDB health check disabled for PostgreSQL migration.
         is_healthy = True
         http_status = 200
         
@@ -101,9 +98,6 @@ def readiness_probe(request):
     - 503: Service is not ready
     """
     try:
-        # Check MongoDB connection
-        mongo_status = check_mongodb_connection()
-        is_ready = mongo_status.get('status') == 'connected'
         
         if is_ready:
             return JsonResponse({

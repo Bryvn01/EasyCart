@@ -14,6 +14,7 @@ def api_root(request):
             'categories': '/api/products/categories/',
             'auth': '/api/auth/',
             'orders': '/api/orders/',
+            'payments': '/api/payments/',
             'health': '/api/health/',
             'liveness': '/api/health/live/',
             'readiness': '/api/health/ready/'
@@ -29,6 +30,7 @@ urlpatterns = [
     path('api/auth/', include('apps.accounts.urls')),
     path('api/products/', include('apps.products.urls')),
     path('api/orders/', include('apps.orders.urls')),
+    path('api/payments/', include('apps.payments.urls')),
     path('api/admin/', include('apps.admin_dashboard.urls')),
 ]
 

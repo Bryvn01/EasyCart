@@ -1,65 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { ordersAPI } from '../services/api';
+import { paymentsAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 const PaymentModal = (props) => {
   const { isOpen, onClose, order, onPaymentSuccess } = props;
   const [paymentMethod, setPaymentMethod] = useState('mpesa');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [paymentId, setPaymentId] = useState(null);
+  const [isPolling, setIsPolling] = useState(false);
+  const [pollCount, setPollCount] = useState(0);
+  const [pollingStatus, setPollingStatus] = useState('');
+  const pollingTimer = useRef(null);
 
   // React Query mutation for payment
+  // M-Pesa mutation
   const {
-    mutate: initiatePayment,
-    isLoading: loading,
-    error: paymentError,
-    reset: resetPaymentError
+    mutate: initiateMPesa,
+    isLoading: mpesaLoading,
+  // error: mpesaError, // removed unused variable
+    reset: resetMpesaError
   } = useMutation({
-    mutationFn: async (paymentData) => {
-      return await ordersAPI.initiatePayment(paymentData);
-    },
-    onSuccess: (response, variables) => {
-      if (response.data.success) {
-        const { payment_method } = variables;
-        if ((payment_method === 'card' || payment_method === 'stripe' || payment_method === 'paypal') && response.data.payment_url) {
-          window.open(response.data.payment_url, '_blank');
-        } else if (payment_method === 'cash') {
-          toast.success('Order confirmed! Pay cash on delivery.');
-        } else {
-          toast.success('Payment initiated! Please check your phone for payment prompt.');
-        }
-        if (onPaymentSuccess) onPaymentSuccess();
-        onClose();
-      } else {
-        toast.error(response.data.message || 'Payment failed');
-      }
+    mutationFn: paymentsAPI.initiateMPesa,
+    onSuccess: (response) => {
+      setPaymentId(response.data.payment_id);
+      setIsPolling(true);
+      setPollingStatus('waiting');
+      toast.success('STK Push sent! Check your phone.');
     },
     onError: (error) => {
-      const errorMsg = error.response?.data?.message || 'Payment failed. Please try again.';
-      toast.error(errorMsg);
+      toast.error(error.response?.data?.error || 'Failed to initiate M-Pesa payment');
     }
   });
 
   const handlePayment = (e) => {
     e.preventDefault();
-    resetPaymentError();
+    resetMpesaError();
 
-    if ((paymentMethod === 'mpesa' || paymentMethod === 'airtel') && !phoneNumber.trim()) {
-      toast.error('Phone number is required for mobile money payments');
-      return;
+    if (paymentMethod === 'mpesa') {
+      if (!phoneNumber.trim()) {
+        toast.error('Phone number is required for M-Pesa payments');
+        return;
+      }
+      if (!/^254\d{9}$/.test(phoneNumber.trim())) {
+        toast.error('Phone number must start with 254 and be 12 digits');
+        return;
+      }
+      initiateMPesa({
+        order_id: order.id,
+        phone_number: phoneNumber.trim()
+      });
+    } else {
+      toast.error('Only M-Pesa is supported in this demo');
     }
-
-    if (phoneNumber && !/^\+?[1-9]\d{8,14}$/.test(phoneNumber.trim())) {
-      toast.error('Please enter a valid phone number');
-      return;
-    }
-
-    initiatePayment({
-      order_id: order.id,
-      payment_method: paymentMethod,
-      phone_number: phoneNumber.trim()
-    });
   };
+
+  // Poll payment status every 10s, up to 5min (30 attempts)
+  useEffect(() => {
+    if (isPolling && paymentId) {
+      if (pollCount >= 30) {
+        setIsPolling(false);
+        setPollingStatus('timeout');
+        toast.error('⏰ Payment timeout. Please try again.');
+        return;
+      }
+      pollingTimer.current = setTimeout(async () => {
+        try {
+          const res = await paymentsAPI.getPaymentStatus(paymentId);
+          const status = res.data.status;
+          if (status === 'succeeded') {
+            setIsPolling(false);
+            setPollingStatus('success');
+            toast.success('🎉 Payment successful!');
+            if (onPaymentSuccess) onPaymentSuccess();
+            onClose();
+          } else if (status === 'failed' || status === 'cancelled') {
+            setIsPolling(false);
+            setPollingStatus('failed');
+            toast.error('❌ Payment failed or cancelled');
+          } else {
+            setPollCount((c) => c + 1);
+          }
+        } catch (err) {
+          setIsPolling(false);
+          setPollingStatus('error');
+          toast.error('Error checking payment status');
+        }
+      }, 10000);
+      return () => clearTimeout(pollingTimer.current);
+    }
+    // eslint-disable-next-line
+  }, [isPolling, paymentId, pollCount]);
+
+  // Reset polling state on modal close
+  useEffect(() => {
+    if (!isOpen) {
+      setPaymentId(null);
+      setIsPolling(false);
+      setPollCount(0);
+      setPollingStatus('');
+      setPhoneNumber('');
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -130,7 +172,7 @@ const PaymentModal = (props) => {
             </select>
           </div>
 
-          {(paymentMethod === 'mpesa' || paymentMethod === 'airtel') && (
+          {paymentMethod === 'mpesa' && (
             <div style={{ marginBottom: 'var(--space-4)' }}>
               <label style={{ display: 'block', marginBottom: 'var(--space-2)', fontWeight: '500' }}>
                 {props.phoneNumberLabel || 'Phone Number'}
@@ -152,15 +194,35 @@ const PaymentModal = (props) => {
             </div>
           )}
 
-          {paymentError && (
-            <div style={{
-              color: 'var(--error)',
-              marginBottom: 'var(--space-4)',
-              padding: 'var(--space-2)',
-              backgroundColor: '#fee',
-              borderRadius: 'var(--radius-sm)'
-            }}>
-              {paymentError.response?.data?.message || paymentError.message || 'Payment failed'}
+
+          {/* Polling and status messages */}
+          {mpesaLoading && (
+            <div style={{ color: '#007e33', marginBottom: 16 }}>
+              ⏳ Sending...<br />
+              <small>Initiating STK Push to your phone.</small>
+            </div>
+          )}
+          {isPolling && (
+            <div style={{ color: '#007e33', marginBottom: 16 }}>
+              📱 Waiting for payment...<br />
+              <small>Check your phone and complete the M-Pesa prompt.</small><br />
+              <progress value={pollCount} max={30} style={{ width: '100%' }} />
+              <div style={{ fontSize: 12, marginTop: 4 }}>Elapsed: {pollCount * 10}s / 300s</div>
+            </div>
+          )}
+          {pollingStatus === 'success' && (
+            <div style={{ color: '#007e33', marginBottom: 16 }}>
+              🎉 Payment successful!
+            </div>
+          )}
+          {pollingStatus === 'failed' && (
+            <div style={{ color: '#d32f2f', marginBottom: 16 }}>
+              ❌ Payment failed or cancelled.
+            </div>
+          )}
+          {pollingStatus === 'timeout' && (
+            <div style={{ color: '#d32f2f', marginBottom: 16 }}>
+              ⏰ Payment timeout. Please try again.
             </div>
           )}
 
@@ -181,11 +243,11 @@ const PaymentModal = (props) => {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={mpesaLoading || isPolling}
               className="btn btn-primary"
               style={{ flex: 1 }}
             >
-              {loading ? (props.processingLabel || 'Processing...') : (props.payNowLabel || 'Pay Now')}
+              {mpesaLoading ? '⏳ Sending...' : isPolling ? '📱 Waiting...' : (props.payNowLabel || 'Pay Now')}
             </button>
           </div>
         </form>

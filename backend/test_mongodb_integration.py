@@ -1,63 +1,6 @@
-#!/usr/bin/env python3
-"""
-Test script to verify Django REST Framework + MongoDB Atlas integration.
-This script tests the MongoDB connection and product fetching functionality.
-"""
 
-import os
-import sys
-import django
-from pathlib import Path
-
-# Add backend directory to Python path
-backend_dir = Path(__file__).resolve().parent
-sys.path.insert(0, str(backend_dir))
-
-# Setup Django environment
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecommerce.settings')
-os.environ.setdefault('MONGO_URI', 'mongodb+srv://<username>:<password>@cluster.mongodb.net/easycart?retryWrites=true&w=majority')
-
-try:
-    django.setup()
-except Exception as e:
-    print(f"❌ Error setting up Django: {e}")
-    sys.exit(1)
-
-from apps.products.mongodb_utils import (
-    check_mongodb_connection,
-    get_products_from_mongodb,
-    get_product_by_id_from_mongodb,
-    get_categories_from_mongodb
-)
-
-
-def print_header(text):
-    """Print a formatted header."""
-    print("\n" + "=" * 70)
-    print(f"  {text}")
-    print("=" * 70)
-
-
-def test_mongodb_connection():
-    """Test MongoDB connection status."""
-    print_header("Testing MongoDB Connection")
-    
-    try:
-        status = check_mongodb_connection()
-        
-        if status.get('status') == 'connected':
-            print("✅ MongoDB connection successful!")
-            print(f"   Database: {status.get('database')}")
-            print(f"   MongoDB Version: {status.get('mongodb_version')}")
-            print(f"   Products Count: {status.get('products_count')}")
-            return True
-        else:
-            print(f"❌ MongoDB connection failed: {status.get('error')}")
-            return False
-            
-    except Exception as e:
-        print(f"❌ Connection test error: {str(e)}")
-        return False
+# DEPRECATED: This test file is obsolete after migration to PostgreSQL.
+# All MongoDB integration tests have been removed.
 
 
 def test_get_products():

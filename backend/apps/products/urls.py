@@ -1,3 +1,9 @@
+from rest_framework.routers import DefaultRouter
+from .admin_views import AdminProductViewSet, AdminCategoryViewSet
+
+admin_router = DefaultRouter()
+admin_router.register(r'admin/products', AdminProductViewSet, basename='admin-product')
+admin_router.register(r'admin/categories', AdminCategoryViewSet, basename='admin-category')
 from django.urls import path
 from . import views
 from . import wishlist_views
@@ -23,3 +29,6 @@ urlpatterns = [
     path('reviews/create/', review_views.ReviewCreateView.as_view(), name='review-create'),
     path('reviews/helpful/', review_views.mark_review_helpful, name='review-helpful'),
 ]
+
+# Admin endpoints
+urlpatterns += admin_router.urls

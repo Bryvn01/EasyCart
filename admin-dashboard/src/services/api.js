@@ -114,40 +114,25 @@ export const authAPI = {
 
 export const adminAPI = {
   getDashboardStats: () => api.get('/admin/dashboard'),
-  
-  // Product APIs (Enhanced)
-  getProducts: (params) => api.get('/products', { params }),
-  getProduct: (id) => api.get(`/products/${id}`),
-  createProduct: (data) => api.post('/products', data),
-  updateProduct: (id, data) => api.put(`/products/${id}`, data),
-  deleteProduct: (id) => api.delete(`/products/${id}`),
-  bulkDeleteProducts: (ids) => api.post('/products/bulk-delete', { ids }),
-  bulkUpdateProducts: (productIds, updateData) => api.patch('/products/bulk', { productIds, updateData }),
-  
-  // Inventory Management
-  updateStock: (id, stock, operation) => api.patch(`/products/${id}/stock`, { stock, operation }),
-  getLowStockProducts: () => api.get('/products/inventory/low-stock'),
-  getOutOfStockProducts: () => api.get('/products/inventory/out-of-stock'),
-  
-  // Image Upload (Enhanced for multiple images)
-  uploadImage: (formData) => api.post('/upload/image', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
-  uploadImages: (formData) => api.post('/upload/images', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
-  deleteImage: (publicId) => api.delete(`/upload/image/${encodeURIComponent(publicId)}`),
-  
-  // Category APIs
-  getCategories: () => api.get('/categories'),
-  createCategory: (data) => api.post('/categories', data),
-  updateCategory: (id, data) => api.put(`/categories/${id}`, data),
-  deleteCategory: (id) => api.delete(`/categories/${id}`),
-  
+
+  // Product APIs (Admin endpoints)
+  getProducts: (params) => api.get('/products/admin/products/', { params }),
+  getProduct: (id) => api.get(`/products/admin/products/${id}/`),
+  createProduct: (data) => api.post('/products/admin/products/', data),
+  updateProduct: (id, data) => api.put(`/products/admin/products/${id}/`, data),
+  deleteProduct: (id) => api.delete(`/products/admin/products/${id}/`),
+  bulkDeleteProducts: (ids) => api.post('/products/admin/products/bulk_delete/', { ids }),
+  updateStock: (id, operation, value) => api.post(`/products/admin/products/${id}/update_stock/`, { operation, value }),
+
+  // Category APIs (Admin endpoints)
+  getCategories: () => api.get('/products/admin/categories/'),
+  createCategory: (data) => api.post('/products/admin/categories/', data),
+  updateCategory: (id, data) => api.put(`/products/admin/categories/${id}/`, data),
+  deleteCategory: (id) => api.delete(`/products/admin/categories/${id}/`),
+
   // Order APIs
   getOrders: (params) => api.get('/orders', { params }),
   updateOrderStatus: (id, status) => api.patch(`/orders/${id}`, { status }),
-  
 };
 
 export default api;

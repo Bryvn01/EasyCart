@@ -28,14 +28,10 @@ class CategoryListView(APIView):
         try:
             categories = Category.objects.all()
             serializer = CategorySerializer(categories, many=True)
-            
-            logger.info(f"✅ Returned {len(serializer.data)} categories from PostgreSQL")
+            logger.info(f"Returned {len(serializer.data)} categories from PostgreSQL")
             return Response(serializer.data, status=status.HTTP_200_OK)
-            
-            return Response(transformed_categories, status=status.HTTP_200_OK)
-            
         except Exception as e:
-            logger.error(f"❌ Error in CategoryListView: {str(e)}")
+            logger.error(f"Error in CategoryListView: {str(e)}")
             return Response(
                 {'error': 'Failed to fetch categories', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -109,10 +105,10 @@ class ProductListView(APIView):
                 'previous': page > 1,
                 'results': serializer.data
             }
-            logger.info(f"✅ Returned {len(serializer.data)} products from PostgreSQL (page {page}/{total_pages})")
+            logger.info(f"Returned {len(serializer.data)} products from PostgreSQL (page {page}/{total_pages})")
             return Response(response_data, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error(f"❌ Error in ProductListView: {str(e)}")
+            logger.error(f"Error in ProductListView: {str(e)}")
             return Response(
                 {'error': 'Failed to fetch products', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -124,14 +120,14 @@ class ProductListView(APIView):
             serializer = ProductCreateUpdateSerializer(data=request.data)
             if serializer.is_valid():
                 product = serializer.save()
-                logger.info(f"✅ Product created with ID: {product.id}")
+                logger.info(f"SUCCESS: Product created with ID: {product.id}")
                 return Response(
                     ProductSerializer(product).data,
                     status=status.HTTP_201_CREATED
                 )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error(f"❌ Failed to create product: {str(e)}")
+            logger.error(f"ERROR: Failed to create product: {str(e)}")
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
@@ -158,10 +154,10 @@ class ProductDetailView(APIView):
                     status=status.HTTP_404_NOT_FOUND
                 )
             serializer = ProductSerializer(product)
-            logger.info(f"✅ Returned product: {product.name}")
+            logger.info(f"SUCCESS: Returned product: {product.name}")
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error(f"❌ Error in ProductDetailView: {str(e)}")
+            logger.error(f"ERROR: Error in ProductDetailView: {str(e)}")
             return Response(
                 {'error': 'Failed to fetch product', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -179,11 +175,11 @@ class ProductDetailView(APIView):
             serializer = ProductCreateUpdateSerializer(product, data=request.data, partial=False)
             if serializer.is_valid():
                 product = serializer.save()
-                logger.info(f"✅ Product {pk} updated successfully")
+                logger.info(f"SUCCESS: Product {pk} updated successfully")
                 return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error(f"❌ Failed to update product {pk}: {str(e)}")
+            logger.error(f"ERROR: Failed to update product {pk}: {str(e)}")
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
@@ -201,11 +197,11 @@ class ProductDetailView(APIView):
             serializer = ProductCreateUpdateSerializer(product, data=request.data, partial=True)
             if serializer.is_valid():
                 product = serializer.save()
-                logger.info(f"✅ Product {pk} updated successfully")
+                logger.info(f"SUCCESS: Product {pk} updated successfully")
                 return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error(f"❌ Failed to update product {pk}: {str(e)}")
+            logger.error(f"ERROR: Failed to update product {pk}: {str(e)}")
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
@@ -222,13 +218,13 @@ class ProductDetailView(APIView):
                 )
             product_name = product.name
             product.delete()
-            logger.info(f"✅ Product {pk} ({product_name}) deleted successfully")
+            logger.info(f"SUCCESS: Product {pk} ({product_name}) deleted successfully")
             return Response(
                 {'message': 'Product deleted successfully'},
                 status=status.HTTP_200_OK
             )
         except Exception as e:
-            logger.error(f"❌ Failed to delete product {pk}: {str(e)}")
+            logger.error(f"ERROR: Failed to delete product {pk}: {str(e)}")
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
