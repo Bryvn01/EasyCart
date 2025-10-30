@@ -1,3 +1,78 @@
+// --- Admin Product/Category API ---
+export const adminProductsAPI = {
+  getProducts: (params) => api.get('/products/admin/products/', { params }),
+  getProduct: (id) => api.get(`/products/admin/products/${id}/`),
+  createProduct: (data) => {
+    if (data.image_file) {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === 'image_file' && value) {
+          formData.append('image', value);
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, value);
+        }
+      });
+      return api.post('/products/admin/products/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+    return api.post('/products/admin/products/', data);
+  },
+  updateProduct: (id, data) => {
+    if (data.image_file) {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === 'image_file' && value) {
+          formData.append('image', value);
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, value);
+        }
+      });
+      return api.put(`/products/admin/products/${id}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+    return api.put(`/products/admin/products/${id}/`, data);
+  },
+  deleteProduct: (id) => api.delete(`/products/admin/products/${id}/`),
+  bulkDelete: (ids) => api.post('/products/admin/products/bulk_delete/', { ids }),
+  updateStock: (id, operation, value) => api.post(`/products/admin/products/${id}/update_stock/`, { operation, value }),
+  getCategories: (params) => api.get('/products/admin/categories/', { params }),
+  getCategory: (id) => api.get(`/products/admin/categories/${id}/`),
+  createCategory: (data) => api.post('/products/admin/categories/', data),
+  updateCategory: (id, data) => api.put(`/products/admin/categories/${id}/`, data),
+  deleteCategory: (id) => api.delete(`/products/admin/categories/${id}/`),
+};
+import axios from 'axios';
+
+// === IMPORTANT: Always use .env for production API URL ===
+// Never use demo/mock mode or fallback URL in production!
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
+// Log API configuration in development
+if (process.env.NODE_ENV === 'development') {
+  console.log('API Configuration:', {
+    baseURL: API_BASE_URL,
+    env: process.env.REACT_APP_API_URL || '(not set)',
+    isUndefined: API_BASE_URL === undefined,
+    isString: typeof API_BASE_URL,
+  });
+  
+  if (!API_BASE_URL || API_BASE_URL === 'undefined') {
+    console.error('❌ REACT_APP_API_URL is not set properly!');
+    console.error('Please check your .env file in the frontend directory.');
+    console.error('Expected: REACT_APP_API_URL=http://localhost:8000/api');
+  }
+}
+
+const api = axios.create({
+  baseURL: API_BASE_URL || '',
+  timeout: 30000, // 30 second timeout
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 // --- Customer Management API ---
 export const customersAPI = {
   // Admin: list all customers
@@ -11,35 +86,16 @@ export const customersAPI = {
   // Admin or self: delete customer
   delete: (id) => api.delete(`/auth/customers/${id}/`),
 };
-import axios from 'axios';
-
-
-
-// === IMPORTANT: Always use .env for production API URL ===
-// Never use demo/mock mode or fallback URL in production!
-const API_BASE_URL = process.env.REACT_APP_API_URL;
-
-// Log API configuration in development
-if (process.env.NODE_ENV === 'development') {
-  console.log('API Configuration:', {
-    baseURL: API_BASE_URL,
-    env: process.env.REACT_APP_API_URL || '(using default)',
-  });
-}
-
-const api = axios.create({
-  baseURL: API_BASE_URL || '',
-  timeout: 30000, // 30 second timeout
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
 
 // Add a request interceptor to throw if baseURL is missing at call time
 api.interceptors.request.use(
   (config) => {
-    if (!API_BASE_URL) {
-      throw new Error('REACT_APP_API_URL is not set! Please check your .env file.');
+    if (!API_BASE_URL || API_BASE_URL === 'undefined') {
+      const errorMsg = 'REACT_APP_API_URL is not set properly! Please check your .env file and restart the frontend server.';
+      console.error('❌', errorMsg);
+      console.error('Current value:', API_BASE_URL);
+      console.error('Expected: http://localhost:8000/api');
+      throw new Error(errorMsg);
     }
     return config;
   },
@@ -244,6 +300,12 @@ export const adminAPI = {
   getDashboardStats: (days = 30) => api.get(`/admin/dashboard/?days=${days}`),
   getOrdersAdmin: (params) => api.get('/admin/orders/', { params }),
   updateOrderStatus: (id, status) => api.patch(`/admin/orders/${id}/`, { status }),
+};
+
+// --- Payments API ---
+export const paymentsAPI = {
+  initiateMPesa: (data) => api.post('/payments/initiate_mpesa/', data),
+  getPaymentStatus: (paymentId) => api.get(`/payments/${paymentId}/`),
 };
 
 export default api;

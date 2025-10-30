@@ -1,4 +1,6 @@
 import React, { Suspense, useEffect } from 'react';
+import ApiEnvWarning from './components/ApiEnvWarning';
+import { getApiBaseUrl } from './services/api';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -45,6 +47,7 @@ function App() {
             <ThemeProvider>
               <Router>
                 <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+                  <ApiEnvWarning baseUrl={getApiBaseUrl()} />
                   <Navbar />
                   <main className="flex-1">
                     <Suspense fallback={<Loading size="lg" className="py-20" />}>

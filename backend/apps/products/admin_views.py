@@ -28,7 +28,6 @@ class AdminProductViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         queryset = super().get_queryset()
-        
         # Filter by stock levels
         stock_filter = self.request.query_params.get('stock_filter')
         if stock_filter == 'low':
@@ -37,8 +36,37 @@ class AdminProductViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(stock=0)
         elif stock_filter == 'in':
             queryset = queryset.filter(stock__gt=0)
-        
         # Filter by price range
+        # ...existing code...
+        return queryset
+
+    @action(detail=False, methods=['post'], url_path='bulk_delete')
+    def bulk_delete(self, request):
+        ids = request.data.get('ids', [])
+        Product.objects.filter(id__in=ids).delete()
+        return Response({'status': 'deleted', 'ids': ids})
+
+    @action(detail=True, methods=['post'], url_path='update_stock')
+    def update_stock(self, request, pk=None):
+        product = self.get_object()
+        op = request.data.get('operation', 'set')
+        value = int(request.data.get('value', 0))
+        if op == 'add':
+            product.stock += value
+        elif op == 'subtract':
+            product.stock = max(0, product.stock - value)
+        else:
+            product.stock = value
+        product.save()
+        return Response({'id': product.id, 'stock': product.stock})
+class AdminCategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['is_active']
+    search_fields = ['name', 'description']
+    ordering_fields = ['id', 'name', 'created_at']
+    permission_classes = [IsAuthenticated, IsAdminUser]
         min_price = self.request.query_params.get('min_price')
         max_price = self.request.query_params.get('max_price')
         if min_price:

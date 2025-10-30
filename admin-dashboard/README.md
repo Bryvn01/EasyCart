@@ -1,14 +1,20 @@
-# EasyCart Admin Dashboard
+
+# EasyCart Admin Dashboard (2025)
 
 Modern, responsive admin dashboard for managing the EasyCart e-commerce platform.
 
+
 ## Features
 
-- **Secure Authentication**: Role-based access control for admin users only
+- **Superadmin CRUD**: Full CRUD for products, categories, and orders via new admin endpoints
+- **Bulk Actions**: Bulk delete, update stock, inline editing
+- **Role Management**: Assign/change roles (superadmin/manager only), audit-logged
+- **Admin/Frontend Sync**: All admin actions are instantly reflected in the frontend
+- **Secure Authentication**: JWT-based, role-based access control for all admin endpoints
 - **Dashboard Overview**: Key metrics and recent orders
-- **Product Management**: Full CRUD operations for products
-- **Order Management**: View and update order statuses
-- **User Management**: View and manage user accounts
+- **Product Management**: Full CRUD, bulk actions, image upload/URL
+- **Order Management**: View, update, and manage order statuses
+- **User Management**: View, manage, and assign roles
 - **Reports & Analytics**: Business performance metrics
 
 ## Tech Stack
@@ -67,17 +73,36 @@ admin-dashboard/
 └── package.json
 ```
 
-## API Integration
 
-The dashboard connects to the existing EasyCart backend:
+## API Integration (Admin Endpoints)
+
+The dashboard connects to the EasyCart backend using dedicated admin endpoints:
 
 - **Authentication**: `/api/auth/login`, `/api/auth/profile`
-- **Products**: `/api/products` (CRUD operations)
-- **Orders**: `/api/orders` (view, update status)
-- **Users**: `/api/users` (view, manage)
+- **Products (Admin)**: `/api/products/admin/products/` (CRUD, bulk actions)
+- **Categories (Admin)**: `/api/products/admin/categories/` (CRUD)
+- **Orders (Admin)**: `/api/orders/admin/orders/` (CRUD)
+- **Bulk Actions**: `/api/products/admin/products/bulk_delete/`, `/api/products/admin/products/update_stock/`
+- **Users**: `/api/users` (view, manage, assign roles)
 - **Dashboard**: `/api/admin/dashboard` (metrics)
 
-## Security
+All admin endpoints are protected by JWT authentication and role-based permissions. See [ADMIN_DASHBOARD_API_FIX_SUMMARY.md](../ADMIN_DASHBOARD_API_FIX_SUMMARY.md) and [ENHANCED_PRODUCT_API_GUIDE.md](../ENHANCED_PRODUCT_API_GUIDE.md) for full API details.
+
+
+## Security & Compliance
+
+- All admin endpoints require JWT authentication and enforce role-based permissions
+- Superadmin/manager can assign roles; all changes are audit-logged
+- CORS and secure HTTP headers enforced for all admin operations
+- Automated security checks and error monitoring (Sentry)
+## Documentation & Guides
+
+- [ADMIN_DASHBOARD_GUIDE.md](../ADMIN_DASHBOARD_GUIDE.md): Admin dashboard usage
+- [ADMIN_DASHBOARD_API_FIX_SUMMARY.md](../ADMIN_DASHBOARD_API_FIX_SUMMARY.md): Admin API details
+- [ENHANCED_PRODUCT_API_GUIDE.md](../ENHANCED_PRODUCT_API_GUIDE.md): Product API reference
+- [IMAGE_UPLOAD_GUIDE.md](../IMAGE_UPLOAD_GUIDE.md): Image upload (file & URL)
+- [TESTING_GUIDE.md](../TESTING_GUIDE.md): Automated tests and coverage
+- [SECURITY.md](../SECURITY.md): Security policy and known vulnerabilities
 
 - JWT token-based authentication
 - Role-based access control (admin only)
