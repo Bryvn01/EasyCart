@@ -8,7 +8,16 @@
 
 A complete e-commerce solution with React frontend and Django REST Framework backend, featuring PostgreSQL database, JWT authentication, superadmin CRUD operations, and production deployment on Render.
 
-## 🌍 Live Demo
+## 📖 Documentation
+
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+- **[PR Management Guidelines](docs/PR_MANAGEMENT_GUIDELINES.md)** - Pull request review and management
+- **[Code Style Guide](docs/CODE_STYLE_GUIDE.md)** - Coding standards and conventions
+- **[Post-Merge Monitoring](docs/POST_MERGE_MONITORING.md)** - Deployment monitoring procedures
+- **[Security Policy](SECURITY.md)** - Security guidelines and reporting
+- **[Full Documentation Index](docs/README.md)** - Complete documentation overview
+
+---
 
 - **Frontend**: https://easycart-frontend-wj9x.onrender.com/
 - **Admin Dashboard**: https://easycart-admin-08xf.onrender.com/
@@ -613,11 +622,26 @@ See deployment guides for detailed instructions.
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+We welcome contributions! Please follow our comprehensive contribution guidelines:
+
+1. Read the [Contributing Guide](CONTRIBUTING.md) for detailed instructions
+2. Review the [Code Style Guide](docs/CODE_STYLE_GUIDE.md) before writing code
+3. Fork the repository
+4. Create a feature branch (`git checkout -b feature/amazing-feature`)
+5. Write tests for your changes
+6. Commit your changes following our [commit message guidelines](CONTRIBUTING.md#commit-message-format)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Open a Pull Request using our [PR template](.github/PULL_REQUEST_TEMPLATE.md)
+
+### Pull Request Guidelines
+
+See our [PR Management Guidelines](docs/PR_MANAGEMENT_GUIDELINES.md) for:
+- Priority levels and review timelines
+- Code review standards
+- Testing requirements
+- Security considerations
+
+Quick reference: [PR Quick Reference](docs/PR_QUICK_REFERENCE.md)
 
 ## 📄 License
 
