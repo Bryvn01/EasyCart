@@ -459,4 +459,3 @@ Thank you for contributing to EasyCart! Your efforts help make this project bett
 - [PR Management Guidelines](docs/PR_MANAGEMENT_GUIDELINES.md)
 - [PR Quick Reference](docs/PR_QUICK_REFERENCE.md)
 - [Security Policy](SECURITY.md)
-- [Code of Conduct](CODE_OF_CONDUCT.md)

@@ -370,5 +370,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr.number,
-              body: `👋 Thanks for your contribution!\n\n**Priority Level:** ${priority}\n**Expected Review Timeline:** ${reviewTimeline}\n\n**Next Steps:**\n1. Ensure all CI checks pass\n2. Address any automated feedback\n3. Request review from relevant team members\n4. Respond to reviewer feedback promptly\n\n📚 **Resources:**\n- [PR Management Guidelines](docs/PR_MANAGEMENT_GUIDELINES.md)\n- [Contributing Guide](CONTRIBUTING.md)\n- [Code Style Guide](docs/code-style.md)\n\nReviewers will be automatically assigned based on the changes in this PR.`
+              body: `👋 Thanks for your contribution!\n\n**Priority Level:** ${priority}\n**Expected Review Timeline:** ${reviewTimeline}\n\n**Next Steps:**\n1. Ensure all CI checks pass\n2. Address any automated feedback\n3. Request review from relevant team members\n4. Respond to reviewer feedback promptly\n\n📚 **Resources:**\n- [PR Management Guidelines](docs/PR_MANAGEMENT_GUIDELINES.md)\n- [Contributing Guide](CONTRIBUTING.md)\n- [Code Style Guide](docs/CODE_STYLE_GUIDE.md)\n\nReviewers will be automatically assigned based on the changes in this PR.`
             });

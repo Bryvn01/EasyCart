@@ -366,9 +366,9 @@ A merge is considered successful if after 24 hours:
 ## 📚 Related Documentation
 
 - [PR Management Guidelines](PR_MANAGEMENT_GUIDELINES.md)
-- [Deployment Guide](../DEPLOYMENT_GUIDE.md)
-- [Rollback Procedures](../ROLLBACK_PROCEDURES.md)
-- [Incident Response Plan](../INCIDENT_RESPONSE.md)
+- [Deployment Guide](../DEPLOYMENT.md)
+- [Contributing Guide](../CONTRIBUTING.md)
+- [Security Policy](../SECURITY.md)
 
 ---
 

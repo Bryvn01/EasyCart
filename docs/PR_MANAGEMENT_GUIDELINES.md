@@ -402,7 +402,7 @@ When PRs conflict with other pending changes:
 
 ### Documentation
 - [Contributing Guidelines](../CONTRIBUTING.md)
-- [Code Style Guide](../docs/code-style.md)
+- [Code Style Guide](CODE_STYLE_GUIDE.md)
 - [Security Policy](../SECURITY.md)
 - [Architecture Documentation](../ARCHITECTURE_DIAGRAM.md)
 

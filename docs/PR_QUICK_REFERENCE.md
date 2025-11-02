@@ -152,10 +152,10 @@ useEffect(() => {
 ## 🔗 Quick Links
 
 - [Full PR Management Guidelines](PR_MANAGEMENT_GUIDELINES.md)
-- [PR Template](.github/PULL_REQUEST_TEMPLATE.md)
+- [PR Template](../.github/PULL_REQUEST_TEMPLATE.md)
 - [Contributing Guide](../CONTRIBUTING.md)
 - [Security Policy](../SECURITY.md)
-- [Code Style Guide](code-style.md)
+- [Code Style Guide](CODE_STYLE_GUIDE.md)
 
 ## 💡 Tips for Authors
 
