@@ -1,0 +1,374 @@
+name: PR Management & Automation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  pr-validation:
+    name: Validate PR Requirements
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check PR Template Compliance
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            
+            // Check if PR body has minimum required sections
+            const requiredSections = [
+              '## 📋 PR Type',
+              '## 🎯 Priority Level',
+              '## 📝 Description',
+              '## 🧪 Testing'
+            ];
+            
+            const missingSections = requiredSections.filter(section => !body.includes(section));
+            
+            if (missingSections.length > 0) {
+              core.setFailed(`PR template incomplete. Missing sections: ${missingSections.join(', ')}`);
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `⚠️ **PR Template Incomplete**\n\nPlease ensure your PR includes all required sections:\n${missingSections.map(s => `- ${s}`).join('\n')}\n\nRefer to the [PR template](.github/PULL_REQUEST_TEMPLATE.md) for guidance.`
+              });
+            } else {
+              console.log('✅ PR template is complete');
+            }
+
+  auto-label-by-type:
+    name: Auto-label by Type
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Changes and Apply Labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            
+            // Get changed files
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number
+            });
+            
+            const labels = new Set();
+            const changedFiles = files.map(f => f.filename);
+            
+            // Detect area based on file paths
+            if (changedFiles.some(f => f.startsWith('frontend/'))) {
+              labels.add('frontend');
+            }
+            if (changedFiles.some(f => f.startsWith('backend/'))) {
+              labels.add('backend');
+            }
+            if (changedFiles.some(f => f.startsWith('admin-dashboard/'))) {
+              labels.add('admin-dashboard');
+            }
+            if (changedFiles.some(f => f.includes('test') || f.includes('spec'))) {
+              labels.add('testing');
+            }
+            if (changedFiles.some(f => f.endsWith('.md') || f.startsWith('docs/'))) {
+              labels.add('documentation');
+            }
+            if (changedFiles.some(f => f.includes('.github/workflows'))) {
+              labels.add('infrastructure');
+            }
+            if (changedFiles.some(f => f.includes('requirements.txt') || f.includes('package.json') || f.includes('package-lock.json'))) {
+              labels.add('dependencies');
+            }
+            
+            // Detect type from PR body
+            const body = pr.body || '';
+            if (body.includes('[x] 🐛 Bug Fix')) {
+              labels.add('bug');
+            }
+            if (body.includes('[x] ⚡ Performance Enhancement')) {
+              labels.add('performance');
+            }
+            if (body.includes('[x] ♿ Accessibility Improvement')) {
+              labels.add('accessibility');
+            }
+            if (body.includes('[x] ✨ New Feature')) {
+              labels.add('enhancement');
+            }
+            if (body.includes('[x] 🔒 Security Fix')) {
+              labels.add('security');
+            }
+            
+            // Detect priority from PR body
+            if (body.includes('[x] 🔴 Critical')) {
+              labels.add('critical');
+              labels.add('priority: critical');
+            } else if (body.includes('[x] 🟠 High')) {
+              labels.add('priority: high');
+            } else if (body.includes('[x] 🟡 Medium')) {
+              labels.add('priority: medium');
+            } else if (body.includes('[x] 🟢 Low')) {
+              labels.add('priority: low');
+            }
+            
+            // Check for security-sensitive changes
+            const securityFiles = [
+              'apps/accounts/', 'apps/payments/', 'authentication', 
+              'security', 'settings.py', '.env'
+            ];
+            if (changedFiles.some(f => securityFiles.some(sf => f.includes(sf)))) {
+              labels.add('security-review-required');
+            }
+            
+            // Apply labels
+            if (labels.size > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: Array.from(labels)
+              });
+              console.log(`Applied labels: ${Array.from(labels).join(', ')}`);
+            }
+
+  security-check:
+    name: Security Review Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for Security-Sensitive Changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            
+            const securityChecks = [
+              'Changes authentication logic',
+              'Handles payment processing',
+              'Manages user data storage',
+              'Introduces new third-party dependencies'
+            ];
+            
+            const hasSecurityChanges = securityChecks.some(check => 
+              body.includes(`[x] ${check}`)
+            );
+            
+            if (hasSecurityChanges && !body.includes('### Security Review')) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `🔒 **Security Review Required**\n\nThis PR includes security-sensitive changes. Please:\n\n1. Complete the "Security Review" section in the PR description\n2. Request review from security-focused team members\n3. Ensure all security tests pass\n4. Document any security implications\n\nRefer to [Security Policy](docs/SECURITY.md) for guidelines.`
+              });
+            }
+
+  dependency-check:
+    name: Check New Dependencies
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'dependencies')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check npm dependencies for vulnerabilities
+        run: |
+          if [ -f frontend/package.json ]; then
+            cd frontend
+            npm audit --audit-level=high --production || echo "⚠️ Frontend dependencies have vulnerabilities"
+          fi
+          if [ -f admin-dashboard/package.json ]; then
+            cd admin-dashboard
+            npm audit --audit-level=high --production || echo "⚠️ Admin dependencies have vulnerabilities"
+          fi
+
+      - name: Check Python dependencies for vulnerabilities
+        run: |
+          if [ -f backend/requirements.txt ]; then
+            pip install safety
+            cd backend
+            safety check -r requirements.txt --output text || echo "⚠️ Backend dependencies have vulnerabilities"
+          fi
+
+  performance-check:
+    name: Performance Impact Analysis
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'performance')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check Bundle Size
+        run: |
+          if [ -f frontend/package.json ]; then
+            cd frontend
+            npm ci
+            npm run build
+            
+            # Check build size
+            BUILD_SIZE=$(du -sh build | cut -f1)
+            echo "Frontend build size: $BUILD_SIZE"
+            
+            # Could add bundle size comparison logic here
+          fi
+
+      - name: Comment Performance Metrics
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `⚡ **Performance Check**\n\nThis PR is labeled as a performance improvement. Please ensure:\n\n- [ ] Performance metrics (before/after) are documented\n- [ ] Bundle size impact is analyzed\n- [ ] Load time improvements are measured\n- [ ] No regression in other performance metrics\n\nSee [PR Guidelines](docs/PR_MANAGEMENT_GUIDELINES.md#performance--page-load) for details.`
+            });
+
+  accessibility-check:
+    name: Accessibility Check
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'accessibility')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install axe-core
+        run: npm install -g @axe-core/cli
+
+      - name: Build Frontend
+        run: |
+          if [ -f frontend/package.json ]; then
+            cd frontend
+            npm ci
+            npm run build
+          fi
+
+      - name: Comment Accessibility Requirements
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `♿ **Accessibility Check**\n\nThis PR includes accessibility improvements. Please verify:\n\n- [ ] ARIA labels added for interactive elements\n- [ ] Keyboard navigation tested\n- [ ] Color contrast meets WCAG 2.1 Level AA\n- [ ] Screen reader compatibility verified\n- [ ] Semantic HTML structure used\n\nSee [PR Guidelines](docs/PR_MANAGEMENT_GUIDELINES.md#accessibility-compliance) for details.`
+            });
+
+  pr-size-check:
+    name: Check PR Size
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR Size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number
+            });
+            
+            const additions = pr.additions;
+            const deletions = pr.deletions;
+            const totalChanges = additions + deletions;
+            const fileCount = files.length;
+            
+            let size = 'small';
+            let emoji = '✅';
+            let message = 'This PR is appropriately sized.';
+            
+            if (totalChanges > 1000 || fileCount > 50) {
+              size = 'extra-large';
+              emoji = '🚨';
+              message = 'This PR is very large. Consider breaking it into smaller PRs for easier review.';
+            } else if (totalChanges > 500 || fileCount > 30) {
+              size = 'large';
+              emoji = '⚠️';
+              message = 'This PR is large. Ensure it has a clear scope and good documentation.';
+            } else if (totalChanges > 200 || fileCount > 15) {
+              size = 'medium';
+              emoji = '📝';
+              message = 'This PR is medium-sized.';
+            }
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: `${emoji} **PR Size: ${size}**\n\n**Stats:**\n- Files changed: ${fileCount}\n- Lines added: ${additions}\n- Lines deleted: ${deletions}\n- Total changes: ${totalChanges}\n\n${message}`
+            });
+
+  pr-review-reminder:
+    name: Review Assignment Reminder
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
+    steps:
+      - name: Comment Review Guidelines
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            
+            let priority = 'medium';
+            let reviewTimeline = '3-5 days';
+            
+            if (body.includes('[x] 🔴 Critical')) {
+              priority = 'critical';
+              reviewTimeline = 'same day';
+            } else if (body.includes('[x] 🟠 High')) {
+              priority = 'high';
+              reviewTimeline = '1-2 days';
+            } else if (body.includes('[x] 🟢 Low')) {
+              priority = 'low';
+              reviewTimeline = '1-2 weeks';
+            }
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: `👋 Thanks for your contribution!\n\n**Priority Level:** ${priority}\n**Expected Review Timeline:** ${reviewTimeline}\n\n**Next Steps:**\n1. Ensure all CI checks pass\n2. Address any automated feedback\n3. Request review from relevant team members\n4. Respond to reviewer feedback promptly\n\n📚 **Resources:**\n- [PR Management Guidelines](docs/PR_MANAGEMENT_GUIDELINES.md)\n- [Contributing Guide](CONTRIBUTING.md)\n- [Code Style Guide](docs/code-style.md)\n\nReviewers will be automatically assigned based on the changes in this PR.`
+            });

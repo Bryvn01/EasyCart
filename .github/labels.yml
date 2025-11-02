@@ -1,0 +1,193 @@
+# GitHub Labels Configuration for EasyCart
+# This file defines the label schema for PR and issue management
+
+## Type Labels
+- name: bug
+  color: d73a4a
+  description: Something isn't working correctly
+
+- name: enhancement
+  color: a2eeef
+  description: New feature or request
+
+- name: performance
+  color: f9d0c4
+  description: Performance improvements
+
+- name: security
+  color: ee0701
+  description: Security-related changes
+
+- name: accessibility
+  color: 7057ff
+  description: Accessibility improvements
+
+- name: documentation
+  color: 0075ca
+  description: Documentation updates
+
+- name: refactoring
+  color: fbca04
+  description: Code refactoring
+
+## Priority Labels
+- name: critical
+  color: b60205
+  description: Critical priority - immediate attention required
+
+- name: "priority: high"
+  color: d93f0b
+  description: High priority - review within 1-2 days
+
+- name: "priority: medium"
+  color: fbca04
+  description: Medium priority - review within 3-5 days
+
+- name: "priority: low"
+  color: 0e8a16
+  description: Low priority - review within 1-2 weeks
+
+## Area Labels
+- name: frontend
+  color: 1d76db
+  description: Frontend/React changes
+
+- name: backend
+  color: 5319e7
+  description: Backend/Django changes
+
+- name: admin-dashboard
+  color: c5def5
+  description: Admin dashboard changes
+
+- name: database
+  color: 006b75
+  description: Database schema or migration changes
+
+- name: infrastructure
+  color: 0052cc
+  description: CI/CD, deployment, infrastructure
+
+- name: testing
+  color: bfd4f2
+  description: Test additions or updates
+
+- name: dependencies
+  color: 0366d6
+  description: Dependency updates
+
+## Status Labels
+- name: needs-review
+  color: fbca04
+  description: Awaiting review
+
+- name: changes-requested
+  color: d93f0b
+  description: Changes requested by reviewers
+
+- name: approved
+  color: 0e8a16
+  description: Approved and ready to merge
+
+- name: ready-to-merge
+  color: 0e8a16
+  description: All checks passed, ready to merge
+
+- name: blocked
+  color: d93f0b
+  description: Blocked by dependencies
+
+- name: work-in-progress
+  color: fbca04
+  description: Work in progress, not ready for review
+
+## Special Labels
+- name: security-review-required
+  color: ee0701
+  description: Requires security-focused review
+
+- name: breaking-change
+  color: b60205
+  description: Contains breaking changes
+
+- name: needs-testing
+  color: fbca04
+  description: Needs additional testing
+
+- name: needs-documentation
+  color: 0075ca
+  description: Needs documentation update
+
+- name: good-first-issue
+  color: 7057ff
+  description: Good for newcomers
+
+- name: good-first-review
+  color: 7057ff
+  description: Good for new reviewers
+
+- name: help-wanted
+  color: 008672
+  description: Extra attention needed from community
+
+- name: duplicate
+  color: cfd3d7
+  description: This issue or PR already exists
+
+- name: invalid
+  color: e4e669
+  description: This doesn't seem right
+
+- name: wontfix
+  color: ffffff
+  description: This will not be worked on
+
+- name: question
+  color: d876e3
+  description: Further information is requested
+
+## Feature-Specific Labels
+- name: checkout
+  color: c5def5
+  description: Related to checkout process
+
+- name: product-display
+  color: c5def5
+  description: Related to product display
+
+- name: search
+  color: c5def5
+  description: Related to search functionality
+
+- name: authentication
+  color: c5def5
+  description: Related to authentication/authorization
+
+- name: payment
+  color: c5def5
+  description: Related to payment processing
+
+- name: cart
+  color: c5def5
+  description: Related to shopping cart
+
+## Browser/Device Labels
+- name: browser-chrome
+  color: ededed
+  description: Issue specific to Chrome
+
+- name: browser-safari
+  color: ededed
+  description: Issue specific to Safari
+
+- name: browser-firefox
+  color: ededed
+  description: Issue specific to Firefox
+
+- name: mobile
+  color: ededed
+  description: Mobile-specific issue
+
+- name: desktop
+  color: ededed
+  description: Desktop-specific issue
