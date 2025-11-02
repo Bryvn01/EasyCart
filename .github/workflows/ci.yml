@@ -30,6 +30,10 @@ jobs:
       DATABASE_URL: postgres://easycart:easycart@localhost:5432/easycart
       MONGODB_URL: mongodb://localhost:27017/easycart
       SECRET_KEY: testsecretkey
+      CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+      CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+      CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+      CLOUDINARY_URL: cloudinary://${{ secrets.CLOUDINARY_API_KEY }}:${{ secrets.CLOUDINARY_API_SECRET }}@${{ secrets.CLOUDINARY_CLOUD_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
