@@ -5,17 +5,8 @@ const CategoryCard = ({ category, onClick, isSelected }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
-  const getCategoryImage = () => {
-    if (category.image_url) {
-      return normalizeImageUrl(category.image_url);
-    }
-    if (category.image) {
-      return normalizeImageUrl(category.image);
-    }
-    return null;
-  };
-
-  const imageUrl = getCategoryImage();
+  const imageUrl = category.image_url || category.image;
+  const normalizedUrl = imageUrl ? normalizeImageUrl(imageUrl) : null;
 
   const getCategoryEmoji = (name) => {
     const emojiMap = {
@@ -60,13 +51,13 @@ const CategoryCard = ({ category, onClick, isSelected }) => {
       aria-label={`View ${category.name} products`}
     >
       <div className="aspect-square relative overflow-hidden bg-gray-50">
-        {imageUrl && !imageError ? (
+        {normalizedUrl && !imageError ? (
           <>
             {imageLoading && (
               <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
             )}
             <img
-              src={imageUrl}
+              src={normalizedUrl}
               alt={category.name}
               className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
                 imageLoading ? 'opacity-0' : 'opacity-100'

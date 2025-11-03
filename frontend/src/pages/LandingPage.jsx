@@ -47,7 +47,7 @@ const ProductCardSkeleton = () => (
 
 // Category Card Component
 const CategoryCard = React.memo(({ category, getCategoryIcon }) => {
-  const categoryImage = category.image;
+  const categoryImage = category.image_url || category.image;
   const hasImage = !!categoryImage;
 
   return (
@@ -56,22 +56,26 @@ const CategoryCard = React.memo(({ category, getCategoryIcon }) => {
       className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105 group focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
       aria-label={`Browse ${category.name} category`}
     >
-      <div className="relative aspect-square mb-3 overflow-hidden rounded-lg bg-gray-100">
+      <div className="relative aspect-square mb-3 overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-gray-100">
         {hasImage ? (
-          <ImageWithFallback
+          <img
             src={categoryImage}
             alt={category.name}
-            fallbackCategory="category"
-            lazy
-            showSkeleton
-            className="w-full h-full group-hover:scale-110 transition-transform duration-300"
-            style={{ objectFit: 'cover' }}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            loading="lazy"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
           />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
-            {getCategoryIcon(category.name)}
-          </div>
-        )}
+        ) : null}
+        <div 
+          className="w-full h-full flex items-center justify-center text-5xl group-hover:scale-110 transition-transform duration-300" 
+          style={{ display: hasImage ? 'none' : 'flex' }}
+          aria-hidden="true"
+        >
+          {getCategoryIcon(category.name)}
+        </div>
       </div>
       <h3 className="text-sm font-semibold text-gray-900 text-center group-hover:text-primary-600 transition-colors">
         {category.name}
