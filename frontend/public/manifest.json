@@ -1,7 +1,7 @@
 {
   "short_name": "EasyCart",
-  "name": "EasyCart - Your Online Supermarket",
-  "description": "Shop groceries online with EasyCart. Fast delivery, fresh products, and great prices.",
+  "name": "EasyCart - Kenya's #1 Online Shopping",
+  "description": "Shop 10,000+ genuine products. Free delivery in Nairobi. Groceries, electronics, fashion & more. Trusted by 50,000+ Kenyans.",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -19,7 +19,11 @@
   "theme_color": "#2563eb",
   "background_color": "#ffffff",
   "orientation": "portrait-primary",
-  "categories": ["shopping", "lifestyle"],
+  "categories": ["shopping", "lifestyle", "food", "retail"],
+  "lang": "en-KE",
+  "dir": "ltr",
+  "scope": "/",
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "shortcuts": [
     {
       "name": "Browse Products",
