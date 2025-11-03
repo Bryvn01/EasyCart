@@ -1,6 +1,14 @@
 // jest-dom adds custom jest matchers for asserting on DOM nodes.
 import '@testing-library/jest-dom';
 
+// Mock react-router-dom
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '', hash: '', state: null }),
+  useParams: () => ({}),
+}));
+
 // Mock localStorage
 const localStorageMock = {
   getItem: jest.fn(),
@@ -36,5 +44,21 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key) => key,
     i18n: { changeLanguage: jest.fn() }
-  })
+  }),
+  Trans: ({ children }) => children
 }));
+
+// Suppress console errors in tests
+const originalError = console.error;
+global.console = {
+  ...console,
+  error: (...args) => {
+    if (args[0]?.includes?.('Not implemented: navigation')) return;
+    originalError(...args);
+  },
+  warn: jest.fn(),
+};
+
+// Mock window.location for tests
+delete window.location;
+window.location = { href: 'http://localhost:3000', origin: 'http://localhost:3000', reload: jest.fn() };

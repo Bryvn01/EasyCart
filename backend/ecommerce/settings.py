@@ -384,11 +384,25 @@ ADMIN_URL = config('ADMIN_URL', default='admin/')
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 # M-Pesa Settings
-MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY')
-MPESA_CONSUMER_SECRET = config('MPESA_CONSUMER_SECRET')
-MPESA_SHORTCODE = config('MPESA_SHORTCODE', default='174379')
-MPESA_PASSKEY = config('MPESA_PASSKEY')
-MPESA_CALLBACK_URL = config('MPESA_CALLBACK_URL')
+from decouple import UndefinedValueError
+from django.core.exceptions import ImproperlyConfigured
+
+def get_env_var(var, default=None, required=False):
+    try:
+        return config(var)
+    except UndefinedValueError:
+        if required:
+            raise ImproperlyConfigured(f"{var} must be set in production")
+        return default
+
+MPESA_CONSUMER_KEY = get_env_var('MPESA_CONSUMER_KEY', default='', required=False)
+MPESA_CONSUMER_SECRET = get_env_var('MPESA_CONSUMER_SECRET', default='', required=False)
+MPESA_SHORTCODE = get_env_var('MPESA_SHORTCODE', default='174379', required=False)
+MPESA_PASSKEY = get_env_var('MPESA_PASSKEY', default='', required=False)
+try:
+    MPESA_CALLBACK_URL = config('MPESA_CALLBACK_URL')
+except UndefinedValueError:
+    raise Exception("MPESA_CALLBACK_URL must be set in the environment or .env file.")
 
 # Development CORS override
 if DEBUG:

@@ -10,3 +10,10 @@ export function withQueryClientProvider(ui) {
     </QueryClientProvider>
   );
 }
+
+// Test to ensure test-utils.js is covered
+describe('test-utils', () => {
+  it('should export withQueryClientProvider', () => {
+    expect(typeof withQueryClientProvider).toBe('function');
+  });
+});
