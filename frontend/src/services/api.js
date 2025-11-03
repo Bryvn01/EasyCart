@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 // --- Admin Product/Category API ---
 export const adminProductsAPI = {
   getProducts: (params) => api.get('/products/admin/products/', { params }),
@@ -43,7 +45,6 @@ export const adminProductsAPI = {
   updateCategory: (id, data) => api.put(`/products/admin/categories/${id}/`, data),
   deleteCategory: (id) => api.delete(`/products/admin/categories/${id}/`),
 };
-import axios from 'axios';
 
 // === IMPORTANT: Always use .env for production API URL ===
 // Never use demo/mock mode or fallback URL in production!
