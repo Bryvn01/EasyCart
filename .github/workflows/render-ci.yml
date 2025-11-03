@@ -40,10 +40,15 @@ jobs:
       - name: Run backend tests
         env:
           SECRET_KEY: django-insecure-test-key-for-ci-only-12345
-          DEBUG: False
+          DEBUG: True
           ALLOWED_HOSTS: localhost,127.0.0.1,testserver
           DB_ENGINE: django.db.backends.sqlite3
           DB_NAME: db.sqlite3
+          DB_USER: ''
+          DB_PASSWORD: ''
+          DB_HOST: ''
+          DB_PORT: ''
+          CORS_ALLOWED_ORIGINS: http://localhost:3000
         run: |
           cd backend
           python manage.py test
