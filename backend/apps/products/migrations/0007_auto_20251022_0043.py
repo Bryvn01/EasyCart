@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0006_historicalcategory_historicalproduct'),
+        ("products", "0006_historicalcategory_historicalproduct"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='productimage',
-            name='image_url',
+            model_name="productimage",
+            name="image_url",
             field=models.CharField(blank=True, max_length=500),
         ),
         migrations.AlterField(
-            model_name='productimage',
-            name='image',
-            field=models.ImageField(blank=True, upload_to='products/gallery/'),
+            model_name="productimage",
+            name="image",
+            field=models.ImageField(blank=True, upload_to="products/gallery/"),
         ),
     ]

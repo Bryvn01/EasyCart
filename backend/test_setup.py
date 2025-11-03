@@ -8,14 +8,14 @@ import django
 from django.core.management import call_command
 
 # Setup Django
-sys.path.append('.')
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecommerce.settings')
+sys.path.append(".")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
 django.setup()
 
 # Run migrations first
 print("Running migrations...")
 try:
-    call_command('migrate', verbosity=0)
+    call_command("migrate", verbosity=0)
     print("[OK] Migrations completed")
 except Exception as e:
     print(f"[WARNING] Migration error (may be expected): {e}")
@@ -25,21 +25,18 @@ from apps.products.models import Category, Product
 
 User = get_user_model()
 
+
 def setup_test_data():
     """Create test data for API tests"""
     print("Setting up test data...")
 
     # Create test user
-    test_email = os.getenv('TEST_EMAIL', 'test@example.com')
-    test_password = os.getenv('TEST_PASSWORD', 'testpassword')
-    test_username = os.getenv('TEST_USERNAME', 'testuser')
+    test_email = os.getenv("TEST_EMAIL", "test@example.com")
+    test_password = os.getenv("TEST_PASSWORD", "testpassword")
+    test_username = os.getenv("TEST_USERNAME", "testuser")
 
     user, created = User.objects.get_or_create(
-        email=test_email,
-        defaults={
-            'username': test_username,
-            'password': test_password
-        }
+        email=test_email, defaults={"username": test_username, "password": test_password}
     )
 
     if created:
@@ -51,8 +48,7 @@ def setup_test_data():
 
     # Create test category
     category, created = Category.objects.get_or_create(
-        name='Test Category',
-        defaults={'description': 'Test category for API tests'}
+        name="Test Category", defaults={"description": "Test category for API tests"}
     )
 
     if created:
@@ -62,14 +58,14 @@ def setup_test_data():
 
     # Create test product
     product, created = Product.objects.get_or_create(
-        name='Test Product',
+        name="Test Product",
         defaults={
-            'description': 'Test product for API tests',
-            'price': 10.00,
-            'category': category,
-            'stock': 100,
-            'is_active': True
-        }
+            "description": "Test product for API tests",
+            "price": 10.00,
+            "category": category,
+            "stock": 100,
+            "is_active": True,
+        },
     )
 
     if created:
@@ -78,6 +74,7 @@ def setup_test_data():
         print("[OK] Test product already exists")
 
     print("Test data setup complete!")
+
 
 if __name__ == "__main__":
     setup_test_data()

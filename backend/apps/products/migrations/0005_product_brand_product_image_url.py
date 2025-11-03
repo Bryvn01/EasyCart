@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0004_review_reviewhelpful_wishlist_wishlistitem_and_more'),
+        ("products", "0004_review_reviewhelpful_wishlist_wishlistitem_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='product',
-            name='brand',
+            model_name="product",
+            name="brand",
             field=models.CharField(blank=True, max_length=100),
         ),
         migrations.AddField(
-            model_name='product',
-            name='image_url',
+            model_name="product",
+            name="image_url",
             field=models.CharField(blank=True, max_length=500),
         ),
     ]

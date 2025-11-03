@@ -9,141 +9,159 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0003_fix_missing_fields'),
+        ("products", "0003_fix_missing_fields"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Review',
+            name="Review",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('rating', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
-                ('title', models.CharField(max_length=200)),
-                ('comment', models.TextField()),
-                ('is_verified_purchase', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "rating",
+                    models.IntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(5),
+                        ]
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("comment", models.TextField()),
+                ("is_verified_purchase", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='ReviewHelpful',
+            name="ReviewHelpful",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_helpful', models.BooleanField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("is_helpful", models.BooleanField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Wishlist',
+            name="Wishlist",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='WishlistItem',
+            name="WishlistItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('added_at', models.DateTimeField(auto_now_add=True)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("added_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'ordering': ['-added_at'],
+                "ordering": ["-added_at"],
             },
         ),
         migrations.AlterModelOptions(
-            name='category',
-            options={'ordering': ['name'], 'verbose_name_plural': 'Categories'},
+            name="category",
+            options={"ordering": ["name"], "verbose_name_plural": "Categories"},
         ),
         migrations.AlterModelOptions(
-            name='product',
-            options={'ordering': ['-created_at']},
+            name="product",
+            options={"ordering": ["-created_at"]},
         ),
         migrations.AlterField(
-            model_name='product',
-            name='category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='products', to='products.category'),
+            model_name="product",
+            name="category",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name="products", to="products.category"
+            ),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='is_active',
+            model_name="product",
+            name="is_active",
             field=models.BooleanField(db_index=True, default=True),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='is_featured',
+            model_name="product",
+            name="is_featured",
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='name',
+            model_name="product",
+            name="name",
             field=models.CharField(db_index=True, max_length=200),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='price',
+            model_name="product",
+            name="price",
             field=models.DecimalField(db_index=True, decimal_places=2, max_digits=10),
         ),
         migrations.AddIndex(
-            model_name='product',
-            index=models.Index(fields=['category', 'is_active'], name='products_pr_categor_50f5f1_idx'),
+            model_name="product",
+            index=models.Index(fields=["category", "is_active"], name="products_pr_categor_50f5f1_idx"),
         ),
         migrations.AddIndex(
-            model_name='product',
-            index=models.Index(fields=['is_featured', 'is_active'], name='products_pr_is_feat_a1ecf6_idx'),
+            model_name="product",
+            index=models.Index(fields=["is_featured", "is_active"], name="products_pr_is_feat_a1ecf6_idx"),
         ),
         migrations.AddIndex(
-            model_name='product',
-            index=models.Index(fields=['price'], name='products_pr_price_9b1a5f_idx'),
+            model_name="product",
+            index=models.Index(fields=["price"], name="products_pr_price_9b1a5f_idx"),
         ),
         migrations.AddField(
-            model_name='review',
-            name='product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='products.product'),
+            model_name="review",
+            name="product",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name="reviews", to="products.product"
+            ),
         ),
         migrations.AddField(
-            model_name='review',
-            name='user',
+            model_name="review",
+            name="user",
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
-            model_name='reviewhelpful',
-            name='review',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='helpful_votes', to='products.review'),
+            model_name="reviewhelpful",
+            name="review",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name="helpful_votes", to="products.review"
+            ),
         ),
         migrations.AddField(
-            model_name='reviewhelpful',
-            name='user',
+            model_name="reviewhelpful",
+            name="user",
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
-            model_name='wishlist',
-            name='user',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='wishlist', to=settings.AUTH_USER_MODEL),
+            model_name="wishlist",
+            name="user",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE, related_name="wishlist", to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AddField(
-            model_name='wishlistitem',
-            name='product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='products.product'),
+            model_name="wishlistitem",
+            name="product",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="products.product"),
         ),
         migrations.AddField(
-            model_name='wishlistitem',
-            name='wishlist',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='products.wishlist'),
+            model_name="wishlistitem",
+            name="wishlist",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name="items", to="products.wishlist"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='review',
-            unique_together={('product', 'user')},
+            name="review",
+            unique_together={("product", "user")},
         ),
         migrations.AlterUniqueTogether(
-            name='reviewhelpful',
-            unique_together={('review', 'user')},
+            name="reviewhelpful",
+            unique_together={("review", "user")},
         ),
         migrations.AlterUniqueTogether(
-            name='wishlistitem',
-            unique_together={('wishlist', 'product')},
+            name="wishlistitem",
+            unique_together={("wishlist", "product")},
         ),
     ]

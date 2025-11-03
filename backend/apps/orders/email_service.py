@@ -4,10 +4,11 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import os
 
+
 class EmailService:
     @staticmethod
     def send_order_confirmation(order):
-        subject = f'Order Confirmation - #{order.id}'
+        subject = f"Order Confirmation - #{order.id}"
         html_message = f"""
         <h2>Order Confirmation</h2>
         <p>Dear {order.user.username},</p>
@@ -33,7 +34,7 @@ class EmailService:
 
     @staticmethod
     def send_payment_confirmation(order):
-        subject = f'Payment Confirmed - Order #{order.id}'
+        subject = f"Payment Confirmed - Order #{order.id}"
         html_message = f"""
         <h2>Payment Confirmed</h2>
         <p>Dear {order.user.username},</p>
