@@ -30,13 +30,13 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
           crossOrigin="anonymous"
         />
         {product.is_flash_sale && (
-          <span className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg animate-pulse">Flash Sale</span>
+          <span className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg animate-pulse">🔥 Hot Deal</span>
         )}
-        {product.is_top_seller && (
-          <span className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded shadow-lg">Top Seller</span>
+        {product.is_top_seller && !product.is_flash_sale && (
+          <span className="absolute top-2 left-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded shadow-lg">⭐ Bestseller</span>
         )}
         {product.is_new && (
-          <span className="absolute bottom-2 left-2 bg-gradient-to-r from-green-500 to-teal-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg">New</span>
+          <span className="absolute top-2 right-2 bg-gradient-to-r from-green-500 to-teal-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg">✨ New</span>
         )}
         {product.old_price && product.price < product.old_price && (
           <span className="absolute bottom-2 right-2 bg-gradient-to-r from-blue-600 to-cyan-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg">
@@ -48,6 +48,37 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
         <div className="text-sm text-gray-500 mb-1">{product.category?.name || product.category_name || 'Uncategorized'}</div>
         <h3 className="font-semibold text-base mb-1 truncate" title={product.name}>{product.name}</h3>
         <div className="text-xs text-gray-400 mb-1">{product.brand}</div>
+        
+        {/* Star Rating */}
+        {product.rating && (
+          <div className="flex items-center gap-1 mb-2">
+            {[...Array(5)].map((_, i) => (
+              <svg
+                key={i}
+                className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            ))}
+            <span className="text-xs text-gray-600 ml-1">({product.rating})</span>
+          </div>
+        )}
+        
+        {/* Stock Indicator */}
+        {product.stock !== undefined && (
+          <div className="mb-2">
+            {product.stock > 10 ? (
+              <span className="text-xs text-green-600 font-medium">✓ In Stock</span>
+            ) : product.stock > 0 ? (
+              <span className="text-xs text-orange-600 font-medium">⚠ Only {product.stock} left</span>
+            ) : (
+              <span className="text-xs text-red-600 font-medium">✗ Out of Stock</span>
+            )}
+          </div>
+        )}
+        
         <div className="flex items-center gap-2 mb-2">
           <span className="text-lg font-bold text-primary">KSh {product.price?.toLocaleString()}</span>
           {product.old_price && product.price < product.old_price && (
