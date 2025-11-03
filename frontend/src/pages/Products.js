@@ -9,6 +9,9 @@ import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 import { useProducts } from '../hooks/useProducts';
 import { getProductImageUrl } from '../utils/imageUtils';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
+import ImageLightbox from '../components/ImageLightbox';
+import SuccessAnimation from '../components/SuccessAnimation';
+import EmptyState from '../components/EmptyState';
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
@@ -18,6 +21,9 @@ const Products = () => {
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [currentPage, setCurrentPage] = useState(1);
+  const [lightboxImage, setLightboxImage] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successProduct, setSuccessProduct] = useState('');
   
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
@@ -72,16 +78,22 @@ const Products = () => {
     }
   };
 
-  const addToCart = async (productId) => {
+  const addToCart = async (product) => {
     if (!isAuthenticated) {
       handleApiError({ message: 'Please login to add items to cart' });
       return;
     }
 
     try {
-      await ordersAPI.addToCart({ product_id: productId, quantity: 1 });
+      await ordersAPI.addToCart({ product_id: product.id, quantity: 1 });
       fetchCartCount();
-      handleApiSuccess('Product added to cart! 🛒');
+      setSuccessProduct(product.name);
+      setShowSuccess(true);
+      
+      // Haptic feedback
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
     } catch (error) {
       console.error('Error adding to cart:', error);
       handleApiError(error, 'Failed to add product to cart');
@@ -275,8 +287,10 @@ const Products = () => {
             }}
           >
             {/* Product Image */}
-            <Link to={`/products/${product.id}`}>
-              <div style={{
+            <div 
+              onClick={() => setLightboxImage({ url: getProductImageUrl(product), name: product.name })}
+              style={{
+                cursor: 'zoom-in',
                 height: '200px',
                 background: 'var(--gray-100)',
                 display: 'flex',
@@ -378,7 +392,6 @@ const Products = () => {
                 </div>
               )}
             </div>
-            </Link>
             
             {/* Product Info */}
             <div className="p-4">
@@ -477,7 +490,10 @@ const Products = () => {
               <div className="flex justify-between items-center gap-2">
                 
                 <button
-                  onClick={() => addToCart(product.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToCart(product);
+                  }}
                   className="btn btn-primary w-full hover:scale-105 transition-transform"
                   disabled={product.stock === 0}
                   style={{
@@ -517,30 +533,30 @@ const Products = () => {
       </div>
       
       {products.length === 0 && !loading && (
-        <div className="text-center py-16">
-          <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>🔍</div>
-          <h3 className="text-xl font-semibold mb-2">
-            {debouncedSearchTerm ? `No products found for "${debouncedSearchTerm}"` : 'No products found'}
-          </h3>
-          <p style={{ color: 'var(--gray-600)' }}>
-            {debouncedSearchTerm 
-              ? 'Try searching with different keywords or check your spelling'
-              : 'Try adjusting your search or filter criteria'
-            }
-          </p>
-          {debouncedSearchTerm && (
-            <button
-              onClick={() => {
-                setSearchTerm('');
-                setDebouncedSearchTerm('');
-              }}
-              className="btn btn-secondary"
-              style={{ marginTop: 'var(--space-4)' }}
-            >
-              Clear Search
-            </button>
-          )}
-        </div>
+        <EmptyState 
+          type={debouncedSearchTerm ? 'search' : 'products'}
+          onAction={debouncedSearchTerm ? () => {
+            setSearchTerm('');
+            setDebouncedSearchTerm('');
+          } : null}
+        />
+      )}
+
+      {/* Image Lightbox */}
+      {lightboxImage && (
+        <ImageLightbox
+          imageUrl={lightboxImage.url}
+          productName={lightboxImage.name}
+          onClose={() => setLightboxImage(null)}
+        />
+      )}
+
+      {/* Success Animation */}
+      {showSuccess && (
+        <SuccessAnimation
+          message={`${successProduct} added to cart!`}
+          onComplete={() => setShowSuccess(false)}
+        />
       )}
 
       {/* Pagination Controls */}
