@@ -1,10 +1,10 @@
 # EasyCart - E-Commerce Web Application
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
-![Django](https://img.shields.io/badge/django-4.2+-green.svg)
+![Python](https://img.shields.io/badge/python-3.12-blue.svg)
+![Django](https://img.shields.io/badge/django-5.2.7-green.svg)
 ![React](https://img.shields.io/badge/react-18+-blue.svg)
-![PostgreSQL](https://img.shields.io/badge/postgresql-13+-blue.svg)
+![PostgreSQL](https://img.shields.io/badge/postgresql-14+-blue.svg)
 
 A complete e-commerce solution with React frontend and Django REST Framework backend, featuring PostgreSQL database, JWT authentication, superadmin CRUD operations, and production deployment on Render.
 
@@ -61,11 +61,12 @@ A complete e-commerce solution with React frontend and Django REST Framework bac
 ## 🛠️ Tech Stack
 
 **Backend:**
-- Django 4.2+ with Django REST Framework
-- PostgreSQL database
-- JWT authentication (SimpleJWT)
+- Django 5.2.7 with Django REST Framework 3.16.1
+- PostgreSQL 14+ database
+- JWT authentication (SimpleJWT 5.5.1)
 - Cloudinary for media storage
-- Celery for background tasks
+- Celery 5.5.3 for background tasks
+- Gunicorn 23.0.0 for production server
 
 **Frontend:**
 - React 18+ with Hooks
@@ -82,9 +83,9 @@ A complete e-commerce solution with React frontend and Django REST Framework bac
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.10+
-- Node.js 16+
-- PostgreSQL 13+
+- Python 3.12
+- Node.js 18+
+- PostgreSQL 14+
 
 ### 1. Backend Setup
 ```bash
@@ -705,6 +706,17 @@ If you're experiencing issues with product/category loading or other errors:
 - HTTPS enforcement
 - Security headers (HSTS, XSS protection)
 - Role-based permissions
+
+## 🆕 Recent Enhancements (2025)
+
+- ⬆️ **Django 5.2.7 Upgrade** - Latest Django with improved performance and security
+- 🐍 **Python 3.12** - Updated to latest Python version
+- 🧪 **CI/CD Improvements** - Fixed GitHub Actions workflows with proper test coverage
+- 🖼️ **Image URL Fixes** - Resolved Cloudinary image loading issues
+- 🔑 **Admin Password Reset** - Added `resetadmin` management command
+- 📦 **Dependency Updates** - All packages updated to latest secure versions
+- ✅ **Test Suite** - Comprehensive test coverage with React Query v5 compatibility
+- 🔧 **Code Quality** - Auto-formatted with Black and autopep8, zero flake8 errors
 
 ---
 
