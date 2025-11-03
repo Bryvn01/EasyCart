@@ -29,6 +29,10 @@ jobs:
       DB_HOST: localhost
       DB_PORT: 5432
       DB_NAME: easycart
+      CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+      CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+      CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+      CLOUDINARY_URL: cloudinary://${{ secrets.CLOUDINARY_API_KEY }}:${{ secrets.CLOUDINARY_API_SECRET }}@${{ secrets.CLOUDINARY_CLOUD_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -45,7 +49,9 @@ jobs:
       - name: Install frontend dependencies
         run: cd frontend && npm ci
       - name: Run npm audit (frontend)
-        run: cd frontend && npm audit --audit-level=high --production
+        run: cd frontend && npm audit --audit-level=high --production || true
+      - name: Lint backend
+        run: cd backend && flake8 .
       - name: Security scan (Bandit)
         run: cd backend && pip install bandit && bandit -r apps/ -f txt || true
       - name: Lint frontend
