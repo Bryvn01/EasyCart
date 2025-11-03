@@ -2,10 +2,11 @@
 
 from django.db import migrations, models
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0002_enhance_models'),
+        ("products", "0002_enhance_models"),
     ]
 
     operations = [
@@ -15,12 +16,11 @@ class Migration(migrations.Migration):
             reverse_sql="ALTER TABLE products_category DROP COLUMN is_active;",
             state_operations=[
                 migrations.AddField(
-                    model_name='category',
-                    name='is_active',
+                    model_name="category",
+                    name="is_active",
                     field=models.BooleanField(default=True),
                 ),
-            ]
+            ],
         ),
-
         # Note: Product fields were already added in 0002_enhance_models.py, so no need to add them again here
     ]

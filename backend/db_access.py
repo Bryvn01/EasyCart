@@ -4,7 +4,7 @@ from apps.products.models import Product, Category
 import os
 import django
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecommerce.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
 django.setup()
 
 

@@ -9,6 +9,7 @@ from .wishlist_models import Wishlist, WishlistItem
 from .models import Product
 from .wishlist_serializers import WishlistSerializer, WishlistItemSerializer
 
+
 class WishlistView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = WishlistSerializer
@@ -17,46 +18,49 @@ class WishlistView(generics.RetrieveAPIView):
         wishlist, created = Wishlist.objects.get_or_create(user=self.request.user)
         return wishlist
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def add_to_wishlist(request):
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
 
     # Sanitize product_id to prevent path traversal
-    raw_product_id = str(request.data.get('product_id', ''))
-    product_id = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c', '', escape(raw_product_id))
+    raw_product_id = str(request.data.get("product_id", ""))
+    product_id = re.sub(r"[.]{2,}|[/\\]|%2e|%2f|%5c", "", escape(raw_product_id))
 
     if not product_id:
-        return Response({'error': 'Product ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Product ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         product = Product.objects.get(id=product_id, is_active=True)
     except Product.DoesNotExist:
-        return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
 
     # Check if item already exists in wishlist
     if WishlistItem.objects.filter(wishlist=wishlist, product=product).exists():
-        return Response({'error': 'Product already in wishlist'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Product already in wishlist"}, status=status.HTTP_400_BAD_REQUEST)
 
     wishlist_item = WishlistItem.objects.create(wishlist=wishlist, product=product)
     serializer = WishlistItemSerializer(wishlist_item)
 
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-@api_view(['DELETE'])
+
+@api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def remove_from_wishlist(request, item_id):
     wishlist = get_object_or_404(Wishlist, user=request.user)
 
     # Sanitize item_id to prevent path traversal
-    safe_item_id = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c', '', escape(str(item_id)))
+    safe_item_id = re.sub(r"[.]{2,}|[/\\]|%2e|%2f|%5c", "", escape(str(item_id)))
 
     wishlist_item = get_object_or_404(WishlistItem, id=safe_item_id, wishlist=wishlist)
     wishlist_item.delete()
 
-    return Response({'message': 'Item removed from wishlist'}, status=status.HTTP_200_OK)
+    return Response({"message": "Item removed from wishlist"}, status=status.HTTP_200_OK)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def move_to_cart(request, item_id):
     """Move an item from wishlist to cart"""
@@ -64,14 +68,14 @@ def move_to_cart(request, item_id):
 
     wishlist = get_object_or_404(Wishlist, user=request.user)
     # Sanitize item_id to prevent path traversal
-    safe_item_id = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c', '', escape(str(item_id)))
+    safe_item_id = re.sub(r"[.]{2,}|[/\\]|%2e|%2f|%5c", "", escape(str(item_id)))
     wishlist_item = get_object_or_404(WishlistItem, id=safe_item_id, wishlist=wishlist)
 
     # Get or create cart
     cart, created = Cart.objects.get_or_create(user=request.user)
 
     # Get quantity from request or default to 1
-    quantity = request.data.get('quantity', 1)
+    quantity = request.data.get("quantity", 1)
     try:
         quantity = int(quantity)
         if quantity < 1:
@@ -84,15 +88,13 @@ def move_to_cart(request, item_id):
     # Check stock availability
     if wishlist_item.product.stock < quantity:
         return Response(
-            {'error': f'Only {wishlist_item.product.stock} items available in stock'},
-            status=status.HTTP_400_BAD_REQUEST
+            {"error": f"Only {wishlist_item.product.stock} items available in stock"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     # Add to cart
     cart_item, cart_created = CartItem.objects.get_or_create(
-        cart=cart,
-        product=wishlist_item.product,
-        defaults={'quantity': quantity}
+        cart=cart, product=wishlist_item.product, defaults={"quantity": quantity}
     )
 
     if not cart_created:
@@ -102,24 +104,24 @@ def move_to_cart(request, item_id):
     # Remove from wishlist
     wishlist_item.delete()
 
-    return Response({
-        'message': 'Item moved to cart successfully',
-        'cart_item_id': cart_item.id
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {"message": "Item moved to cart successfully", "cart_item_id": cart_item.id}, status=status.HTTP_200_OK
+    )
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def check_wishlist_status(request, product_id):
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
 
     # Sanitize product_id to prevent path traversal
-    safe_product_id = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c', '', escape(str(product_id)))
+    safe_product_id = re.sub(r"[.]{2,}|[/\\]|%2e|%2f|%5c", "", escape(str(product_id)))
 
     try:
         product = Product.objects.get(id=safe_product_id, is_active=True)
     except Product.DoesNotExist:
-        return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
 
     is_in_wishlist = WishlistItem.objects.filter(wishlist=wishlist, product=product).exists()
 
-    return Response({'is_in_wishlist': is_in_wishlist}, status=status.HTTP_200_OK)
+    return Response({"is_in_wishlist": is_in_wishlist}, status=status.HTTP_200_OK)

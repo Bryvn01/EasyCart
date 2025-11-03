@@ -9,13 +9,15 @@ from .review_models import Review, ReviewHelpful
 from .review_serializers import ReviewSerializer, ReviewCreateSerializer, ReviewHelpfulSerializer
 from apps.products.models import Product
 
+
 class ReviewListView(generics.ListAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        product_id = self.kwargs.get('product_id')
-        return Review.objects.filter(product_id=product_id).order_by('-created_at')
+        product_id = self.kwargs.get("product_id")
+        return Review.objects.filter(product_id=product_id).order_by("-created_at")
+
 
 class ReviewCreateView(generics.CreateAPIView):
     serializer_class = ReviewCreateSerializer
@@ -24,24 +26,23 @@ class ReviewCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def mark_review_helpful(request):
-    review_id = request.data.get('review_id')
-    is_helpful = request.data.get('is_helpful', True)
+    review_id = request.data.get("review_id")
+    is_helpful = request.data.get("is_helpful", True)
 
     # Validate review_id is numeric
     try:
         review_id = int(review_id)
     except (ValueError, TypeError):
-        return Response({'error': 'Invalid review ID'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid review ID"}, status=status.HTTP_400_BAD_REQUEST)
 
     review = get_object_or_404(Review, id=review_id)
 
     helpful_vote, created = ReviewHelpful.objects.get_or_create(
-        review=review,
-        user=request.user,
-        defaults={'is_helpful': is_helpful}
+        review=review, user=request.user, defaults={"is_helpful": is_helpful}
     )
 
     if not created:

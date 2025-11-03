@@ -9,16 +9,12 @@ import subprocess
 import requests
 from pathlib import Path
 
+
 def run_command(command, cwd=None):
     """Run a shell command and return success status"""
     try:
         result = subprocess.run(
-            command,
-            shell=True,
-            cwd=cwd,
-            capture_output=True,
-            text=True,
-            timeout=300  # 5 minute timeout
+            command, shell=True, cwd=cwd, capture_output=True, text=True, timeout=300  # 5 minute timeout
         )
         print(f"Command: {command}")
         print(f"Return code: {result.returncode}")
@@ -34,20 +30,22 @@ def run_command(command, cwd=None):
         print(f"Error running command {command}: {e}")
         return False
 
+
 def setup_test_environment():
     """Set up test environment variables"""
     print("Setting up test environment...")
 
     # Set default test credentials if not already set
-    os.environ.setdefault('TEST_EMAIL', 'test@example.com')
-    os.environ.setdefault('TEST_PASSWORD', 'testpassword')
-    os.environ.setdefault('TEST_USERNAME', 'testuser')
+    os.environ.setdefault("TEST_EMAIL", "test@example.com")
+    os.environ.setdefault("TEST_PASSWORD", "testpassword")
+    os.environ.setdefault("TEST_USERNAME", "testuser")
 
     # Set Django settings for testing
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecommerce.settings')
-    os.environ.setdefault('DEBUG', 'True')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
+    os.environ.setdefault("DEBUG", "True")
 
     print("✅ Test environment setup complete")
+
 
 def run_django_tests():
     """Run Django unit tests"""
@@ -59,11 +57,13 @@ def run_django_tests():
         print("❌ Django tests failed")
     return success
 
+
 def run_api_tests():
     """Run API integration tests"""
     print("\n🧪 Running API tests...")
     print("✅ API tests skipped (no separate API tests configured)")
     return True
+
 
 def run_security_tests():
     """Run security tests"""
@@ -74,6 +74,7 @@ def run_security_tests():
     else:
         print("❌ Security tests failed")
     return success
+
 
 def main():
     """Main test runner function"""
@@ -119,6 +120,7 @@ def main():
     else:
         print("💥 Some tests failed. Please review the output above.")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

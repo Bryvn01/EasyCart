@@ -6,40 +6,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_historicaluser'),
+        ("accounts", "0002_historicaluser"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='historicaluser',
-            name='role',
+            model_name="historicaluser",
+            name="role",
             field=models.CharField(
                 choices=[
-                    ('superadmin',
-                     'Superadmin'),
-                    ('manager',
-                     'Manager'),
-                    ('editor',
-                     'Editor'),
-                    ('viewer',
-                     'Viewer')],
-                default='viewer',
-                max_length=20),
+                    ("superadmin", "Superadmin"),
+                    ("manager", "Manager"),
+                    ("editor", "Editor"),
+                    ("viewer", "Viewer"),
+                ],
+                default="viewer",
+                max_length=20,
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='role',
+            model_name="user",
+            name="role",
             field=models.CharField(
                 choices=[
-                    ('superadmin',
-                     'Superadmin'),
-                    ('manager',
-                     'Manager'),
-                    ('editor',
-                     'Editor'),
-                    ('viewer',
-                     'Viewer')],
-                default='viewer',
-                max_length=20),
+                    ("superadmin", "Superadmin"),
+                    ("manager", "Manager"),
+                    ("editor", "Editor"),
+                    ("viewer", "Viewer"),
+                ],
+                default="viewer",
+                max_length=20,
+            ),
         ),
     ]

@@ -34,24 +34,18 @@ def health_check(request):
 
         # Build comprehensive health response
         response_data = {
-            'status': 'UP' if is_healthy else 'DOWN',
-            'service': 'easycart-django-backend',
-            'version': '1.0.0',
-            'timestamp': time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime()),
-            'components': {
-                'database': {
-                    'status': 'UP',
-                    'details': None
+            "status": "UP" if is_healthy else "DOWN",
+            "service": "easycart-django-backend",
+            "version": "1.0.0",
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime()),
+            "components": {
+                "database": {"status": "UP", "details": None},
+                "python": {
+                    "status": "UP",
+                    "details": {"version": sys.version.split()[0], "implementation": sys.implementation.name},
                 },
-                'python': {
-                    'status': 'UP',
-                    'details': {
-                        'version': sys.version.split()[0],
-                        'implementation': sys.implementation.name
-                    }
-                }
             },
-            'responseTime': f"{int((time.time() - start_time) * 1000)}ms"
+            "responseTime": f"{int((time.time() - start_time) * 1000)}ms",
         }
 
         return JsonResponse(response_data, status=http_status)
@@ -60,14 +54,17 @@ def health_check(request):
         logger.error(f"Health check failed: {str(e)}")
 
         # Return error response
-        return JsonResponse({
-            'status': 'DOWN',
-            'service': 'easycart-django-backend',
-            'version': '1.0.0',
-            'timestamp': time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime()),
-            'error': str(e),
-            'responseTime': f"{int((time.time() - start_time) * 1000)}ms"
-        }, status=503)
+        return JsonResponse(
+            {
+                "status": "DOWN",
+                "service": "easycart-django-backend",
+                "version": "1.0.0",
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime()),
+                "error": str(e),
+                "responseTime": f"{int((time.time() - start_time) * 1000)}ms",
+            },
+            status=503,
+        )
 
 
 def liveness_probe(request):
@@ -80,10 +77,7 @@ def liveness_probe(request):
     Returns:
     - 200: Service is alive
     """
-    return JsonResponse({
-        'status': 'UP',
-        'check': 'liveness'
-    })
+    return JsonResponse({"status": "UP", "check": "liveness"})
 
 
 def readiness_probe(request):
@@ -101,22 +95,10 @@ def readiness_probe(request):
         is_ready = True
 
         if is_ready:
-            return JsonResponse({
-                'status': 'UP',
-                'check': 'readiness',
-                'database': 'connected'
-            })
+            return JsonResponse({"status": "UP", "check": "readiness", "database": "connected"})
         else:
-            return JsonResponse({
-                'status': 'DOWN',
-                'check': 'readiness',
-                'database': 'disconnected'
-            }, status=503)
+            return JsonResponse({"status": "DOWN", "check": "readiness", "database": "disconnected"}, status=503)
 
     except Exception as e:
         logger.error(f"Readiness check failed: {str(e)}")
-        return JsonResponse({
-            'status': 'DOWN',
-            'check': 'readiness',
-            'error': str(e)
-        }, status=503)
+        return JsonResponse({"status": "DOWN", "check": "readiness", "error": str(e)}, status=503)

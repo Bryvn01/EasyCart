@@ -102,6 +102,7 @@ PRODUCTS = [
     },
 ]
 
+
 def run():
     print("Seeding Kenyan categories...")
     for cat_name in CATEGORIES:
