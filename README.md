@@ -63,6 +63,7 @@ A complete e-commerce solution with React frontend and Django REST Framework bac
 **Backend:**
 - Django 5.2.7 with Django REST Framework 3.16.1
 - PostgreSQL 14+ database
+- Redis 7.0+ for caching and sessions
 - JWT authentication (SimpleJWT 5.5.1)
 - Cloudinary for media storage
 - Celery 5.5.3 for background tasks
@@ -86,6 +87,7 @@ A complete e-commerce solution with React frontend and Django REST Framework bac
 - Python 3.12
 - Node.js 18+
 - PostgreSQL 14+
+- Redis 7.0+ (for caching)
 
 ### 1. Backend Setup
 ```bash
@@ -111,8 +113,14 @@ cp .env.example .env
 # Run migrations
 python manage.py migrate
 
+# Seed database
 python manage.py seed_products
 python manage.py createsuperuser
+
+# Test Redis connection (optional)
+python manage.py test_redis
+
+# Start server
 python manage.py runserver
 # Server runs on http://localhost:8000
 ```

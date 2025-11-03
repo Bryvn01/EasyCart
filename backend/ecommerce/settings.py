@@ -272,29 +272,27 @@ if not DEBUG:
 
 # Cache Configuration
 REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/1")
-CACHES = (
-    {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL,
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "IGNORE_EXCEPTIONS": not DEBUG,
-                "SOCKET_CONNECT_TIMEOUT": 5,
-                "SOCKET_TIMEOUT": 5,
-            },
-            "KEY_PREFIX": "ecommerce",
-            "TIMEOUT": 300,
-        }
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,  # Don't crash if Redis is down
+            "SOCKET_CONNECT_TIMEOUT": 5,
+            "SOCKET_TIMEOUT": 5,
+            "CONNECTION_POOL_KWARGS": {"max_connections": 50},
+        },
+        "KEY_PREFIX": "easycart",
+        "TIMEOUT": 300,  # 5 minutes default
     }
-    if not DEBUG
-    else {
-        "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "unique-snowflake",
-        }
-    }
-)
+}
+
+# Session Configuration - Use Redis for sessions
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+SESSION_COOKIE_AGE = 604800  # 7 days
+SESSION_SAVE_EVERY_REQUEST = False  # Only save when modified
 
 # Email Configuration
 EMAIL_BACKEND = config("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")

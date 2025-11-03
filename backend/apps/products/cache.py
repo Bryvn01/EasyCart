@@ -1,0 +1,90 @@
+"""
+Product caching utilities for Redis
+"""
+from django.core.cache import cache
+from django.conf import settings
+
+
+class ProductCache:
+    """Cache manager for product-related data"""
+    
+    PRODUCT_LIST_KEY = "products:list:{category}:{page}"
+    PRODUCT_DETAIL_KEY = "products:detail:{id}"
+    CATEGORY_LIST_KEY = "products:categories"
+    FEATURED_PRODUCTS_KEY = "products:featured"
+    
+    TIMEOUT_SHORT = 300  # 5 minutes
+    TIMEOUT_MEDIUM = 1800  # 30 minutes
+    TIMEOUT_LONG = 3600  # 1 hour
+    
+    @classmethod
+    def get_product_list(cls, category=None, page=1):
+        """Get cached product list"""
+        key = cls.PRODUCT_LIST_KEY.format(category=category or "all", page=page)
+        return cache.get(key)
+    
+    @classmethod
+    def set_product_list(cls, data, category=None, page=1, timeout=None):
+        """Cache product list"""
+        key = cls.PRODUCT_LIST_KEY.format(category=category or "all", page=page)
+        cache.set(key, data, timeout or cls.TIMEOUT_SHORT)
+    
+    @classmethod
+    def get_product_detail(cls, product_id):
+        """Get cached product detail"""
+        key = cls.PRODUCT_DETAIL_KEY.format(id=product_id)
+        return cache.get(key)
+    
+    @classmethod
+    def set_product_detail(cls, product_id, data, timeout=None):
+        """Cache product detail"""
+        key = cls.PRODUCT_DETAIL_KEY.format(id=product_id)
+        cache.set(key, data, timeout or cls.TIMEOUT_MEDIUM)
+    
+    @classmethod
+    def get_categories(cls):
+        """Get cached categories"""
+        return cache.get(cls.CATEGORY_LIST_KEY)
+    
+    @classmethod
+    def set_categories(cls, data, timeout=None):
+        """Cache categories"""
+        cache.set(cls.CATEGORY_LIST_KEY, data, timeout or cls.TIMEOUT_LONG)
+    
+    @classmethod
+    def invalidate_product(cls, product_id):
+        """Invalidate product cache when updated"""
+        key = cls.PRODUCT_DETAIL_KEY.format(id=product_id)
+        cache.delete(key)
+        # Also clear product lists
+        cache.delete_pattern("products:list:*")
+    
+    @classmethod
+    def invalidate_all(cls):
+        """Clear all product caches"""
+        cache.delete_pattern("products:*")
+
+
+class CartCache:
+    """Cache manager for shopping cart"""
+    
+    CART_KEY = "cart:{user_id}"
+    TIMEOUT = 604800  # 7 days
+    
+    @classmethod
+    def get_cart(cls, user_id):
+        """Get user's cart from cache"""
+        key = cls.CART_KEY.format(user_id=user_id)
+        return cache.get(key, {})
+    
+    @classmethod
+    def set_cart(cls, user_id, cart_data):
+        """Save user's cart to cache"""
+        key = cls.CART_KEY.format(user_id=user_id)
+        cache.set(key, cart_data, cls.TIMEOUT)
+    
+    @classmethod
+    def clear_cart(cls, user_id):
+        """Clear user's cart"""
+        key = cls.CART_KEY.format(user_id=user_id)
+        cache.delete(key)

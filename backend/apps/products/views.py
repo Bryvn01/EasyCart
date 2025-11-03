@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
+from .cache import ProductCache
 import logging
 
 logger = logging.getLogger(__name__)
@@ -29,10 +30,21 @@ class CategoryListView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        """Fetch categories from PostgreSQL."""
+        """Fetch categories from PostgreSQL with caching."""
         try:
+            # Try cache first
+            cached_data = ProductCache.get_categories()
+            if cached_data:
+                logger.info(f"Returned {len(cached_data)} categories from cache")
+                return Response(cached_data, status=status.HTTP_200_OK)
+            
+            # Cache miss - fetch from DB
             categories = Category.objects.all()
             serializer = CategorySerializer(categories, many=True)
+            
+            # Cache for 1 hour
+            ProductCache.set_categories(serializer.data)
+            
             logger.info(f"Returned {len(serializer.data)} categories from PostgreSQL")
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -53,14 +65,22 @@ class ProductListView(APIView):
     required_role = "editor"  # Only editors, managers, superadmins can create
 
     def get(self, request):
-        """Fetch products from PostgreSQL with filters and pagination."""
+        """Fetch products from PostgreSQL with filters, pagination, and caching."""
         try:
-            queryset = Product.objects.all()
             category = request.query_params.get("category")
             search = request.query_params.get("search")
             ordering = request.query_params.get("ordering", "-created_at")
             page = int(request.query_params.get("page", 1))
             page_size = int(request.query_params.get("page_size", 20))
+            
+            # Only cache simple category+page queries (no search/filters)
+            if not search and not request.query_params.get("price_min") and not request.query_params.get("price_max"):
+                cached_data = ProductCache.get_product_list(category, page)
+                if cached_data:
+                    logger.info(f"Returned products from cache (category={category}, page={page})")
+                    return Response(cached_data, status=status.HTTP_200_OK)
+            
+            queryset = Product.objects.all()
             if category:
                 queryset = queryset.filter(category__name__iexact=category)
             if search:
@@ -106,6 +126,11 @@ class ProductListView(APIView):
                 "previous": page > 1,
                 "results": serializer.data,
             }
+            
+            # Cache simple queries
+            if not search and not request.query_params.get("price_min") and not request.query_params.get("price_max"):
+                ProductCache.set_product_list(response_data, category, page)
+            
             logger.info(f"Returned {len(serializer.data)} products from PostgreSQL (page {page}/{total_pages})")
             return Response(response_data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -140,12 +165,24 @@ class ProductDetailView(APIView):
     required_role = "editor"  # Only editors, managers, superadmins can update/delete
 
     def get(self, request, pk):
-        """Fetch single product from PostgreSQL by ID."""
+        """Fetch single product from PostgreSQL by ID with caching."""
         try:
+            # Try cache first
+            cached_data = ProductCache.get_product_detail(pk)
+            if cached_data:
+                logger.info(f"Returned product {pk} from cache")
+                return Response(cached_data, status=status.HTTP_200_OK)
+            
+            # Cache miss - fetch from DB
             product = Product.objects.filter(id=pk).first()
             if not product:
                 return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+            
             serializer = ProductSerializer(product)
+            
+            # Cache for 30 minutes
+            ProductCache.set_product_detail(pk, serializer.data)
+            
             logger.info(f"SUCCESS: Returned product: {product.name}")
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -163,6 +200,8 @@ class ProductDetailView(APIView):
             serializer = ProductCreateUpdateSerializer(product, data=request.data, partial=False)
             if serializer.is_valid():
                 product = serializer.save()
+                # Invalidate cache
+                ProductCache.invalidate_product(pk)
                 logger.info(f"SUCCESS: Product {pk} updated successfully")
                 return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -179,6 +218,8 @@ class ProductDetailView(APIView):
             serializer = ProductCreateUpdateSerializer(product, data=request.data, partial=True)
             if serializer.is_valid():
                 product = serializer.save()
+                # Invalidate cache
+                ProductCache.invalidate_product(pk)
                 logger.info(f"SUCCESS: Product {pk} updated successfully")
                 return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -194,6 +235,8 @@ class ProductDetailView(APIView):
                 return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
             product_name = product.name
             product.delete()
+            # Invalidate cache
+            ProductCache.invalidate_product(pk)
             logger.info(f"SUCCESS: Product {pk} ({product_name}) deleted successfully")
             return Response({"message": "Product deleted successfully"}, status=status.HTTP_200_OK)
         except Exception as e:
