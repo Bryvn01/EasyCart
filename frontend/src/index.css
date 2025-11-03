@@ -1078,6 +1078,19 @@ input:focus:not(:focus-visible) {
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
 /* Connection-aware image loading */
 @media (prefers-reduced-data: reduce) {
   img {

@@ -1,19 +1,18 @@
 import React from 'react';
 
 export const ProductCardSkeleton = () => (
-  <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
-    <div className="aspect-square bg-gray-200"></div>
+  <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="aspect-square bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer bg-[length:200%_100%]"></div>
     <div className="p-4 space-y-3">
-      <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+      <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer bg-[length:200%_100%] rounded w-1/3"></div>
+      <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer bg-[length:200%_100%] rounded w-3/4"></div>
+      <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer bg-[length:200%_100%] rounded w-1/2"></div>
       <div className="flex items-center gap-2">
-        <div className="h-6 bg-gray-200 rounded w-20"></div>
-        <div className="h-4 bg-gray-200 rounded w-16"></div>
+        <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer bg-[length:200%_100%] rounded w-20"></div>
+        <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer bg-[length:200%_100%] rounded w-16"></div>
       </div>
       <div className="flex gap-2">
-        <div className="h-10 bg-gray-200 rounded flex-1"></div>
-        <div className="h-10 bg-gray-200 rounded flex-1"></div>
+        <div className="h-10 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer bg-[length:200%_100%] rounded flex-1"></div>
       </div>
     </div>
   </div>
