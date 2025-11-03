@@ -19,3 +19,4 @@ redis==5.3.1
 requests==2.32.5
 sentry-sdk==1.45.1
 django-ratelimit==4.1.0
+stripe==7.4.0
