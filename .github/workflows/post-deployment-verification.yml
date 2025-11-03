@@ -1,17 +1,9 @@
 name: Post-Deployment Verification
 
 on:
-  # Run after deployment to main
   workflow_dispatch:
-  # Or schedule daily
   schedule:
     - cron: '0 */6 * * *'  # Every 6 hours
-  # Or after successful deployment
-  workflow_run:
-    workflows: ["CI/CD Pipeline"]
-    types:
-      - completed
-    branches: [main]
 
 jobs:
   verify-deployment:
