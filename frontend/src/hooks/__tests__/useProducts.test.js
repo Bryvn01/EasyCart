@@ -1,20 +1,9 @@
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useProducts } from '../useProducts';
 import { productsAPI } from '../../services/api';
 
 // Mock the API
 jest.mock('../../services/api');
-
-const wrapper = ({ children }) => {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </BrowserRouter>
-  );
-};
 
 describe('useProducts hook', () => {
   afterEach(() => {
@@ -23,6 +12,7 @@ describe('useProducts hook', () => {
 
 
   it('should fetch products successfully with DRF-compatible response', async () => {
+    // Mock API response with both 'data' and 'results' keys (backend format)
     const mockResponse = {
       data: {
         success: true,
@@ -81,19 +71,27 @@ describe('useProducts hook', () => {
 
     let result;
     await act(async () => {
-      result = renderHook(() => useProducts({ page: 1, pageSize: 12 }), { wrapper });
+      result = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
     });
 
-    // Initially may be loading or already loaded depending on timing
-    expect(result.result.current.products).toBeDefined();
+    // Initially loading
+    expect(result.result.current.loading).toBe(true);
+    expect(result.result.current.products).toEqual([]);
 
+    // Wait for data to load
     await waitFor(() => {
-      expect(result.result.current.products.length).toBeGreaterThan(0);
+      expect(result.result.current.loading).toBe(false);
     });
 
+    // Verify products are loaded
     expect(result.result.current.products).toHaveLength(2);
     expect(result.result.current.products[0].name).toBe('iPhone 14 Pro');
     expect(result.result.current.products[1].name).toBe('Samsung Galaxy S23');
+
+    // Verify pagination
+    expect(result.result.current.pagination.totalCount).toBe(2);
+    expect(result.result.current.pagination.currentPage).toBe(1);
+    expect(result.result.current.pagination.hasNext).toBe(false);
   });
 
   it('should handle API errors gracefully', async () => {
@@ -102,7 +100,7 @@ describe('useProducts hook', () => {
 
     let result;
     await act(async () => {
-      result = renderHook(() => useProducts({ page: 1, pageSize: 12 }), { wrapper });
+      result = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
     });
 
     await waitFor(() => {

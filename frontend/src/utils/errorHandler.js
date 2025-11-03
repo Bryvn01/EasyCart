@@ -1,13 +1,5 @@
 import toast from 'react-hot-toast';
 
-// Log environment configuration on module load
-if (process.env.NODE_ENV === 'development') {
-  console.log('Environment check:', {
-    REACT_APP_API_URL: process.env.REACT_APP_API_URL || '(not set)',
-    NODE_ENV: process.env.NODE_ENV
-  });
-}
-
 /**
  * Enhanced error type detection
  */
@@ -254,14 +246,6 @@ export const retryWithBackoff = async (
  */
 export const checkApiHealth = async (baseUrl) => {
   try {
-    // Skip health check if baseUrl is not properly configured
-    if (!baseUrl || baseUrl === 'undefined' || baseUrl.includes('undefined')) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('API base URL is not configured properly:', baseUrl);
-      }
-      return false;
-    }
-    
     const healthEndpoints = [
       `${baseUrl}/health/`,
       `${baseUrl}/health`,

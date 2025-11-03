@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
 import { CartProvider, useCart } from '../context/CartContext';
 
 // Mock the AuthContext
@@ -42,16 +41,6 @@ const TestComponent = () => {
   );
 };
 
-const renderWithProviders = (component) => {
-  return render(
-    <BrowserRouter>
-      <CartProvider>
-        {component}
-      </CartProvider>
-    </BrowserRouter>
-  );
-};
-
 describe('CartContext', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -67,7 +56,11 @@ describe('CartContext', () => {
   test('provides cart count when authenticated', async () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     
-    const { getByTestId } = renderWithProviders(<TestComponent />);
+    const { getByTestId } = render(
+      <CartProvider>
+        <TestComponent />
+      </CartProvider>
+    );
 
     await waitFor(() => {
       expect(getByTestId('cart-count')).toHaveTextContent('2');
@@ -77,7 +70,11 @@ describe('CartContext', () => {
   test('cart count is 0 when not authenticated', async () => {
     useAuth.mockReturnValue({ isAuthenticated: false, user: null });
     
-    const { getByTestId } = renderWithProviders(<TestComponent />);
+    const { getByTestId } = render(
+      <CartProvider>
+        <TestComponent />
+      </CartProvider>
+    );
 
     await waitFor(() => {
       expect(getByTestId('cart-count')).toHaveTextContent('0');
@@ -88,7 +85,11 @@ describe('CartContext', () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.addToCart.mockResolvedValue({ data: {} });
     
-    const { getByTestId } = renderWithProviders(<TestComponent />);
+    const { getByTestId } = render(
+      <CartProvider>
+        <TestComponent />
+      </CartProvider>
+    );
 
     const addButton = getByTestId('add-to-cart');
     addButton.click();
@@ -103,7 +104,11 @@ describe('CartContext', () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.updateCartItem.mockResolvedValue({ data: {} });
     
-    const { getByTestId } = renderWithProviders(<TestComponent />);
+    const { getByTestId } = render(
+      <CartProvider>
+        <TestComponent />
+      </CartProvider>
+    );
 
     const updateButton = getByTestId('update-item');
     updateButton.click();
@@ -118,7 +123,11 @@ describe('CartContext', () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.removeFromCart.mockResolvedValue({ data: {} });
     
-    const { getByTestId } = renderWithProviders(<TestComponent />);
+    const { getByTestId } = render(
+      <CartProvider>
+        <TestComponent />
+      </CartProvider>
+    );
 
     const removeButton = getByTestId('remove-item');
     removeButton.click();
@@ -133,7 +142,11 @@ describe('CartContext', () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.moveToWishlist.mockResolvedValue({ data: {} });
     
-    const { getByTestId } = renderWithProviders(<TestComponent />);
+    const { getByTestId } = render(
+      <CartProvider>
+        <TestComponent />
+      </CartProvider>
+    );
 
     const moveButton = getByTestId('move-to-wishlist');
     moveButton.click();

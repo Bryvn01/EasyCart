@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '../test-utils';
+import { render, screen, waitFor } from '@testing-library/react';
 import ProductList from '../components/ProductList';
 import * as api from '../services/api';
 import * as errorHandler from '../utils/errorHandler';
@@ -55,10 +55,9 @@ describe('ProductList Component', () => {
 
   test('renders loading state initially', () => {
     api.productsAPI.getProducts.mockImplementation(() => new Promise(() => {}));
-    const { container } = render(<ProductList />);
+    render(<ProductList />);
     
-    // Loading shows skeleton, check for animate-pulse class
-    expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
+    expect(screen.getByText('Loading products...')).toBeInTheDocument();
   });
 
   test('fetches and displays products from API', async () => {
@@ -94,39 +93,34 @@ describe('ProductList Component', () => {
     });
   });
 
-  test('displays products with buttons', async () => {
+  test('displays "Add to Cart" buttons', async () => {
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
-    const { container } = render(<ProductList />);
+    render(<ProductList />);
     
     await waitFor(() => {
-      expect(screen.getByText('Samsung Galaxy S21')).toBeInTheDocument();
+      const buttons = screen.getAllByText('Add to Cart');
+      expect(buttons).toHaveLength(2);
     });
-    
-    // Check buttons exist
-    const buttons = container.querySelectorAll('button');
-    expect(buttons.length).toBeGreaterThan(0);
   });
 
-  test('displays empty state when API returns empty array', async () => {
+  test('displays "No products available" when API returns empty array', async () => {
     api.productsAPI.getProducts.mockResolvedValue({ data: { results: [] } });
-    const { container } = render(<ProductList />);
+    render(<ProductList />);
     
     await waitFor(() => {
-      // Check for empty state (emoji or text)
-      expect(container.textContent).toMatch(/📦|no products/i);
+      expect(screen.getByText('No products available')).toBeInTheDocument();
     });
   });
 
-  test.skip('handles API errors gracefully', async () => {
+  test('handles API errors gracefully', async () => {
     api.productsAPI.getProducts.mockRejectedValue(new Error('Network error'));
-    const { container } = render(<ProductList />);
+    render(<ProductList />);
     
     await waitFor(() => {
-      // Check for error state - button or error indicator
-      const hasButton = container.querySelectorAll('button').length > 0;
-      const hasContent = container.textContent.length > 0;
-      expect(hasButton || hasContent).toBe(true);
-    }, { timeout: 3000 });
+      expect(screen.getByText('Error Loading Products')).toBeInTheDocument();
+    });
+    
+    expect(screen.getByText(/Try Again/)).toBeInTheDocument();
   });
 
   test('displays product categories', async () => {
@@ -134,14 +128,13 @@ describe('ProductList Component', () => {
     render(<ProductList />);
     
     await waitFor(() => {
-      expect(screen.getByText('Samsung Galaxy S21')).toBeInTheDocument();
+      expect(screen.getByText('Electronics')).toBeInTheDocument();
     });
     
-    // Categories may be displayed differently in the component
-    expect(screen.getByText('Samsung Galaxy S21')).toBeInTheDocument();
+    expect(screen.getByText('Fashion')).toBeInTheDocument();
   });
 
-  test('displays long product names', async () => {
+  test('truncates long product names with title attribute', async () => {
     const longNameProduct = {
       data: {
         results: [
@@ -162,7 +155,8 @@ describe('ProductList Component', () => {
     render(<ProductList />);
     
     await waitFor(() => {
-      expect(screen.getByText('This is a very long product name that should be truncated in the display')).toBeInTheDocument();
+      const heading = screen.getByText('This is a very long product name that should be truncated in the display');
+      expect(heading).toHaveAttribute('title', 'This is a very long product name that should be truncated in the display');
     });
   });
 

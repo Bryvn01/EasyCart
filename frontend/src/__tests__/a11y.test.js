@@ -1,23 +1,21 @@
 import React from 'react';
-import { render } from '../test-utils';
+import { render } from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
 import ProductList from '../components/ProductList';
+import Homepage from '../components/Homepage';
 
-// Mock API
-jest.mock('../services/api', () => ({
-  productsAPI: {
-    getProducts: jest.fn(() => Promise.resolve({ data: { results: [] } })),
-    getCategories: jest.fn(() => Promise.resolve({ data: [] })),
-  }
-}));
+expect.extend(toHaveNoViolations);
 
-describe('Accessibility checks', () => {
-  it('ProductList renders without crashing', async () => {
+describe('Accessibility (a11y) checks', () => {
+  it('ProductList should have no a11y violations', async () => {
     const { container } = render(<ProductList />);
-    expect(container).toBeInTheDocument();
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 
-  it('ProductList has proper structure', async () => {
-    const { container } = render(<ProductList />);
-    expect(container.firstChild).toBeTruthy();
+  it('Homepage should have no a11y violations', async () => {
+    const { container } = render(<Homepage />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });
