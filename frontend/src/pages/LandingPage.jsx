@@ -52,7 +52,7 @@ const CategoryCard = React.memo(({ category, getCategoryIcon }) => {
 
   return (
     <Link
-      to={`/products?category=${category.id}`}
+      to={`/products?category=${encodeURIComponent(category.name)}`}
       className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105 group focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
       aria-label={`Browse ${category.name} category`}
     >
