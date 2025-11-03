@@ -101,6 +101,23 @@ const Products = () => {
 
   return (
     <div className="container py-8">
+      {/* Breadcrumb */}
+      <nav className="mb-6" aria-label="Breadcrumb">
+        <ol className="flex items-center gap-2 text-sm text-gray-600">
+          <li><Link to="/" className="hover:text-primary-600">Home</Link></li>
+          <li>›</li>
+          <li className="text-gray-900 font-medium">Products</li>
+          {selectedCategory && (
+            <>
+              <li>›</li>
+              <li className="text-gray-900 font-medium">
+                {categories.find(cat => cat.id === selectedCategory)?.name}
+              </li>
+            </>
+          )}
+        </ol>
+      </nav>
+
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">
@@ -115,6 +132,11 @@ const Products = () => {
             'Discover quality Kenyan products at great prices'
           }
         </p>
+        {pagination.totalCount > 0 && (
+          <p className="text-sm text-gray-500 mt-2">
+            Showing {((currentPage - 1) * 12) + 1}-{Math.min(currentPage * 12, pagination.totalCount)} of {pagination.totalCount} products
+          </p>
+        )}
       </div>
       
       {/* Active Filters Summary */}
@@ -196,11 +218,12 @@ const Products = () => {
               <option value="-view_count">Most Popular</option>
             </select>
           </div>
-          <div>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">KSh</span>
             <input
               type="number"
-              className="form-control"
-              placeholder="Min Price (KES)"
+              className="form-control pl-12"
+              placeholder="Min Price"
               min="0"
               value={priceRange.min}
               onChange={(e) => {
@@ -211,11 +234,12 @@ const Products = () => {
               }}
             />
           </div>
-          <div>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">KSh</span>
             <input
               type="number"
-              className="form-control"
-              placeholder="Max Price (KES)"
+              className="form-control pl-12"
+              placeholder="Max Price"
               min="0"
               value={priceRange.max}
               onChange={(e) => {
@@ -232,21 +256,28 @@ const Products = () => {
       {/* Products Grid */}
       <div className="grid grid-cols-4 gap-6">
         {products.map(product => (
-          <div key={product.id} className="card">
+          <div 
+            key={product.id} 
+            className="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+            style={{ cursor: 'pointer', overflow: 'hidden' }}
+          >
             {/* Product Image */}
-            <div style={{
-              height: '200px',
-              background: 'var(--gray-100)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative'
-            }}>
+            <Link to={`/products/${product.id}`}>
+              <div style={{
+                height: '200px',
+                background: 'var(--gray-100)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
               {product.image ? (
                 <img
                   src={getProductImageUrl(product, '/placeholder.png')}
                   alt={product.name}
                   crossOrigin="anonymous"
+                  className="group-hover:scale-110 transition-transform duration-500"
                   style={{
                     width: '100%',
                     height: '100%',
@@ -272,23 +303,69 @@ const Products = () => {
                 📦
               </div>
               
-              {/* Stock Badge */}
-              {product.stock === 0 && (
+              {/* Badges */}
+              {product.stock === 0 ? (
                 <div style={{
                   position: 'absolute',
                   top: 'var(--space-2)',
                   right: 'var(--space-2)',
-                  background: 'var(--error)',
+                  background: '#ef4444',
                   color: 'white',
                   padding: 'var(--space-1) var(--space-2)',
                   borderRadius: 'var(--radius-sm)',
                   fontSize: '0.75rem',
-                  fontWeight: '500'
+                  fontWeight: '600'
                 }}>
                   Out of Stock
                 </div>
+              ) : product.stock < 10 ? (
+                <div style={{
+                  position: 'absolute',
+                  top: 'var(--space-2)',
+                  right: 'var(--space-2)',
+                  background: '#f59e0b',
+                  color: 'white',
+                  padding: 'var(--space-1) var(--space-2)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.75rem',
+                  fontWeight: '600'
+                }}>
+                  Only {product.stock} left
+                </div>
+              ) : (
+                <div style={{
+                  position: 'absolute',
+                  top: 'var(--space-2)',
+                  right: 'var(--space-2)',
+                  background: '#10b981',
+                  color: 'white',
+                  padding: 'var(--space-1) var(--space-2)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.75rem',
+                  fontWeight: '600'
+                }}>
+                  In Stock
+                </div>
+              )}
+              
+              {/* New/Featured Badge */}
+              {product.is_featured && (
+                <div style={{
+                  position: 'absolute',
+                  top: 'var(--space-2)',
+                  left: 'var(--space-2)',
+                  background: '#8b5cf6',
+                  color: 'white',
+                  padding: 'var(--space-1) var(--space-2)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.75rem',
+                  fontWeight: '600'
+                }}>
+                  ⭐ Featured
+                </div>
               )}
             </div>
+            </Link>
             
             {/* Product Info */}
             <div className="p-4">
@@ -296,60 +373,131 @@ const Products = () => {
                 fontSize: '0.75rem',
                 color: 'var(--primary-600)',
                 fontWeight: '500',
-                marginBottom: 'var(--space-1)'
+                marginBottom: 'var(--space-1)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
               }}>
                 {product.category?.name || product.category_name || 'Uncategorized'}
               </div>
               
-              <h3 style={{
-                fontSize: '1rem',
-                fontWeight: '600',
-                marginBottom: 'var(--space-2)',
-                lineHeight: '1.4'
-              }}>
-                {product.name}
-              </h3>
-              
-              <p style={{
-                color: 'var(--gray-600)',
-                fontSize: '0.875rem',
-                marginBottom: 'var(--space-4)',
-                lineHeight: '1.4'
-              }}>
-                {product.description ? product.description.substring(0, 80) + '...' : 'No description available'}
-              </p>
-              
-              <div className="flex justify-between items-center">
-                <span style={{
-                  fontSize: '1.25rem',
-                  fontWeight: '700',
-                  color: 'var(--gray-900)'
+              {product.brand && (
+                <div style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--gray-500)',
+                  marginBottom: 'var(--space-1)'
                 }}>
-                  KES {product.price}
-                </span>
-                
-                <div className="flex gap-2">
-                  <Link
-                    to={`/products/${product.id}`}
-                    className="btn btn-secondary"
-                    style={{ padding: 'var(--space-2) var(--space-3)', fontSize: '0.75rem' }}
-                  >
-                    View
-                  </Link>
-                  <button
-                    onClick={() => addToCart(product.id)}
-                    className="btn btn-primary"
-                    disabled={product.stock === 0}
-                    style={{
-                      padding: 'var(--space-2) var(--space-3)',
-                      fontSize: '0.75rem',
-                      opacity: product.stock === 0 ? 0.5 : 1
-                    }}
-                  >
-                    {product.stock === 0 ? 'Sold Out' : 'Add to Cart'}
-                  </button>
+                  {product.brand}
+                </div>
+              )}
+              
+              <Link to={`/products/${product.id}`}>
+                <h3 
+                  className="hover:text-primary-600 transition-colors"
+                  style={{
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    marginBottom: 'var(--space-2)',
+                    lineHeight: '1.4',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    minHeight: '2.8em'
+                  }}
+                  title={product.name}
+                >
+                  {product.name}
+                </h3>
+              </Link>
+              
+              {/* Star Rating */}
+              {product.rating && (
+                <div className="flex items-center gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                  <span className="text-xs text-gray-600 ml-1">({product.rating})</span>
+                </div>
+              )}
+              
+              {/* Price */}
+              <div className="mb-4">
+                <div className="flex items-baseline gap-2">
+                  <span style={{
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                    color: 'var(--primary-600)'
+                  }}>
+                    KSh {parseFloat(product.price).toLocaleString()}
+                  </span>
+                  {product.compare_price && parseFloat(product.compare_price) > parseFloat(product.price) && (
+                    <>
+                      <span style={{
+                        fontSize: '1rem',
+                        color: 'var(--gray-400)',
+                        textDecoration: 'line-through'
+                      }}>
+                        KSh {parseFloat(product.compare_price).toLocaleString()}
+                      </span>
+                      <span style={{
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                        color: '#10b981',
+                        background: '#d1fae5',
+                        padding: '2px 6px',
+                        borderRadius: '4px'
+                      }}>
+                        {Math.round(((parseFloat(product.compare_price) - parseFloat(product.price)) / parseFloat(product.compare_price)) * 100)}% OFF
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
+              
+              <div className="flex justify-between items-center gap-2">
+                
+                <button
+                  onClick={() => addToCart(product.id)}
+                  className="btn btn-primary w-full hover:scale-105 transition-transform"
+                  disabled={product.stock === 0}
+                  style={{
+                    padding: 'var(--space-3)',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    opacity: product.stock === 0 ? 0.5 : 1,
+                    cursor: product.stock === 0 ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {product.stock === 0 ? '❌ Sold Out' : '🛒 Add to Cart'}
+                </button>
+              </div>
+              
+              {/* Quick View Button (appears on hover) */}
+              <Link
+                to={`/products/${product.id}`}
+                className="absolute inset-x-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  padding: 'var(--space-2)',
+                  borderRadius: 'var(--radius-md)',
+                  textAlign: 'center',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  color: 'var(--primary-600)',
+                  border: '2px solid var(--primary-600)',
+                  textDecoration: 'none',
+                  display: 'block'
+                }}
+              >
+                👁️ Quick View
+              </Link>
             </div>
           </div>
         ))}
