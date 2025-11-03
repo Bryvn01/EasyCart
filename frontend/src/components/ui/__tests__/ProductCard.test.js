@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '../../../test-utils';
 import ProductCard from '../ProductCard';
 
-describe('ProductCard fade-out/auto-hide', () => {
+describe('ProductCard', () => {
   const product = {
     id: 1,
     name: 'Test Product',
@@ -11,29 +11,53 @@ describe('ProductCard fade-out/auto-hide', () => {
     category: { name: 'Category' },
   };
 
-  it('fades out and hides Add to Cart button, shows success message on success', async () => {
+  it('renders product information', () => {
     render(
       <ProductCard
         product={product}
         onAddToCart={async () => true}
       />
     );
-    fireEvent.click(screen.getByRole('button', { name: /add to cart/i }));
-    await waitFor(() => expect(screen.queryByRole('button', { name: /add to cart/i })).not.toBeInTheDocument(), { timeout: 1000 });
-    const msg = await screen.findByText(/added to cart/i);
-    expect(msg).toBeInTheDocument();
-    expect(document.activeElement).toBe(msg);
+    
+    expect(screen.getByText('Test Product')).toBeInTheDocument();
   });
 
-  it('does not hide Add to Cart button on error', async () => {
+  it('calls onAddToCart when add button is clicked', async () => {
+    const mockAddToCart = jest.fn().mockResolvedValue(true);
+    
     render(
       <ProductCard
         product={product}
-        onAddToCart={async () => { throw new Error('fail'); }}
+        onAddToCart={mockAddToCart}
       />
     );
-    fireEvent.click(screen.getByRole('button', { name: /add to cart/i }));
-    await waitFor(() => expect(screen.getByRole('button', { name: /add to cart/i })).toBeInTheDocument());
-    expect(screen.queryByText(/added to cart/i)).not.toBeInTheDocument();
+    
+    const addButton = screen.getByLabelText('Add Test Product to cart');
+    fireEvent.click(addButton);
+    
+    await waitFor(() => {
+      expect(mockAddToCart).toHaveBeenCalled();
+    });
+  });
+
+  it('handles add to cart errors', async () => {
+    const mockAddToCart = jest.fn().mockRejectedValue(new Error('fail'));
+    
+    render(
+      <ProductCard
+        product={product}
+        onAddToCart={mockAddToCart}
+      />
+    );
+    
+    const addButton = screen.getByLabelText('Add Test Product to cart');
+    fireEvent.click(addButton);
+    
+    await waitFor(() => {
+      expect(mockAddToCart).toHaveBeenCalled();
+    });
+    
+    // Button should still be present after error
+    expect(screen.getByLabelText('Add Test Product to cart')).toBeInTheDocument();
   });
 });

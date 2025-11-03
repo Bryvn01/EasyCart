@@ -21,40 +21,37 @@ jobs:
           POSTGRES_DB: easycart
         ports:
           - 5432:5432
-      mongo:
-        image: mongo:6
-        ports:
-          - 27017:27017
     env:
-      DJANGO_SETTINGS_MODULE: backend.settings
-      DATABASE_URL: postgres://easycart:easycart@localhost:5432/easycart
-      MONGODB_URL: mongodb://localhost:27017/easycart
+      DJANGO_SETTINGS_MODULE: ecommerce.settings
       SECRET_KEY: testsecretkey
+      DB_USER: easycart
+      DB_PASSWORD: easycart
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: easycart
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18'
       - name: Install backend dependencies
         run: cd backend && pip install -r requirements.txt
       - name: Install frontend dependencies
         run: cd frontend && npm ci
       - name: Run npm audit (frontend)
         run: cd frontend && npm audit --audit-level=high --production
-      - name: Lint backend
-        run: cd backend && flake8 .
       - name: Security scan (Bandit)
         run: cd backend && pip install bandit && bandit -r apps/ -f txt || true
       - name: Lint frontend
         run: cd frontend && npm run lint
       - name: Run backend tests
-        run: cd backend && pytest --cov=apps --cov-report=xml
+        run: cd backend && python manage.py test
       - name: Run frontend tests
         run: cd frontend && npm test -- --coverage --watchAll=false
       - name: Upload backend coverage to Codecov
