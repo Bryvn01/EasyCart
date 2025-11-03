@@ -38,3 +38,11 @@ jest.mock('react-i18next', () => ({
     i18n: { changeLanguage: jest.fn() }
   })
 }));
+
+// Mock react-router-dom
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => jest.fn(),
+  useParams: () => ({}),
+  useLocation: () => ({ pathname: '/' })
+}));
