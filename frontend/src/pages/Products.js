@@ -45,12 +45,15 @@ const Products = () => {
     const urlSearch = urlParams.get('search');
     const urlCategory = urlParams.get('category');
     
-    if (urlSearch && urlSearch !== searchTerm) {
+    if (urlSearch) {
       setSearchTerm(urlSearch);
     }
     
-    if (urlCategory && urlCategory !== selectedCategory) {
+    if (urlCategory) {
       setSelectedCategory(urlCategory);
+    } else if (!urlCategory && selectedCategory) {
+      // Clear category if not in URL
+      setSelectedCategory('');
     }
   }, [location.search]);
 
