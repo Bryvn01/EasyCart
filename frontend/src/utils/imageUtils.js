@@ -20,15 +20,10 @@ export const normalizeImageUrl = (imageUrl) => {
   }
 
   // Fix malformed URLs like "/media/https:/..." or "/media/http:/..."
-  // This happens when Django's ImageField prepends /media/ to full URLs
-  if (decodedUrl.includes('/media/https:') || decodedUrl.includes('/media/http:')) {
-    // Extract the actual URL after /media/, handling both https:// and http://
-    const match = decodedUrl.match(/\/media\/(https?:\/?\/?[^"'\s]+)/);
+  if (decodedUrl.includes('/media/http')) {
+    const match = decodedUrl.match(/\/media\/(https?:.+)/);
     if (match) {
-      let cleanUrl = match[1];
-      // Fix malformed protocol (https:/ -> https://)
-      cleanUrl = cleanUrl.replace(/^(https?):\/([^/])/, '$1://$2');
-      return cleanUrl;
+      return match[1].replace(/^(https?):(\/)?(\/)?/, '$1://');
     }
   }
 
