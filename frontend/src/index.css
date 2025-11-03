@@ -850,6 +850,46 @@ img {
   object-position: center;
 }
 
+/* ===== MOBILE ENHANCEMENTS ===== */
+
+/* Active state for touch */
+.active\:scale-98:active {
+  transform: scale(0.98);
+}
+
+/* Safe area padding for notched devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide on mobile */
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Show only on mobile */
+.show-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .show-mobile {
+    display: block;
+  }
+}
+
 /* ===== PWA AND MOBILE TOUCH ENHANCEMENTS ===== */
 
 /* Touch-friendly tap targets (minimum 44x44px) */

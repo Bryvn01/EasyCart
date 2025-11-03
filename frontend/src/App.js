@@ -7,6 +7,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
+import MobileBottomNav from './components/MobileBottomNav';
+import BackToTop from './components/BackToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
@@ -100,6 +102,8 @@ function App() {
                     </Suspense>
                   </main>
                   <Footer />
+                  <MobileBottomNav />
+                  <BackToTop />
                   <SupportChat />
                   <NetworkStatus />
                   <InstallPWA />

@@ -8,6 +8,7 @@ import { ProductGridSkeleton } from '../components/ui';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 import { useProducts } from '../hooks/useProducts';
 import { getProductImageUrl } from '../utils/imageUtils';
+import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
@@ -180,8 +181,15 @@ const Products = () => {
         </div>
       )}
       
+      {/* Mobile Category Scroll */}
+      <HorizontalCategoryScroll 
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+      />
+
       {/* Filters */}
-      <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
+      <div className="card hidden md:block" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
         <div className="grid grid-cols-5 gap-4">
           <div>
             <SearchInput
@@ -254,12 +262,17 @@ const Products = () => {
       </div>
       
       {/* Products Grid */}
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-20 md:pb-8">
         {products.map(product => (
           <div 
             key={product.id} 
-            className="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
-            style={{ cursor: 'pointer', overflow: 'hidden' }}
+            className="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 active:scale-98"
+            style={{ 
+              cursor: 'pointer', 
+              overflow: 'hidden',
+              touchAction: 'manipulation',
+              borderRadius: '8px'
+            }}
           >
             {/* Product Image */}
             <Link to={`/products/${product.id}`}>
