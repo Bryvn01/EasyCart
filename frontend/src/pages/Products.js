@@ -40,13 +40,19 @@ const Products = () => {
   });
 
   useEffect(() => {
-    // Get search term from URL parameters
+    // Get search term and category from URL parameters
     const urlParams = new URLSearchParams(location.search);
     const urlSearch = urlParams.get('search');
+    const urlCategory = urlParams.get('category');
+    
     if (urlSearch && urlSearch !== searchTerm) {
       setSearchTerm(urlSearch);
     }
-  }, [location.search, searchTerm]);
+    
+    if (urlCategory && urlCategory !== selectedCategory) {
+      setSelectedCategory(urlCategory);
+    }
+  }, [location.search]);
 
   // Debounce search term
   useEffect(() => {
@@ -124,7 +130,7 @@ const Products = () => {
             <>
               <li>›</li>
               <li className="text-gray-900 font-medium">
-                {categories.find(cat => cat.id === selectedCategory)?.name}
+                {selectedCategory}
               </li>
             </>
           )}
@@ -135,7 +141,7 @@ const Products = () => {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">
           {selectedCategory ? 
-            `${categories.find(cat => cat.id === selectedCategory)?.name || 'Category'} Products` : 
+            `${selectedCategory} Products` : 
             'Our Products'
           }
         </h1>
@@ -165,7 +171,7 @@ const Products = () => {
         }}>
           <div style={{ fontSize: '0.875rem', color: 'var(--primary-700)' }}>
             <strong>Active Filters:</strong>
-            {selectedCategory && <span> Category: {categories.find(cat => cat.id === selectedCategory)?.name}</span>}
+            {selectedCategory && <span> Category: {selectedCategory}</span>}
             {debouncedSearchTerm && <span> Search: "{debouncedSearchTerm}"</span>}
             {sortBy && <span> Sort: {sortBy.replace('-', '').replace('_', ' ')}</span>}
             {(priceRange.min || priceRange.max) && <span> Price: KES {priceRange.min || '0'} - {priceRange.max || '∞'}</span>}
@@ -217,7 +223,7 @@ const Products = () => {
             >
               <option value="">All Categories</option>
               {Array.isArray(categories) && categories.map(category => (
-                <option key={category.id} value={category.id}>
+                <option key={category.id} value={category.name}>
                   {category.name}
                 </option>
               ))}
