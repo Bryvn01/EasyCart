@@ -107,9 +107,9 @@ const ProductDetail = () => {
             justifyContent: 'center',
             overflow: 'hidden'
           }}>
-            {product.image ? (
+            {(product.image || product.image_url) ? (
               <img
-                src={`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${product.image}`}
+                src={product.image_url || `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${product.image}`}
                 alt={product.name}
                 style={{
                   width: '100%',
@@ -123,7 +123,7 @@ const ProductDetail = () => {
               />
             ) : null}
             <div style={{
-              display: product.image ? 'none' : 'flex',
+              display: (product.image || product.image_url) ? 'none' : 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'var(--gray-500)',
