@@ -399,10 +399,7 @@ MPESA_CONSUMER_KEY = get_env_var('MPESA_CONSUMER_KEY', default='', required=Fals
 MPESA_CONSUMER_SECRET = get_env_var('MPESA_CONSUMER_SECRET', default='', required=False)
 MPESA_SHORTCODE = get_env_var('MPESA_SHORTCODE', default='174379', required=False)
 MPESA_PASSKEY = get_env_var('MPESA_PASSKEY', default='', required=False)
-try:
-    MPESA_CALLBACK_URL = config('MPESA_CALLBACK_URL')
-except UndefinedValueError:
-    raise Exception("MPESA_CALLBACK_URL must be set in the environment or .env file.")
+MPESA_CALLBACK_URL = get_env_var('MPESA_CALLBACK_URL', default='', required=False)
 
 # Development CORS override
 if DEBUG:
