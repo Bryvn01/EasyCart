@@ -35,11 +35,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
-    
+
     def validate(self, attrs):
         email = attrs.get('email')
         password = attrs.get('password')
-        
+
         if email and password:
             user = authenticate(username=email, password=password)
             if not user:

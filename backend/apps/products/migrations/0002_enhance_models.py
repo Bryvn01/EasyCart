@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             name='image',
             field=models.ImageField(blank=True, upload_to='categories/'),
         ),
-        
+
         # Add new fields to Product
         migrations.AddField(
             model_name='product',
@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
             name='meta_description',
             field=models.CharField(blank=True, max_length=160),
         ),
-        
+
         # Create ProductImage model
         migrations.CreateModel(
             name='ProductImage',
@@ -84,13 +84,14 @@ class Migration(migrations.Migration):
                 ('alt_text', models.CharField(blank=True, max_length=200)),
                 ('is_primary', models.BooleanField(default=False)),
                 ('order', models.PositiveIntegerField(default=0)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='products.product')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                 related_name='images', to='products.product')),
             ],
             options={
                 'ordering': ['order', 'id'],
             },
         ),
-        
+
         # Add database indexes
         migrations.RunSQL(
             "CREATE INDEX IF NOT EXISTS idx_product_category_active ON products_product(category_id, is_active);",

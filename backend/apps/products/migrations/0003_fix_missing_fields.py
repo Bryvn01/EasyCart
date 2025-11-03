@@ -21,6 +21,6 @@ class Migration(migrations.Migration):
                 ),
             ]
         ),
-        
+
         # Note: Product fields were already added in 0002_enhance_models.py, so no need to add them again here
     ]

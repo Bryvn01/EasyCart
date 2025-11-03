@@ -13,31 +13,82 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='payment_method',
-            field=models.CharField(choices=[('mpesa', 'M-Pesa'), ('airtel', 'Airtel Money'), ('tkash', 'T-Kash'), ('card', 'Credit/Debit Card'), ('bank', 'Bank Transfer'), ('cash', 'Cash on Delivery')], default='mpesa', max_length=20),
+            field=models.CharField(
+                choices=[
+                    ('mpesa',
+                     'M-Pesa'),
+                    ('airtel',
+                     'Airtel Money'),
+                    ('tkash',
+                     'T-Kash'),
+                    ('card',
+                     'Credit/Debit Card'),
+                    ('bank',
+                     'Bank Transfer'),
+                    ('cash',
+                     'Cash on Delivery')],
+                default='mpesa',
+                max_length=20),
         ),
         migrations.AddField(
             model_name='order',
             name='payment_reference',
-            field=models.CharField(blank=True, max_length=100, null=True),
+            field=models.CharField(
+                blank=True,
+                max_length=100,
+                null=True),
         ),
         migrations.AddField(
             model_name='order',
             name='payment_status',
-            field=models.CharField(choices=[('pending', 'Pending'), ('processing', 'Processing'), ('completed', 'Completed'), ('failed', 'Failed'), ('cancelled', 'Cancelled')], db_index=True, default='pending', max_length=20),
+            field=models.CharField(
+                choices=[
+                    ('pending',
+                     'Pending'),
+                    ('processing',
+                     'Processing'),
+                    ('completed',
+                     'Completed'),
+                    ('failed',
+                     'Failed'),
+                    ('cancelled',
+                     'Cancelled')],
+                db_index=True,
+                default='pending',
+                max_length=20),
         ),
         migrations.AddField(
             model_name='order',
             name='phone_number',
-            field=models.CharField(default='0700000000', max_length=15),
+            field=models.CharField(
+                default='0700000000',
+                max_length=15),
         ),
         migrations.AddField(
             model_name='order',
             name='transaction_id',
-            field=models.CharField(blank=True, max_length=100, null=True),
+            field=models.CharField(
+                blank=True,
+                max_length=100,
+                null=True),
         ),
         migrations.AlterField(
             model_name='order',
             name='status',
-            field=models.CharField(choices=[('pending', 'Pending'), ('processing', 'Processing'), ('shipped', 'Shipped'), ('delivered', 'Delivered'), ('cancelled', 'Cancelled')], db_index=True, default='pending', max_length=20),
+            field=models.CharField(
+                choices=[
+                    ('pending',
+                     'Pending'),
+                    ('processing',
+                     'Processing'),
+                    ('shipped',
+                     'Shipped'),
+                    ('delivered',
+                     'Delivered'),
+                    ('cancelled',
+                     'Cancelled')],
+                db_index=True,
+                default='pending',
+                max_length=20),
         ),
     ]

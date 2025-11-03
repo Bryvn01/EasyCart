@@ -11,18 +11,18 @@ class Category(models.Model):
     image = models.ImageField(upload_to='categories/', blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     history = HistoricalRecords()
 
     class Meta:
         verbose_name_plural = 'Categories'
         ordering = ['name']
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-    
+
     def __str__(self):
         return escape(self.name)
 
@@ -49,7 +49,7 @@ class Product(models.Model):
     meta_description = models.CharField(max_length=160, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     history = HistoricalRecords()
 
     class Meta:
@@ -59,11 +59,11 @@ class Product(models.Model):
             models.Index(fields=['is_featured', 'is_active']),
             models.Index(fields=['price']),
         ]
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-        
+
         # Generate SKU before saving if it doesn't exist
         if not self.sku:
             import uuid
@@ -71,29 +71,29 @@ class Product(models.Model):
             timestamp = int(time.time())
             unique_id = str(uuid.uuid4())[:8]
             self.sku = f'PRD-{timestamp}-{unique_id}-{slugify(self.name)[:10]}'
-        
+
         super().save(*args, **kwargs)
-    
+
     @property
     def average_rating(self):
         """Calculate average rating for the product"""
         return self.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
-    
+
     @property
     def review_count(self):
         """Get total number of reviews for the product"""
         return self.reviews.count()
-    
+
     @property
     def is_on_sale(self):
         return self.compare_price and self.compare_price > self.price
-    
+
     @property
     def discount_percentage(self):
         if self.is_on_sale:
             return int(((self.compare_price - self.price) / self.compare_price) * 100)
         return 0
-    
+
     def __str__(self):
         return escape(self.name)
 
@@ -104,9 +104,9 @@ class ProductImage(models.Model):
     alt_text = models.CharField(max_length=200, blank=True)
     is_primary = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
-    
+
     class Meta:
         ordering = ['order', 'id']
-    
+
     def __str__(self):
         return f'{escape(self.product.name)} - Image {self.id}'

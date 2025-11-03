@@ -1,13 +1,15 @@
 # Allow test client host
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
-import os
-import sys
-from pathlib import Path
-from decouple import config, Csv
-from datetime import timedelta
-import logging
-import sentry_sdk
+from django.core.exceptions import ImproperlyConfigured
+from decouple import UndefinedValueError
 from sentry_sdk.integrations.django import DjangoIntegration
+import sentry_sdk
+import logging
+from datetime import timedelta
+from decouple import config, Csv
+from pathlib import Path
+import sys
+import os
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # Third-party apps
 
     'rest_framework',
@@ -291,7 +293,7 @@ CACHES = {
 
 # Email Configuration
 EMAIL_BACKEND = config(
-    'EMAIL_BACKEND', 
+    'EMAIL_BACKEND',
     default='django.core.mail.backends.console.EmailBackend'
 )
 EMAIL_HOST = config('EMAIL_HOST', default='')
@@ -384,8 +386,6 @@ ADMIN_URL = config('ADMIN_URL', default='admin/')
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 # M-Pesa Settings
-from decouple import UndefinedValueError
-from django.core.exceptions import ImproperlyConfigured
 
 def get_env_var(var, default=None, required=False):
     try:
@@ -394,6 +394,7 @@ def get_env_var(var, default=None, required=False):
         if required:
             raise ImproperlyConfigured(f"{var} must be set in production")
         return default
+
 
 MPESA_CONSUMER_KEY = get_env_var('MPESA_CONSUMER_KEY', default='', required=False)
 MPESA_CONSUMER_SECRET = get_env_var('MPESA_CONSUMER_SECRET', default='', required=False)

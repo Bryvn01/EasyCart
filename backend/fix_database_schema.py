@@ -8,17 +8,17 @@ django.setup()
 def fix_database_schema():
     with sqlite3.connect('db.sqlite3') as conn:
         cursor = conn.cursor()
-        
+
         # Get current columns for products_product table
         cursor.execute('PRAGMA table_info(products_product)')
         existing_columns = [row[1] for row in cursor.fetchall()]
         print(f"Existing Product columns: {existing_columns}")
-        
-        # Get current columns for products_category table  
+
+        # Get current columns for products_category table
         cursor.execute('PRAGMA table_info(products_category)')
         existing_cat_columns = [row[1] for row in cursor.fetchall()]
         print(f"Existing Category columns: {existing_cat_columns}")
-        
+
         # Required columns for Product model
         required_product_columns = {
             'slug': 'VARCHAR(50) DEFAULT ""',
@@ -32,13 +32,13 @@ def fix_database_schema():
             'meta_title': 'VARCHAR(60) DEFAULT ""',
             'meta_description': 'VARCHAR(160) DEFAULT ""'
         }
-        
+
         # Whitelist of allowed column names to prevent SQL injection
         allowed_columns = {
-            'slug', 'short_description', 'compare_price', 'sku', 'weight', 
+            'slug', 'short_description', 'compare_price', 'sku', 'weight',
             'dimensions', 'is_featured', 'view_count', 'meta_title', 'meta_description', 'is_active'
         }
-        
+
         # Add missing columns to products_product with validation
         for column, definition in required_product_columns.items():
             if column not in existing_columns and column in allowed_columns:
@@ -52,12 +52,12 @@ def fix_database_schema():
                     print(f"Added column: {column}")
                 except Exception as e:
                     print(f"Error adding {column}: {e}")
-        
+
         # Required columns for Category model
         required_category_columns = {
             'is_active': 'BOOLEAN DEFAULT 1'
         }
-        
+
         # Add missing columns to products_category with validation
         for column, definition in required_category_columns.items():
             if column not in existing_cat_columns and column in allowed_columns:
@@ -70,9 +70,10 @@ def fix_database_schema():
                     print(f"Added category column: {column}")
                 except Exception as e:
                     print(f"Error adding category {column}: {e}")
-        
+
         conn.commit()
         print("Database schema fix completed!")
+
 
 if __name__ == '__main__':
     fix_database_schema()

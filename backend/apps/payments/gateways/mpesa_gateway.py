@@ -64,7 +64,8 @@ class MPesaGateway:
             meta = stk_callback.get('CallbackMetadata', {})
             payment = Payment.objects.filter(transaction_id=checkout_request_id).first()
             if not payment:
-                PaymentLog.objects.create(payment=None, event='mpesa_callback_error', message=f'Payment not found for {checkout_request_id}')
+                PaymentLog.objects.create(payment=None, event='mpesa_callback_error',
+                                          message=f'Payment not found for {checkout_request_id}')
                 return False
             if result_code == 0:
                 payment.status = 'succeeded'

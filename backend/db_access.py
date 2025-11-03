@@ -1,12 +1,12 @@
+from apps.orders.models import Order, Cart
+from apps.accounts.models import User
+from apps.products.models import Product, Category
 import os
 import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecommerce.settings')
 django.setup()
 
-from apps.products.models import Product, Category
-from apps.accounts.models import User
-from apps.orders.models import Order, Cart
 
 # Quick database queries
 print("=== DATABASE OVERVIEW ===")

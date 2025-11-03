@@ -1,3 +1,4 @@
+from rest_framework import permissions
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsAdminUser(BasePermission):
@@ -10,12 +11,12 @@ class IsAdminOrReadOnly(BasePermission):
             return True
         return bool(request.user and request.user.is_authenticated and request.user.is_staff)
 
-from rest_framework import permissions
 
 class IsSuperAdmin(permissions.BasePermission):
     """
     Allows access only to users with role 'superadmin'.
     """
+
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) == 'superadmin'
 
@@ -23,28 +24,35 @@ class IsManager(permissions.BasePermission):
     """
     Allows access only to users with role 'manager' or higher.
     """
+
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) in ['superadmin', 'manager']
+        return request.user and request.user.is_authenticated and getattr(
+            request.user, 'role', None) in ['superadmin', 'manager']
 
 class IsEditor(permissions.BasePermission):
     """
     Allows access only to users with role 'editor' or higher.
     """
+
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) in ['superadmin', 'manager', 'editor']
+        return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) in [
+            'superadmin', 'manager', 'editor']
 
 class IsViewer(permissions.BasePermission):
     """
     Allows access to any authenticated user (viewer or higher).
     """
+
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) in ['superadmin', 'manager', 'editor', 'viewer']
+        return request.user and request.user.is_authenticated and getattr(request.user, 'role', None) in [
+            'superadmin', 'manager', 'editor', 'viewer']
 
 class IsRoleOrReadOnly(permissions.BasePermission):
     """
     Allows read-only access to everyone, but write access only to users with a minimum role.
     Usage: set 'required_role' attribute on the view (superadmin, manager, editor, viewer).
     """
+
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True

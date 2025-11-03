@@ -1,18 +1,18 @@
+from . import review_views
+from . import wishlist_views
+from . import views
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 from .admin_views import AdminProductViewSet, AdminCategoryViewSet
 
 admin_router = DefaultRouter()
 admin_router.register(r'admin/products', AdminProductViewSet, basename='admin-product')
 admin_router.register(r'admin/categories', AdminCategoryViewSet, basename='admin-category')
-from django.urls import path
-from . import views
-from . import wishlist_views
-from . import review_views
 
 urlpatterns = [
     # Categories must come before <str:pk> to avoid conflict
     path('categories/', views.CategoryListView.as_view(), name='category-list'),
-    
+
     # Product list and detail
     path('', views.ProductListView.as_view(), name='product-list'),
     path('<str:pk>/', views.ProductDetailView.as_view(), name='product-detail'),

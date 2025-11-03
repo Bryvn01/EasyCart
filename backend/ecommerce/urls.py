@@ -21,6 +21,7 @@ def api_root(request):
         }
     })
 
+
 urlpatterns = [
     path('', api_root, name='api-root'),
     path('api/health/', health_check, name='health-check'),

@@ -5,9 +5,24 @@ from .models import User
 
 class CustomerAPITests(APITestCase):
     def setUp(self):
-        self.superadmin = User.objects.create_user(username='superadmin', email='superadmin@example.com', password='pass1234', role='superadmin', is_superuser=True, is_admin=True)
-        self.manager = User.objects.create_user(username='manager', email='manager@example.com', password='pass1234', role='manager', is_admin=True)
-        self.customer = User.objects.create_user(username='customer', email='customer@example.com', password='pass1234', role='viewer')
+        self.superadmin = User.objects.create_user(
+            username='superadmin',
+            email='superadmin@example.com',
+            password='pass1234',
+            role='superadmin',
+            is_superuser=True,
+            is_admin=True)
+        self.manager = User.objects.create_user(
+            username='manager',
+            email='manager@example.com',
+            password='pass1234',
+            role='manager',
+            is_admin=True)
+        self.customer = User.objects.create_user(
+            username='customer',
+            email='customer@example.com',
+            password='pass1234',
+            role='viewer')
         self.client = APIClient()
 
     def test_admin_can_list_customers(self):
