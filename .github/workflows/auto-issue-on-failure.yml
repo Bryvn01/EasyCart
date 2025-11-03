@@ -10,6 +10,9 @@ jobs:
   create-issue-on-failure:
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
     steps:
       - name: Create issue for failed workflow
         uses: actions/github-script@v7
@@ -17,7 +20,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const run = context.payload.workflow_run;
-            await github.issues.create({
+            await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `CI/CD Failure: ${run.name} #${run.id}`,
