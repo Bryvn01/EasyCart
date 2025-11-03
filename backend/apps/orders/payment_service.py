@@ -132,14 +132,8 @@ class StripePaymentService:
                     'quantity': 1,
                 }],
                 mode='payment',
-                success_url=f'{
-                    os.environ.get(
-                        "FRONTEND_URL",
-                        "http://localhost:3000")}/payment/success?order_id={order_id}',
-                cancel_url=f'{
-                    os.environ.get(
-                        "FRONTEND_URL",
-                        "http://localhost:3000")}/payment/cancel?order_id={order_id}',
+                success_url=f'{os.environ.get("FRONTEND_URL", "http://localhost:3000")}/payment/success?order_id={order_id}',
+                cancel_url=f'{os.environ.get("FRONTEND_URL", "http://localhost:3000")}/payment/cancel?order_id={order_id}',
                 customer_email=email,
                 metadata={
                     'order_id': str(order_id),
