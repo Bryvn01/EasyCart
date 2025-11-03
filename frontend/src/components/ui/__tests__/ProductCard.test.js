@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { renderWithProviders } from '../../../__tests__/test-utils';
 import ProductCard from '../ProductCard';
 
 describe('ProductCard fade-out/auto-hide', () => {
@@ -12,7 +13,7 @@ describe('ProductCard fade-out/auto-hide', () => {
   };
 
   it('fades out and hides Add to Cart button, shows success message on success', async () => {
-    render(
+    renderWithProviders(
       <ProductCard
         product={product}
         onAddToCart={async () => true}
@@ -26,7 +27,7 @@ describe('ProductCard fade-out/auto-hide', () => {
   });
 
   it('does not hide Add to Cart button on error', async () => {
-    render(
+    renderWithProviders(
       <ProductCard
         product={product}
         onAddToCart={async () => { throw new Error('fail'); }}
