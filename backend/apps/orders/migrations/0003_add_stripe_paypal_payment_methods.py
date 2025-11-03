@@ -15,16 +15,16 @@ class Migration(migrations.Migration):
             name='payment_method',
             field=models.CharField(
                 choices=[
-                    ('mpesa', 'M-Pesa'), 
-                    ('airtel', 'Airtel Money'), 
-                    ('tkash', 'T-Kash'), 
-                    ('card', 'Credit/Debit Card'), 
+                    ('mpesa', 'M-Pesa'),
+                    ('airtel', 'Airtel Money'),
+                    ('tkash', 'T-Kash'),
+                    ('card', 'Credit/Debit Card'),
                     ('stripe', 'Stripe'),
                     ('paypal', 'PayPal'),
-                    ('bank', 'Bank Transfer'), 
+                    ('bank', 'Bank Transfer'),
                     ('cash', 'Cash on Delivery')
-                ], 
-                default='mpesa', 
+                ],
+                default='mpesa',
                 max_length=20
             ),
         ),

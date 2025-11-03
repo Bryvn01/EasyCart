@@ -16,19 +16,19 @@ class ErrorHandlingMiddleware:
 
     def process_exception(self, request, exception):
         logger.error(f"Unhandled exception: {exception}", exc_info=True)
-        
+
         if isinstance(exception, ValidationError):
             return JsonResponse({
                 'error': 'Validation error',
                 'details': exception.message_dict if hasattr(exception, 'message_dict') else str(exception)
             }, status=400)
-        
+
         if isinstance(exception, PermissionDenied):
             return JsonResponse({
                 'error': 'Permission denied',
                 'message': 'You do not have permission to perform this action'
             }, status=403)
-        
+
         # Generic error response for production
         return JsonResponse({
             'error': 'Internal server error',
@@ -37,7 +37,7 @@ class ErrorHandlingMiddleware:
 
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
-    
+
     if response is not None:
         custom_response_data = {
             'error': True,
@@ -45,5 +45,5 @@ def custom_exception_handler(exc, context):
             'details': response.data
         }
         response.data = custom_response_data
-    
+
     return response

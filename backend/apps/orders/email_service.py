@@ -18,7 +18,7 @@ class EmailService:
         <p>Thank you for shopping with us!</p>
         """
         plain_message = strip_tags(html_message)
-        
+
         try:
             send_mail(
                 subject,
@@ -30,7 +30,7 @@ class EmailService:
             )
         except Exception as e:
             print(f"Failed to send email: {e}")
-    
+
     @staticmethod
     def send_payment_confirmation(order):
         subject = f'Payment Confirmed - Order #{order.id}'
@@ -43,7 +43,7 @@ class EmailService:
         <p>Your order is now being processed.</p>
         """
         plain_message = strip_tags(html_message)
-        
+
         try:
             send_mail(
                 subject,

@@ -14,11 +14,11 @@ class Review(models.Model):
     is_verified_purchase = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         unique_together = ('product', 'user')
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return f'{self.product.name} - {self.rating} stars by {self.user.email}'
 
@@ -27,6 +27,6 @@ class ReviewHelpful(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_helpful = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         unique_together = ('review', 'user')

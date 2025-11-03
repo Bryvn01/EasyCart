@@ -14,7 +14,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_editable = ['status']
     inlines = [OrderItemInline]
     readonly_fields = ['created_at', 'updated_at', 'transaction_id', 'payment_reference']
-    
+
     fieldsets = (
         ('Order Information', {
             'fields': ('user', 'total_amount', 'status', 'shipping_address', 'phone_number')

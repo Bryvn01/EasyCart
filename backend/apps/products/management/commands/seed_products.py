@@ -1,3 +1,5 @@
+from apps.products.models import Product, Category
+from django.core.management.base import BaseCommand
 def slugify(text):
     """Simple slugify function to create URL-friendly strings."""
     import re
@@ -6,10 +8,6 @@ def slugify(text):
     text = re.sub(r'[-\s]+', '-', text)
     return text
 
-
-
-from django.core.management.base import BaseCommand
-from apps.products.models import Product, Category
 
 # List of products to seed
 PRODUCTS = [

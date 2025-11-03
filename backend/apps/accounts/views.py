@@ -54,12 +54,12 @@ def register(request):
         # Remove all path traversal patterns and normalize
         sanitized = ''.join(c for c in raw_address if c.isalnum() or c in ' .,#-')
         data['address'] = escape(sanitized).strip()
-    
+
     # Additional sanitization for all string fields
     for key, value in data.items():
         if isinstance(value, str):
             data[key] = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c', '', escape(str(value)[:500]))
-    
+
     serializer = UserRegistrationSerializer(data=data)
     if serializer.is_valid():
         user = serializer.save()
@@ -103,12 +103,12 @@ def forgot_password(request):
     email = request.data.get('email')
     if not email:
         return Response({'email': ['Email is required']}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     try:
         user = User.objects.get(email=email)
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        
+
         # Hash the token before sending
         from django.contrib.auth.hashers import make_password
         hashed_token = make_password(token)

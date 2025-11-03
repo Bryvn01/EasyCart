@@ -25,8 +25,7 @@ def download_kenyan_product_images():
         'always-ultra-pads.jpg': 'https://www.pg.com/en_US/images/always-ultra-thin-pads-10ct.jpg',
         'fresh-tomatoes.jpg': 'https://images.unsplash.com/photo-1546470427-e2679e62e32f?w=400&q=80',
         'kenyan-bananas.jpg': 'https://images.unsplash.com/photo-1571771019784-3ff35f4f4277?w=400&q=80',
-        'kenyan-carrots.jpg': 'https://images.unsplash.com/photo-1582515073490-39981397c445?w=400&q=80'
-    }
+        'kenyan-carrots.jpg': 'https://images.unsplash.com/photo-1582515073490-39981397c445?w=400&q=80'}
 
     # Create media/products directory if it doesn't exist
     os.makedirs('backend/media/products', exist_ok=True)
@@ -68,7 +67,8 @@ def download_kenyan_product_images():
     print("\n📊 Download Summary:")
     print(f"✅ Successfully downloaded: {downloaded_count} images")
     print(f"❌ Failed downloads: {failed_count} images")
-    print(f"📁 Images saved to: backend/media/products/")
+    print("📁 Images saved to: backend/media/products/")
+
 
 if __name__ == '__main__':
     download_kenyan_product_images()

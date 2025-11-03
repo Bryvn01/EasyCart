@@ -1,3 +1,5 @@
+from apps.accounts.permissions import IsRoleOrReadOnly
+from .serializers import ProductSerializer, CategorySerializer, ProductCreateUpdateSerializer
 from rest_framework import generics, filters, permissions, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -22,7 +24,7 @@ class CategoryListView(APIView):
     POST: Create category (admin only - not implemented)
     """
     permission_classes = [AllowAny]
-    
+
     def get(self, request):
         """Fetch categories from PostgreSQL."""
         try:
@@ -36,10 +38,6 @@ class CategoryListView(APIView):
                 {'error': 'Failed to fetch categories', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-
-from .serializers import ProductSerializer, CategorySerializer, ProductCreateUpdateSerializer
-from apps.accounts.permissions import IsRoleOrReadOnly
 
 
 class ProductListView(APIView):
