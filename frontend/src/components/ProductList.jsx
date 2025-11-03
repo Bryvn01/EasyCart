@@ -48,9 +48,7 @@ const ProductList = () => {
     isError,
     error,
     refetch,
-  } = useQuery({
-    queryKey: ['products'],
-    queryFn: fetchProducts,
+  } = useQuery(['products'], fetchProducts, {
     retry: 2,
     refetchOnWindowFocus: false,
   });

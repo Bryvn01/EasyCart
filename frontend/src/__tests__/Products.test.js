@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
@@ -62,19 +61,14 @@ const mockCategories = {
 };
 
 const renderWithProviders = (component) => {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } }
-  });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <CartProvider>
-            {component}
-          </CartProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <CartProvider>
+          {component}
+        </CartProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 };
 
@@ -195,7 +189,7 @@ describe('Products Page', () => {
     expect(screen.getByText('Out of Stock')).toBeInTheDocument();
   });
 
-  test('applies search filter', async () => {
+  test('shows clear filters button when filters are active', async () => {
     renderWithProviders(<Products />);
     
     // Wait for component to load
@@ -203,8 +197,17 @@ describe('Products Page', () => {
       expect(screen.getByText('Test Product')).toBeInTheDocument();
     });
     
-    // Verify products are displayed
-    expect(screen.getByText('Test Product')).toBeInTheDocument();
+    // Apply a search filter
+    const searchInput = screen.getByTestId('search-input');
+    fireEvent.change(searchInput, { target: { value: 'Test' } });
+    
+    // Wait for active filters section to appear
+    await waitFor(() => {
+      expect(screen.getByText('Active Filters:')).toBeInTheDocument();
+    });
+    
+    // Check that clear all button is present
+    expect(screen.getByText('Clear All')).toBeInTheDocument();
   });
 
   test('renders pagination controls when there are multiple pages', async () => {
@@ -313,7 +316,7 @@ describe('Products Page', () => {
     expect(firstImage.style.display).toBe('none');
   });
 
-  test('handles pagination correctly', async () => {
+  test('resets to first page when search term changes', async () => {
     const manyProducts = {
       data: {
         count: 25,
@@ -343,5 +346,14 @@ describe('Products Page', () => {
     await waitFor(() => {
       expect(screen.getByText(/Page 2 of/)).toBeInTheDocument();
     });
+
+    // Now search for something
+    const searchInput = screen.getByTestId('search-input');
+    fireEvent.change(searchInput, { target: { value: 'Laptop' } });
+
+    // Should reset to page 1
+    await waitFor(() => {
+      expect(screen.getByText(/Page 1 of/)).toBeInTheDocument();
+    }, { timeout: 1000 });
   });
 });

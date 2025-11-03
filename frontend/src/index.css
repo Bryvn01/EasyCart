@@ -958,12 +958,10 @@ input:focus:not(:focus-visible) {
   }
 }
 
-
 /* High DPI screens */
-@media (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   img {
-    /* image-rendering: -webkit-optimize-contrast; */
-    /* Removed for standards compliance */
+    image-rendering: -webkit-optimize-contrast;
   }
 }
 
@@ -1033,6 +1031,10 @@ input:focus:not(:focus-visible) {
   }
 }
 
-
 /* Connection-aware image loading */
-/* Removed @media (prefers-reduced-data: reduce) for standards compliance */
+@media (prefers-reduced-data: reduce) {
+  img {
+    /* Lower quality on reduced data mode */
+    image-rendering: pixelated;
+  }
+}

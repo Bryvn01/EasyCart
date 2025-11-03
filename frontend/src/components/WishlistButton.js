@@ -30,8 +30,8 @@ const WishlistButton = ({ productId, size = 'sm', variant = 'outline', className
     },
     onSuccess: () => {
       toast.success('Added to wishlist');
-      queryClient.invalidateQueries({ queryKey: ['wishlist-status', productId] });
-      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+      queryClient.invalidateQueries(['wishlist-status', productId]);
+      queryClient.invalidateQueries(['wishlist']);
     },
     onError: (error) => {
       toast.error(error.response?.data?.error || error.message || 'Failed to add to wishlist');
@@ -49,8 +49,8 @@ const WishlistButton = ({ productId, size = 'sm', variant = 'outline', className
     },
     onSuccess: () => {
       toast.success('Removed from wishlist');
-      queryClient.invalidateQueries({ queryKey: ['wishlist-status', productId] });
-      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+      queryClient.invalidateQueries(['wishlist-status', productId]);
+      queryClient.invalidateQueries(['wishlist']);
     },
     onError: (error) => {
       toast.error(error.response?.data?.error || error.message || 'Failed to remove from wishlist');
