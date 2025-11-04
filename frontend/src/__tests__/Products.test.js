@@ -23,6 +23,9 @@ jest.mock('../components/ui/SearchInput', () => {
   };
 });
 
+// Mock scrollIntoView for tests
+Element.prototype.scrollIntoView = jest.fn();
+
 const mockProducts = {
   data: {
     results: [
@@ -134,7 +137,7 @@ describe('Products Page', () => {
     
     // Wait for error handling to complete
     await waitFor(() => {
-      expect(screen.getByText('No products found')).toBeInTheDocument();
+      expect(screen.getByText('No Products Found')).toBeInTheDocument();
     });
   });
 
@@ -167,12 +170,12 @@ describe('Products Page', () => {
     
     // Find and use category dropdown
     const categorySelect = screen.getByDisplayValue('All Categories');
-    fireEvent.change(categorySelect, { target: { value: '1' } });
+    fireEvent.change(categorySelect, { target: { value: 'Electronics' } });
     
     // Wait for API call with category filter
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(expect.objectContaining({
-        category: '1'
+        category: 'Electronics'
       }));
     });
   });
