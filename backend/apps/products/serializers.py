@@ -16,6 +16,21 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.name", read_only=True)
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        """Return clean image URL without /media/ prefix for external URLs"""
+        if obj.image:
+            image_url = str(obj.image)
+            # If it's a Cloudinary URL, return it directly
+            if image_url.startswith('http://') or image_url.startswith('https://'):
+                return image_url
+            # Otherwise, return the full URL with media prefix
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
 
     class Meta:
         model = Product

@@ -45,7 +45,7 @@ function App() {
         <CartProvider>
           <WishlistProvider>
             <ThemeProvider>
-              <Router>
+              <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
                   <Navbar />
                   <main className="flex-1">

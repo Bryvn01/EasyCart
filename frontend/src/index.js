@@ -8,11 +8,9 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <App />
-    </HelmetProvider>
-  </React.StrictMode>
+  <HelmetProvider>
+    <App />
+  </HelmetProvider>
 );
 
 // DISABLED: Service worker causes caching issues during development
