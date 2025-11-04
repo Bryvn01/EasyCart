@@ -5,7 +5,6 @@ import { productsAPI, ordersAPI, getApiBaseUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess, retryWithBackoff, checkApiHealth, getDetailedErrorMessage } from '../utils/errorHandler';
-import ImageWithFallback from '../components/ImageWithFallback';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 
 // Error Boundary Component
