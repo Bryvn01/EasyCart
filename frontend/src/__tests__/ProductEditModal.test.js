@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, fireEvent, screen, waitFor, AllTheProviders } from './test-utils';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from './test-utils';
 import * as api from '../services/api';
 import ProductEditModal from '../components/ProductEditModal';
 
@@ -31,14 +32,13 @@ describe('ProductEditModal', () => {
   const onUpdate = jest.fn();
 
   it('renders and allows image URL input', () => {
-    render(
+    renderWithProviders(
       <ProductEditModal
         product={baseProduct}
         isOpen={true}
         onClose={onClose}
         onUpdate={onUpdate}
-      />,
-      { wrapper: AllTheProviders }
+      />
     );
     expect(screen.getByLabelText(/Product Image/i)).toBeInTheDocument();
     const urlInput = screen.getByPlaceholderText('https://example.com/image.jpg');
@@ -48,14 +48,13 @@ describe('ProductEditModal', () => {
   });
 
   it('shows error for non-image file upload', async () => {
-    render(
+    renderWithProviders(
       <ProductEditModal
         product={baseProduct}
         isOpen={true}
         onClose={onClose}
         onUpdate={onUpdate}
-      />,
-      { wrapper: AllTheProviders }
+      />
     );
     const fileInput = screen.getByLabelText(/Upload product image file/i);
     const fakeFile = new File(['test'], 'test.txt', { type: 'text/plain' });
@@ -66,14 +65,13 @@ describe('ProductEditModal', () => {
   });
 
   it('shows preview for valid image file', async () => {
-    render(
+    renderWithProviders(
       <ProductEditModal
         product={baseProduct}
         isOpen={true}
         onClose={onClose}
         onUpdate={onUpdate}
-      />,
-      { wrapper: AllTheProviders }
+      />
     );
     const fileInput = screen.getByLabelText(/Upload product image file/i);
     const imageFile = new File(['dummy'], 'test.png', { type: 'image/png' });
@@ -87,14 +85,13 @@ describe('ProductEditModal', () => {
   });
 
   it('clears file when URL is entered', () => {
-    render(
+    renderWithProviders(
       <ProductEditModal
         product={baseProduct}
         isOpen={true}
         onClose={onClose}
         onUpdate={onUpdate}
-      />,
-      { wrapper: AllTheProviders }
+      />
     );
     const fileInput = screen.getByLabelText(/Upload product image file/i);
     const urlInput = screen.getByPlaceholderText('https://example.com/image.jpg');

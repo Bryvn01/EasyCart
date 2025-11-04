@@ -25,7 +25,7 @@ module.exports = {
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
-    'test-utils',
+    'test-utils\\.js$',
   ],
   moduleDirectories: ['node_modules', 'src'],
   testTimeout: 10000,
