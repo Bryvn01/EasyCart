@@ -1,8 +1,7 @@
 import React from 'react';
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor, AllTheProviders } from './test-utils';
 import * as api from '../services/api';
 import ProductEditModal from '../components/ProductEditModal';
-import { withQueryClientProvider } from './test-utils';
 
 const baseProduct = {
   id: 1,
@@ -33,14 +32,13 @@ describe('ProductEditModal', () => {
 
   it('renders and allows image URL input', () => {
     render(
-      withQueryClientProvider(
-        <ProductEditModal
-          product={baseProduct}
-          isOpen={true}
-          onClose={onClose}
-          onUpdate={onUpdate}
-        />
-      )
+      <ProductEditModal
+        product={baseProduct}
+        isOpen={true}
+        onClose={onClose}
+        onUpdate={onUpdate}
+      />,
+      { wrapper: AllTheProviders }
     );
     expect(screen.getByLabelText(/Product Image/i)).toBeInTheDocument();
     const urlInput = screen.getByPlaceholderText('https://example.com/image.jpg');
@@ -51,14 +49,13 @@ describe('ProductEditModal', () => {
 
   it('shows error for non-image file upload', async () => {
     render(
-      withQueryClientProvider(
-        <ProductEditModal
-          product={baseProduct}
-          isOpen={true}
-          onClose={onClose}
-          onUpdate={onUpdate}
-        />
-      )
+      <ProductEditModal
+        product={baseProduct}
+        isOpen={true}
+        onClose={onClose}
+        onUpdate={onUpdate}
+      />,
+      { wrapper: AllTheProviders }
     );
     const fileInput = screen.getByLabelText(/Upload product image file/i);
     const fakeFile = new File(['test'], 'test.txt', { type: 'text/plain' });
@@ -70,14 +67,13 @@ describe('ProductEditModal', () => {
 
   it('shows preview for valid image file', async () => {
     render(
-      withQueryClientProvider(
-        <ProductEditModal
-          product={baseProduct}
-          isOpen={true}
-          onClose={onClose}
-          onUpdate={onUpdate}
-        />
-      )
+      <ProductEditModal
+        product={baseProduct}
+        isOpen={true}
+        onClose={onClose}
+        onUpdate={onUpdate}
+      />,
+      { wrapper: AllTheProviders }
     );
     const fileInput = screen.getByLabelText(/Upload product image file/i);
     const imageFile = new File(['dummy'], 'test.png', { type: 'image/png' });
@@ -92,14 +88,13 @@ describe('ProductEditModal', () => {
 
   it('clears file when URL is entered', () => {
     render(
-      withQueryClientProvider(
-        <ProductEditModal
-          product={baseProduct}
-          isOpen={true}
-          onClose={onClose}
-          onUpdate={onUpdate}
-        />
-      )
+      <ProductEditModal
+        product={baseProduct}
+        isOpen={true}
+        onClose={onClose}
+        onUpdate={onUpdate}
+      />,
+      { wrapper: AllTheProviders }
     );
     const fileInput = screen.getByLabelText(/Upload product image file/i);
     const urlInput = screen.getByPlaceholderText('https://example.com/image.jpg');

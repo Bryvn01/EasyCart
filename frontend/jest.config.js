@@ -23,6 +23,10 @@ module.exports = {
     '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
     '<rootDir>/src/**/*.{spec,test}.{js,jsx}',
   ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    'test-utils',
+  ],
   moduleDirectories: ['node_modules', 'src'],
   testTimeout: 10000,
 };
