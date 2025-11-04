@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess, retryWithBackoff, checkApiHealth, getDetailedErrorMessage } from '../utils/errorHandler';
 import ImageWithFallback from '../components/ImageWithFallback';
+import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 
 // Error Boundary Component
 const ErrorFallback = ({ error, resetErrorBoundary }) => (
@@ -512,10 +513,10 @@ const LandingPage = () => {
 
         {/* Categories Section */}
         <section 
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16"
+          className="max-w-7xl mx-auto py-12 md:py-16"
           aria-labelledby="categories-heading"
         >
-          <div className="text-center mb-10">
+          <div className="text-center mb-10 px-4 sm:px-6 lg:px-8">
             <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
               Shop by Category
             </h2>
@@ -525,21 +526,37 @@ const LandingPage = () => {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <CategorySkeleton key={i} />
-              ))}
+            <div className="px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <CategorySkeleton key={i} />
+                ))}
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-              {categories.map((category) => (
-                <CategoryCard
-                  key={category.id}
-                  category={category}
-                  getCategoryIcon={getCategoryIcon}
+            <>
+              {/* Mobile: Horizontal Scroll */}
+              <div className="md:hidden">
+                <HorizontalCategoryScroll 
+                  categories={categories}
+                  selectedCategory={null}
+                  onSelectCategory={(categoryName) => {
+                    window.location.href = `/products?category=${encodeURIComponent(categoryName)}`;
+                  }}
                 />
-              ))}
-            </div>
+              </div>
+
+              {/* Desktop: Grid */}
+              <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 px-4 sm:px-6 lg:px-8">
+                {categories.map((category) => (
+                  <CategoryCard
+                    key={category.id}
+                    category={category}
+                    getCategoryIcon={getCategoryIcon}
+                  />
+                ))}
+              </div>
+            </>
           )}
         </section>
 

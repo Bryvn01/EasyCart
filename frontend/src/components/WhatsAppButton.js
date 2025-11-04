@@ -13,8 +13,15 @@ const WhatsAppButton = () => {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
-      style={{ width: isHovered ? 'auto' : '60px', height: '60px', padding: isHovered ? '0 20px' : '0' }}
+      className="fixed bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+      style={{ 
+        bottom: '24px',
+        left: '20px',
+        width: isHovered ? 'auto' : '56px', 
+        height: '56px', 
+        padding: isHovered ? '0 20px' : '0',
+        zIndex: 45
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       aria-label="Chat with us on WhatsApp"
