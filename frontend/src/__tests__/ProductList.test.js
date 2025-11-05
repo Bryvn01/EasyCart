@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import { renderWithProviders } from './test-utils';
 import ProductList from '../components/ProductList';
 import * as api from '../services/api';
 import * as errorHandler from '../utils/errorHandler';
@@ -55,14 +56,14 @@ describe('ProductList Component', () => {
 
   test('renders loading state initially', () => {
     api.productsAPI.getProducts.mockImplementation(() => new Promise(() => {}));
-    render(<ProductList />);
+    renderWithProviders(<ProductList />);
     
     expect(screen.getByText('Loading products...')).toBeInTheDocument();
   });
 
   test('fetches and displays products from API', async () => {
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
-    render(<ProductList />);
+    renderWithProviders(<ProductList />);
     
     await waitFor(() => {
       expect(screen.getByText('Samsung Galaxy S21')).toBeInTheDocument();
@@ -74,7 +75,7 @@ describe('ProductList Component', () => {
 
   test('displays prices in KSh format', async () => {
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
-    render(<ProductList />);
+    renderWithProviders(<ProductList />);
     
     await waitFor(() => {
       expect(screen.getByText(/KSh 45,000/)).toBeInTheDocument();
@@ -85,7 +86,7 @@ describe('ProductList Component', () => {
 
   test('displays product images', async () => {
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
-    render(<ProductList />);
+    renderWithProviders(<ProductList />);
     
     await waitFor(() => {
       const images = screen.getAllByRole('img');
@@ -95,7 +96,7 @@ describe('ProductList Component', () => {
 
   test('displays "Add to Cart" buttons', async () => {
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
-    render(<ProductList />);
+    renderWithProviders(<ProductList />);
     
     await waitFor(() => {
       const buttons = screen.getAllByText('Add to Cart');
@@ -105,7 +106,7 @@ describe('ProductList Component', () => {
 
   test('displays "No products available" when API returns empty array', async () => {
     api.productsAPI.getProducts.mockResolvedValue({ data: { results: [] } });
-    render(<ProductList />);
+    renderWithProviders(<ProductList />);
     
     await waitFor(() => {
       expect(screen.getByText('No products available')).toBeInTheDocument();
@@ -114,7 +115,7 @@ describe('ProductList Component', () => {
 
   test('handles API errors gracefully', async () => {
     api.productsAPI.getProducts.mockRejectedValue(new Error('Network error'));
-    render(<ProductList />);
+    renderWithProviders(<ProductList />);
     
     await waitFor(() => {
       expect(screen.getByText('Error Loading Products')).toBeInTheDocument();
@@ -125,7 +126,7 @@ describe('ProductList Component', () => {
 
   test('displays product categories', async () => {
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
-    render(<ProductList />);
+    renderWithProviders(<ProductList />);
     
     await waitFor(() => {
       expect(screen.getByText('Electronics')).toBeInTheDocument();
@@ -152,7 +153,7 @@ describe('ProductList Component', () => {
     };
     
     api.productsAPI.getProducts.mockResolvedValue(longNameProduct);
-    render(<ProductList />);
+    renderWithProviders(<ProductList />);
     
     await waitFor(() => {
       const heading = screen.getByText('This is a very long product name that should be truncated in the display');
@@ -162,7 +163,7 @@ describe('ProductList Component', () => {
 
   test('uses responsive grid layout', async () => {
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
-    const { container } = render(<ProductList />);
+    const { container } = renderWithProviders(<ProductList />);
     
     await waitFor(() => {
       expect(screen.getByText('Samsung Galaxy S21')).toBeInTheDocument();
