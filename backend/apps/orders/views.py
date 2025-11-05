@@ -40,18 +40,41 @@ def get_cart(request):
 
 @api_view(["POST"])
 def add_to_cart(request):
+    from .idempotency import idempotent_operation
+    
     cart, created = Cart.objects.get_or_create(user=request.user)
     product_id = request.data.get("product_id")
     quantity = request.data.get("quantity", 1)
 
+    # Validate quantity
+    try:
+        quantity = int(quantity)
+        if quantity < 1 or quantity > 100:
+            return Response({"error": "Quantity must be between 1 and 100"}, status=status.HTTP_400_BAD_REQUEST)
+    except (ValueError, TypeError):
+        return Response({"error": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
+
     product = get_object_or_404(Product, id=product_id)
+    
+    # Check stock availability
+    if product.stock < quantity:
+        return Response({"error": f"Only {product.stock} items available"}, status=status.HTTP_400_BAD_REQUEST)
+    
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product, defaults={"quantity": quantity})
 
     if not created:
-        cart_item.quantity += quantity
+        # Check if adding quantity exceeds stock
+        new_quantity = cart_item.quantity + quantity
+        if new_quantity > product.stock:
+            return Response({"error": f"Cannot add {quantity} more. Only {product.stock - cart_item.quantity} available"}, status=status.HTTP_400_BAD_REQUEST)
+        cart_item.quantity = new_quantity
         cart_item.save()
 
-    return Response({"message": "Item added to cart"}, status=status.HTTP_201_CREATED)
+    return Response({
+        "message": "Item added to cart",
+        "cart_item_id": cart_item.id,
+        "quantity": cart_item.quantity
+    }, status=status.HTTP_201_CREATED)
 
 
 @api_view(["DELETE"])
