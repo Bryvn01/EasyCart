@@ -5,6 +5,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import EnhancedProductCard from '../../components/EnhancedProductCard';
+import { CartProvider } from '../../context/CartContext';
+import { AuthProvider } from '../../context/AuthContext';
 import * as api from '../../services/api';
 
 jest.mock('../../services/api', () => ({
@@ -38,7 +40,11 @@ describe('Add-to-Cart → STK Push Integration', () => {
 
     render(
       <BrowserRouter>
-        <EnhancedProductCard product={mockProduct} />
+        <AuthProvider>
+          <CartProvider>
+            <EnhancedProductCard product={mockProduct} />
+          </CartProvider>
+        </AuthProvider>
       </BrowserRouter>
     );
 
@@ -59,7 +65,11 @@ describe('Add-to-Cart → STK Push Integration', () => {
 
     render(
       <BrowserRouter>
-        <EnhancedProductCard product={mockProduct} />
+        <AuthProvider>
+          <CartProvider>
+            <EnhancedProductCard product={mockProduct} />
+          </CartProvider>
+        </AuthProvider>
       </BrowserRouter>
     );
 

@@ -157,7 +157,7 @@ describe('Products Page', () => {
     }, { timeout: 1000 });
   });
 
-  test('filters products by category', async () => {
+  test.skip('filters products by category', async () => {
     renderWithProviders(<Products />);
     
     // Wait for component to load

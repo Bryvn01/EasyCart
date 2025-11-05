@@ -38,3 +38,10 @@ export function renderWithProviders(ui, options) {
 }
 
 export * from '@testing-library/react';
+
+// Simple test to prevent Jest "no tests" error
+describe('test-utils', () => {
+  it('exports renderWithProviders', () => {
+    expect(renderWithProviders).toBeDefined();
+  });
+});
