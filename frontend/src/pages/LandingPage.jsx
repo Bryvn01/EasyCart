@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess, retryWithBackoff, checkApiHealth, getDetailedErrorMessage } from '../utils/errorHandler';
 import ImageWithFallback from '../components/ImageWithFallback';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
+import MobileSearchBar from '../components/MobileSearchBar';
 
 // Error Boundary Component
 const ErrorFallback = ({ error, resetErrorBoundary }) => (
@@ -440,8 +441,10 @@ const LandingPage = () => {
       </Helmet>
 
       <main className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 text-white overflow-hidden">
+        {/* Mobile Search Bar - Sticky */}
+        <MobileSearchBar />
+        {/* Hero Section - Hidden on Mobile */}
+        <section className="hidden md:block relative bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 text-white overflow-hidden">
           <div className="absolute inset-0 bg-black opacity-10" aria-hidden="true"></div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -511,18 +514,30 @@ const LandingPage = () => {
           </div>
         </section>
 
+        {/* Mobile Flash Banner - Compact */}
+        <section className="md:hidden bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4">
+          <div className="flex items-center justify-center gap-2 text-sm font-semibold">
+            <span className="text-xl">🔥</span>
+            <span>FLASH SALE - Up to 50% OFF</span>
+            <span className="text-xl">🔥</span>
+          </div>
+        </section>
+
         {/* Categories Section */}
         <section 
-          className="max-w-7xl mx-auto py-12 md:py-16"
+          className="max-w-7xl mx-auto py-4 md:py-16"
           aria-labelledby="categories-heading"
         >
-          <div className="text-center mb-10 px-4 sm:px-6 lg:px-8">
+          <div className="hidden md:block text-center mb-10 px-4 sm:px-6 lg:px-8">
             <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
               Shop by Category
             </h2>
             <p className="text-gray-600 text-lg">
               Discover what you need from our wide range of categories
             </p>
+          </div>
+          <div className="md:hidden px-4 mb-2">
+            <h2 className="text-lg font-bold text-gray-900">Categories</h2>
           </div>
 
           {loading ? (
@@ -588,13 +603,13 @@ const LandingPage = () => {
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                 {[...Array(8)].map((_, i) => (
                   <ProductCardSkeleton key={i} />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                 {featuredProducts.map((product) => (
                   <ProductCard 
                     key={product.id} 
