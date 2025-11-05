@@ -65,18 +65,18 @@ check_health() {
     response=$(curl -s -w "\n%{http_code}" "$BACKEND_URL/api/health")
     http_code=$(echo "$response" | tail -n1)
     body=$(echo "$response" | sed '$d')
-    
+
     if [ "$http_code" != "200" ]; then
         echo "❌ Health check failed! Status: $http_code"
         echo "Response: $body"
-        
+
         # Send alert to Slack (optional)
         if [ -n "$WEBHOOK_URL" ]; then
             curl -X POST "$WEBHOOK_URL" \
                 -H 'Content-Type: application/json' \
                 -d "{\"text\":\"🚨 EasyCart Backend Health Check Failed (Status: $http_code)\"}"
         fi
-        
+
         return 1
     else
         echo "✅ Health check passed"
@@ -111,7 +111,7 @@ done
            message: error.message,
            timestamp: new Date().toISOString()
          });
-         
+
          // Send to error tracking service (e.g., Sentry)
          // Sentry.captureException(error);
        }
@@ -201,7 +201,7 @@ Error fetching products: [error details]
 
 **Error Message:**
 ```
-Access to XMLHttpRequest at 'https://easycart-backend.onrender.com/api/products' 
+Access to XMLHttpRequest at 'https://easycart-backend.onrender.com/api/products'
 from origin 'https://easycart-1-752r.onrender.com' has been blocked by CORS policy
 ```
 
@@ -247,7 +247,7 @@ app.use(responseTime((req, res, time) => {
   if (time > 2000) {
     console.warn(`Slow request: ${req.method} ${req.url} - ${time}ms`);
   }
-  
+
   // Send to monitoring service
   // metrics.recordResponseTime(req.url, time);
 }));
@@ -266,15 +266,15 @@ app.use(responseTime((req, res, time) => {
 // backend/controllers/productController.js
 exports.getProducts = async (req, res) => {
   const startTime = Date.now();
-  
+
   try {
     const products = await Product.find(query).limit(limit);
-    
+
     const queryTime = Date.now() - startTime;
     if (queryTime > 1000) {
       console.warn(`Slow query: getProducts - ${queryTime}ms`);
     }
-    
+
     res.json(products);
   } catch (error) {
     console.error('Query error:', error);
@@ -376,14 +376,14 @@ const axios = require('axios');
 
 const sendSlackAlert = async (message, severity = 'warning') => {
   if (!process.env.SLACK_WEBHOOK_URL) return;
-  
+
   const emoji = {
     error: '🚨',
     warning: '⚠️',
     info: 'ℹ️',
     success: '✅'
   };
-  
+
   try {
     await axios.post(process.env.SLACK_WEBHOOK_URL, {
       text: `${emoji[severity]} ${message}`,
@@ -426,7 +426,7 @@ const nodemailer = require('nodemailer');
 
 const sendAlert = async (subject, message) => {
   if (!process.env.EMAIL_HOST) return;
-  
+
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -436,7 +436,7 @@ const sendAlert = async (subject, message) => {
       pass: process.env.EMAIL_PASSWORD
     }
   });
-  
+
   await transporter.sendMail({
     from: '"EasyCart Alerts" <alerts@easycart.com>',
     to: 'team@easycart.com',
@@ -553,7 +553,7 @@ Create a simple HTML dashboard for team visibility:
 </head>
 <body>
   <h1>🚀 EasyCart Status Dashboard</h1>
-  
+
   <h2>Service Status</h2>
   <div class="status ok">
     ✅ Backend: <span id="backend-status">Checking...</span>
@@ -561,7 +561,7 @@ Create a simple HTML dashboard for team visibility:
   <div class="status ok">
     ✅ Frontend: <span id="frontend-status">Checking...</span>
   </div>
-  
+
   <h2>Performance Metrics</h2>
   <div class="metric">
     <strong>Response Time:</strong> <span id="response-time">-</span>ms
@@ -572,7 +572,7 @@ Create a simple HTML dashboard for team visibility:
   <div class="metric">
     <strong>Last Updated:</strong> <span id="last-updated">-</span>
   </div>
-  
+
   <script>
     async function checkStatus() {
       try {
@@ -580,7 +580,7 @@ Create a simple HTML dashboard for team visibility:
         const response = await fetch('https://easycart-backend.onrender.com/api/products');
         const data = await response.json();
         const responseTime = Date.now() - start;
-        
+
         document.getElementById('backend-status').textContent = 'Live';
         document.getElementById('response-time').textContent = responseTime;
         document.getElementById('products-count').textContent = data.count || 0;
@@ -589,7 +589,7 @@ Create a simple HTML dashboard for team visibility:
         document.getElementById('backend-status').textContent = 'Error: ' + error.message;
       }
     }
-    
+
     checkStatus();
     setInterval(checkStatus, 60000); // Update every minute
   </script>
@@ -718,5 +718,5 @@ curl https://easycart-backend.onrender.com/api/products
 
 ---
 
-**Last Updated:** [Current Date]  
+**Last Updated:** [Current Date]
 **Maintained by:** EasyCart DevOps Team

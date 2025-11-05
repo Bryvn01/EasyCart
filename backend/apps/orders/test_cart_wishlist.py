@@ -17,10 +17,18 @@ class CartWishlistIntegrationTest(TestCase):
     def setUp(self):
         """Set up test data"""
         self.user = User.objects.create_user(
-            email="test@example.com", password="testpass123", first_name="Test", last_name="User"
+            email="test@example.com",
+            password="testpass123",
+            first_name="Test",
+            last_name="User",
         )
         self.product = Product.objects.create(
-            name="Test Product", description="Test Description", price=100.00, stock=10, category="Test", is_active=True
+            name="Test Product",
+            description="Test Description",
+            price=100.00,
+            stock=10,
+            category="Test",
+            is_active=True,
         )
 
     def test_cart_creation(self):
@@ -43,7 +51,9 @@ class CartWishlistIntegrationTest(TestCase):
     def test_add_to_wishlist(self):
         """Test adding item to wishlist"""
         wishlist, _ = Wishlist.objects.get_or_create(user=self.user)
-        wishlist_item = WishlistItem.objects.create(wishlist=wishlist, product=self.product)
+        wishlist_item = WishlistItem.objects.create(
+            wishlist=wishlist, product=self.product
+        )
         self.assertEqual(wishlist_item.product, self.product)
 
     def test_update_cart_quantity(self):
@@ -62,7 +72,9 @@ class CartWishlistIntegrationTest(TestCase):
         """Test moving item from wishlist to cart"""
         # Create wishlist with item
         wishlist, _ = Wishlist.objects.get_or_create(user=self.user)
-        wishlist_item = WishlistItem.objects.create(wishlist=wishlist, product=self.product)
+        wishlist_item = WishlistItem.objects.create(
+            wishlist=wishlist, product=self.product
+        )
 
         # Move to cart
         cart, _ = Cart.objects.get_or_create(user=self.user)
@@ -70,8 +82,15 @@ class CartWishlistIntegrationTest(TestCase):
         wishlist_item.delete()
 
         # Verify
-        self.assertEqual(CartItem.objects.filter(cart=cart, product=self.product).count(), 1)
-        self.assertEqual(WishlistItem.objects.filter(wishlist=wishlist, product=self.product).count(), 0)
+        self.assertEqual(
+            CartItem.objects.filter(cart=cart, product=self.product).count(), 1
+        )
+        self.assertEqual(
+            WishlistItem.objects.filter(
+                wishlist=wishlist, product=self.product
+            ).count(),
+            0,
+        )
 
     def test_move_from_cart_to_wishlist(self):
         """Test moving item from cart to wishlist"""
@@ -85,5 +104,12 @@ class CartWishlistIntegrationTest(TestCase):
         cart_item.delete()
 
         # Verify
-        self.assertEqual(WishlistItem.objects.filter(wishlist=wishlist, product=self.product).count(), 1)
-        self.assertEqual(CartItem.objects.filter(cart=cart, product=self.product).count(), 0)
+        self.assertEqual(
+            WishlistItem.objects.filter(
+                wishlist=wishlist, product=self.product
+            ).count(),
+            1,
+        )
+        self.assertEqual(
+            CartItem.objects.filter(cart=cart, product=self.product).count(), 0
+        )

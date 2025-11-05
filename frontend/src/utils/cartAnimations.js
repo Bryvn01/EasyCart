@@ -18,7 +18,7 @@ export const animateAddToCart = (buttonElement, cartIconElement) => {
   const originalText = buttonElement.innerHTML;
   buttonElement.innerHTML = '✓ Added!';
   buttonElement.style.backgroundColor = 'var(--success)';
-  
+
   setTimeout(() => {
     buttonElement.innerHTML = originalText;
     buttonElement.style.backgroundColor = '';
@@ -28,7 +28,7 @@ export const animateAddToCart = (buttonElement, cartIconElement) => {
   if (cartIconElement) {
     cartIconElement.style.transform = 'scale(1.3)';
     cartIconElement.style.transition = 'transform 0.3s ease';
-    
+
     setTimeout(() => {
       cartIconElement.style.transform = 'scale(1)';
     }, 300);
@@ -46,7 +46,7 @@ export const updateCartBadge = (badgeElement, newCount) => {
   // Pulse animation
   badgeElement.style.transform = 'scale(1.5)';
   badgeElement.style.transition = 'transform 0.3s ease';
-  
+
   setTimeout(() => {
     badgeElement.style.transform = 'scale(1)';
     badgeElement.textContent = newCount > 99 ? '99+' : newCount;

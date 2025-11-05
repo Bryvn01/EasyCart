@@ -15,7 +15,7 @@
 
 ### Frontend:
 1. Go to https://render.com/dashboard
-2. Click "New +" → "Static Site"  
+2. Click "New +" → "Static Site"
 3. Connect same GitHub repo
 4. Set Root Directory: `frontend`
 5. Add Environment Variables:

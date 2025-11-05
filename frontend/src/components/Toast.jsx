@@ -18,7 +18,7 @@ const Toast = ({ message, type = 'success', onClose, duration = 3000 }) => {
   };
 
   return (
-    <div 
+    <div
       className={`toast toast-${type}`}
       role="alert"
       aria-live="polite"
@@ -26,8 +26,8 @@ const Toast = ({ message, type = 'success', onClose, duration = 3000 }) => {
     >
       <span className="toast-icon" aria-hidden="true">{icons[type]}</span>
       <span className="toast-message">{message}</span>
-      <button 
-        className="toast-close" 
+      <button
+        className="toast-close"
         onClick={onClose}
         aria-label="Close notification"
       >

@@ -39,19 +39,23 @@ class CustomerDetailView(generics.RetrieveUpdateDestroyAPIView):
         try:
             obj = super().get_object()
             user = self.request.user
-            
+
             # Allow superusers and admins full access
             if user.is_superuser or getattr(user, "is_admin", False):
                 return obj
-            
+
             # Regular users can only access their own data
             if obj.pk != user.pk:
                 from rest_framework.exceptions import PermissionDenied
-                raise PermissionDenied("You do not have permission to access this user.")
-            
+
+                raise PermissionDenied(
+                    "You do not have permission to access this user."
+                )
+
             return obj
         except Exception as e:
             from rest_framework.exceptions import NotFound
+
             raise NotFound("User not found")
 
 
@@ -60,7 +64,7 @@ class CustomerDetailView(generics.RetrieveUpdateDestroyAPIView):
 def register(request):
     # Sanitize all input fields to prevent injection attacks
     data = request.data.copy()
-    
+
     # Sanitize address field specifically
     if "address" in data:
         raw_address = str(data["address"])[:200]
@@ -72,7 +76,7 @@ def register(request):
     for key, value in data.items():
         if isinstance(value, str) and key != "password":  # Don't modify password
             # Remove path traversal patterns and dangerous characters
-            clean_value = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c|%00', '', str(value)[:500])
+            clean_value = re.sub(r"[.]{2,}|[/\\]|%2e|%2f|%5c|%00", "", str(value)[:500])
             data[key] = escape(clean_value).strip()
 
     serializer = UserRegistrationSerializer(data=data)
@@ -124,10 +128,14 @@ def profile(request):
 @permission_classes([AllowAny])
 def forgot_password(request):
     email = request.data.get("email", "").strip()
-    
+
     # Validate email format
-    if not email or not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
-        return Response({"email": ["Valid email is required"]}, status=status.HTTP_400_BAD_REQUEST)
+    if not email or not re.match(
+        r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", email
+    ):
+        return Response(
+            {"email": ["Valid email is required"]}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     try:
         user = User.objects.get(email=email)
@@ -139,15 +147,22 @@ def forgot_password(request):
         # reset_url = f"{frontend_url}/reset-password?uid={uid}&token={token}"
         # send_mail(...)
 
-        return Response({"message": "Password reset email sent"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Password reset email sent"}, status=status.HTTP_200_OK
+        )
     except User.DoesNotExist:
         # Don't reveal if email exists or not for security (timing-safe)
-        return Response({"message": "Password reset email sent"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Password reset email sent"}, status=status.HTTP_200_OK
+        )
     except Exception as e:
         # Log error but don't expose details
         import logging
+
         logging.error(f"Password reset error: {str(e)}")
-        return Response({"message": "Password reset email sent"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Password reset email sent"}, status=status.HTTP_200_OK
+        )
 
 
 @api_view(["POST"])
@@ -158,33 +173,46 @@ def reset_password(request):
     password = request.data.get("password", "")
 
     if not all([uid, token, password]):
-        return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
-    
+        return Response(
+            {"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
     # Validate password strength
     if len(password) < 8:
-        return Response({"error": "Password must be at least 8 characters"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Password must be at least 8 characters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
         # Sanitize uid to prevent injection
-        safe_uid = re.sub(r'[^A-Za-z0-9_=-]', '', uid[:100])
+        safe_uid = re.sub(r"[^A-Za-z0-9_=-]", "", uid[:100])
         user_id = force_str(urlsafe_base64_decode(safe_uid))
-        
+
         # Validate user_id is numeric
         if not user_id.isdigit():
             raise ValueError("Invalid user ID")
-        
+
         user = User.objects.get(pk=int(user_id))
 
         if default_token_generator.check_token(user, token):
             user.set_password(password)
             user.save()
-            return Response({"message": "Password reset successful"}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Password reset successful"}, status=status.HTTP_200_OK
+            )
         else:
-            return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Invalid or expired token"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
     except (User.DoesNotExist, ValueError, TypeError) as e:
         import logging
+
         logging.warning(f"Password reset attempt failed: {type(e).__name__}")
-        return Response({"error": "Invalid reset link"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Invalid reset link"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(["GET"])

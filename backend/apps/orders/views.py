@@ -14,7 +14,12 @@ import requests
 from .models import Order, Cart, CartItem
 from apps.products.models import Product
 from .serializers import OrderSerializer, CartSerializer, CartItemSerializer
-from .payment_service import MpesaPaymentService, CardPaymentService, StripePaymentService, PayPalPaymentService
+from .payment_service import (
+    MpesaPaymentService,
+    CardPaymentService,
+    StripePaymentService,
+    PayPalPaymentService,
+)
 
 
 class OrderListView(generics.ListCreateAPIView):
@@ -41,7 +46,7 @@ def get_cart(request):
 @api_view(["POST"])
 def add_to_cart(request):
     from .idempotency import idempotent_operation
-    
+
     cart, created = Cart.objects.get_or_create(user=request.user)
     product_id = request.data.get("product_id")
     quantity = request.data.get("quantity", 1)
@@ -50,31 +55,49 @@ def add_to_cart(request):
     try:
         quantity = int(quantity)
         if quantity < 1 or quantity > 100:
-            return Response({"error": "Quantity must be between 1 and 100"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Quantity must be between 1 and 100"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
     except (ValueError, TypeError):
-        return Response({"error": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     product = get_object_or_404(Product, id=product_id)
-    
+
     # Check stock availability
     if product.stock < quantity:
-        return Response({"error": f"Only {product.stock} items available"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product, defaults={"quantity": quantity})
+        return Response(
+            {"error": f"Only {product.stock} items available"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart, product=product, defaults={"quantity": quantity}
+    )
 
     if not created:
         # Check if adding quantity exceeds stock
         new_quantity = cart_item.quantity + quantity
         if new_quantity > product.stock:
-            return Response({"error": f"Cannot add {quantity} more. Only {product.stock - cart_item.quantity} available"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "error": f"Cannot add {quantity} more. Only {product.stock - cart_item.quantity} available"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         cart_item.quantity = new_quantity
         cart_item.save()
 
-    return Response({
-        "message": "Item added to cart",
-        "cart_item_id": cart_item.id,
-        "quantity": cart_item.quantity
-    }, status=status.HTTP_201_CREATED)
+    return Response(
+        {
+            "message": "Item added to cart",
+            "cart_item_id": cart_item.id,
+            "quantity": cart_item.quantity,
+        },
+        status=status.HTTP_201_CREATED,
+    )
 
 
 @api_view(["DELETE"])
@@ -96,21 +119,32 @@ def update_cart_item(request, item_id):
 
     quantity = request.data.get("quantity")
     if quantity is None:
-        return Response({"error": "Quantity is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Quantity is required"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     try:
         quantity = int(quantity)
         if quantity < 1:
-            return Response({"error": "Quantity must be at least 1"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Quantity must be at least 1"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         if quantity > 100:
-            return Response({"error": "Quantity cannot exceed 100"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Quantity cannot exceed 100"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
     except (ValueError, TypeError):
-        return Response({"error": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     # Check stock availability
     if cart_item.product.stock < quantity:
         return Response(
-            {"error": f"Only {cart_item.product.stock} items available in stock"}, status=status.HTTP_400_BAD_REQUEST
+            {"error": f"Only {cart_item.product.stock} items available in stock"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     cart_item.quantity = quantity
@@ -134,19 +168,29 @@ def move_to_wishlist(request, item_id):
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
 
     # Check if item already exists in wishlist
-    if WishlistItem.objects.filter(wishlist=wishlist, product=cart_item.product).exists():
+    if WishlistItem.objects.filter(
+        wishlist=wishlist, product=cart_item.product
+    ).exists():
         # Just remove from cart, don't add duplicate to wishlist
         cart_item.delete()
-        return Response({"message": "Item already in wishlist, removed from cart"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Item already in wishlist, removed from cart"},
+            status=status.HTTP_200_OK,
+        )
 
     # Add to wishlist
-    wishlist_item = WishlistItem.objects.create(wishlist=wishlist, product=cart_item.product)
+    wishlist_item = WishlistItem.objects.create(
+        wishlist=wishlist, product=cart_item.product
+    )
 
     # Remove from cart
     cart_item.delete()
 
     return Response(
-        {"message": "Item moved to wishlist successfully", "wishlist_item_id": wishlist_item.id},
+        {
+            "message": "Item moved to wishlist successfully",
+            "wishlist_item_id": wishlist_item.id,
+        },
         status=status.HTTP_200_OK,
     )
 
@@ -164,15 +208,32 @@ def checkout(request):
     # Prevent path traversal by removing dangerous characters
     shipping_address = re.sub(r"[.]{2,}|[/\\]", "", escape(raw_address))
     if not shipping_address or len(shipping_address) < 10:
-        return Response({"error": "Valid shipping address is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Valid shipping address is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     payment_method = request.data.get("payment_method", "mpesa")
-    if payment_method not in ["mpesa", "airtel", "tkash", "card", "stripe", "paypal", "bank", "cash"]:
-        return Response({"error": "Invalid payment method"}, status=status.HTTP_400_BAD_REQUEST)
+    if payment_method not in [
+        "mpesa",
+        "airtel",
+        "tkash",
+        "card",
+        "stripe",
+        "paypal",
+        "bank",
+        "cash",
+    ]:
+        return Response(
+            {"error": "Invalid payment method"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     phone_number = escape(request.data.get("phone_number", "").strip())
     if not re.match(r"^\+?[1-9]\d{1,14}$", phone_number):
-        return Response({"error": "Valid phone number is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Valid phone number is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     order = Order.objects.create(
         user=request.user,
@@ -186,10 +247,15 @@ def checkout(request):
         # Check stock availability
         if cart_item.product.stock < cart_item.quantity:
             return Response(
-                {"error": f"Insufficient stock for {cart_item.product.name}"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": f"Insufficient stock for {cart_item.product.name}"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        order.items.create(product=cart_item.product, quantity=cart_item.quantity, price=cart_item.product.price)
+        order.items.create(
+            product=cart_item.product,
+            quantity=cart_item.quantity,
+            price=cart_item.product.price,
+        )
 
         # Update stock
         cart_item.product.stock -= cart_item.quantity
@@ -211,108 +277,157 @@ def initiate_payment(request):
     if payment_method == "mpesa":
         mpesa_service = MpesaPaymentService()
         try:
-            result = mpesa_service.initiate_stk_push(phone_number, order.total_amount, order_id)
+            result = mpesa_service.initiate_stk_push(
+                phone_number, order.total_amount, order_id
+            )
             if result.get("ResponseCode") == "0":
                 order.payment_status = "processing"
                 order.transaction_id = result.get("CheckoutRequestID")
                 order.save()
-                return Response({"success": True, "message": "Payment initiated", "data": result})
+                return Response(
+                    {"success": True, "message": "Payment initiated", "data": result}
+                )
             else:
                 return Response(
-                    {"success": False, "message": result.get("errorMessage", "Payment failed")},
+                    {
+                        "success": False,
+                        "message": result.get("errorMessage", "Payment failed"),
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
             # Handle network-related errors
             print(f"Network error processing M-Pesa payment: {e}")
             return Response(
-                {"success": False, "message": "Payment service temporarily unavailable"},
+                {
+                    "success": False,
+                    "message": "Payment service temporarily unavailable",
+                },
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
         except Exception as e:
             # Handle other unexpected errors
             print(f"Unexpected error processing M-Pesa payment: {e}")
             return Response(
-                {"success": False, "message": "Payment processing failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"success": False, "message": "Payment processing failed"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif payment_method == "card":
         card_service = CardPaymentService()
         try:
-            result = card_service.initiate_payment(order.total_amount, request.user.email, phone_number, order_id)
+            result = card_service.initiate_payment(
+                order.total_amount, request.user.email, phone_number, order_id
+            )
             if result.get("status") == "success":
                 order.payment_status = "processing"
                 order.save()
-                return Response({"success": True, "payment_url": result.get("data", {}).get("link")})
+                return Response(
+                    {"success": True, "payment_url": result.get("data", {}).get("link")}
+                )
             else:
                 return Response(
-                    {"success": False, "message": "Payment initialization failed"}, status=status.HTTP_400_BAD_REQUEST
+                    {"success": False, "message": "Payment initialization failed"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
             # Handle network-related errors
             print(f"Network error processing card payment: {e}")
             return Response(
-                {"success": False, "message": "Payment service temporarily unavailable"},
+                {
+                    "success": False,
+                    "message": "Payment service temporarily unavailable",
+                },
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
         except Exception as e:
             # Handle other unexpected errors
             print(f"Unexpected error processing card payment: {e}")
             return Response(
-                {"success": False, "message": "Payment processing failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"success": False, "message": "Payment processing failed"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif payment_method == "stripe":
         stripe_service = StripePaymentService()
         try:
-            result = stripe_service.initiate_payment(order.total_amount, request.user.email, phone_number, order_id)
+            result = stripe_service.initiate_payment(
+                order.total_amount, request.user.email, phone_number, order_id
+            )
             if result.get("status") == "success":
                 order.payment_status = "processing"
                 order.transaction_id = result.get("session_id")
                 order.save()
-                return Response({"success": True, "payment_url": result.get("checkout_url")})
+                return Response(
+                    {"success": True, "payment_url": result.get("checkout_url")}
+                )
             else:
                 return Response(
-                    {"success": False, "message": result.get("message", "Payment initialization failed")},
+                    {
+                        "success": False,
+                        "message": result.get(
+                            "message", "Payment initialization failed"
+                        ),
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except Exception as e:
             print(f"Error processing Stripe payment: {e}")
             return Response(
-                {"success": False, "message": "Payment processing failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"success": False, "message": "Payment processing failed"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     elif payment_method == "paypal":
         paypal_service = PayPalPaymentService()
         try:
-            result = paypal_service.initiate_payment(order.total_amount, request.user.email, phone_number, order_id)
+            result = paypal_service.initiate_payment(
+                order.total_amount, request.user.email, phone_number, order_id
+            )
             if result.get("status") == "success":
                 order.payment_status = "processing"
                 order.transaction_id = result.get("order_id")
                 order.save()
-                return Response({"success": True, "payment_url": result.get("approval_url")})
+                return Response(
+                    {"success": True, "payment_url": result.get("approval_url")}
+                )
             else:
                 return Response(
-                    {"success": False, "message": result.get("message", "Payment initialization failed")},
+                    {
+                        "success": False,
+                        "message": result.get(
+                            "message", "Payment initialization failed"
+                        ),
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except Exception as e:
             print(f"Error processing PayPal payment: {e}")
             return Response(
-                {"success": False, "message": "Payment processing failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"success": False, "message": "Payment processing failed"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    return Response({"success": False, "message": "Invalid payment method"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(
+        {"success": False, "message": "Invalid payment method"},
+        status=status.HTTP_400_BAD_REQUEST,
+    )
 
 
 @api_view(["POST"])
 def mpesa_callback(request):
     try:
         callback_data = json.loads(request.body.decode("utf-8"))
-        raw_checkout_id = str(callback_data.get("Body", {}).get("stkCallback", {}).get("CheckoutRequestID", ""))
+        raw_checkout_id = str(
+            callback_data.get("Body", {})
+            .get("stkCallback", {})
+            .get("CheckoutRequestID", "")
+        )
         # Sanitize checkout request ID to prevent path traversal
         checkout_request_id = re.sub(r"[.]{2,}|[/\\]", "", escape(raw_checkout_id))
-        result_code = callback_data.get("Body", {}).get("stkCallback", {}).get("ResultCode")
+        result_code = (
+            callback_data.get("Body", {}).get("stkCallback", {}).get("ResultCode")
+        )
 
         if checkout_request_id:
             try:
@@ -321,11 +436,17 @@ def mpesa_callback(request):
                     order.payment_status = "completed"
                     order.status = "processing"
                     # Extract M-Pesa receipt number
-                    callback_metadata = callback_data.get("Body", {}).get("stkCallback", {}).get("CallbackMetadata", {})
+                    callback_metadata = (
+                        callback_data.get("Body", {})
+                        .get("stkCallback", {})
+                        .get("CallbackMetadata", {})
+                    )
                     items = callback_metadata.get("Item", [])
                     for item in items:
                         if item.get("Name") == "MpesaReceiptNumber":
-                            order.payment_reference = escape(str(item.get("Value", ""))[:100])
+                            order.payment_reference = escape(
+                                str(item.get("Value", ""))[:100]
+                            )
                             break
                 else:
                     order.payment_status = "failed"

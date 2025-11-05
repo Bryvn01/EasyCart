@@ -221,9 +221,9 @@ export const wishlistAPI = {
 export const reviewsAPI = {
   getProductReviews: (productId) => api.get(`/products/reviews/${productId}/`),
   createReview: (data) => api.post('/products/reviews/create/', data),
-  markReviewHelpful: (reviewId, isHelpful = true) => api.post('/products/reviews/helpful/', { 
-    review_id: reviewId, 
-    is_helpful: isHelpful 
+  markReviewHelpful: (reviewId, isHelpful = true) => api.post('/products/reviews/helpful/', {
+    review_id: reviewId,
+    is_helpful: isHelpful
   }),
 };
 

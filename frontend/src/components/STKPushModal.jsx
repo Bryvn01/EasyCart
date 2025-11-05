@@ -158,8 +158,8 @@ const STKPushModal = ({ isOpen, onClose, order, onSuccess }) => {
       <div className="stk-modal">
         <div className="stk-modal-header">
           <h2 id="stk-modal-title">M-Pesa Payment</h2>
-          <button 
-            className="stk-modal-close" 
+          <button
+            className="stk-modal-close"
             onClick={handleCancel}
             aria-label="Close payment modal"
             disabled={status === 'initiating'}
@@ -263,15 +263,15 @@ const STKPushModal = ({ isOpen, onClose, order, onSuccess }) => {
         <div className="stk-modal-footer">
           {status === 'idle' && (
             <>
-              <button 
-                className="btn btn-secondary" 
+              <button
+                className="btn btn-secondary"
                 onClick={handleCancel}
                 aria-label="Cancel payment"
               >
                 Cancel
               </button>
-              <button 
-                className="btn btn-primary" 
+              <button
+                className="btn btn-primary"
                 onClick={initiateSTKPush}
                 aria-label="Initiate M-Pesa payment"
               >
@@ -281,8 +281,8 @@ const STKPushModal = ({ isOpen, onClose, order, onSuccess }) => {
           )}
 
           {status === 'waiting' && (
-            <button 
-              className="btn btn-secondary" 
+            <button
+              className="btn btn-secondary"
               onClick={handleCancel}
               aria-label="Cancel payment request"
             >
@@ -292,15 +292,15 @@ const STKPushModal = ({ isOpen, onClose, order, onSuccess }) => {
 
           {(status === 'failed' || status === 'timeout') && (
             <>
-              <button 
-                className="btn btn-secondary" 
+              <button
+                className="btn btn-secondary"
                 onClick={handleCancel}
                 aria-label="Close and cancel"
               >
                 Cancel
               </button>
-              <button 
-                className="btn btn-primary" 
+              <button
+                className="btn btn-primary"
                 onClick={handleRetry}
                 disabled={retryCount >= MAX_RETRIES}
                 aria-label={`Retry payment (${retryCount + 1}/${MAX_RETRIES})`}

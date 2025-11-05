@@ -9,7 +9,7 @@ const ProductManager = () => {
   const [user, setUser] = useState(null);
   // Removed unused loading state
   const [formData, setFormData] = useState({
-    name: '', price: '', category: 'Groceries', description: '', 
+    name: '', price: '', category: 'Groceries', description: '',
     stock: '', image: '', brand: '', weight: ''
   });
 
@@ -50,7 +50,7 @@ const ProductManager = () => {
       await productsAPI.createProduct(productData);
       await fetchProducts();
       setFormData({
-        name: '', price: '', category: 'Groceries', description: '', 
+        name: '', price: '', category: 'Groceries', description: '',
         stock: '', image: '', brand: '', weight: ''
       });
       setShowAddForm(false);
@@ -82,11 +82,11 @@ const ProductManager = () => {
       <p style={{ color: '#666', marginBottom: '20px' }}>
         Demo Mode: Add products temporarily. For permanent changes, implement backend API.
       </p>
-      
-      <button 
+
+      <button
         onClick={() => setShowAddForm(true)}
-        style={{ 
-          backgroundColor: '#007bff', color: 'white', padding: '12px 24px', 
+        style={{
+          backgroundColor: '#007bff', color: 'white', padding: '12px 24px',
           border: 'none', borderRadius: '6px', marginBottom: '20px', cursor: 'pointer'
         }}
       >
@@ -94,8 +94,8 @@ const ProductManager = () => {
       </button>
 
       {showAddForm && (
-        <div style={{ 
-          backgroundColor: '#f8f9fa', padding: '24px', borderRadius: '8px', 
+        <div style={{
+          backgroundColor: '#f8f9fa', padding: '24px', borderRadius: '8px',
           marginBottom: '20px', border: '1px solid #dee2e6'
         }}>
           <h3>Add New Product</h3>
@@ -149,8 +149,8 @@ const ProductManager = () => {
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
               required
-              style={{ 
-                width: '100%', padding: '10px', borderRadius: '4px', 
+              style={{
+                width: '100%', padding: '10px', borderRadius: '4px',
                 border: '1px solid #ced4da', marginBottom: '16px', minHeight: '80px'
               }}
             />
@@ -159,26 +159,26 @@ const ProductManager = () => {
               value={formData.image}
               onChange={(e) => setFormData({...formData, image: e.target.value})}
               required
-              style={{ 
-                width: '100%', padding: '10px', borderRadius: '4px', 
+              style={{
+                width: '100%', padding: '10px', borderRadius: '4px',
                 border: '1px solid #ced4da', marginBottom: '16px'
               }}
             />
             <div>
-              <button 
+              <button
                 type="submit"
-                style={{ 
-                  backgroundColor: '#28a745', color: 'white', padding: '12px 24px', 
+                style={{
+                  backgroundColor: '#28a745', color: 'white', padding: '12px 24px',
                   border: 'none', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'
                 }}
               >
                 Add Product
               </button>
-              <button 
+              <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
-                style={{ 
-                  backgroundColor: '#6c757d', color: 'white', padding: '12px 24px', 
+                style={{
+                  backgroundColor: '#6c757d', color: 'white', padding: '12px 24px',
                   border: 'none', borderRadius: '4px', cursor: 'pointer'
                 }}
               >
@@ -189,16 +189,16 @@ const ProductManager = () => {
         </div>
       )}
 
-      <div style={{ 
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-        gap: '20px' 
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+        gap: '20px'
       }}>
         {products.map(product => (
-          <div key={product.id} style={{ 
+          <div key={product.id} style={{
             border: '1px solid #dee2e6', borderRadius: '8px', padding: '16px',
             backgroundColor: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
           }}>
-            <img 
+            <img
               src={product.image} alt={product.name}
               style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '6px' }}
             />
@@ -213,10 +213,10 @@ const ProductManager = () => {
               Stock: {product.stock} | {product.weight}
             </p>
             <p style={{ fontSize: '12px', color: '#6c757d' }}>Brand: {product.brand}</p>
-            <button 
+            <button
               onClick={() => deleteProduct(product._id)}
-              style={{ 
-                backgroundColor: '#dc3545', color: 'white', padding: '6px 12px', 
+              style={{
+                backgroundColor: '#dc3545', color: 'white', padding: '6px 12px',
                 border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px',
                 marginTop: '8px'
               }}
@@ -228,7 +228,7 @@ const ProductManager = () => {
       </div>
 
       {products.length === 0 && (
-        <div style={{ 
+        <div style={{
           textAlign: 'center', padding: '40px', color: '#6c757d',
           border: '2px dashed #dee2e6', borderRadius: '8px', marginTop: '20px'
         }}>

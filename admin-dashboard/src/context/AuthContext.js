@@ -40,22 +40,22 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     console.log('[AuthContext] Login attempt', { email: credentials.email });
-    
+
     try {
       const response = await authAPI.login(credentials);
       const { user, access } = response.data;
-      
-      console.log('[AuthContext] Login response received', { 
-        hasUser: !!user, 
+
+      console.log('[AuthContext] Login response received', {
+        hasUser: !!user,
         hasAccess: !!access,
         role: user?.role,
         is_admin: user?.is_admin
       });
-      
+
       if (user.role !== 'admin' && !user.is_admin) {
         throw new Error('Access denied. Admin privileges required.');
       }
-      
+
       localStorage.setItem('admin_token', access);
       setUser(user);
       console.log('[AuthContext] Login successful, user set');
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         hasResponse: !!error.response,
         status: error.response?.status
       });
-      
+
       // Enhanced fallback for demo - allow admin@easycart.com with any password
       if (credentials.email === 'admin@easycart.com') {
         console.log('[AuthContext] Activating demo mode for admin@easycart.com');

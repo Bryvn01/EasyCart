@@ -51,7 +51,9 @@ class MongoDBConnection:
             # Get database from URI
             self._db = self._client.get_database()
 
-            logger.info(f"✅ MongoDB connected successfully to database: {self._db.name}")
+            logger.info(
+                f"✅ MongoDB connected successfully to database: {self._db.name}"
+            )
 
         except errors.ConfigurationError as e:
             logger.error(f"❌ MongoDB configuration error: {str(e)}")
@@ -104,7 +106,10 @@ def serialize_mongodb_doc(doc: Dict) -> Dict:
         elif isinstance(value, ObjectId):
             serialized[key] = str(value)
         elif isinstance(value, list):
-            serialized[key] = [serialize_mongodb_doc(item) if isinstance(item, dict) else item for item in value]
+            serialized[key] = [
+                serialize_mongodb_doc(item) if isinstance(item, dict) else item
+                for item in value
+            ]
         elif isinstance(value, dict):
             serialized[key] = serialize_mongodb_doc(value)
         else:
@@ -154,6 +159,7 @@ def get_products_from_mongodb(
         # Search filter - sanitize regex input to prevent injection
         if search:
             import re as regex_module
+
             # Escape special regex characters to prevent injection
             safe_search = regex_module.escape(str(search)[:100])
             query["$or"] = [
@@ -171,10 +177,17 @@ def get_products_from_mongodb(
 
         # Determine sort direction and field - whitelist allowed fields
         allowed_sort_fields = {
-            "name", "price", "created_at", "updated_at", "view_count",
-            "createdAt", "updatedAt", "viewCount", "stock"
+            "name",
+            "price",
+            "created_at",
+            "updated_at",
+            "view_count",
+            "createdAt",
+            "updatedAt",
+            "viewCount",
+            "stock",
         }
-        
+
         sort_field = str(ordering).lstrip("-")
         sort_direction = -1 if str(ordering).startswith("-") else 1
 
@@ -185,13 +198,18 @@ def get_products_from_mongodb(
             "view_count": "viewCount",
         }
         sort_field = field_mapping.get(sort_field, sort_field)
-        
+
         # Validate sort field against whitelist
         if sort_field not in allowed_sort_fields:
             sort_field = "createdAt"  # Default to safe field
 
         # Execute query with pagination
-        cursor = products_collection.find(query).sort(sort_field, sort_direction).skip(skip).limit(limit)
+        cursor = (
+            products_collection.find(query)
+            .sort(sort_field, sort_direction)
+            .skip(skip)
+            .limit(limit)
+        )
         products = list(cursor)
 
         # Get total count for pagination
@@ -200,7 +218,9 @@ def get_products_from_mongodb(
         # Serialize products
         serialized_products = [serialize_mongodb_doc(product) for product in products]
 
-        logger.info(f"✅ Fetched {len(serialized_products)} products from MongoDB (total: {total_count})")
+        logger.info(
+            f"✅ Fetched {len(serialized_products)} products from MongoDB (total: {total_count})"
+        )
 
         return serialized_products, total_count
 
@@ -264,7 +284,9 @@ def get_categories_from_mongodb() -> List[Dict]:
         categories = list(cursor)
 
         # Serialize categories
-        serialized_categories = [serialize_mongodb_doc(category) for category in categories]
+        serialized_categories = [
+            serialize_mongodb_doc(category) for category in categories
+        ]
 
         logger.info(f"✅ Fetched {len(serialized_categories)} categories from MongoDB")
 

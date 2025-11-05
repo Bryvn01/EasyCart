@@ -12,7 +12,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     console.log('[Login] Form submitted', { email: credentials.email });
 
     // Set a timeout to prevent infinite loading
@@ -37,7 +37,7 @@ const Login = () => {
     } catch (error) {
       clearTimeout(timeoutId);
       console.error('[Login] Login error:', error);
-      
+
       // Enhanced error message
       let errorMessage = 'Login failed';
       if (!error.response) {
@@ -47,7 +47,7 @@ const Login = () => {
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
+
       // Always allow admin@easycart.com to login as fallback
       if (credentials.email === 'admin@easycart.com') {
         console.log('[Login] Using demo mode fallback');
@@ -55,7 +55,7 @@ const Login = () => {
         navigate('/admin/dashboard');
         return;
       }
-      
+
       toast.error(errorMessage);
     } finally {
       setLoading(false);

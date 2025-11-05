@@ -4,7 +4,7 @@ const CategoryCard = ({ category, isSelected, onClick }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [isPressed, setIsPressed] = useState(false);
-  
+
   // Enhanced category icons with better variety and modern emojis
   const categoryIcons = {
     'Groceries': '🛒',
@@ -65,11 +65,11 @@ const CategoryCard = ({ category, isSelected, onClick }) => {
       onTouchStart={() => setIsPressed(true)}
       onTouchEnd={() => setIsPressed(false)}
       className={`flex-shrink-0 flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 relative ${
-        isSelected 
-          ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200' 
+        isSelected
+          ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200'
           : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md border border-gray-200 hover:border-primary-200 shadow-sm'
       }`}
-      style={{ 
+      style={{
         scrollSnapAlign: 'start',
         touchAction: 'manipulation',
         minWidth: '88px',
@@ -85,15 +85,15 @@ const CategoryCard = ({ category, isSelected, onClick }) => {
       {isSelected && (
         <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rounded-full shadow-sm" />
       )}
-      
+
       <div className="relative">
         {imageUrl && !imageError ? (
           <div className="w-11 h-11 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center shadow-inner relative">
             {imageLoading && (
               <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-full" />
             )}
-            <img 
-              src={imageUrl} 
+            <img
+              src={imageUrl}
               alt={category.name}
               className={`w-full h-full object-cover transition-all duration-200 ${
                 imageLoading ? 'opacity-0' : 'opacity-100'
@@ -110,19 +110,19 @@ const CategoryCard = ({ category, isSelected, onClick }) => {
             {getIcon()}
           </div>
         )}
-        
+
         {isSelected && (
           <div className="absolute inset-0 rounded-full bg-white/10 animate-pulse" />
         )}
       </div>
-      
+
       {/* Category Name */}
       <span className={`text-xs font-semibold text-center leading-tight line-clamp-2 px-1 transition-all duration-200 ${
         isSelected ? 'text-white' : 'text-gray-700'
       }`}>
         {category.name}
       </span>
-      
+
       {/* Product Count (if available) */}
       {category.product_count && (
         <span className={`text-xs opacity-75 ${

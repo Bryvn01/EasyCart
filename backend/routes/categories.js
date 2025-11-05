@@ -32,25 +32,25 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { name, description } = req.body;
-    
+
     if (!name || !name.trim()) {
       return res.status(400).json({ message: 'Category name is required' });
     }
-    
+
     // Check if category with same name already exists
-    const existingCategory = await Category.findOne({ 
-      name: { $regex: new RegExp(`^${name.trim()}$`, 'i') } 
+    const existingCategory = await Category.findOne({
+      name: { $regex: new RegExp(`^${name.trim()}$`, 'i') }
     });
-    
+
     if (existingCategory) {
       return res.status(400).json({ message: 'Category with this name already exists' });
     }
-    
+
     const newCategory = new Category({
       name: name.trim(),
       description: description?.trim() || ''
     });
-    
+
     await newCategory.save();
     res.status(201).json(newCategory);
   } catch (error) {
@@ -92,33 +92,33 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { name, description, isActive } = req.body;
-    
+
     const category = await Category.findById(req.params.id);
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }
-    
+
     // Check if another category with same name exists (excluding current one)
     if (name && name.trim()) {
-      const existingCategory = await Category.findOne({ 
+      const existingCategory = await Category.findOne({
         name: { $regex: new RegExp(`^${name.trim()}$`, 'i') },
         _id: { $ne: req.params.id }
       });
-      
+
       if (existingCategory) {
         return res.status(400).json({ message: 'Category with this name already exists' });
       }
       category.name = name.trim();
     }
-    
+
     if (description !== undefined) {
       category.description = description?.trim() || '';
     }
-    
+
     if (isActive !== undefined) {
       category.isActive = isActive;
     }
-    
+
     await category.save();
     res.json(category);
   } catch (error) {

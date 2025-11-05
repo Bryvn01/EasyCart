@@ -43,7 +43,7 @@ const AdminCategories = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim()) {
       toast.error('Category name is required');
       return;
@@ -207,8 +207,8 @@ const AdminCategories = () => {
 
       {/* Category Modal */}
       {showModal && (
-        <div 
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" 
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
           onClick={(e) => e.target === e.currentTarget && closeModal()}
           role="dialog"
           aria-modal="true"
@@ -219,15 +219,15 @@ const AdminCategories = () => {
               <h3 id="category-modal-title" className="text-lg font-medium text-gray-900">
                 {editingCategory ? 'Edit Category' : 'Add New Category'}
               </h3>
-              <button 
-                onClick={closeModal} 
+              <button
+                onClick={closeModal}
                 className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100 transition-colors"
                 aria-label="Close modal"
               >
                 <X className="h-6 w-6" />
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -242,7 +242,7 @@ const AdminCategories = () => {
                   placeholder="Enter category name"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                 <textarea
@@ -253,7 +253,7 @@ const AdminCategories = () => {
                   placeholder="Enter category description (optional)"
                 />
               </div>
-              
+
               <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
                 <button
                   type="button"

@@ -228,6 +228,6 @@ This payment integration is part of EasyCart and follows the same license terms.
 
 ---
 
-**Version:** 2.1.0  
-**Last Updated:** 2025  
+**Version:** 2.1.0
+**Last Updated:** 2025
 **Status:** Production Ready ✅

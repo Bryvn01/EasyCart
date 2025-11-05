@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const EmptyState = ({ 
-  type = 'products', 
-  title, 
-  message, 
-  actionText, 
+const EmptyState = ({
+  type = 'products',
+  title,
+  message,
+  actionText,
   actionLink,
-  onAction 
+  onAction
 }) => {
   const emptyStates = {
     products: {
@@ -63,7 +63,7 @@ const EmptyState = ({
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center max-w-md mx-auto">
       {/* Animated Icon */}
-      <div 
+      <div
         className="text-8xl mb-6 animate-bounce-slow"
         style={{
           animation: 'bounce 2s infinite'
@@ -109,22 +109,22 @@ const EmptyState = ({
       <div className="mt-8 pt-8 border-t border-gray-200 w-full">
         <p className="text-sm text-gray-500 mb-3">Need help?</p>
         <div className="flex flex-wrap gap-3 justify-center">
-          <Link 
-            to="/contact" 
+          <Link
+            to="/contact"
             className="text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
             Contact Support
           </Link>
           <span className="text-gray-300">•</span>
-          <Link 
-            to="/faq" 
+          <Link
+            to="/faq"
             className="text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
             View FAQ
           </Link>
           <span className="text-gray-300">•</span>
-          <a 
-            href="https://wa.me/254700123456" 
+          <a
+            href="https://wa.me/254700123456"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-primary-600 hover:text-primary-700 font-medium"

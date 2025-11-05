@@ -31,7 +31,7 @@ Run this PowerShell command:
 # Count copilot branches
 (git branch -r | Select-String "copilot/fix").Count
 
-# Count dependabot branches  
+# Count dependabot branches
 (git branch -r | Select-String "dependabot").Count
 
 # List recent branches
@@ -275,7 +275,7 @@ git push origin <commit-sha>:refs/heads/branch-name
 - Low maintenance
 - Automated cleanup
 
-**Time Investment**: 2-3 days  
+**Time Investment**: 2-3 days
 **Long-term Benefit**: Ongoing clean repository
 
 ---

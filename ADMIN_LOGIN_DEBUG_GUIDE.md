@@ -235,7 +235,7 @@ curl https://easycart-backend-0u8r.onrender.com/api/health
 
 Or visit: https://easycart-backend-0u8r.onrender.com/
 
-**Prevention:** 
+**Prevention:**
 - Use a service like UptimeRobot to ping the backend every 5 minutes
 - Upgrade to Render paid plan for always-on service
 
@@ -344,14 +344,14 @@ curl -X POST https://api.render.com/deploy/srv-xxx?key=yyy
 #### Scenario 2: "Cannot connect to server"
 
 **Diagnosis:** Backend is down or wrong URL
-**Solution:** 
+**Solution:**
 1. Verify backend URL in console logs
 2. Check backend service status on Render
 3. Use demo mode to access dashboard
 
 #### Scenario 3: "Invalid credentials"
 
-**Diagnosis:** 
+**Diagnosis:**
 - User doesn't exist in database
 - Password is incorrect
 - User is not an admin

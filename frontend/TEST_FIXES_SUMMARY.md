@@ -5,7 +5,7 @@
 ### 1. ProductList.test.js ✅
 **Problem:** Missing QueryClientProvider wrapper causing "No QueryClient set" errors
 
-**Fix:** 
+**Fix:**
 - Removed duplicate import
 - Added QueryClientProvider wrapper to all render() calls
 - All 11 tests now wrapped with `{ wrapper: createWrapper() }`

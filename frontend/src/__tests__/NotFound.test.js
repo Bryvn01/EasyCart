@@ -10,7 +10,7 @@ describe('NotFound Component', () => {
         <NotFound />
       </BrowserRouter>
     );
-    
+
     expect(screen.getByText('404')).toBeInTheDocument();
   });
 
@@ -20,7 +20,7 @@ describe('NotFound Component', () => {
         <NotFound />
       </BrowserRouter>
     );
-    
+
     expect(screen.getByText('Page Not Found')).toBeInTheDocument();
   });
 
@@ -30,7 +30,7 @@ describe('NotFound Component', () => {
         <NotFound />
       </BrowserRouter>
     );
-    
+
     const homeLink = screen.getByText('Go to Home');
     expect(homeLink).toBeInTheDocument();
     expect(homeLink.closest('a')).toHaveAttribute('href', '/');
@@ -42,7 +42,7 @@ describe('NotFound Component', () => {
         <NotFound />
       </BrowserRouter>
     );
-    
+
     const productsLink = screen.getByText('Browse Products');
     expect(productsLink).toBeInTheDocument();
     expect(productsLink.closest('a')).toHaveAttribute('href', '/products');

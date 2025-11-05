@@ -157,7 +157,7 @@ export default function ProductsPage() {
         // Unwrap the results array from paginated DRF response
         // Handle both DRF pagination format and direct array format
         const productsData = data.results || data.data || data;
-        
+
         if (Array.isArray(productsData)) {
           setProducts(productsData);
         } else if (typeof productsData === 'object' && productsData !== null) {

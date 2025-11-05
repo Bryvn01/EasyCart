@@ -199,7 +199,7 @@ branches:
           - CI-CD-Pipeline / build-test-lint
       enforce_admins: false
       restrictions: null
-      
+
 # Auto-delete branches after merge
 repository:
   delete_branch_on_merge: true
@@ -336,5 +336,5 @@ git for-each-ref --sort=-committerdate refs/remotes/ --format='%(committerdate:s
 - [ ] Schedule maintenance window
 - [ ] Notify team of cleanup
 
-**Approved by**: _______________  
+**Approved by**: _______________
 **Date**: _______________

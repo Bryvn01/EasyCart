@@ -109,7 +109,7 @@ You should see all 79 products! 🎉
 ### Common Issues
 
 #### Issue: "MongoDB connection error"
-**Solution**: 
+**Solution**:
 - Install and start MongoDB: `brew install mongodb-community` (Mac) or follow [MongoDB docs](https://docs.mongodb.com/manual/installation/)
 - Or use MongoDB Atlas (free tier)
 

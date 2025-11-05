@@ -359,7 +359,7 @@
   .stk-modal-overlay {
     align-items: center;
   }
-  
+
   .stk-modal {
     border-radius: 20px;
     max-height: 85vh;
@@ -370,11 +370,11 @@
   .stk-modal-header {
     padding: 16px 20px;
   }
-  
+
   .stk-modal-body {
     padding: 20px;
   }
-  
+
   .amount-value {
     font-size: 28px;
   }

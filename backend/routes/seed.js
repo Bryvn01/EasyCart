@@ -241,10 +241,10 @@ router.post('/', async (req, res) => {
   try {
     await Category.deleteMany({});
     await Product.deleteMany({});
-    
+
     await Category.insertMany(categories);
     await Product.insertMany(products);
-    
+
     // Create admin user
     await User.deleteOne({ email: 'admin@easycart.com' });
     const admin = new User({
@@ -256,7 +256,7 @@ router.post('/', async (req, res) => {
       is_admin: true
     });
     await admin.save();
-    
+
     // Create test user
     await User.deleteOne({ email: 'test@easycart.com' });
     const testUser = new User({
@@ -266,7 +266,7 @@ router.post('/', async (req, res) => {
       username: 'testuser'
     });
     await testUser.save();
-    
+
     res.json({ message: 'Database seeded successfully', products: products.length, categories: categories.length });
   } catch (error) {
     res.status(500).json({ message: error.message });

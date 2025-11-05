@@ -20,7 +20,7 @@ const SupportChat = () => {
         .getPropertyValue('env(safe-area-inset-bottom)') || '0px';
       document.documentElement.style.setProperty('--safe-area-bottom', safeAreaBottom);
     };
-    
+
     updateSafeArea();
     window.addEventListener('resize', updateSafeArea);
     return () => window.removeEventListener('resize', updateSafeArea);
@@ -47,7 +47,7 @@ const SupportChat = () => {
     setMessages(prev => [...prev, message]);
     setNewMessage('');
     setIsTyping(true);
-    
+
     setTimeout(() => {
       setIsTyping(false);
       setMessages(prev => [...prev, {
@@ -67,15 +67,15 @@ const SupportChat = () => {
         style={{
           bottom: '24px',
           right: '20px',
-          width: '56px', 
+          width: '56px',
           height: '56px',
-          borderRadius: '50%', 
+          borderRadius: '50%',
           background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-          color: 'white', 
+          color: 'white',
           border: 'none',
-          fontSize: '22px', 
-          cursor: 'pointer', 
-          boxShadow: '0 8px 25px rgba(16, 185, 129, 0.3), 0 4px 10px rgba(0, 0, 0, 0.1)', 
+          fontSize: '22px',
+          cursor: 'pointer',
+          boxShadow: '0 8px 25px rgba(16, 185, 129, 0.3), 0 4px 10px rgba(0, 0, 0, 0.1)',
           touchAction: 'manipulation',
           display: 'flex',
           alignItems: 'center',
@@ -85,7 +85,7 @@ const SupportChat = () => {
         aria-label="Open support chat"
       >
         💬
-        <div 
+        <div
           className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse"
           style={{
             boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.3)'
@@ -96,11 +96,11 @@ const SupportChat = () => {
   }
 
   return (
-    <div 
+    <div
       className="fixed flex flex-col bg-white border border-gray-200 rounded-2xl shadow-2xl backdrop-blur-sm"
       style={{
         bottom: '90px',
-        right: '20px', 
+        right: '20px',
         width: 'min(calc(100vw - 40px), 380px)',
         height: 'min(450px, calc(100vh - 200px))',
         border: '1px solid rgba(0, 0, 0, 0.08)',
@@ -119,7 +119,7 @@ const SupportChat = () => {
             <p className="text-xs text-emerald-100">We're here to help!</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={() => setIsOpen(false)}
           className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
           aria-label="Close chat"
@@ -131,13 +131,13 @@ const SupportChat = () => {
       {/* Messages Area */}
       <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50/50">
         {messages.map(message => (
-          <div 
-            key={message.id} 
+          <div
+            key={message.id}
             className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
-              message.sender === 'user' 
-                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-md' 
+              message.sender === 'user'
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-md'
                 : 'bg-white text-gray-800 border border-gray-200 rounded-bl-md shadow-sm'
             }`}>
               {message.text}
@@ -149,7 +149,7 @@ const SupportChat = () => {
             </div>
           </div>
         ))}
-        
+
         {/* Typing Indicator */}
         {isTyping && (
           <div className="flex justify-start">
@@ -162,7 +162,7 @@ const SupportChat = () => {
             </div>
           </div>
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -170,14 +170,14 @@ const SupportChat = () => {
       <form onSubmit={sendMessage} className="p-4 border-t border-gray-200 bg-white rounded-b-2xl">
         <div className="flex gap-2">
           <input
-            type="text" 
-            value={newMessage} 
+            type="text"
+            value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type your message..."
             className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-gray-50 hover:bg-white transition-colors"
             disabled={isTyping}
           />
-          <button 
+          <button
             type="submit"
             disabled={!newMessage.trim() || isTyping}
             className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full hover:from-emerald-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm font-medium min-w-[70px]"
@@ -185,7 +185,7 @@ const SupportChat = () => {
             {isTyping ? '•••' : 'Send'}
           </button>
         </div>
-        
+
         {/* Quick Actions */}
         <div className="flex gap-2 mt-3">
           {['Order Status', 'Returns', 'Payment'].map((action) => (

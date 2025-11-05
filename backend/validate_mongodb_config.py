@@ -36,7 +36,9 @@ def validate_mongodb_connection():
 
     try:
         # Create MongoDB client with timeout
-        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000)  # 5 second timeout
+        client = MongoClient(
+            mongo_uri, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000
+        )  # 5 second timeout
 
         # Attempt to connect and get server info
         print("   Attempting to connect...")
@@ -63,7 +65,10 @@ def validate_mongodb_connection():
         return True, "MongoDB connection validated successfully"
 
     except ConnectionFailure as e:
-        return False, f"❌ Connection failed: {str(e)}\n   Check network, whitelist IPs, and credentials"
+        return (
+            False,
+            f"❌ Connection failed: {str(e)}\n   Check network, whitelist IPs, and credentials",
+        )
 
     except ConfigurationError as e:
         return False, f"❌ Configuration error: {str(e)}\n   Check MONGO_URI format"

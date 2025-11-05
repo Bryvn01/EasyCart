@@ -18,16 +18,16 @@ def api_root(request):
         "liveness": "/api/health/live/",
         "readiness": "/api/health/ready/",
     }
-    
+
     response_data = {
         "message": "E-Commerce API",
         "endpoints": endpoints,
     }
-    
+
     # Only expose admin URL in debug mode
     if settings.DEBUG:
         response_data["admin"] = "/admin/"
-    
+
     return JsonResponse(response_data)
 
 

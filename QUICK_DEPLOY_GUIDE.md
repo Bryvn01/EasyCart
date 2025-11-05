@@ -126,7 +126,7 @@ services:
       - key: MONGODB_URI
         value: <your-mongodb-uri>
         type: SECRET
-    
+
   - name: frontend
     github:
       repo: <your-username>/EasyCart

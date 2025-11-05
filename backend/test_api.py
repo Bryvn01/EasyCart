@@ -88,8 +88,12 @@ def test_product_detail():
                     print(f"✅ Success! Retrieved product details")
                     print(f"\n  Name: {product.get('name')}")
                     print(f"  Price: ${product.get('price')}")
-                    print(f"  Description: {product.get('description', 'N/A')[:100]}...")
-                    print(f"  Category: {product.get('category', {}).get('name', 'N/A')}")
+                    print(
+                        f"  Description: {product.get('description', 'N/A')[:100]}..."
+                    )
+                    print(
+                        f"  Category: {product.get('category', {}).get('name', 'N/A')}"
+                    )
                     print(f"  Brand: {product.get('brand', 'N/A')}")
                     print(f"  Stock: {product.get('stock')}")
                 else:

@@ -11,8 +11,10 @@ User = get_user_model()
 
 class PaymentAPITestCase(APITestCase):
     def setUp(self):
-        test_password = os.environ.get('TEST_PASSWORD', 'TestP@ssw0rd!2024')
-        self.user = User.objects.create_user(username="testuser", password=test_password)
+        test_password = os.environ.get("TEST_PASSWORD", "TestP@ssw0rd!2024")
+        self.user = User.objects.create_user(
+            username="testuser", password=test_password
+        )
         self.order = Order.objects.create(
             user=self.user,
             total_amount=100,
@@ -42,7 +44,9 @@ class PaymentAPITestCase(APITestCase):
         self.assertEqual(payment.status, "pending")
 
     def test_list_payments(self):
-        Payment.objects.create(user=self.user, order=self.order, method="mpesa", amount=50, currency="KES")
+        Payment.objects.create(
+            user=self.user, order=self.order, method="mpesa", amount=50, currency="KES"
+        )
         url = reverse("payment-list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

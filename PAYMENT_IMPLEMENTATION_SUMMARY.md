@@ -165,7 +165,7 @@ Response: {
 ### Order Model Fields
 ```python
 payment_method = CharField(
-    max_length=20, 
+    max_length=20,
     choices=[
         ('mpesa', 'M-Pesa'),
         ('airtel', 'Airtel Money'),

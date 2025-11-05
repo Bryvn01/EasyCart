@@ -18,7 +18,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
   }
 
   // Get product images - support multiple images
-  const productImages = product.images && product.images.length > 0 
+  const productImages = product.images && product.images.length > 0
     ? product.images.map(img => typeof img === 'object' ? img.url : img)
     : [product.image || '/images/placeholder-product.jpg'];
 
@@ -32,8 +32,8 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
   };
 
   return (
-    <Card 
-      hover 
+    <Card
+      hover
       className="group overflow-hidden transition-all duration-300 hover:shadow-card-hover animate-fade-in relative"
     >
       {/* Product Image Section */}
@@ -47,7 +47,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
             style={{ objectFit: 'cover' }}
             className="w-full h-full"
           />
-          
+
           {/* Image Navigation Dots for Multiple Images */}
           {hasMultipleImages && (
             <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
@@ -60,8 +60,8 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
                     setCurrentImageIndex(index);
                   }}
                   className={`w-2 h-2 rounded-full transition-all ${
-                    currentImageIndex === index 
-                      ? 'bg-white scale-125' 
+                    currentImageIndex === index
+                      ? 'bg-white scale-125'
                       : 'bg-white bg-opacity-50'
                   }`}
                   aria-label={`View image ${index + 1}`}
@@ -79,7 +79,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
             </span>
           </div>
         )}
-        
+
         {product.stock > 0 && product.stock < 10 && (
           <div className="absolute top-2 right-2">
             <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-sm">

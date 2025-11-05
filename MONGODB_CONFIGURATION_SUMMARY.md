@@ -134,7 +134,7 @@ if MONGO_URI:
     }
 ```
 
-**Result:** 
+**Result:**
 - Django `Product.objects.count()` → Queries SQLite ❌
 - Does NOT query MongoDB Atlas ❌
 
@@ -448,12 +448,12 @@ curl -X POST https://easycart-backend.onrender.com/api/seed
 
 - **Full Audit:** `MONGODB_DJANGO_AUDIT.md` (20+ pages)
 - **Quick Reference:** `MONGODB_QUICK_REFERENCE.md`
-- **Test Scripts:** 
+- **Test Scripts:**
   - `backend/test_mongodb_connection.js`
   - `backend/test_django_mongodb.py`
 
 ---
 
-**Audit Date:** $(date)  
-**Status:** Configuration clarified and documented  
+**Audit Date:** $(date)
+**Status:** Configuration clarified and documented
 **Recommendation:** Continue with current Node.js + MongoDB setup

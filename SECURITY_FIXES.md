@@ -10,7 +10,7 @@ Fixed critical and high-severity security vulnerabilities identified by code rev
 
 **Issue:** Test files contained hardcoded passwords like "pass1234" and "testpass"
 
-**Fix:** 
+**Fix:**
 - Replaced hardcoded passwords with environment variable `TEST_PASSWORD`
 - Default secure password: `TestP@ssw0rd!2024`
 - Usage: `test_password = os.environ.get('TEST_PASSWORD', 'TestP@ssw0rd!2024')`

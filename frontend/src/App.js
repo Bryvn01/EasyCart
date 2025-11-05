@@ -35,11 +35,11 @@ import NotFound from './pages/NotFound';
 
 function App() {
   usePerformance();
-  
+
   useEffect(() => {
   // analytics.page('App Loaded');
   }, []);
-  
+
   return (
     <ErrorBoundary>
       <AuthProvider>
@@ -109,7 +109,7 @@ function App() {
                   <SupportChat />
                   <NetworkStatus />
                   <InstallPWA />
-                  <Toaster 
+                  <Toaster
                     position="top-right"
                     toastOptions={{
                       duration: 4000,

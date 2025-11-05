@@ -14,7 +14,7 @@ describe('ProductCard fade-out/auto-hide', () => {
 
   it('fades out and hides Add to Cart button, shows success message on success', async () => {
     const onAddToCart = jest.fn().mockResolvedValue(true);
-    
+
     renderWithProviders(
       <ProductCard
         product={product}
@@ -23,7 +23,7 @@ describe('ProductCard fade-out/auto-hide', () => {
     );
 
     const addButton = await screen.findByRole('button', { name: /add.*to cart/i });
-    
+
     await act(async () => {
       fireEvent.click(addButton);
     });
@@ -40,7 +40,7 @@ describe('ProductCard fade-out/auto-hide', () => {
 
   it('does not hide Add to Cart button on error', async () => {
     const onAddToCart = jest.fn().mockRejectedValue(new Error('fail'));
-    
+
     renderWithProviders(
       <ProductCard
         product={product}
@@ -49,7 +49,7 @@ describe('ProductCard fade-out/auto-hide', () => {
     );
 
     const addButton = await screen.findByRole('button', { name: /add.*to cart/i });
-    
+
     await act(async () => {
       fireEvent.click(addButton);
     });
@@ -63,7 +63,7 @@ describe('ProductCard fade-out/auto-hide', () => {
       const button = screen.queryByRole('button', { name: /add.*to cart/i });
       expect(button).toBeInTheDocument();
     }, { timeout: 2000 });
-    
+
     expect(screen.queryByText(/added to cart/i)).not.toBeInTheDocument();
   });
 });

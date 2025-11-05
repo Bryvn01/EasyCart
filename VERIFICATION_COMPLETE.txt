@@ -179,7 +179,7 @@ NEXT STEPS
       - Branch: main
       - Auto-Deploy: Yes
       - Root Directory: backend
-   
+
    b. Check Environment tab:
       - Add CLOUDINARY_URL if not present
       - Format: cloudinary://api_key:api_secret@cloud_name

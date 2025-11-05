@@ -38,7 +38,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav 
+    <nav
       className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-all duration-300"
       style={{
         backdropFilter: scrolled ? 'blur(10px)' : 'none',
@@ -49,14 +49,14 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 gap-4">
           {/* Logo */}
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="flex items-center space-x-2 text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors flex-shrink-0"
           >
             <span className="text-2xl">🛒</span>
             <span className="hidden sm:inline">Easycart</span>
           </Link>
-          
+
           {/* Search Bar - Desktop */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md">
             <div className="relative w-full">
@@ -78,7 +78,7 @@ const Navbar = () => {
               </button>
             </div>
           </form>
-          
+
           {/* Desktop Navigation */}
           <div className={`hidden md:flex items-center space-x-6`}>
             <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
@@ -87,7 +87,7 @@ const Navbar = () => {
             <Link to="/products" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
               {t('products')}
             </Link>
-            
+
             {isAuthenticated ? (
               <div className="flex items-center space-x-6">
                 <Link to="/cart" className="relative text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors flex items-center gap-2 group">
@@ -174,7 +174,7 @@ const Navbar = () => {
                   </button>
                 </div>
               </form>
-              
+
               <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium">
                 {t('home')}
               </Link>

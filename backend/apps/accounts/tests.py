@@ -9,8 +9,8 @@ from .models import User
 class CustomerAPITests(APITestCase):
     def setUp(self):
         # Use environment variable or generate secure test password
-        test_password = os.environ.get('TEST_PASSWORD', 'TestP@ssw0rd!2024')
-        
+        test_password = os.environ.get("TEST_PASSWORD", "TestP@ssw0rd!2024")
+
         self.superadmin = User.objects.create_user(
             username="superadmin",
             email="superadmin@example.com",
@@ -20,10 +20,17 @@ class CustomerAPITests(APITestCase):
             is_admin=True,
         )
         self.manager = User.objects.create_user(
-            username="manager", email="manager@example.com", password=test_password, role="manager", is_admin=True
+            username="manager",
+            email="manager@example.com",
+            password=test_password,
+            role="manager",
+            is_admin=True,
         )
         self.customer = User.objects.create_user(
-            username="customer", email="customer@example.com", password=test_password, role="viewer"
+            username="customer",
+            email="customer@example.com",
+            password=test_password,
+            role="viewer",
         )
         self.client = APIClient()
 

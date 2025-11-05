@@ -36,7 +36,8 @@ def setup_test_data():
     test_username = os.getenv("TEST_USERNAME", "testuser")
 
     user, created = User.objects.get_or_create(
-        email=test_email, defaults={"username": test_username, "password": test_password}
+        email=test_email,
+        defaults={"username": test_username, "password": test_password},
     )
 
     if created:

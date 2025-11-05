@@ -14,7 +14,7 @@ const CategoryList = ({ onSelectCategory, selectedCategory }) => {
     const fetchCategories = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/categories/`);
         const categoriesData = response.data.results || response.data;
@@ -40,8 +40,8 @@ const CategoryList = ({ onSelectCategory, selectedCategory }) => {
     return (
       <div className="flex gap-3 py-4">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div 
-            key={i} 
+          <div
+            key={i}
             className="h-10 w-24 bg-gray-200 rounded-full animate-pulse"
           />
         ))}
@@ -67,8 +67,8 @@ const CategoryList = ({ onSelectCategory, selectedCategory }) => {
           <button
             onClick={() => onSelectCategory && onSelectCategory(null)}
             className={`px-6 py-3 rounded-full font-medium transition-all duration-200 ${
-              !selectedCategory 
-                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200' 
+              !selectedCategory
+                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200'
                 : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-primary-200 shadow-sm'
             }`}
           >
@@ -81,8 +81,8 @@ const CategoryList = ({ onSelectCategory, selectedCategory }) => {
               key={category.id}
               onClick={() => onSelectCategory && onSelectCategory(category.id)}
               className={`px-6 py-3 rounded-full font-medium transition-all duration-200 ${
-                selectedCategory === category.id 
-                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200' 
+                selectedCategory === category.id
+                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200'
                   : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-primary-200 shadow-sm'
               }`}
             >
@@ -109,8 +109,8 @@ const CategoryList = ({ onSelectCategory, selectedCategory }) => {
               <div className="mb-3">
                 {imageUrl ? (
                   <div className="w-12 h-12 mx-auto rounded-full overflow-hidden bg-gray-100 shadow-inner">
-                    <img 
-                      src={imageUrl} 
+                    <img
+                      src={imageUrl}
                       alt={category.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       loading="lazy"

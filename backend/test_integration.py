@@ -126,10 +126,14 @@ def test_api_endpoints():
             response = requests.get(url, timeout=5)
 
             if response.status_code in [200, 401]:  # 401 is expected for auth endpoints
-                print_success(f"{description:<25} {endpoint:<30} [{response.status_code}]")
+                print_success(
+                    f"{description:<25} {endpoint:<30} [{response.status_code}]"
+                )
                 tests_passed += 1
             else:
-                print_error(f"{description:<25} {endpoint:<30} [{response.status_code}]")
+                print_error(
+                    f"{description:<25} {endpoint:<30} [{response.status_code}]"
+                )
                 tests_failed += 1
 
         except requests.exceptions.ConnectionError:
@@ -158,7 +162,10 @@ def test_cors_configuration():
 
         print_success(f"CORS Credentials: {settings.CORS_ALLOW_CREDENTIALS}")
 
-        if "http://localhost:3000" in cors_origins or "http://127.0.0.1:3000" in cors_origins:
+        if (
+            "http://localhost:3000" in cors_origins
+            or "http://127.0.0.1:3000" in cors_origins
+        ):
             print_success("Local development origins configured correctly")
         else:
             print_error("Local development origins (localhost:3000) not found!")
@@ -176,9 +183,15 @@ def test_environment_variables():
     from django.conf import settings
 
     checks = [
-        ("SECRET_KEY", settings.SECRET_KEY != "django-insecure-change-me-in-production"),
+        (
+            "SECRET_KEY",
+            settings.SECRET_KEY != "django-insecure-change-me-in-production",
+        ),
         ("DEBUG", hasattr(settings, "DEBUG")),
-        ("DATABASE", settings.DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql"),
+        (
+            "DATABASE",
+            settings.DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql",
+        ),
         ("ALLOWED_HOSTS", len(settings.ALLOWED_HOSTS) > 0),
     ]
 
@@ -244,17 +257,23 @@ def main():
             print_info(f"{test_name}: SKIPPED")
 
     print(f"\n{Fore.CYAN}{'='*60}")
-    print(f"{Fore.GREEN}PASSED: {passed}  {Fore.RED}FAILED: {failed}  {Fore.YELLOW}SKIPPED: {skipped}")
+    print(
+        f"{Fore.GREEN}PASSED: {passed}  {Fore.RED}FAILED: {failed}  {Fore.YELLOW}SKIPPED: {skipped}"
+    )
     print(f"{Fore.CYAN}{'='*60}\n")
 
     if failed == 0 and skipped == 0:
         print(f"{Fore.GREEN}{Style.BRIGHT}✓ ALL TESTS PASSED! System is ready for use.")
         return 0
     elif failed == 0:
-        print(f"{Fore.YELLOW}{Style.BRIGHT}⚠ All core tests passed. Start server for full testing.")
+        print(
+            f"{Fore.YELLOW}{Style.BRIGHT}⚠ All core tests passed. Start server for full testing."
+        )
         return 0
     else:
-        print(f"{Fore.RED}{Style.BRIGHT}✗ Some tests failed. Please review errors above.")
+        print(
+            f"{Fore.RED}{Style.BRIGHT}✗ Some tests failed. Please review errors above."
+        )
         return 1
 
 

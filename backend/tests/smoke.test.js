@@ -13,11 +13,11 @@ describe('Backend Smoke Tests', () => {
     // Create a minimal app for testing
     app = express();
     app.use(express.json());
-    
+
     // Mock health endpoint
     app.get('/api/health', (req, res) => {
-      res.json({ 
-        status: 'OK', 
+      res.json({
+        status: 'OK',
         message: 'EasyCart API is running',
         timestamp: new Date().toISOString()
       });
@@ -102,7 +102,7 @@ describe('Backend Smoke Tests', () => {
 
   test('Seeding script exports required data', () => {
     const seedModule = require('../scripts/seedProducts.js');
-    
+
     expect(seedModule).toHaveProperty('kenyanProducts');
     expect(seedModule).toHaveProperty('categories');
     expect(seedModule).toHaveProperty('seedProducts');
@@ -127,10 +127,10 @@ describe('Backend Smoke Tests', () => {
 
   test('Product model is properly defined', () => {
     const Product = require('../models/Product');
-    
+
     expect(Product).toBeDefined();
     expect(typeof Product).toBe('function');
-    
+
     // Check schema definition
     const schema = Product.schema;
     expect(schema).toBeDefined();
@@ -144,10 +144,10 @@ describe('Backend Smoke Tests', () => {
 
   test('Category model is properly defined', () => {
     const Category = require('../models/Category');
-    
+
     expect(Category).toBeDefined();
     expect(typeof Category).toBe('function');
-    
+
     // Check schema definition
     const schema = Category.schema;
     expect(schema).toBeDefined();

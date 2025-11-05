@@ -45,7 +45,7 @@ describe('Login fade-out/auto-hide', () => {
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     // Button should remain visible
-    await waitFor(() => expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument());
+    await screen.findByRole('button', { name: /sign in/i });
     // Error message should appear
     expect(await screen.findByText(/login failed/i)).toBeInTheDocument();
   });

@@ -246,5 +246,5 @@ For issues with scripts:
 
 ---
 
-**Last Updated:** [Current Date]  
+**Last Updated:** [Current Date]
 **Maintained by:** EasyCart Engineering Team

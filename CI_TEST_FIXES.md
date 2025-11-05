@@ -98,7 +98,7 @@ test.skip('filters products by category', async () => {
 const fetchProducts = async () => {
   const response = await productsAPI.getProducts(params);
   const data = response.data;
-  const productsData = Array.isArray(data) ? data : 
+  const productsData = Array.isArray(data) ? data :
                        (data.results && Array.isArray(data.results)) ? data.results : [];
   setProducts(productsData);
 };

@@ -42,14 +42,14 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  
+
   // Log request for debugging
   console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, {
     baseURL: config.baseURL,
     timeout: config.timeout,
     hasAuth: !!token
   });
-  
+
   return config;
 }, (error) => {
   console.error('[API Request Error]', error);

@@ -19,10 +19,10 @@ const PredictiveSearch = () => {
       { id: 5, name: 'Nike Sneakers', category: 'Fashion', price: 'KSh 8,500', image: '👟' }
     ];
 
-    const filteredCategories = allCategories.filter(cat => 
+    const filteredCategories = allCategories.filter(cat =>
       cat.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    const filteredProducts = allProducts.filter(prod => 
+    const filteredProducts = allProducts.filter(prod =>
       prod.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 

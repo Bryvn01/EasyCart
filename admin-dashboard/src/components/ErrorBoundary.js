@@ -16,7 +16,7 @@ class ErrorBoundary extends React.Component {
       error: error,
       errorInfo: errorInfo
     });
-    
+
     // Log error to console for debugging
     console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
@@ -40,7 +40,7 @@ class ErrorBoundary extends React.Component {
                   An unexpected error occurred in the admin dashboard. Please try refreshing the page.
                 </p>
               </div>
-              
+
               {process.env.NODE_ENV === 'development' && this.state.error && (
                 <div className="mt-4 p-3 bg-gray-100 rounded-md">
                   <details className="text-xs text-gray-700">
@@ -52,7 +52,7 @@ class ErrorBoundary extends React.Component {
                   </details>
                 </div>
               )}
-              
+
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={this.handleRetry}

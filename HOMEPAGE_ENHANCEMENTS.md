@@ -144,8 +144,8 @@ import ErrorBoundary from './components/ErrorBoundary';
     <CategoryGridSkeleton count={6} />
   ) : (
     categories.map(cat => (
-      <CategoryCard 
-        key={cat.id} 
+      <CategoryCard
+        key={cat.id}
         category={cat}
         onClick={() => handleCategoryClick(cat)}
         isSelected={selectedCategory === cat.id}

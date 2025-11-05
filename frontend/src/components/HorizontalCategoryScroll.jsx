@@ -8,10 +8,10 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
     if (selectedCategory && scrollRef.current) {
       const selectedElement = scrollRef.current.querySelector(`[data-category="${selectedCategory}"]`);
       if (selectedElement) {
-        selectedElement.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'nearest', 
-          inline: 'center' 
+        selectedElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
         });
       }
     }
@@ -23,8 +23,8 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
         <h2 className="text-lg font-bold text-gray-900 mb-1">Shop by Category</h2>
         <p className="text-sm text-gray-600">Find what you're looking for</p>
       </div>
-      
-      <div 
+
+      <div
         ref={scrollRef}
         className="overflow-x-auto scrollbar-hide py-3"
         style={{
@@ -41,11 +41,11 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
             onClick={() => onSelectCategory('')}
             data-category=""
             className={`flex-shrink-0 flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-              !selectedCategory 
-                ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200' 
+              !selectedCategory
+                ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200'
                 : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md border border-gray-200 hover:border-primary-200 shadow-sm'
             }`}
-            style={{ 
+            style={{
               scrollSnapAlign: 'start',
               touchAction: 'manipulation',
               minWidth: '88px',
@@ -81,12 +81,12 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
           ))}
         </div>
       </div>
-      
+
       <div className="flex justify-center mt-2 px-4">
         <div className="flex space-x-1.5">
           {Array.from({ length: Math.min(5, Math.ceil((categories.length + 1) / 4)) }).map((_, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className="w-1.5 h-1.5 rounded-full bg-gray-300 transition-all duration-200"
               style={{ opacity: i === 0 ? 1 : 0.5 }}
             />

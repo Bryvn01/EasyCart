@@ -59,7 +59,7 @@ describe('Add-to-Cart → STK Push Integration', () => {
   });
 
   test('prevents duplicate additions', async () => {
-    api.ordersAPI.addToCart.mockImplementation(() => 
+    api.ordersAPI.addToCart.mockImplementation(() =>
       new Promise(resolve => setTimeout(() => resolve({ data: {} }), 100))
     );
 
@@ -74,7 +74,7 @@ describe('Add-to-Cart → STK Push Integration', () => {
     );
 
     const addButton = screen.getByRole('button', { name: /add.*to cart/i });
-    
+
     fireEvent.click(addButton);
     fireEvent.click(addButton);
     fireEvent.click(addButton);

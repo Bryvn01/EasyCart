@@ -5,28 +5,28 @@ const productSchema = new mongoose.Schema({
   // Basic Information
   name: { type: String, required: true, trim: true, index: true },
   description: { type: String, required: true, trim: true },
-  
+
   // SKU & Inventory Management
-  sku: { 
-    type: String, 
-    unique: true, 
+  sku: {
+    type: String,
+    unique: true,
     sparse: true,
     index: true
   },
   stock: { type: Number, required: true, default: 0, min: 0 },
   manageStock: { type: Boolean, default: true },
   lowStockThreshold: { type: Number, default: 10, min: 0 },
-  
+
   // Pricing
   price: { type: Number, required: true, min: 0, index: true },
   comparePrice: { type: Number, min: 0 },
   costPerItem: { type: Number, min: 0 },
-  
+
   // Categories & Classification
   category: { type: String, required: true, trim: true, index: true },
   brand: { type: String, required: true, trim: true, index: true },
   tags: { type: [String], default: [], index: true },
-  
+
   // Images (Enhanced: Array of image objects)
   images: [{
     url: { type: String, required: true },
@@ -35,28 +35,28 @@ const productSchema = new mongoose.Schema({
   }],
   // Legacy single image field (for backward compatibility)
   image: { type: String },
-  
+
   // Product Variants
   variants: [{
     name: { type: String, required: true }, // e.g., "Size", "Color"
     options: [{ type: String }] // e.g., ["Small", "Medium", "Large"]
   }],
-  
+
   // SEO Fields
   slug: { type: String, unique: true, sparse: true, index: true },
   metaTitle: { type: String, trim: true },
   metaDescription: { type: String, trim: true },
-  
+
   // Additional Details
   weight: { type: String, trim: true },
   dimensions: { type: String, trim: true },
   rating: { type: Number, default: 4.5, min: 0, max: 5 },
   reviewCount: { type: Number, default: 0, min: 0 },
-  
+
   // Status
   isActive: { type: Boolean, default: true, index: true },
   isFeatured: { type: Boolean, default: false, index: true },
-}, { 
+}, {
   timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
@@ -85,14 +85,14 @@ productSchema.pre('save', function(next) {
   if (!this.slug || this.isModified('name')) {
     this.slug = slugify(this.name, { lower: true, strict: true });
   }
-  
+
   // Generate SKU if not provided
   if (!this.sku) {
     const timestamp = Date.now().toString(36);
     const random = Math.random().toString(36).substring(2, 7);
     this.sku = `PRD-${timestamp}-${random}`.toUpperCase();
   }
-  
+
   // Ensure at least one image is marked as primary
   if (this.images && this.images.length > 0) {
     const hasPrimary = this.images.some(img => img.isPrimary);
@@ -100,13 +100,13 @@ productSchema.pre('save', function(next) {
       this.images[0].isPrimary = true;
     }
   }
-  
+
   // Sync legacy image field with primary image
   if (this.images && this.images.length > 0) {
     const primaryImage = this.images.find(img => img.isPrimary) || this.images[0];
     this.image = primaryImage.url;
   }
-  
+
   next();
 });
 

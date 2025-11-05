@@ -31,7 +31,7 @@ python manage.py seed_products [--clear]
 
 ### Categories (10)
 - Groceries
-- Electronics  
+- Electronics
 - Fashion
 - Essentials
 - Home & Kitchen
@@ -148,7 +148,7 @@ Since Djongo is incompatible with Django 4.x, PyMongo is used for direct MongoDB
 ```json
 {
   "name": "Groceries",
-  "slug": "groceries", 
+  "slug": "groceries",
   "description": "...",
   "isActive": true,
   "createdAt": "...",
@@ -195,7 +195,7 @@ Since Djongo is incompatible with Django 4.x, PyMongo is used for direct MongoDB
 # Minimal output
 python manage.py seed_products --verbosity 0
 
-# Verbose output  
+# Verbose output
 python manage.py seed_products --verbosity 2
 ```
 

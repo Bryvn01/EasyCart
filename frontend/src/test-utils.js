@@ -9,7 +9,7 @@ const AllTheProviders = ({ children }) => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } }
   });
-  
+
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>

@@ -66,7 +66,7 @@ const AdminDashboard = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
           <p className="text-gray-600 mt-2">Sales analytics and business insights</p>
-          
+
           {/* Time Range Filter */}
           <div className="mt-4">
             <select
@@ -180,7 +180,7 @@ const AdminDashboard = () => {
                     <div key={method.payment_method} className="flex items-center justify-between">
                       <div className="flex items-center">
                         <span className="text-2xl mr-3">
-                          {method.payment_method === 'mpesa' ? '💳' : 
+                          {method.payment_method === 'mpesa' ? '💳' :
                            method.payment_method === 'stripe' ? '💳' :
                            method.payment_method === 'paypal' ? '💰' :
                            method.payment_method === 'card' ? '💳' : '📱'}

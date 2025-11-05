@@ -96,7 +96,7 @@ category_images = {
 // In your admin category management page
 import CategoryImageUploader from '../components/Admin/CategoryImageUploader';
 
-<CategoryImageUploader 
+<CategoryImageUploader
   category={selectedCategory}
   onUpdate={(updated) => {
     // Refresh category list
@@ -267,6 +267,6 @@ When all checkboxes are marked:
 
 ---
 
-**Last Updated:** 2025  
-**Status:** Ready for Implementation  
+**Last Updated:** 2025
+**Status:** Ready for Implementation
 **Estimated Time:** 20 minutes total

@@ -71,8 +71,8 @@ const CategoryCard = React.memo(({ category, getCategoryIcon }) => {
             }}
           />
         ) : null}
-        <div 
-          className="w-full h-full flex items-center justify-center text-5xl group-hover:scale-110 transition-transform duration-300" 
+        <div
+          className="w-full h-full flex items-center justify-center text-5xl group-hover:scale-110 transition-transform duration-300"
           style={{ display: hasImage ? 'none' : 'flex' }}
           aria-hidden="true"
         >
@@ -136,7 +136,7 @@ const ProductCard = React.memo(({ product, onAddToCart }) => {
           )}
 
           {isOutOfStock && (
-            <div 
+            <div
               className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center"
               role="status"
               aria-label="Out of stock"
@@ -159,8 +159,8 @@ const ProductCard = React.memo(({ product, onAddToCart }) => {
 
       <div className="p-4">
         <Link to={`/products/${product.id}`}>
-          <h3 
-            className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors min-h-[3rem]" 
+          <h3
+            className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors min-h-[3rem]"
             title={product.name}
           >
             {product.name}
@@ -172,7 +172,7 @@ const ProductCard = React.memo(({ product, onAddToCart }) => {
             KSh {product.price?.toLocaleString() || '0'}
           </div>
           {isLowStock && (
-            <span 
+            <span
               className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium"
               aria-label={`Only ${product.stock} items left`}
             >
@@ -232,16 +232,16 @@ const LandingPage = () => {
     setError(null);
     setErrorDetails(null);
     setIsRetrying(retryCount > 0);
-    
+
     try {
       // Check API health first
       const apiBaseUrl = getApiBaseUrl();
       const isHealthy = await checkApiHealth(apiBaseUrl);
-      
+
       if (!isHealthy && process.env.NODE_ENV === 'development') {
         console.warn('API health check failed, but continuing with request...');
       }
-      
+
       // Fetch data with retry logic
       const [productsRes, categoriesRes] = await retryWithBackoff(
         async () => Promise.all([
@@ -268,22 +268,22 @@ const LandingPage = () => {
           return (b.rating || 0) - (a.rating || 0);
         })
         .slice(0, 8);
-      
+
       setFeaturedProducts(featured);
       setRetryCount(0); // Reset retry count on success
     } catch (error) {
       console.error('Error fetching data:', error);
-      
+
       // Get detailed error information
       const details = getDetailedErrorMessage(error, 'Failed to load products and categories');
       setErrorDetails(details);
-      
+
       // Set user-facing error message
       setError(details.userMessage);
-      
+
       // Show toast with specific error
       handleApiError(error, details.userMessage);
-      
+
       // Increment retry count
       setRetryCount(prev => prev + 1);
     } finally {
@@ -350,13 +350,13 @@ const LandingPage = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="max-w-2xl w-full bg-white rounded-xl shadow-lg p-8 text-center">
           <div className="text-6xl mb-4">
-            {errorDetails?.type === 'NETWORK' ? '📡' : 
-             errorDetails?.type === 'CORS' ? '🚫' : 
+            {errorDetails?.type === 'NETWORK' ? '📡' :
+             errorDetails?.type === 'CORS' ? '🚫' :
              errorDetails?.type === 'SERVER' ? '🔧' : '😞'}
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Unable to Load Content</h2>
           <p className="text-gray-600 mb-2">{error}</p>
-          
+
           {/* Technical details for development */}
           {process.env.NODE_ENV === 'development' && errorDetails && (
             <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left">
@@ -370,7 +370,7 @@ const LandingPage = () => {
               </div>
             </div>
           )}
-          
+
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
             <button
@@ -387,7 +387,7 @@ const LandingPage = () => {
               Browse Products Anyway
             </Link>
           </div>
-          
+
           {/* Helpful suggestions based on error type */}
           {errorDetails && (
             <div className="mt-6 p-4 bg-blue-50 rounded-lg text-left">
@@ -433,9 +433,9 @@ const LandingPage = () => {
     <>
       <Helmet>
         <title>EasyCart - Kenya's Leading Online Shopping Platform</title>
-        <meta 
-          name="description" 
-          content="Shop the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi. Secure payments with M-Pesa, Visa, and Mastercard." 
+        <meta
+          name="description"
+          content="Shop the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi. Secure payments with M-Pesa, Visa, and Mastercard."
         />
         <meta name="keywords" content="online shopping Kenya, groceries Nairobi, electronics, fashion, M-Pesa payments" />
       </Helmet>
@@ -456,22 +456,22 @@ const LandingPage = () => {
                   <span className="block text-yellow-300">Shopping Platform</span>
                 </h1>
                 <p className="text-lg md:text-xl mb-8 text-blue-100 max-w-2xl mx-auto lg:mx-0">
-                  Fresh groceries, latest electronics, trending fashion delivered to your door. 
+                  Fresh groceries, latest electronics, trending fashion delivered to your door.
                   Shop with confidence and enjoy unbeatable prices!
                 </p>
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
-                  <Link 
-                    to="/products" 
+                  <Link
+                    to="/products"
                     className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-white text-primary-600 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
                     aria-label="Start shopping now"
                   >
                     <span className="mr-2" aria-hidden="true">🛒</span>
                     Shop Now
                   </Link>
-                  <Link 
-                    to="/app-download" 
+                  <Link
+                    to="/app-download"
                     className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-transparent border-2 border-white text-white rounded-lg hover:bg-white hover:text-primary-600 transition-all duration-300 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
                     aria-label="Download our mobile app"
                   >
@@ -483,7 +483,7 @@ const LandingPage = () => {
                 {/* Trust Badges */}
                 <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
                   {trustBadges.map((badge, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full"
                     >
@@ -524,7 +524,7 @@ const LandingPage = () => {
         </section>
 
         {/* Categories Section */}
-        <section 
+        <section
           className="max-w-7xl mx-auto py-4 md:py-16"
           aria-labelledby="categories-heading"
         >
@@ -552,7 +552,7 @@ const LandingPage = () => {
             <>
               {/* Mobile: Horizontal Scroll */}
               <div className="md:hidden">
-                <HorizontalCategoryScroll 
+                <HorizontalCategoryScroll
                   categories={categories}
                   selectedCategory={null}
                   onSelectCategory={(categoryName) => {
@@ -576,7 +576,7 @@ const LandingPage = () => {
         </section>
 
         {/* Top Deals / Trending Section */}
-        <section 
+        <section
           className="bg-white py-12 md:py-16"
           aria-labelledby="trending-heading"
         >
@@ -590,8 +590,8 @@ const LandingPage = () => {
                   Hot deals you don't want to miss
                 </p>
               </div>
-              <Link 
-                to="/products" 
+              <Link
+                to="/products"
                 className="hidden md:inline-flex items-center text-primary-600 font-semibold hover:text-primary-700 transition-colors focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
                 aria-label="View all products"
               >
@@ -611,9 +611,9 @@ const LandingPage = () => {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                 {featuredProducts.map((product) => (
-                  <ProductCard 
-                    key={product.id} 
-                    product={product} 
+                  <ProductCard
+                    key={product.id}
+                    product={product}
                     onAddToCart={handleAddToCart}
                   />
                 ))}
@@ -621,7 +621,7 @@ const LandingPage = () => {
             )}
 
             <div className="text-center mt-8">
-              <Link 
+              <Link
                 to="/products"
                 className="inline-flex items-center px-8 py-3 text-lg font-semibold bg-primary-600 text-white rounded-lg shadow-md hover:bg-primary-700 hover:shadow-lg transition-all duration-300 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 aria-label="Explore all products"
@@ -695,7 +695,7 @@ const LandingPage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               {statsData.map((stat, index) => (
-                <div 
+                <div
                   key={index}
                   className="animate-fade-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
@@ -709,7 +709,7 @@ const LandingPage = () => {
         </section>
 
         {/* Newsletter Section */}
-        <section 
+        <section
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16"
           aria-labelledby="newsletter-heading"
         >
@@ -720,7 +720,7 @@ const LandingPage = () => {
             <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
               Subscribe to our newsletter and get exclusive offers, new arrivals, and special discounts delivered to your inbox.
             </p>
-            <form 
+            <form
               onSubmit={handleNewsletterSubmit}
               className="max-w-md mx-auto flex flex-col sm:flex-row gap-3"
               noValidate

@@ -43,7 +43,7 @@ export const normalizeImageUrl = (imageUrl) => {
       return cleanUrl;
     }
   }
-  
+
   // Handle other URL formats...
 };
 ```
@@ -207,7 +207,7 @@ While the frontend now handles malformed URLs, the **ideal solution** is to fix 
 class Product(models.Model):
     # Change from:
     # image = models.ImageField(upload_to='products/', blank=True)
-    
+
     # To:
     image = models.CharField(max_length=500, blank=True)  # For URLs
     image_url = models.CharField(max_length=500, blank=True)  # Backwards compatibility
@@ -221,7 +221,7 @@ Create a custom Django storage class that doesn't prepend MEDIA_URL to full URLs
 # In backend/apps/products/serializers.py
 class ProductSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
-    
+
     def get_image(self, obj):
         if obj.image and obj.image.startswith('http'):
             return obj.image

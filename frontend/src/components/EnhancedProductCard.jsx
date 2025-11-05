@@ -33,7 +33,7 @@ const EnhancedProductCard = ({ product }) => {
     try {
       await addToCart(product.id, 1);
       setToast({ message: `${product.name} added to cart!`, type: 'success' });
-      
+
       // Track success
       if (window.gtag) {
         window.gtag('event', 'add_to_cart_success', {
@@ -43,7 +43,7 @@ const EnhancedProductCard = ({ product }) => {
     } catch (error) {
       const errorMsg = error.message || 'Failed to add to cart';
       setToast({ message: errorMsg, type: 'error' });
-      
+
       // Track failure
       if (window.gtag) {
         window.gtag('event', 'add_to_cart_failed', {
@@ -83,7 +83,7 @@ const EnhancedProductCard = ({ product }) => {
                 setImageLoaded(true);
               }}
             />
-            
+
             {/* Stock Badge */}
             {product.stock === 0 && (
               <div className="stock-badge out-of-stock">Out of Stock</div>
@@ -97,7 +97,7 @@ const EnhancedProductCard = ({ product }) => {
           <div className="product-info">
             <h3 className="product-name">{product.name}</h3>
             <p className="product-description">{product.description}</p>
-            
+
             <div className="product-price">
               <span className="current-price">KSh {parseFloat(product.price).toLocaleString()}</span>
               {product.original_price && product.original_price > product.price && (

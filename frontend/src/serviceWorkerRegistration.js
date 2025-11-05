@@ -46,16 +46,16 @@ function registerValidSW(swUrl, config) {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
               console.log('New content is available; please refresh.');
-              
+
               if (config && config.onUpdate) {
                 config.onUpdate(registration);
               }
-              
+
               // Show update notification to user
               showUpdateNotification(registration);
             } else {
               console.log('Content is cached for offline use.');
-              
+
               if (config && config.onSuccess) {
                 config.onSuccess(registration);
               }
@@ -160,14 +160,14 @@ function showUpdateNotification(registration) {
       }
     </style>
   `;
-  
+
   document.body.appendChild(updateBanner);
-  
+
   document.getElementById('sw-update-btn')?.addEventListener('click', () => {
     registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
     window.location.reload();
   });
-  
+
   document.getElementById('sw-dismiss-btn')?.addEventListener('click', () => {
     updateBanner.remove();
   });
@@ -177,7 +177,7 @@ function showUpdateNotification(registration) {
 export function addNetworkListener(callback) {
   window.addEventListener('online', () => callback(true));
   window.addEventListener('offline', () => callback(false));
-  
+
   // Return initial status
   return navigator.onLine;
 }
@@ -191,22 +191,22 @@ export function isInstalled() {
 // Prompt to install PWA
 export function promptInstall() {
   let deferredPrompt = null;
-  
+
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
   });
-  
+
   return {
     show: async () => {
       if (!deferredPrompt) {
         return { outcome: 'not-available' };
       }
-      
+
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       deferredPrompt = null;
-      
+
       return { outcome };
     },
     isAvailable: () => deferredPrompt !== null

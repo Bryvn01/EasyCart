@@ -13,7 +13,7 @@ The cart page previously only showed:
 #### 1. Quantity Controls
 ```
 [Product Image] Product Name           Total: KSh 200.00
-                KSh 100 each           
+                KSh 100 each
                                        💛 Wishlist
                 [ - ] 2 [ + ]          Remove
 ```
@@ -57,7 +57,7 @@ The wishlist page showed:
 #### 1. Move to Cart Button
 ```
 [Product Image] Product Name           KES 100
-                In Stock               
+                In Stock
                                        🛒 Move to Cart
                                        Remove
 ```

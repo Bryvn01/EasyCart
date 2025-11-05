@@ -147,7 +147,7 @@ EasyCart/
       }}
     />
   ) : null}
-  <div 
+  <div
     style={{ display: (product.image || product.image_url) ? 'none' : 'flex' }}
   >
     📦  ← Fallback emoji

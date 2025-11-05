@@ -4,7 +4,7 @@
 
 ### 1. Chat Button Overlap Issue
 **Problem:** Chat button was overlapping with mobile navigation/account buttons
-**Solution:** 
+**Solution:**
 - Adjusted z-index from 40 to 45
 - Changed bottom positioning from complex calc to simple `24px` and `90px` (open state)
 - Removed unnecessary safe-area calculations that were causing positioning issues
@@ -188,7 +188,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(is_active=True)
     serializer_class = CategorySerializer
     parser_classes = (MultiPartParser, FormParser)
-    
+
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
@@ -266,7 +266,7 @@ class Command(BaseCommand):
             'Electronics': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400',
             # Add more...
         }
-        
+
         for name, url in images.items():
             try:
                 category = Category.objects.get(name=name)

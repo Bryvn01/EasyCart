@@ -148,8 +148,8 @@ const sendResponse = (res, statusCode, success, data, message, pagination = null
  * Includes both 'data' and 'results' keys for compatibility
  */
 const sendProductsResponse = (res, statusCode, success, products, message, pagination = null) => {
-  const response = { 
-    success, 
+  const response = {
+    success,
     message,
     data: products,
     results: products,  // DRF-compatible key
@@ -179,7 +179,7 @@ exports.getAllProducts = async (req, res) => {
     console.log('🔍 [DEBUG] Fetching products from MongoDB');
     console.log('📊 [DEBUG] Database:', mongoose.connection.name || 'Unknown');
     console.log(`🔗 [DEBUG] Connection state: ${state} (${connectionStates[state]})`);
-    
+
     const {
       search,
       category,
@@ -291,7 +291,7 @@ exports.getAllProducts = async (req, res) => {
     return sendProductsResponse(res, 200, true, products, 'Products retrieved successfully', pagination);
   } catch (error) {
     console.error('❌ [DEBUG] Error fetching products:', error.name, '-', error.message);
-    
+
     // Return fallback products when MongoDB is unavailable
     if (error.name === 'MongooseError' || error.message.includes('buffering timed out')) {
       console.log('⚠️  [DEBUG] MongoDB not available, using fallback products (8 items)');
@@ -299,12 +299,12 @@ exports.getAllProducts = async (req, res) => {
       const pageNum = parseInt(page);
       const limitNum = parseInt(limit);
       const skip = (pageNum - 1) * limitNum;
-      
+
       // Simple pagination for fallback data
       const paginatedProducts = fallbackProducts.slice(skip, skip + limitNum);
       const total = fallbackProducts.length;
       const totalPages = Math.ceil(total / limitNum);
-      
+
       const pagination = {
         page: pageNum,
         limit: limitNum,
@@ -313,10 +313,10 @@ exports.getAllProducts = async (req, res) => {
         hasNextPage: pageNum < totalPages,
         hasPrevPage: pageNum > 1
       };
-      
+
       return sendProductsResponse(res, 200, true, paginatedProducts, 'Products retrieved successfully (fallback)', pagination);
     }
-    
+
     // For other errors, return error response with proper format
     return sendResponse(res, 500, false, null, error.message || 'Failed to fetch products');
   }
@@ -329,7 +329,7 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Try to find by ID first, then by slug
     let product = null;
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -346,19 +346,19 @@ exports.getProductById = async (req, res) => {
     return sendResponse(res, 200, true, product, 'Product retrieved successfully');
   } catch (error) {
     console.error('Error fetching product:', error);
-    
+
     // Return fallback product when MongoDB is unavailable
     if (error.name === 'MongooseError' || error.message.includes('buffering timed out')) {
       console.log('MongoDB not available, using fallback product');
       const { id } = req.params;
       const product = fallbackProducts.find(p => p._id === id || p.id === id);
-      
+
       if (product) {
         return sendResponse(res, 200, true, product, 'Product retrieved successfully (fallback)');
       }
       return sendResponse(res, 404, false, null, 'Product not found');
     }
-    
+
     return sendResponse(res, 500, false, null, error.message);
   }
 };
@@ -632,7 +632,7 @@ exports.bulkUpdateProducts = async (req, res) => {
       { $set: updateData }
     );
 
-    return sendResponse(res, 200, true, { 
+    return sendResponse(res, 200, true, {
       modifiedCount: result.modifiedCount,
       matchedCount: result.matchedCount
     }, `${result.modifiedCount} products updated successfully`);

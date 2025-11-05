@@ -185,7 +185,7 @@ DEBUG=False
 
 ```javascript
 // frontend/src/services/api.js
-const API_BASE_URL = process.env.REACT_APP_API_URL || 
+const API_BASE_URL = process.env.REACT_APP_API_URL ||
                      'https://easycart-backend.onrender.com/api';
 
 const api = axios.create({

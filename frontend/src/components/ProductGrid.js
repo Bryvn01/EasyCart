@@ -7,7 +7,7 @@ const QuickViewModal = dynamic(() => import('./ui/QuickViewModal'), { ssr: false
 const ProductGrid = ({ products = [], onAddToCart, loading }) => {
   const productList = Array.isArray(products) ? products : [];
   const [quickViewProduct, setQuickViewProduct] = useState(null);
-  
+
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 xl:gap-6">
@@ -24,7 +24,7 @@ const ProductGrid = ({ products = [], onAddToCart, loading }) => {
       </div>
     );
   }
-  
+
   // Show all products - placeholder images are acceptable
   if (!productList.length) {
     return (
@@ -35,8 +35,8 @@ const ProductGrid = ({ products = [], onAddToCart, loading }) => {
           <p className="text-gray-600 mb-6">
             More amazing products coming soon! Check back later for great deals.
           </p>
-          <a 
-            href="/products" 
+          <a
+            href="/products"
             className="inline-block bg-primary hover:bg-primary-dark text-white font-semibold px-6 py-3 rounded-lg transition"
           >
             Explore All Products
@@ -45,14 +45,14 @@ const ProductGrid = ({ products = [], onAddToCart, loading }) => {
       </div>
     );
   }
-  
+
   return (
     <>
       <Helmet>
         <title>Shop Products | EasyCart</title>
         <meta name="description" content="Browse our wide selection of products at EasyCart. Find the best deals on groceries, electronics, fashion, and more." />
       </Helmet>
-      
+
       <section aria-label="Product Grid" className="w-full">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 xl:gap-6">
           {productList.map(product => (
@@ -64,7 +64,7 @@ const ProductGrid = ({ products = [], onAddToCart, loading }) => {
             />
           ))}
         </div>
-        
+
         {quickViewProduct && (
           <QuickViewModal
             product={quickViewProduct}

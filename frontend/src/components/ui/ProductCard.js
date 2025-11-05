@@ -48,7 +48,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
         <div className="text-sm text-gray-500 mb-1">{product.category?.name || product.category_name || 'Uncategorized'}</div>
         <h3 className="font-semibold text-base mb-1 truncate" title={product.name}>{product.name}</h3>
         <div className="text-xs text-gray-400 mb-1">{product.brand}</div>
-        
+
         {/* Star Rating */}
         {product.rating && (
           <div className="flex items-center gap-1 mb-2">
@@ -65,7 +65,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
             <span className="text-xs text-gray-600 ml-1">({product.rating})</span>
           </div>
         )}
-        
+
         {/* Stock Indicator */}
         {product.stock !== undefined && (
           <div className="mb-2">
@@ -78,7 +78,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
             )}
           </div>
         )}
-        
+
         <div className="flex items-center gap-2 mb-2">
           <span className="text-lg font-bold text-primary">KSh {product.price?.toLocaleString()}</span>
           {product.old_price && product.price < product.old_price && (

@@ -29,7 +29,7 @@ const { useAuth } = require('../context/AuthContext');
 // Test component that uses the cart context
 const TestComponent = () => {
   const { cartCount, addToCart, updateCartItem, removeFromCart, moveToWishlist } = useCart();
-  
+
   return (
     <div>
       <div data-testid="cart-count">{cartCount}</div>
@@ -55,7 +55,7 @@ describe('CartContext', () => {
 
   test('provides cart count when authenticated', async () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
-    
+
     const { getByTestId } = render(
       <CartProvider>
         <TestComponent />
@@ -69,7 +69,7 @@ describe('CartContext', () => {
 
   test('cart count is 0 when not authenticated', async () => {
     useAuth.mockReturnValue({ isAuthenticated: false, user: null });
-    
+
     const { getByTestId } = render(
       <CartProvider>
         <TestComponent />
@@ -84,7 +84,7 @@ describe('CartContext', () => {
   test('addToCart calls API and refreshes cart', async () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.addToCart.mockResolvedValue({ data: {} });
-    
+
     const { getByTestId } = render(
       <CartProvider>
         <TestComponent />
@@ -103,7 +103,7 @@ describe('CartContext', () => {
   test('updateCartItem calls API and refreshes cart', async () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.updateCartItem.mockResolvedValue({ data: {} });
-    
+
     const { getByTestId } = render(
       <CartProvider>
         <TestComponent />
@@ -122,7 +122,7 @@ describe('CartContext', () => {
   test('removeFromCart calls API and refreshes cart', async () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.removeFromCart.mockResolvedValue({ data: {} });
-    
+
     const { getByTestId } = render(
       <CartProvider>
         <TestComponent />
@@ -141,7 +141,7 @@ describe('CartContext', () => {
   test('moveToWishlist calls API and refreshes cart', async () => {
     useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.moveToWishlist.mockResolvedValue({ data: {} });
-    
+
     const { getByTestId } = render(
       <CartProvider>
         <TestComponent />

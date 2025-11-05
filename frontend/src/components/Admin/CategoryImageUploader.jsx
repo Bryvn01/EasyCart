@@ -24,10 +24,10 @@ const CategoryImageUploader = ({ category, onUpdate }) => {
           }
         }
       );
-      
+
       setSuccess('Image URL updated successfully!');
       if (onUpdate) onUpdate(response.data);
-      
+
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update image URL');
@@ -68,10 +68,10 @@ const CategoryImageUploader = ({ category, onUpdate }) => {
           }
         }
       );
-      
+
       setSuccess('Image uploaded successfully!');
       if (onUpdate) onUpdate(response.data);
-      
+
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to upload image');

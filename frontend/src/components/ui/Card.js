@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const Card = ({ children, className = '', hover = false, ...props }) => {
   const baseStyles = 'bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card';
   const hoverStyles = hover ? 'hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300' : '';
-  
+
   return (
     <div className={`${baseStyles} ${hoverStyles} ${className}`} {...props}>
       {children}

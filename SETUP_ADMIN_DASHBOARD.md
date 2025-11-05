@@ -102,6 +102,6 @@ npm run build
 - 🐛 Report issues: GitHub Issues
 - 💬 Get help: Contact support team
 
-**Setup Time**: ~5 minutes  
-**Browser Support**: Chrome, Firefox, Safari, Edge (latest 2 versions)  
+**Setup Time**: ~5 minutes
+**Browser Support**: Chrome, Firefox, Safari, Edge (latest 2 versions)
 **Mobile Support**: ✅ Fully responsive
