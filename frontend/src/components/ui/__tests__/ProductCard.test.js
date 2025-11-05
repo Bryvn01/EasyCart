@@ -13,14 +13,12 @@ describe('ProductCard fade-out/auto-hide', () => {
   };
 
   it('fades out and hides Add to Cart button, shows success message on success', async () => {
-    await act(async () => {
-      renderWithProviders(
-        <ProductCard
-          product={product}
-          onAddToCart={async () => true}
-        />
-      );
-    });
+    renderWithProviders(
+      <ProductCard
+        product={product}
+        onAddToCart={async () => true}
+      />
+    );
     
     const addButton = await screen.findByRole('button', { name: /add.*test product.*to cart/i });
     
@@ -37,14 +35,12 @@ describe('ProductCard fade-out/auto-hide', () => {
   });
 
   it('does not hide Add to Cart button on error', async () => {
-    await act(async () => {
-      renderWithProviders(
-        <ProductCard
-          product={product}
-          onAddToCart={async () => { throw new Error('fail'); }}
-        />
-      );
-    });
+    renderWithProviders(
+      <ProductCard
+        product={product}
+        onAddToCart={async () => { throw new Error('fail'); }}
+      />
+    );
     
     const addButton = await screen.findByRole('button', { name: /add.*test product.*to cart/i });
     
