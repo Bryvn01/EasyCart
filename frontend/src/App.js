@@ -7,7 +7,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
-import MobileBottomNav from './components/MobileBottomNav';
+import BottomNav from './components/BottomNav';
 import BackToTop from './components/BackToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import StickyMiniCart from './components/StickyMiniCart';
@@ -103,7 +103,7 @@ function App() {
                     </Suspense>
                   </main>
                   <Footer />
-                  <MobileBottomNav />
+                  <BottomNav />
                   <StickyMiniCart />
                   <BackToTop />
                   <SupportChat />
