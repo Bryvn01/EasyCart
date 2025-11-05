@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../test-utils';
 import { BrowserRouter } from 'react-router-dom';
 import NotFound from '../pages/NotFound';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor } from '../test-utils';
 import { CartProvider, useCart } from '../context/CartContext';
 
 // Mock the AuthContext

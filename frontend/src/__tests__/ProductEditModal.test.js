@@ -1,8 +1,7 @@
 import React from 'react';
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '../test-utils';
 import * as api from '../services/api';
 import ProductEditModal from '../components/ProductEditModal';
-import { withQueryClientProvider } from './test-utils';
 
 const baseProduct = {
   id: 1,
@@ -32,16 +31,13 @@ describe('ProductEditModal', () => {
   const onUpdate = jest.fn();
 
   it('renders and allows image URL input', () => {
-    render(
-      withQueryClientProvider(
-        <ProductEditModal
+    render(<ProductEditModal
           product={baseProduct}
           isOpen={true}
           onClose={onClose}
           onUpdate={onUpdate}
         />
-      )
-    );
+      );
     expect(screen.getByLabelText(/Product Image/i)).toBeInTheDocument();
     const urlInput = screen.getByPlaceholderText('https://example.com/image.jpg');
     fireEvent.change(urlInput, { target: { value: 'https://img.com/test.jpg' } });
@@ -50,16 +46,13 @@ describe('ProductEditModal', () => {
   });
 
   it('shows error for non-image file upload', async () => {
-    render(
-      withQueryClientProvider(
-        <ProductEditModal
+    render(<ProductEditModal
           product={baseProduct}
           isOpen={true}
           onClose={onClose}
           onUpdate={onUpdate}
         />
-      )
-    );
+      );
     const fileInput = screen.getByLabelText(/Upload product image file/i);
     const fakeFile = new File(['test'], 'test.txt', { type: 'text/plain' });
     fireEvent.change(fileInput, { target: { files: [fakeFile] } });
@@ -69,16 +62,13 @@ describe('ProductEditModal', () => {
   });
 
   it('shows preview for valid image file', async () => {
-    render(
-      withQueryClientProvider(
-        <ProductEditModal
+    render(<ProductEditModal
           product={baseProduct}
           isOpen={true}
           onClose={onClose}
           onUpdate={onUpdate}
         />
-      )
-    );
+      );
     const fileInput = screen.getByLabelText(/Upload product image file/i);
     const imageFile = new File(['dummy'], 'test.png', { type: 'image/png' });
     fireEvent.change(fileInput, { target: { files: [imageFile] } });
@@ -91,16 +81,13 @@ describe('ProductEditModal', () => {
   });
 
   it('clears file when URL is entered', () => {
-    render(
-      withQueryClientProvider(
-        <ProductEditModal
+    render(<ProductEditModal
           product={baseProduct}
           isOpen={true}
           onClose={onClose}
           onUpdate={onUpdate}
         />
-      )
-    );
+      );
     const fileInput = screen.getByLabelText(/Upload product image file/i);
     const urlInput = screen.getByPlaceholderText('https://example.com/image.jpg');
     const imageFile = new File(['dummy'], 'test.png', { type: 'image/png' });

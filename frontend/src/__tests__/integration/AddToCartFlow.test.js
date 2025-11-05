@@ -2,7 +2,7 @@
  * Integration test for Add-to-Cart → STK Push → Success flow
  */
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '../../test-utils';
 import { BrowserRouter } from 'react-router-dom';
 import EnhancedProductCard from '../../components/EnhancedProductCard';
 import { CartProvider } from '../../context/CartContext';

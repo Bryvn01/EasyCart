@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '../test-utils';
 import ProductList from '../components/ProductList';
 import * as api from '../services/api';
 import * as errorHandler from '../utils/errorHandler';

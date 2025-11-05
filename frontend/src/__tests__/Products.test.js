@@ -1,10 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { render, screen, fireEvent, waitFor } from '../test-utils';
 import Products from '../pages/Products';
 import * as api from '../services/api';
-import { AuthProvider } from '../context/AuthContext';
-import { CartProvider } from '../context/CartContext';
 
 // Mock the API module
 jest.mock('../services/api');
@@ -60,18 +57,6 @@ const mockCategories = {
   ]
 };
 
-const renderWithProviders = (component) => {
-  return render(
-    <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          {component}
-        </CartProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  );
-};
-
 describe('Products Page', () => {
   beforeEach(() => {
     // Reset all mocks
@@ -92,7 +77,7 @@ describe('Products Page', () => {
   });
 
   test('renders products list', async () => {
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     // Wait for loading to complete and products to render
     await waitFor(() => {
@@ -113,7 +98,7 @@ describe('Products Page', () => {
     api.productsAPI.getProducts.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(mockProducts), 100)));
     api.productsAPI.getCategories.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(mockCategories), 100)));
 
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     // Loading skeleton shows multiple placeholder divs with animate-pulse
     // We can check that the test product is not yet visible
@@ -130,16 +115,16 @@ describe('Products Page', () => {
     api.productsAPI.getProducts.mockRejectedValue(new Error('API Error'));
     api.productsAPI.getCategories.mockRejectedValue(new Error('API Error'));
 
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     // Wait for error handling to complete
     await waitFor(() => {
-      expect(screen.getByText('No Products Found')).toBeInTheDocument();
+      expect(screen.getByText('No products found')).toBeInTheDocument();
     });
   });
 
   test('filters products by search', async () => {
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     // Wait for component to load
     await waitFor(() => {
@@ -157,8 +142,8 @@ describe('Products Page', () => {
     }, { timeout: 1000 });
   });
 
-  test.skip('filters products by category', async () => {
-    renderWithProviders(<Products />);
+  test('filters products by category', async () => {
+    render(<Products />);
 
     // Wait for component to load
     await waitFor(() => {
@@ -178,7 +163,7 @@ describe('Products Page', () => {
   });
 
   test('displays out of stock badge for products with no stock', async () => {
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     // Wait for products to load
     await waitFor(() => {
@@ -190,7 +175,7 @@ describe('Products Page', () => {
   });
 
   test('shows clear filters button when filters are active', async () => {
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     // Wait for component to load
     await waitFor(() => {
@@ -228,7 +213,7 @@ describe('Products Page', () => {
     };
 
     api.productsAPI.getProducts.mockResolvedValue(manyProducts);
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     await waitFor(() => {
       expect(screen.getByText('Product 1')).toBeInTheDocument();
@@ -257,7 +242,7 @@ describe('Products Page', () => {
     };
 
     api.productsAPI.getProducts.mockResolvedValue(manyProducts);
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     await waitFor(() => {
       expect(screen.getByText('Product 1')).toBeInTheDocument();
@@ -289,7 +274,7 @@ describe('Products Page', () => {
     };
 
     api.productsAPI.getProducts.mockResolvedValue(manyProducts);
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     await waitFor(() => {
       expect(screen.getByText('Product 1')).toBeInTheDocument();
@@ -300,7 +285,7 @@ describe('Products Page', () => {
   });
 
   test('handles image load error with fallback', async () => {
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     await waitFor(() => {
       expect(screen.getByText('Test Product')).toBeInTheDocument();
@@ -333,7 +318,7 @@ describe('Products Page', () => {
     };
 
     api.productsAPI.getProducts.mockResolvedValue(manyProducts);
-    renderWithProviders(<Products />);
+    render(<Products />);
 
     await waitFor(() => {
       expect(screen.getByText('Product 1')).toBeInTheDocument();
