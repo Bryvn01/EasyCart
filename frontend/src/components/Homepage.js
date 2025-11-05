@@ -46,6 +46,9 @@ const Homepage = () => {
     refetchOnWindowFocus: false,
   });
 
+  // Ensure products is always an array to prevent .filter errors
+  const productsArray = Array.isArray(products) ? products : [];
+
   // Refetch products after admin CRUD (optional: use context/event for real-time)
   useEffect(() => {
     const handleProductsUpdated = () => refetch();
@@ -69,7 +72,7 @@ const Homepage = () => {
   };
 
   const renderSection = (section) => {
-    const filtered = products.filter(section.filter);
+    const filtered = productsArray.filter(section.filter);
     if (isLoading) {
       return (
         <section key={section.title} className="mb-10">
@@ -193,32 +196,32 @@ const Homepage = () => {
       {/* Deals Carousel/Section */}
       <section className="my-8">
         <h2 className="text-2xl font-bold mb-4">Today's Deals</h2>
-        <ProductGrid products={products.filter(p => p.is_flash_sale).slice(0, 10)} onAddToCart={handleAddToCart} loading={isLoading} />
+        <ProductGrid products={productsArray.filter(p => p.is_flash_sale).slice(0, 10)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Full Product Grid */}
       <section className="my-8">
         <h2 className="text-2xl font-bold mb-4">All Products</h2>
-        <ProductGrid products={selectedCategory ? products.filter(categorySections[selectedCategory]?.filter || (() => true)) : products} onAddToCart={handleAddToCart} loading={isLoading} />
+        <ProductGrid products={selectedCategory ? productsArray.filter(categorySections[selectedCategory]?.filter || (() => true)) : productsArray} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Top Picks Section */}
       <section className="my-8">
         <h2 className="text-xl font-semibold mb-4">Top Picks</h2>
-        <ProductGrid products={products.filter(p => p.is_top_seller).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
+        <ProductGrid products={productsArray.filter(p => p.is_top_seller).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Essentials Section */}
       <section className="my-8">
         <h2 className="text-xl font-semibold mb-4">Essentials</h2>
-        <ProductGrid products={products.filter(p => p.category_name && ['Groceries', 'Baby & Kids', 'Beauty & Personal Care', 'Essentials'].some(cat => p.category_name.includes(cat))).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
+        <ProductGrid products={productsArray.filter(p => p.category_name && ['Groceries', 'Baby & Kids', 'Beauty & Personal Care', 'Essentials'].some(cat => p.category_name.includes(cat))).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Popular in Selected Category */}
       {selectedCategory && (
         <section className="my-8">
           <h2 className="text-xl font-semibold mb-4">Popular in {selectedCategory}</h2>
-          <ProductGrid products={products.filter(categorySections[selectedCategory]?.filter || (() => true)).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
+          <ProductGrid products={productsArray.filter(categorySections[selectedCategory]?.filter || (() => true)).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
         </section>
       )}
 

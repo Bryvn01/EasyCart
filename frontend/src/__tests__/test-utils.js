@@ -1,7 +1,8 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from '../context/AuthContext';
 import { CartProvider } from '../context/CartContext';
 
@@ -15,15 +16,17 @@ const createTestQueryClient = () => new QueryClient({
 export function AllTheProviders({ children }) {
   const testQueryClient = createTestQueryClient();
   return (
-    <QueryClientProvider client={testQueryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={testQueryClient}>
+        <BrowserRouter>
+          <AuthProvider>
+            <CartProvider>
+              {children}
+            </CartProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 
@@ -32,3 +35,4 @@ export function renderWithProviders(ui, options) {
 }
 
 export * from '@testing-library/react';
+export { act };
