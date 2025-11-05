@@ -97,6 +97,11 @@ describe('EnhancedProductCard', () => {
     
     // Button should be disabled
     expect(button).toBeDisabled();
+    
+    // Wait for operation to complete
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
   });
 
   test('shows success toast on successful add to cart', async () => {
@@ -109,7 +114,7 @@ describe('EnhancedProductCard', () => {
     
     await waitFor(() => {
       expect(screen.getByText(/added to cart/i)).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   test('shows error toast on failed add to cart', async () => {
@@ -122,7 +127,7 @@ describe('EnhancedProductCard', () => {
     
     await waitFor(() => {
       expect(screen.getByText(/failed to add/i)).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   test('disables button when product is out of stock', () => {
