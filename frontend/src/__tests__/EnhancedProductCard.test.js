@@ -7,12 +7,21 @@ import { AuthProvider } from '../context/AuthContext';
 
 // Mock useCart hook
 const mockAddToCart = jest.fn();
+const mockUseCart = {
+  addToCart: mockAddToCart,
+  cartCount: 0,
+  cart: null,
+  loading: false,
+  fetchCart: jest.fn(),
+  updateCartItem: jest.fn(),
+  removeFromCart: jest.fn(),
+  moveToWishlist: jest.fn(),
+  updateCartCount: jest.fn()
+};
+
 jest.mock('../context/CartContext', () => ({
   ...jest.requireActual('../context/CartContext'),
-  useCart: () => ({
-    addToCart: mockAddToCart,
-    cartCount: 0
-  })
+  useCart: () => mockUseCart
 }));
 
 const mockProduct = {
@@ -27,11 +36,7 @@ const mockProduct = {
 const renderComponent = (product = mockProduct) => {
   return render(
     <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <EnhancedProductCard product={product} />
-        </CartProvider>
-      </AuthProvider>
+      <EnhancedProductCard product={product} />
     </BrowserRouter>
   );
 };

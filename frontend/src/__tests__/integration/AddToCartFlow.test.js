@@ -11,6 +11,30 @@ import { AuthProvider } from '../../context/AuthContext';
 import { ordersAPI } from '../../services/api';
 
 jest.mock('../../services/api');
+jest.mock('../../context/CartContext', () => ({
+  ...jest.requireActual('../../context/CartContext'),
+  useCart: () => ({
+    addToCart: jest.fn(),
+    cartCount: 0,
+    cart: null,
+    loading: false,
+    fetchCart: jest.fn(),
+    updateCartItem: jest.fn(),
+    removeFromCart: jest.fn(),
+    moveToWishlist: jest.fn(),
+    updateCartCount: jest.fn()
+  })
+}));
+jest.mock('../../context/AuthContext', () => ({
+  ...jest.requireActual('../../context/AuthContext'),
+  useAuth: () => ({
+    isAuthenticated: true,
+    user: { id: 1, email: 'test@example.com' },
+    login: jest.fn(),
+    logout: jest.fn(),
+    register: jest.fn()
+  })
+}));
 
 const mockProduct = {
   id: 1,
@@ -39,13 +63,9 @@ describe('Add-to-Cart → STK Push Integration', () => {
       data: { payment_status: 'completed' }
     });
 
-    const { rerender } = render(
+    render(
       <BrowserRouter>
-        <AuthProvider>
-          <CartProvider>
-            <EnhancedProductCard product={mockProduct} />
-          </CartProvider>
-        </AuthProvider>
+        <EnhancedProductCard product={mockProduct} />
       </BrowserRouter>
     );
 
@@ -66,11 +86,7 @@ describe('Add-to-Cart → STK Push Integration', () => {
 
     render(
       <BrowserRouter>
-        <AuthProvider>
-          <CartProvider>
-            <EnhancedProductCard product={mockProduct} />
-          </CartProvider>
-        </AuthProvider>
+        <EnhancedProductCard product={mockProduct} />
       </BrowserRouter>
     );
 

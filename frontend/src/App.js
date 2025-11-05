@@ -10,6 +10,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import MobileBottomNav from './components/MobileBottomNav';
 import BackToTop from './components/BackToTop';
 import ProtectedRoute from './components/ProtectedRoute';
+import StickyMiniCart from './components/StickyMiniCart';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
@@ -103,6 +104,7 @@ function App() {
                   </main>
                   <Footer />
                   <MobileBottomNav />
+                  <StickyMiniCart />
                   <BackToTop />
                   <SupportChat />
                   <NetworkStatus />
