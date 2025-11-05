@@ -134,7 +134,7 @@ describe('Products Page', () => {
     
     // Wait for error handling to complete
     await waitFor(() => {
-      expect(screen.getByText('No products found')).toBeInTheDocument();
+      expect(screen.getByText('No Products Found')).toBeInTheDocument();
     });
   });
 

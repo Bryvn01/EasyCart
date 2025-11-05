@@ -28,7 +28,13 @@ export function AllTheProviders({ children }) {
 }
 
 export function renderWithProviders(ui, options) {
-  return render(ui, { wrapper: AllTheProviders, ...options });
+  const { HelmetProvider } = require('react-helmet-async');
+  const Wrapper = ({ children }) => (
+    <HelmetProvider>
+      <AllTheProviders>{children}</AllTheProviders>
+    </HelmetProvider>
+  );
+  return render(ui, { wrapper: Wrapper, ...options });
 }
 
 export * from '@testing-library/react';
