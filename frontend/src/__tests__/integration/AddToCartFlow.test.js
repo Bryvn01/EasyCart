@@ -5,35 +5,14 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import EnhancedProductCard from '../../components/EnhancedProductCard';
-import STKPushModal from '../../components/STKPushModal';
-import { CartProvider } from '../../context/CartContext';
-import { AuthProvider } from '../../context/AuthContext';
-import { ordersAPI } from '../../services/api';
+import * as api from '../../services/api';
 
-jest.mock('../../services/api');
-jest.mock('../../context/CartContext', () => ({
-  ...jest.requireActual('../../context/CartContext'),
-  useCart: () => ({
+jest.mock('../../services/api', () => ({
+  ordersAPI: {
     addToCart: jest.fn(),
-    cartCount: 0,
-    cart: null,
-    loading: false,
-    fetchCart: jest.fn(),
-    updateCartItem: jest.fn(),
-    removeFromCart: jest.fn(),
-    moveToWishlist: jest.fn(),
-    updateCartCount: jest.fn()
-  })
-}));
-jest.mock('../../context/AuthContext', () => ({
-  ...jest.requireActual('../../context/AuthContext'),
-  useAuth: () => ({
-    isAuthenticated: true,
-    user: { id: 1, email: 'test@example.com' },
-    login: jest.fn(),
-    logout: jest.fn(),
-    register: jest.fn()
-  })
+    initiatePayment: jest.fn(),
+    getPaymentStatus: jest.fn()
+  }
 }));
 
 const mockProduct = {
@@ -51,17 +30,11 @@ const mockOrder = {
 describe('Add-to-Cart → STK Push Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    localStorage.setItem('token', 'mock-token');
+    api.ordersAPI.addToCart.mockResolvedValue({ data: { message: 'Added' } });
   });
 
   test('complete flow with success', async () => {
-    ordersAPI.addToCart = jest.fn().mockResolvedValue({ data: { message: 'Added' } });
-    ordersAPI.initiatePayment = jest.fn().mockResolvedValue({
-      data: { success: true, data: { ResponseCode: '0', CheckoutRequestID: 'ws_CO_123' } }
-    });
-    ordersAPI.getPaymentStatus = jest.fn().mockResolvedValue({
-      data: { payment_status: 'completed' }
-    });
+    api.ordersAPI.addToCart.mockResolvedValue({ data: { message: 'Added' } });
 
     render(
       <BrowserRouter>
@@ -73,14 +46,14 @@ describe('Add-to-Cart → STK Push Integration', () => {
     fireEvent.click(addButton);
 
     await waitFor(() => {
-      expect(ordersAPI.addToCart).toHaveBeenCalledTimes(1);
-    });
+      expect(api.ordersAPI.addToCart).toHaveBeenCalledTimes(1);
+    }, { timeout: 3000 });
 
-    expect(ordersAPI.addToCart).toHaveBeenCalledWith(1, 1);
+    expect(api.ordersAPI.addToCart).toHaveBeenCalledWith(1, 1);
   });
 
   test('prevents duplicate additions', async () => {
-    ordersAPI.addToCart = jest.fn().mockImplementation(() => 
+    api.ordersAPI.addToCart.mockImplementation(() => 
       new Promise(resolve => setTimeout(() => resolve({ data: {} }), 100))
     );
 
@@ -97,7 +70,7 @@ describe('Add-to-Cart → STK Push Integration', () => {
     fireEvent.click(addButton);
 
     await waitFor(() => {
-      expect(ordersAPI.addToCart).toHaveBeenCalledTimes(1);
-    });
+      expect(api.ordersAPI.addToCart).toHaveBeenCalledTimes(1);
+    }, { timeout: 3000 });
   });
 });

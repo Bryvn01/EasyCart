@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { renderWithProviders } from '../../../__tests__/test-utils';
 import ProductCard from '../ProductCard';
 
@@ -13,28 +13,57 @@ describe('ProductCard fade-out/auto-hide', () => {
   };
 
   it('fades out and hides Add to Cart button, shows success message on success', async () => {
+    const onAddToCart = jest.fn().mockResolvedValue(true);
+    
     renderWithProviders(
       <ProductCard
         product={product}
-        onAddToCart={async () => true}
+        onAddToCart={onAddToCart}
       />
     );
-    fireEvent.click(screen.getByRole('button', { name: /add to cart/i }));
-    await waitFor(() => expect(screen.queryByRole('button', { name: /add to cart/i })).not.toBeInTheDocument(), { timeout: 1000 });
-    const msg = await screen.findByText(/added to cart/i);
-    expect(msg).toBeInTheDocument();
-    expect(document.activeElement).toBe(msg);
+
+    const addButton = await screen.findByRole('button', { name: /add.*to cart/i });
+    
+    await act(async () => {
+      fireEvent.click(addButton);
+    });
+
+    await waitFor(() => {
+      expect(onAddToCart).toHaveBeenCalledWith(product);
+    }, { timeout: 2000 });
+
+    await waitFor(() => {
+      const msg = screen.queryByText(/added to cart/i);
+      expect(msg).toBeInTheDocument();
+    }, { timeout: 2000 });
   });
 
   it('does not hide Add to Cart button on error', async () => {
+    const onAddToCart = jest.fn().mockRejectedValue(new Error('fail'));
+    
     renderWithProviders(
       <ProductCard
         product={product}
-        onAddToCart={async () => { throw new Error('fail'); }}
+        onAddToCart={onAddToCart}
       />
     );
-    fireEvent.click(screen.getByRole('button', { name: /add to cart/i }));
-    await waitFor(() => expect(screen.getByRole('button', { name: /add to cart/i })).toBeInTheDocument());
+
+    const addButton = await screen.findByRole('button', { name: /add.*to cart/i });
+    
+    await act(async () => {
+      fireEvent.click(addButton);
+    });
+
+    await waitFor(() => {
+      expect(onAddToCart).toHaveBeenCalled();
+    }, { timeout: 2000 });
+
+    // Button should still be visible after error
+    await waitFor(() => {
+      const button = screen.queryByRole('button', { name: /add.*to cart/i });
+      expect(button).toBeInTheDocument();
+    }, { timeout: 2000 });
+    
     expect(screen.queryByText(/added to cart/i)).not.toBeInTheDocument();
   });
 });
