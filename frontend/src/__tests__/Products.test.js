@@ -2,6 +2,10 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '../test-utils';
 import Products from '../pages/Products';
 import * as api from '../services/api';
+import axios from 'axios';
+
+// Mock axios for CategoryList
+jest.mock('axios');
 
 // Mock the API module
 jest.mock('../services/api');
@@ -68,6 +72,16 @@ describe('Products Page', () => {
     // Setup API mocks
     api.productsAPI.getProducts.mockResolvedValue(mockProducts);
     api.productsAPI.getCategories.mockResolvedValue(mockCategories);
+
+    // Mock axios.get for CategoryList component
+    axios.get.mockResolvedValue({
+      data: {
+        results: [
+          { id: 1, name: 'Electronics' },
+          { id: 2, name: 'Fashion' }
+        ]
+      }
+    });
 
     // Mock auth API to prevent AuthProvider from making API calls
     api.authAPI.getProfile.mockRejectedValue(new Error('Not authenticated'));

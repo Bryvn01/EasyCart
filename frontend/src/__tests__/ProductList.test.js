@@ -3,6 +3,10 @@ import { render, screen, waitFor } from '../test-utils';
 import ProductList from '../components/ProductList';
 import * as api from '../services/api';
 import * as errorHandler from '../utils/errorHandler';
+import axios from 'axios';
+
+// Mock axios for CategoryList
+jest.mock('axios');
 
 // Mock the API module
 jest.mock('../services/api');
@@ -51,6 +55,15 @@ describe('ProductList Component', () => {
     jest.clearAllMocks();
     // Mock getApiBaseUrl
     api.getApiBaseUrl = jest.fn(() => 'https://easycart-backend.onrender.com/api');
+    // Mock axios.get for CategoryList component
+    axios.get.mockResolvedValue({
+      data: {
+        results: [
+          { id: 1, name: 'Electronics' },
+          { id: 2, name: 'Fashion' }
+        ]
+      }
+    });
   });
 
   test('renders loading state initially', () => {
