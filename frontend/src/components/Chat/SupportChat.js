@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FiMessageCircle, FiX, FiSend } from 'react-icons/fi';
 
 const SupportChat = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,30 +64,29 @@ const SupportChat = () => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200"
+        className="fixed transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200 group"
         style={{
-          bottom: '24px',
+          bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
           right: '20px',
-          width: '56px',
-          height: '56px',
+          width: '60px',
+          height: '60px',
           borderRadius: '50%',
           background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
           color: 'white',
           border: 'none',
-          fontSize: '22px',
           cursor: 'pointer',
-          boxShadow: '0 8px 25px rgba(16, 185, 129, 0.3), 0 4px 10px rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 8px 25px rgba(16, 185, 129, 0.4), 0 4px 10px rgba(0, 0, 0, 0.15)',
           touchAction: 'manipulation',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 45
+          zIndex: 50
         }}
         aria-label="Open support chat"
       >
-        💬
+        <FiMessageCircle className="w-7 h-7" />
         <div
-          className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse"
+          className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse border-2 border-white"
           style={{
             boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.3)'
           }}
@@ -99,32 +99,32 @@ const SupportChat = () => {
     <div
       className="fixed flex flex-col bg-white border border-gray-200 rounded-2xl shadow-2xl backdrop-blur-sm"
       style={{
-        bottom: '90px',
+        bottom: 'calc(100px + env(safe-area-inset-bottom, 0px))',
         right: '20px',
         width: 'min(calc(100vw - 40px), 380px)',
-        height: 'min(450px, calc(100vh - 200px))',
+        height: 'min(500px, calc(100vh - 160px))',
         border: '1px solid rgba(0, 0, 0, 0.08)',
         background: 'rgba(255, 255, 255, 0.98)',
-        zIndex: 45
+        zIndex: 50
       }}
     >
       {/* Enhanced Header */}
       <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-t-2xl">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-            💬
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+            <FiMessageCircle className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-semibold text-sm">Support Chat</h4>
+            <h4 className="font-semibold">Support Chat</h4>
             <p className="text-xs text-emerald-100">We're here to help!</p>
           </div>
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+          className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
           aria-label="Close chat"
         >
-          <span className="text-lg leading-none">×</span>
+          <FiX className="w-5 h-5" />
         </button>
       </div>
 
@@ -180,9 +180,10 @@ const SupportChat = () => {
           <button
             type="submit"
             disabled={!newMessage.trim() || isTyping}
-            className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full hover:from-emerald-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm font-medium min-w-[70px]"
+            className="p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full hover:from-emerald-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
+            aria-label="Send message"
           >
-            {isTyping ? '•••' : 'Send'}
+            <FiSend className="w-5 h-5" />
           </button>
         </div>
 

@@ -1,41 +1,70 @@
 import React, { useState } from 'react';
+import {
+  FiShoppingBag,
+  FiSmartphone,
+  FiHome,
+  FiBook,
+  FiHeart,
+  FiPackage
+} from 'react-icons/fi';
+import {
+  GiSoccerBall,
+  GiLipstick,
+  GiClothes,
+  GiRunningShoe,
+  GiBabyBottle,
+  GiDogBowl,
+  GiFlowerPot,
+  GiBriefcase,
+  GiGamepad,
+  GiWeightLiftingUp
+} from 'react-icons/gi';
+import {
+  FaCar,
+  FaPlane,
+  FaMusic,
+  FaUtensils,
+  FaRing,
+  FaTshirt
+} from 'react-icons/fa';
+import { MdHealthAndSafety } from 'react-icons/md';
 
 const CategoryCard = ({ category, isSelected, onClick }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [isPressed, setIsPressed] = useState(false);
 
-  // Enhanced category icons with better variety and modern emojis
-  const categoryIcons = {
-    'Groceries': '🛒',
-    'Electronics': '📱',
-    'Fashion': '👗',
-    'Home & Kitchen': '🏠',
-    'Beauty': '💄',
-    'Sports': '⚽',
-    'Books': '📚',
-    'Toys': '🧸',
-    'Health': '💊',
-    'Automotive': '🚗',
-    'Food & Beverages': '🍔',
-    'Household': '🧩',
-    'Personal Care': '🧴',
-    'Beverages': '🥤',
-    'Clothing': '👕',
-    'Shoes': '👟',
-    'Accessories': '💍',
-    'Baby & Kids': '👶',
-    'Pet Supplies': '🐶',
-    'Garden': '🌱',
-    'Office': '💼',
-    'Travel': '✈️',
-    'Music': '🎵',
-    'Gaming': '🎮',
-    'Fitness': '🏋️',
-  };
+  // Professional icon mapping with React Icons
+  const getCategoryIcon = () => {
+    const iconMap = {
+      'Groceries': <FiShoppingBag className="w-full h-full" />,
+      'Electronics': <FiSmartphone className="w-full h-full" />,
+      'Fashion': <GiClothes className="w-full h-full" />,
+      'Home & Kitchen': <FiHome className="w-full h-full" />,
+      'Beauty': <GiLipstick className="w-full h-full" />,
+      'Sports': <GiSoccerBall className="w-full h-full" />,
+      'Books': <FiBook className="w-full h-full" />,
+      'Toys': <GiGamepad className="w-full h-full" />,
+      'Health': <MdHealthAndSafety className="w-full h-full" />,
+      'Automotive': <FaCar className="w-full h-full" />,
+      'Food & Beverages': <FaUtensils className="w-full h-full" />,
+      'Household': <FiHome className="w-full h-full" />,
+      'Personal Care': <FiHeart className="w-full h-full" />,
+      'Beverages': <FaUtensils className="w-full h-full" />,
+      'Clothing': <FaTshirt className="w-full h-full" />,
+      'Shoes': <GiRunningShoe className="w-full h-full" />,
+      'Accessories': <FaRing className="w-full h-full" />,
+      'Baby & Kids': <GiBabyBottle className="w-full h-full" />,
+      'Pet Supplies': <GiDogBowl className="w-full h-full" />,
+      'Garden': <GiFlowerPot className="w-full h-full" />,
+      'Office': <GiBriefcase className="w-full h-full" />,
+      'Travel': <FaPlane className="w-full h-full" />,
+      'Music': <FaMusic className="w-full h-full" />,
+      'Gaming': <GiGamepad className="w-full h-full" />,
+      'Fitness': <GiWeightLiftingUp className="w-full h-full" />,
+    };
 
-  const getIcon = () => {
-    return categoryIcons[category.name] || '📦';
+    return iconMap[category.name] || <FiPackage className="w-full h-full" />;
   };
 
   const getCategoryImage = () => {
@@ -104,10 +133,10 @@ const CategoryCard = ({ category, isSelected, onClick }) => {
             />
           </div>
         ) : (
-          <div className={`w-11 h-11 rounded-full flex items-center justify-center text-2xl transition-all duration-200 ${
+          <div className={`w-11 h-11 rounded-full flex items-center justify-center text-primary-600 transition-all duration-200 ${
             isSelected ? 'bg-white/20 shadow-inner' : 'bg-gradient-to-br from-gray-100 to-gray-200'
           }`}>
-            {getIcon()}
+            {getCategoryIcon()}
           </div>
         )}
 

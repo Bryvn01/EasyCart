@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import CategoryCard from './CategoryCard';
+import { FiGrid } from 'react-icons/fi';
 
 const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCategory }) => {
   const scrollRef = useRef(null);
@@ -56,10 +57,10 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
             aria-label="Show all categories"
             aria-pressed={!selectedCategory}
           >
-            <div className={`w-11 h-11 rounded-full flex items-center justify-center text-2xl transition-all duration-200 ${
-              !selectedCategory ? 'bg-white/20 shadow-inner' : 'bg-gradient-to-br from-gray-100 to-gray-200'
+            <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 ${
+              !selectedCategory ? 'bg-white/20 shadow-inner text-white' : 'bg-gradient-to-br from-gray-100 to-gray-200 text-primary-600'
             }`}>
-              🏪
+              <FiGrid className="w-6 h-6" />
             </div>
             <span className="text-xs font-semibold text-center leading-tight px-1">
               All
