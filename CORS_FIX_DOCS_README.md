@@ -180,6 +180,6 @@ These documentation files are part of the EasyCart project and follow the same l
 
 ---
 
-**Last Updated**: October 3, 2024  
-**Maintained By**: EasyCart Development Team  
+**Last Updated**: October 3, 2024
+**Maintained By**: EasyCart Development Team
 **Status**: Active and Ready for Deployment ✅

@@ -28,7 +28,7 @@ async function testMongoDBConnection() {
 
   // Step 1: Check MONGO_URI environment variable
   const mongoUri = process.env.MONGO_URI;
-  
+
   if (!mongoUri) {
     log('❌', colors.red, 'ERROR: MONGO_URI not found in environment variables');
     log('💡', colors.yellow, 'Solution: Set MONGO_URI in .env file or Render dashboard');
@@ -51,10 +51,10 @@ async function testMongoDBConnection() {
   // Check database name in URI
   const dbNameMatch = mongoUri.match(/\.net\/([^?]+)/);
   const dbName = dbNameMatch ? dbNameMatch[1] : 'unknown';
-  
+
   console.log('📊 Database Configuration:');
   console.log(`   Database name: ${dbName}`);
-  
+
   if (dbName === 'easycart') {
     log('   ✅', colors.green, 'Correct database name (easycart)');
   } else if (dbName === 'admin' || dbName === 'test' || dbName === '') {
@@ -67,7 +67,7 @@ async function testMongoDBConnection() {
 
   // Step 3: Test connection
   log('🔗', colors.cyan, 'Attempting to connect to MongoDB...');
-  
+
   try {
     await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 10000, // 10 second timeout
@@ -87,9 +87,9 @@ async function testMongoDBConnection() {
     // Step 5: Count products
     log('🔢', colors.cyan, 'Counting products in database...');
     const totalProducts = await Product.countDocuments();
-    
+
     console.log(`   Total products: ${totalProducts}`);
-    
+
     if (totalProducts === 37) {
       log('   ✅', colors.green, 'PERFECT: Found exactly 37 products (expected count)');
     } else if (totalProducts === 0) {
@@ -106,7 +106,7 @@ async function testMongoDBConnection() {
     if (totalProducts > 0) {
       log('📋', colors.cyan, 'Fetching sample products...');
       const sampleProducts = await Product.find().limit(5).select('name price category brand').lean();
-      
+
       console.log('   Sample products:');
       sampleProducts.forEach((product, index) => {
         console.log(`   ${index + 1}. ${product.name}`);
@@ -120,15 +120,15 @@ async function testMongoDBConnection() {
     log('📂', colors.cyan, 'Checking collections...');
     const collections = await mongoose.connection.db.listCollections().toArray();
     const collectionNames = collections.map(c => c.name);
-    
+
     console.log(`   Collections found: ${collectionNames.join(', ')}`);
-    
+
     if (collectionNames.includes('products')) {
       log('   ✅', colors.green, 'products collection exists');
     } else {
       log('   ❌', colors.red, 'products collection NOT found');
     }
-    
+
     if (collectionNames.includes('categories')) {
       log('   ✅', colors.green, 'categories collection exists');
     }
@@ -161,7 +161,7 @@ async function testMongoDBConnection() {
     console.log(`   Error: ${error.message}\n`);
 
     console.log('🔧 Troubleshooting:');
-    
+
     if (error.message.includes('authentication failed')) {
       console.log('   ❌ Authentication error - check username/password');
       console.log('   💡 Verify credentials in MongoDB Atlas dashboard');

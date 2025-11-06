@@ -113,5 +113,5 @@ Use this template when reporting issues found after the Products page API integr
 
 ---
 
-**Reported by:** @[username]  
+**Reported by:** @[username]
 **Date:** [YYYY-MM-DD]

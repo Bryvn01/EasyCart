@@ -17,13 +17,13 @@
 ```jsx
 const OptimizedImage = ({ src, alt, className }) => {
   const webpSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-  
+
   return (
     <picture>
       <source srcSet={webpSrc} type="image/webp" />
-      <img 
-        src={src} 
-        alt={alt} 
+      <img
+        src={src}
+        alt={alt}
         className={className}
         loading="lazy"
         decoding="async"
@@ -38,12 +38,12 @@ const OptimizedImage = ({ src, alt, className }) => {
 // Update imageUtils.js
 export const getOptimizedImageUrl = (url, options = {}) => {
   const { width = 400, quality = 'auto', format = 'auto' } = options;
-  
+
   if (url.includes('cloudinary.com')) {
     // Insert transformations
     return url.replace('/upload/', `/upload/f_${format},q_${quality},w_${width}/`);
   }
-  
+
   return url;
 };
 ```
@@ -90,7 +90,7 @@ export const useLazyLoad = () => {
 // Usage:
 const ProductCard = ({ product }) => {
   const [ref, isVisible] = useLazyLoad();
-  
+
   return (
     <div ref={ref}>
       {isVisible && <ProductContent product={product} />}
@@ -377,7 +377,7 @@ products = Product.objects.select_related('category').prefetch_related('reviews'
 class Product(models.Model):
     name = models.CharField(max_length=200, db_index=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
-    
+
     class Meta:
         indexes = [
             models.Index(fields=['name', 'price']),

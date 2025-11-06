@@ -162,33 +162,33 @@ const [formData, setFormData] = useState({
   description: '',
   category: '',
   brand: '',
-  
+
   // Pricing (enhanced)
   price: '',
   comparePrice: '',
   costPerItem: '',
-  
+
   // Inventory (enhanced)
   stock: '',
   sku: '',
   manageStock: true,
   lowStockThreshold: 10,
-  
+
   // Images (enhanced - now array)
   images: [],
-  
+
   // SEO (new)
   metaTitle: '',
   metaDescription: '',
-  
+
   // Variants (new)
   variants: [],
-  
+
   // Additional (new)
   weight: '',
   dimensions: '',
   tags: [],
-  
+
   // Status
   isActive: true,
   isFeatured: false
@@ -207,12 +207,12 @@ const [imagePreviews, setImagePreviews] = useState([]);
 // Handle multiple image selection
 const handleMultipleImageUpload = async (e) => {
   const files = Array.from(e.target.files);
-  
+
   if (files.length > 5) {
     toast.error('Maximum 5 images allowed');
     return;
   }
-  
+
   // Create previews
   const previews = await Promise.all(
     files.map(file => {
@@ -223,7 +223,7 @@ const handleMultipleImageUpload = async (e) => {
       });
     })
   );
-  
+
   setImageFiles(files);
   setImagePreviews(previews);
 };
@@ -231,14 +231,14 @@ const handleMultipleImageUpload = async (e) => {
 // Upload images when form is submitted
 const uploadImages = async () => {
   if (imageFiles.length === 0) return [];
-  
+
   setUploading(true);
   try {
     const formData = new FormData();
     imageFiles.forEach(file => {
       formData.append('images', file);
     });
-    
+
     const response = await adminAPI.uploadImages(formData);
     return response.data.images;
   } catch (error) {
@@ -254,7 +254,7 @@ const uploadImages = async () => {
   <label className="block text-sm font-medium text-gray-700 mb-2">
     Product Images (Max 5)
   </label>
-  
+
   {/* Image Previews */}
   {imagePreviews.length > 0 && (
     <div className="grid grid-cols-5 gap-2 mb-3">
@@ -284,7 +284,7 @@ const uploadImages = async () => {
       ))}
     </div>
   )}
-  
+
   {/* File Input */}
   <input
     type="file"
@@ -365,8 +365,8 @@ Add these fields to your product form:
     type="text"
     className="w-full border border-gray-300 rounded-md px-3 py-2"
     value={formData.tags.join(', ')}
-    onChange={(e) => setFormData({ 
-      ...formData, 
+    onChange={(e) => setFormData({
+      ...formData,
       tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)
     })}
     placeholder="electronics, gadgets, new-arrival"
@@ -422,11 +422,11 @@ Add these fields to your product form:
 const handleSubmit = async (e) => {
   e.preventDefault();
   setUploading(true);
-  
+
   try {
     // Upload images first
     const uploadedImages = await uploadImages();
-    
+
     // Prepare product data
     const productData = {
       ...formData,
@@ -434,7 +434,7 @@ const handleSubmit = async (e) => {
       // Ensure backward compatibility with single image field
       image: uploadedImages.length > 0 ? uploadedImages[0].url : formData.image
     };
-    
+
     if (editingProduct) {
       await adminAPI.updateProduct(editingProduct._id || editingProduct.id, productData);
       toast.success('Product updated successfully');
@@ -442,7 +442,7 @@ const handleSubmit = async (e) => {
       await adminAPI.createProduct(productData);
       toast.success('Product created successfully');
     }
-    
+
     closeModal();
     fetchProducts();
   } catch (error) {
@@ -471,7 +471,7 @@ const InventoryAlerts = () => {
 
   useEffect(() => {
     fetchInventoryStatus();
-    
+
     // Refresh every 5 minutes
     const interval = setInterval(fetchInventoryStatus, 5 * 60 * 1000);
     return () => clearInterval(interval);
@@ -483,7 +483,7 @@ const InventoryAlerts = () => {
         adminAPI.getLowStockProducts(),
         adminAPI.getOutOfStockProducts()
       ]);
-      
+
       setLowStockProducts(lowStock.data.data || []);
       setOutOfStockProducts(outOfStock.data.data || []);
     } catch (error) {
@@ -574,12 +574,12 @@ const fetchProducts = async () => {
     limit: itemsPerPage,
     ...filters
   };
-  
+
   // Remove empty filters
   Object.keys(params).forEach(key => {
     if (params[key] === '') delete params[key];
   });
-  
+
   const response = await adminAPI.getProducts(params);
   // Handle response...
 };
@@ -593,7 +593,7 @@ const fetchProducts = async () => {
     onChange={(e) => setFilters({ ...filters, search: e.target.value })}
     className="border rounded px-3 py-2"
   />
-  
+
   <select
     value={filters.category}
     onChange={(e) => setFilters({ ...filters, category: e.target.value })}
@@ -604,7 +604,7 @@ const fetchProducts = async () => {
       <option key={cat.id} value={cat.name}>{cat.name}</option>
     ))}
   </select>
-  
+
   <select
     value={filters.inStock}
     onChange={(e) => setFilters({ ...filters, inStock: e.target.value })}
@@ -614,10 +614,10 @@ const fetchProducts = async () => {
     <option value="true">In Stock</option>
     <option value="false">Out of Stock</option>
   </select>
-  
+
   <button
     onClick={() => setFilters({
-      search: '', category: '', brand: '', minPrice: '', 
+      search: '', category: '', brand: '', minPrice: '',
       maxPrice: '', minRating: '', inStock: '', isFeatured: ''
     })}
     className="border rounded px-3 py-2 bg-gray-100 hover:bg-gray-200"
@@ -655,7 +655,7 @@ Show discount percentage and stock status:
 <div className="bg-white rounded-lg shadow p-4">
   {/* Product Image */}
   <img src={product.images?.[0]?.url || product.image} alt={product.name} />
-  
+
   {/* Badges */}
   <div className="flex gap-2 mt-2">
     {product.discountPercentage > 0 && (
@@ -679,10 +679,10 @@ Show discount percentage and stock status:
       </span>
     )}
   </div>
-  
+
   {/* Product Details */}
   <h3 className="font-semibold mt-2">{product.name}</h3>
-  
+
   {/* Pricing */}
   <div className="flex items-center gap-2 mt-1">
     <span className="text-lg font-bold text-blue-600">
@@ -694,7 +694,7 @@ Show discount percentage and stock status:
       </span>
     )}
   </div>
-  
+
   {/* Stock */}
   <div className="text-sm text-gray-600 mt-1">
     Stock: {product.stock} units

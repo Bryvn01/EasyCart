@@ -24,7 +24,7 @@ transformed_products = []
 for product in products:
     # Get image URL from either 'image' or 'image_url' field
     image_url = product.get('image_url') or product.get('image', '')
-    
+
     transformed_product = {
         'id': product.get('id'),
         'name': product.get('name'),

@@ -2,7 +2,7 @@
 EASYCART PRODUCTION ISSUE - SOLUTION SUMMARY
 ================================================================================
 
-ISSUE: Frontend (https://easycart-frontend-zge5.onrender.com) fails to load 
+ISSUE: Frontend (https://easycart-frontend-zge5.onrender.com) fails to load
        products/categories with error: "Unable to Load Content"
 
 ROOT CAUSE: Backend CORS configuration did not include the actual frontend URL
@@ -100,16 +100,16 @@ CORS Configuration (Python/Django):
     'corsheaders.middleware.CorsMiddleware',  # Must be first
     ...
   ]
-  
+
   CORS_ALLOWED_ORIGINS = [
     "https://easycart-frontend-zge5.onrender.com",
     "https://easycart-admin.onrender.com"
   ]
-  
+
   CORS_ALLOW_CREDENTIALS = True
 
 Frontend Configuration (JavaScript/React):
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 
+  const API_BASE_URL = process.env.REACT_APP_API_URL ||
                        'https://easycart-backend.onrender.com/api';
 
 ================================================================================

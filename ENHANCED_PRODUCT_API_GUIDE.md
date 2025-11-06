@@ -345,7 +345,7 @@ const fetchProducts = async () => {
     page: 1,
     limit: 20
   });
-  
+
   const products = response.data.data;
   const pagination = response.data.pagination;
 };
@@ -360,10 +360,10 @@ const uploadProductImages = async (files) => {
   files.forEach(file => {
     formData.append('images', file);
   });
-  
+
   const response = await adminAPI.uploadImages(formData);
   const images = response.data.images;
-  
+
   // Use images in product creation/update
   await adminAPI.createProduct({
     name: 'New Product',
@@ -379,7 +379,7 @@ import { adminAPI } from '../services/api';
 
 const updateProductStock = async (productId, quantity, operation) => {
   const response = await adminAPI.updateStock(productId, quantity, operation);
-  
+
   // Socket.io will automatically broadcast the update to all connected clients
   // Admins will receive a lowStockAlert if stock falls below threshold
 };

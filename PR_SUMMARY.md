@@ -95,7 +95,7 @@ class StripePaymentService:
     - Tracks session IDs
     """
     def initiate_payment(amount, email, phone, order_id)
-    
+
 class PayPalPaymentService:
     """
     Handles PayPal Order creation
@@ -142,17 +142,17 @@ def dashboard_stats(request):
 </select>
 
 // Branded button styling
-background: paymentMethod === 'stripe' 
-  ? 'linear-gradient(135deg, #635BFF 0%, #7A73FF 100%)' 
+background: paymentMethod === 'stripe'
+  ? 'linear-gradient(135deg, #635BFF 0%, #7A73FF 100%)'
   : ...
 ```
 
 #### Payment Modal
 ```javascript
 // PaymentModal.js - Handles redirects
-if ((paymentMethod === 'card' || 
-     paymentMethod === 'stripe' || 
-     paymentMethod === 'paypal') && 
+if ((paymentMethod === 'card' ||
+     paymentMethod === 'stripe' ||
+     paymentMethod === 'paypal') &&
     response.data.payment_url) {
   window.open(response.data.payment_url, '_blank');
 }
@@ -177,7 +177,7 @@ if ((paymentMethod === 'card' ||
 CREATE TABLE orders_order (
   id INTEGER PRIMARY KEY,
   payment_method VARCHAR(20) CHECK (payment_method IN (
-    'mpesa', 'airtel', 'tkash', 
+    'mpesa', 'airtel', 'tkash',
     'card', 'stripe', 'paypal',  -- NEW
     'bank', 'cash'
   )),
@@ -212,7 +212,7 @@ try:
     result = stripe_service.initiate_payment(...)
 except requests.exceptions.RequestException as e:
     return Response({
-        'success': False, 
+        'success': False,
         'message': 'Payment service temporarily unavailable'
     }, status=503)
 except Exception as e:
@@ -494,10 +494,10 @@ For questions or issues:
 
 ---
 
-**Status**: ✅ Ready to Merge  
-**Version**: 2.1.0  
-**Date**: October 2025  
-**Compatibility**: Django 3.2+, React 18+  
+**Status**: ✅ Ready to Merge
+**Version**: 2.1.0
+**Date**: October 2025
+**Compatibility**: Django 3.2+, React 18+
 
 ---
 

@@ -20,7 +20,9 @@ from apps.products.models import Product, Category
 def optimize_image(image_url):
     """Download and optimize product image"""
     try:
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        }
         response = requests.get(image_url, headers=headers, timeout=15)
         if response.status_code == 200:
             img = Image.open(BytesIO(response.content))
@@ -282,7 +284,8 @@ def add_carrefour_products():
         try:
             # Get or create category
             category, _ = Category.objects.get_or_create(
-                name=product_data["category"], defaults={"description": f'{product_data["category"]} products'}
+                name=product_data["category"],
+                defaults={"description": f'{product_data["category"]} products'},
             )
 
             # Check if product already exists
@@ -305,10 +308,14 @@ def add_carrefour_products():
                 optimized_image = optimize_image(product_data["image"])
                 if optimized_image:
                     # Sanitize filename to prevent path traversal
-                    safe_name = "".join(c for c in product_data["name"] if c.isalnum() or c in " -_").strip()[:50]
+                    safe_name = "".join(
+                        c for c in product_data["name"] if c.isalnum() or c in " -_"
+                    ).strip()[:50]
                     if not safe_name:
                         safe_name = f"product_{product.id}"
-                    file_name = get_valid_filename(f"{safe_name.replace(' ', '_').lower()}.jpg")
+                    file_name = get_valid_filename(
+                        f"{safe_name.replace(' ', '_').lower()}.jpg"
+                    )
                     product.image.save(file_name, File(optimized_image), save=True)
 
             print(f"Added: {product_data['name']} - KES {product_data['price']}")

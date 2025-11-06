@@ -110,14 +110,14 @@ const Wishlist = () => {
                   </div>
                 </div>
               </Link>
-              
+
               <div className="p-4">
                 <Link to={`/products/${item.product}`}>
                   <h3 className="text-lg font-semibold text-gray-900 hover:text-primary-600 transition-colors line-clamp-2 mb-2">
                     {item.product_name}
                   </h3>
                 </Link>
-                
+
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xl font-bold text-primary-600">
                     KES {item.product_price}
@@ -128,7 +128,7 @@ const Wishlist = () => {
                     <span className="text-sm text-red-600">Out of Stock</span>
                   )}
                 </div>
-                
+
                 <div className="flex gap-2">
                   <Button
                     onClick={() => handleMoveToCart(item.id, item.product_name)}

@@ -58,7 +58,9 @@ def fix_database_schema():
                         print(f"Invalid column name: {column}")
                         continue
                     # Use parameterized query to prevent SQL injection
-                    cursor.execute(f"ALTER TABLE products_product ADD COLUMN {column} {definition}")
+                    cursor.execute(
+                        f"ALTER TABLE products_product ADD COLUMN {column} {definition}"
+                    )
                     print(f"Added column: {column}")
                 except Exception as e:
                     print(f"Error adding {column}: {e}")
@@ -74,7 +76,9 @@ def fix_database_schema():
                         print(f"Invalid column name: {column}")
                         continue
                     # Use parameterized query to prevent SQL injection
-                    cursor.execute(f"ALTER TABLE products_category ADD COLUMN {column} {definition}")
+                    cursor.execute(
+                        f"ALTER TABLE products_category ADD COLUMN {column} {definition}"
+                    )
                     print(f"Added category column: {column}")
                 except Exception as e:
                     print(f"Error adding category {column}: {e}")

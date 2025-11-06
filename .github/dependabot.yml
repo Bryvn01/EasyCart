@@ -1,44 +1,54 @@
 version: 2
 updates:
-  # React frontend
-  - package-ecosystem: "npm"
-    directory: "/frontend"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "chore(deps):"
-    rebase-strategy: "auto"
-    ignore:
-      - dependency-name: "react-scripts"
-        versions: ["0.0.0"]
-
-  # Django backend (npm deps)
-  - package-ecosystem: "npm"
-    directory: "/backend"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "chore(deps):"
-    rebase-strategy: "auto"
-
-  # Admin dashboard
-  - package-ecosystem: "npm"
-    directory: "/admin-dashboard"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "chore(deps):"
-    rebase-strategy: "auto"
-
-  # Django backend (pip deps)
+  # Backend Python dependencies
   - package-ecosystem: "pip"
     directory: "/backend"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "monday"
     open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
     commit-message:
-      prefix: "chore(deps):"
-    rebase-strategy: "auto"
+      prefix: "chore(deps)"
+
+  # Frontend npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Admin dashboard npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/admin-dashboard"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "admin"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "chore(deps)"

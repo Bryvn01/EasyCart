@@ -25,7 +25,7 @@ const BackToTop = () => {
     <button
       onClick={scrollToTop}
       className="fixed w-12 h-12 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
-      style={{ 
+      style={{
         bottom: '90px',
         right: '20px',
         zIndex: 44,

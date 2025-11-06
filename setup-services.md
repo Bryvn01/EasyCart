@@ -32,7 +32,7 @@
 
 ### Frontend:
 ```bash
-# Deploy frontend automatically via Render dashboard  
+# Deploy frontend automatically via Render dashboard
 # Connect GitHub repository and set root directory to 'frontend'
 # Set environment variables in Render dashboard
 ```

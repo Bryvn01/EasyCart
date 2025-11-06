@@ -11,25 +11,25 @@ $rootDir = "C:\EasyCart"
 Write-Host "📦 Backend Environment:" -ForegroundColor Yellow
 if (Test-Path "$rootDir\backend\.env") {
     Write-Host "   ✅ backend\.env exists" -ForegroundColor Green
-    
+
     $backendContent = Get-Content "$rootDir\backend\.env" -Raw
-    
+
     if ($backendContent -match "SECRET_KEY=<your_django_secret_key> {
         Write-Host "   ✅ SECRET_KEY is configured" -ForegroundColor Green
     } else {
         Write-Host "   ⚠️  SECRET_KEY not set" -ForegroundColor Red
     }
-    
+
     if ($backendContent -match "CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name> {
         Write-Host "   ✅ CLOUDINARY_URL is configured" -ForegroundColor Green
     } else {
         Write-Host "   ⚠️  CLOUDINARY_URL not set" -ForegroundColor Red
     }
-    
+
     if ($backendContent -match "DB_ENGINE=django.db.backends.postgresql") {
         Write-Host "   ✅ PostgreSQL configured" -ForegroundColor Green
     }
-    
+
     if ($backendContent -match "CORS_ALLOWED_ORIGINS") {
         Write-Host "   ✅ CORS configured" -ForegroundColor Green
     }
@@ -41,15 +41,15 @@ if (Test-Path "$rootDir\backend\.env") {
 Write-Host "`n📱 Frontend Environment:" -ForegroundColor Yellow
 if (Test-Path "$rootDir\frontend\.env") {
     Write-Host "   ✅ frontend\.env exists" -ForegroundColor Green
-    
+
     $frontendContent = Get-Content "$rootDir\frontend\.env" -Raw
-    
+
     if ($frontendContent -match "REACT_APP_API_URL=http://localhost:8000") {
         Write-Host "   ✅ API_URL configured correctly" -ForegroundColor Green
     } else {
         Write-Host "   ⚠️  API_URL not set correctly" -ForegroundColor Red
     }
-    
+
     if ($frontendContent -match "REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
         Write-Host "   ✅ CLOUDINARY_CLOUD_NAME is configured" -ForegroundColor Green
     } else {
@@ -63,15 +63,15 @@ if (Test-Path "$rootDir\frontend\.env") {
 Write-Host "`n📊 Admin Dashboard Environment:" -ForegroundColor Yellow
 if (Test-Path "$rootDir\admin-dashboard\.env") {
     Write-Host "   ✅ admin-dashboard\.env exists" -ForegroundColor Green
-    
+
     $adminContent = Get-Content "$rootDir\admin-dashboard\.env" -Raw
-    
+
     if ($adminContent -match "REACT_APP_API_URL=http://localhost:8000") {
         Write-Host "   ✅ API_URL configured correctly" -ForegroundColor Green
     } else {
         Write-Host "   ⚠️  API_URL not set correctly" -ForegroundColor Red
     }
-    
+
     if ($adminContent -match "REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
         Write-Host "   ✅ CLOUDINARY_CLOUD_NAME is configured" -ForegroundColor Green
     } else {

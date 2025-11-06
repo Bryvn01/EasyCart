@@ -5,7 +5,7 @@
 **EasyCart** is a production-ready e-commerce platform with a modern tech stack:
 
 - **Backend**: Django REST Framework + PostgreSQL
-- **Frontend**: React + Material-UI/TailwindCSS  
+- **Frontend**: React + Material-UI/TailwindCSS
 - **Database**: PostgreSQL (unified for all environments)
 - **Authentication**: JWT with role-based permissions
 - **Deployment**: Render.com (backend) + Vercel (frontend)
@@ -22,7 +22,7 @@
 ```
 Categories (12 total)
 ├── Staples (8 products)
-├── Beverages (5 products) 
+├── Beverages (5 products)
 ├── Dairy (3 products)
 ├── Fresh Produce (5 products)
 ├── Meat & Poultry (3 products)
@@ -84,7 +84,7 @@ python manage.py migrate
 python manage.py seed_products
 python manage.py runserver
 
-# Frontend  
+# Frontend
 cd frontend
 npm install
 npm start
@@ -177,7 +177,7 @@ cd backend
 python manage.py test
 ```
 
-### Frontend Tests  
+### Frontend Tests
 ```bash
 cd frontend
 npm test
@@ -199,7 +199,7 @@ curl http://localhost:8000/api/products/
 ## 🔄 Data Flow
 
 1. **User Request** → Frontend (React)
-2. **API Call** → Backend (Django REST Framework)  
+2. **API Call** → Backend (Django REST Framework)
 3. **Database Query** → PostgreSQL
 4. **Response** → JSON API response
 5. **UI Update** → React component re-render

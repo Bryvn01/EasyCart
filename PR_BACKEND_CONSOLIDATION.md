@@ -93,7 +93,7 @@ For **easycart-j6ue** (if exists):
 1. **Export from easycart-j6ue:**
    - Go to Environment tab
    - Document all variables (especially MONGODB_URI, CLOUDINARY_URL)
-   
+
 2. **Copy to easycart-backend-0u8r:**
    - Add any missing variables from j6ue to 0u8r
    - Verify critical variables are set:
@@ -318,6 +318,6 @@ If you encounter issues during consolidation:
 
 ---
 
-**Consolidation Status:** Documentation Complete  
-**Production Backend:** https://easycart-backend-0u8r.onrender.com/  
+**Consolidation Status:** Documentation Complete
+**Production Backend:** https://easycart-backend-0u8r.onrender.com/
 **Action Required:** Manual Render dashboard configuration

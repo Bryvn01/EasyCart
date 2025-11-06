@@ -275,7 +275,7 @@ import CategoryList from '../components/CategoryList';
 
 const [category, setCategory] = useState(null);
 
-<CategoryList 
+<CategoryList
   selectedCategory={category}
   onSelectCategory={setCategory}
 />
@@ -288,7 +288,7 @@ import CategoryList from '../components/CategoryList';
 
 function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState(null);
-  
+
   return (
     <>
       <CategoryList onSelectCategory={setSelectedCategory} />

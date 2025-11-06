@@ -1,0 +1,25 @@
+:root {
+  /* Colors */
+  --primary: #2563eb;    /* Professional blue */
+  --secondary: #7c3aed;  /* Purple accent */
+  --accent: #f59e0b;     /* Amber for CTAs */
+  --success: #10b981;    /* Green for confirmations */
+  --gray-50: #f9fafb;    /* Backgrounds */
+  --gray-800: #1f2937;   /* Text */
+
+  /* Spacing Scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, sans-serif;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+
+  /* Components */
+  --border-radius: 0.5rem;
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}

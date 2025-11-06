@@ -4,14 +4,18 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsAdminUser(BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and request.user.is_staff)
+        return bool(
+            request.user and request.user.is_authenticated and request.user.is_staff
+        )
 
 
 class IsAdminOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
-        return bool(request.user and request.user.is_authenticated and request.user.is_staff)
+        return bool(
+            request.user and request.user.is_authenticated and request.user.is_staff
+        )
 
 
 class IsSuperAdmin(permissions.BasePermission):
@@ -20,7 +24,11 @@ class IsSuperAdmin(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and getattr(request.user, "role", None) == "superadmin"
+        return (
+            request.user
+            and request.user.is_authenticated
+            and getattr(request.user, "role", None) == "superadmin"
+        )
 
 
 class IsManager(permissions.BasePermission):
@@ -45,7 +53,8 @@ class IsEditor(permissions.BasePermission):
         return (
             request.user
             and request.user.is_authenticated
-            and getattr(request.user, "role", None) in ["superadmin", "manager", "editor"]
+            and getattr(request.user, "role", None)
+            in ["superadmin", "manager", "editor"]
         )
 
 
@@ -58,7 +67,8 @@ class IsViewer(permissions.BasePermission):
         return (
             request.user
             and request.user.is_authenticated
-            and getattr(request.user, "role", None) in ["superadmin", "manager", "editor", "viewer"]
+            and getattr(request.user, "role", None)
+            in ["superadmin", "manager", "editor", "viewer"]
         )
 
 
@@ -88,7 +98,11 @@ class IsAdminUser(permissions.BasePermission):
         return (
             request.user
             and request.user.is_authenticated
-            and (request.user.is_superuser or request.user.is_staff or getattr(request.user, "is_admin", False))
+            and (
+                request.user.is_superuser
+                or request.user.is_staff
+                or getattr(request.user, "is_admin", False)
+            )
         )
 
 
@@ -98,7 +112,11 @@ class IsSuperAdminUser(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)
+        return (
+            request.user
+            and request.user.is_authenticated
+            and (request.user.is_superuser or request.user.is_staff)
+        )
 
 
 class IsOwnerOrAdmin(permissions.BasePermission):
@@ -113,7 +131,11 @@ class IsOwnerOrAdmin(permissions.BasePermission):
             return True
 
         # Write permissions are only allowed to the owner of the object or admin users.
-        return obj.user == request.user or request.user.is_staff or getattr(request.user, "is_admin", False)
+        return (
+            obj.user == request.user
+            or request.user.is_staff
+            or getattr(request.user, "is_admin", False)
+        )
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):

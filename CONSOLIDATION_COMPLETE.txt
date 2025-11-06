@@ -17,9 +17,9 @@ OBJECTIVE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Consolidate backend deployments so that only ONE Render service remains:
-  
+
   ✅ KEEP:   easycart-backend-0u8r
-  ❌ RETIRE: easycart-j6ue  
+  ❌ RETIRE: easycart-j6ue
   ❌ RETIRE: easycart-backend-d3b90j3e5dus73cc8bjg (if exists)
 
 Production Backend URL: https://easycart-backend-0u8r.onrender.com/

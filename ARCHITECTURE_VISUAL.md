@@ -152,9 +152,9 @@
 5. Django ORM: Product.objects.all().order_by('-created_at')
    ↓
 6. PostgreSQL executes:
-   SELECT * FROM products_product 
+   SELECT * FROM products_product
    LEFT JOIN products_category ON products_product.category_id = products_category.id
-   ORDER BY created_at DESC 
+   ORDER BY created_at DESC
    LIMIT 20;
    ↓
 7. Django serializes QuerySet → JSON
@@ -190,7 +190,7 @@
 ```
 Category (1) ─────< Product (Many)
    id                category_id (FK)
-   
+
 Example:
 Personal Care (id=6)
   ├─ Always Sanitary Pads (product_id=1, category_id=6)

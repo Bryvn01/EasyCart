@@ -7,22 +7,28 @@ from apps.products.health_views import health_check, liveness_probe, readiness_p
 
 
 def api_root(request):
-    return JsonResponse(
-        {
-            "message": "E-Commerce API",
-            "admin": "/admin/",
-            "endpoints": {
-                "products": "/api/products/",
-                "categories": "/api/products/categories/",
-                "auth": "/api/auth/",
-                "orders": "/api/orders/",
-                "payments": "/api/payments/",
-                "health": "/api/health/",
-                "liveness": "/api/health/live/",
-                "readiness": "/api/health/ready/",
-            },
-        }
-    )
+    # Don't expose admin URL in production
+    endpoints = {
+        "products": "/api/products/",
+        "categories": "/api/products/categories/",
+        "auth": "/api/auth/",
+        "orders": "/api/orders/",
+        "payments": "/api/payments/",
+        "health": "/api/health/",
+        "liveness": "/api/health/live/",
+        "readiness": "/api/health/ready/",
+    }
+
+    response_data = {
+        "message": "E-Commerce API",
+        "endpoints": endpoints,
+    }
+
+    # Only expose admin URL in debug mode
+    if settings.DEBUG:
+        response_data["admin"] = "/admin/"
+
+    return JsonResponse(response_data)
 
 
 urlpatterns = [

@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 /**
  * HomePage Component
  * Displays the main product listing page using ProductList component
- * 
+ *
  * This is an example of how to integrate the ProductList component
  * into your application. The ProductList component handles:
  * - Fetching products from the API
@@ -18,12 +18,12 @@ const HomePage = () => {
     <>
       <Helmet>
         <title>Shop Products | EasyCart - Kenya's Online Supermarket</title>
-        <meta 
-          name="description" 
-          content="Browse thousands of products at EasyCart. Get the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi." 
+        <meta
+          name="description"
+          content="Browse thousands of products at EasyCart. Get the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi."
         />
       </Helmet>
-      
+
       <main className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-primary to-primary-dark text-white py-12 px-4">
@@ -61,7 +61,7 @@ const HomePage = () => {
               Browse our wide selection of quality products at great prices
             </p>
           </div>
-          
+
           {/* ProductList Component - Handles everything automatically */}
           <ProductList />
         </section>

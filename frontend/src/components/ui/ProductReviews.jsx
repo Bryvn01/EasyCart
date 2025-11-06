@@ -13,8 +13,8 @@ const ProductReviews = ({ rating = 4.8, reviewCount = 204, recentReview = "Fast 
             <svg
               key={i}
               className={`w-4 h-4 ${
-                i < fullStars ? 'text-yellow-400' : 
-                i === fullStars && hasHalfStar ? 'text-yellow-400' : 
+                i < fullStars ? 'text-yellow-400' :
+                i === fullStars && hasHalfStar ? 'text-yellow-400' :
                 'text-gray-300'
               }`}
               fill="currentColor"

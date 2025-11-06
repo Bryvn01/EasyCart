@@ -196,7 +196,7 @@ import { mockProducts } from '../services/mockData';
 
 function ProductList() {
   const [products] = useState(mockProducts);
-  
+
   return (
     <div>
       {products.map(product => (
@@ -218,7 +218,7 @@ function ProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -232,13 +232,13 @@ function ProductList() {
         setLoading(false);
       }
     };
-    
+
     fetchProducts();
   }, []);
-  
+
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage error={error} />;
-  
+
   return (
     <div>
       {products.map(product => (

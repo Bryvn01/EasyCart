@@ -14,7 +14,7 @@ const InstallPWA = () => {
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setInstallPrompt(e);
-      
+
       // Show prompt after a delay (better UX)
       setTimeout(() => {
         setShowPrompt(true);
@@ -33,9 +33,9 @@ const InstallPWA = () => {
 
     installPrompt.prompt();
     const { outcome } = await installPrompt.userChoice;
-    
+
     console.log(`User response to install prompt: ${outcome}`);
-    
+
     setInstallPrompt(null);
     setShowPrompt(false);
   };

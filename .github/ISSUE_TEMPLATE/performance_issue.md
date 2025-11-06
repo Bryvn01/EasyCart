@@ -109,5 +109,5 @@ Total Blocking Time: [time]
 
 ---
 
-**Reported by:** @[username]  
+**Reported by:** @[username]
 **Date:** [YYYY-MM-DD]

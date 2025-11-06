@@ -54,10 +54,10 @@ export const normalizeImageUrl = (imageUrl) => {
  */
 export const getProductImageUrl = (product, fallback = '/placeholder.png') => {
   if (!product) return fallback;
-  
+
   const imageUrl = product.image || product.image_url;
   const normalized = normalizeImageUrl(imageUrl);
-  
+
   return normalized || fallback;
 };
 

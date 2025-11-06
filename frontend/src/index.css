@@ -25,7 +25,7 @@
   --gray-300: #d1d5db;
   --gray-600: #4b5563;
   --gray-900: #111827;
-  
+
   /* Spacing */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -34,13 +34,13 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
   --space-16: 4rem;
-  
+
   /* Border Radius */
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
@@ -290,13 +290,13 @@ body {
 }
 
 @keyframes slideUp {
-  from { 
-    transform: translateY(10px); 
-    opacity: 0; 
+  from {
+    transform: translateY(10px);
+    opacity: 0;
   }
-  to { 
-    transform: translateY(0); 
-    opacity: 1; 
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -651,7 +651,7 @@ img {
   .payment-method {
     border: 2px solid var(--gray-900);
   }
-  
+
   .stock-badge {
     border: 1px solid white;
   }
@@ -665,11 +665,11 @@ img {
   .payment-method {
     transition: none;
   }
-  
+
   .group:hover .group-hover\:scale-105 {
     transform: none;
   }
-  
+
   .btn::before {
     display: none;
   }
@@ -683,12 +683,12 @@ img {
     border-color: var(--gray-700);
     color: var(--gray-100);
   }
-  
+
   .hero-feature {
     background: rgba(0, 0, 0, 0.3);
     color: white;
   }
-  
+
   .quick-view-btn {
     background: rgba(0, 0, 0, 0.7);
     color: white;
@@ -698,38 +698,38 @@ img {
 /* ===== RESPONSIVE ENHANCEMENTS ===== */
 
 @media (max-width: 768px) {
-  .container { 
-    padding: 0 var(--space-4); 
+  .container {
+    padding: 0 var(--space-4);
   }
-  
-  .grid-cols-2 { 
-    grid-template-columns: 1fr; 
+
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
     gap: var(--space-4);
   }
-  
-  .grid-cols-3 { 
-    grid-template-columns: repeat(2, 1fr); 
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-4);
   }
-  
-  .grid-cols-4 { 
-    grid-template-columns: repeat(2, 1fr); 
+
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-4);
   }
-  
+
   .text-3xl { font-size: 1.5rem; }
   .text-2xl { font-size: 1.25rem; }
-  
+
   .btn {
     width: 100%;
     justify-content: center;
   }
-  
+
   /* Mobile image optimizations */
   .product-image-container {
     max-height: 200px;
   }
-  
+
   .quick-view-btn {
     opacity: 1; /* Always show on mobile */
     transform: translateY(0);
@@ -738,29 +738,29 @@ img {
     width: 1.75rem;
     height: 1.75rem;
   }
-  
+
   .trust-badges {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .trust-badge {
     width: 100%;
     max-width: 300px;
     justify-content: center;
   }
-  
+
   .payment-methods {
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .payment-method {
     flex: 1;
     min-width: 140px;
     justify-content: center;
   }
-  
+
   /* Mobile hero adjustments */
   .hero-image {
     max-width: 200px;
@@ -772,12 +772,12 @@ img {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
   }
-  
+
   .trust-badge,
   .payment-method {
     padding: 0.5rem 0.75rem;
   }
-  
+
   .trust-badge img,
   .payment-method img {
     width: 1.25rem;
@@ -791,7 +791,7 @@ img {
   .image-dots {
     display: none;
   }
-  
+
   .product-card {
     break-inside: avoid;
     box-shadow: none;
@@ -943,7 +943,7 @@ body {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
   }
-  
+
   .navbar,
   .footer {
     padding-left: max(var(--space-4), env(safe-area-inset-left));
@@ -975,18 +975,18 @@ input:focus:not(:focus-visible) {
   textarea {
     font-size: 16px; /* Prevents zoom on iOS */
   }
-  
+
   /* Larger tap targets on mobile */
   .btn {
     padding: var(--space-3) var(--space-6);
     min-height: 48px;
   }
-  
+
   /* Touch-friendly spacing */
   .product-card {
     margin-bottom: var(--space-4);
   }
-  
+
   /* Optimize cards for touch */
   .product-card:active {
     transform: scale(0.98);
@@ -1000,7 +1000,7 @@ input:focus:not(:focus-visible) {
     min-height: auto;
     padding: var(--space-8) 0;
   }
-  
+
   .navbar {
     padding: var(--space-2) var(--space-4);
   }
@@ -1030,14 +1030,14 @@ input:focus:not(:focus-visible) {
     /* App is installed, adjust UI accordingly */
     user-select: none; /* Prevent text selection in PWA mode */
   }
-  
+
   a,
   button,
   input,
   textarea {
     user-select: auto; /* Allow selection in interactive elements */
   }
-  
+
   /* Hide browser-specific elements in standalone mode */
   .install-pwa-prompt {
     display: none !important;
@@ -1051,7 +1051,7 @@ input:focus:not(:focus-visible) {
     --gray-50: #0f172a;
     --gray-900: #f1f5f9;
   }
-  
+
   body {
     background-color: var(--gray-50);
     color: var(--gray-900);

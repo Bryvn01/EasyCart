@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import CategoryCard from './CategoryCard';
+import { FiGrid } from 'react-icons/fi';
 
 const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCategory }) => {
   const scrollRef = useRef(null);
@@ -8,10 +9,10 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
     if (selectedCategory && scrollRef.current) {
       const selectedElement = scrollRef.current.querySelector(`[data-category="${selectedCategory}"]`);
       if (selectedElement) {
-        selectedElement.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'nearest', 
-          inline: 'center' 
+        selectedElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
         });
       }
     }
@@ -23,8 +24,8 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
         <h2 className="text-lg font-bold text-gray-900 mb-1">Shop by Category</h2>
         <p className="text-sm text-gray-600">Find what you're looking for</p>
       </div>
-      
-      <div 
+
+      <div
         ref={scrollRef}
         className="overflow-x-auto scrollbar-hide py-3"
         style={{
@@ -41,11 +42,11 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
             onClick={() => onSelectCategory('')}
             data-category=""
             className={`flex-shrink-0 flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-              !selectedCategory 
-                ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200' 
+              !selectedCategory
+                ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg ring-2 ring-primary-200'
                 : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md border border-gray-200 hover:border-primary-200 shadow-sm'
             }`}
-            style={{ 
+            style={{
               scrollSnapAlign: 'start',
               touchAction: 'manipulation',
               minWidth: '88px',
@@ -56,10 +57,10 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
             aria-label="Show all categories"
             aria-pressed={!selectedCategory}
           >
-            <div className={`w-11 h-11 rounded-full flex items-center justify-center text-2xl transition-all duration-200 ${
-              !selectedCategory ? 'bg-white/20 shadow-inner' : 'bg-gradient-to-br from-gray-100 to-gray-200'
+            <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 ${
+              !selectedCategory ? 'bg-white/20 shadow-inner text-white' : 'bg-gradient-to-br from-gray-100 to-gray-200 text-primary-600'
             }`}>
-              🏪
+              <FiGrid className="w-6 h-6" />
             </div>
             <span className="text-xs font-semibold text-center leading-tight px-1">
               All
@@ -81,12 +82,12 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
           ))}
         </div>
       </div>
-      
+
       <div className="flex justify-center mt-2 px-4">
         <div className="flex space-x-1.5">
           {Array.from({ length: Math.min(5, Math.ceil((categories.length + 1) / 4)) }).map((_, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className="w-1.5 h-1.5 rounded-full bg-gray-300 transition-all duration-200"
               style={{ opacity: i === 0 ? 1 : 0.5 }}
             />

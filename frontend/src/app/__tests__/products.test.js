@@ -1,6 +1,6 @@
 /**
  * Simple integration test for Next.js Products Page
- * 
+ *
  * This test validates:
  * 1. The page can be built successfully
  * 2. The page handles API responses correctly
@@ -69,11 +69,11 @@ describe('Next.js Products Page', () => {
   test('should use NEXT_PUBLIC_API_URL when available', () => {
     // Test environment variable usage
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://easycart-j6ue.onrender.com/api';
-    
+
     expect(apiUrl).toBeTruthy();
     // Should be either the env var or the default production URL
     expect(
-      apiUrl === process.env.NEXT_PUBLIC_API_URL || 
+      apiUrl === process.env.NEXT_PUBLIC_API_URL ||
       apiUrl === 'https://easycart-j6ue.onrender.com/api'
     ).toBe(true);
   });

@@ -46,7 +46,9 @@ def test_product_filtering():
 
         # Test price range filter
         print("💰 Filtering by price range (100-500):")
-        products, total = get_products_from_mongodb(price_min=100, price_max=500, limit=3)
+        products, total = get_products_from_mongodb(
+            price_min=100, price_max=500, limit=3
+        )
         print(f"   Found {total} products in price range")
         for product in products[:3]:
             print(f"   - {product.get('name')} (KES {product.get('price')})")

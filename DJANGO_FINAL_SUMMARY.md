@@ -100,7 +100,7 @@ All requirements from the problem statement have been successfully implemented.
       ▼
 ┌─────────────────────┐
 │   Django REST       │  Port 8000
-│   Framework         │  
+│   Framework         │
 │                     │  • PyMongo Client
 │  /api/products/     │  • JWT Auth
 │  /api/auth/         │  • CORS Headers
@@ -269,9 +269,9 @@ All requirements from the problem statement have been successfully implemented, 
 
 ---
 
-**Implementation Date:** October 5, 2024  
-**Version:** 3.0  
-**Platform:** Django REST Framework + MongoDB Atlas  
+**Implementation Date:** October 5, 2024
+**Version:** 3.0
+**Platform:** Django REST Framework + MongoDB Atlas
 **Developer:** GitHub Copilot + Bryvn01
 
 🛒 **EasyCart is ready to serve customers!** ✨

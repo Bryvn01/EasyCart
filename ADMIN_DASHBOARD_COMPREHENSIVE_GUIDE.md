@@ -221,7 +221,7 @@ The EasyCart Admin Dashboard is a fully-featured, responsive web application bui
 
 #### Build errors
 - **Solution**: Clear node_modules and reinstall dependencies
-- **Commands**: 
+- **Commands**:
   ```bash
   rm -rf node_modules package-lock.json
   npm install
@@ -290,6 +290,6 @@ REACT_APP_ENVIRONMENT=production
 
 ---
 
-**Last Updated**: December 2024  
-**Version**: 2.0.0  
+**Last Updated**: December 2024
+**Version**: 2.0.0
 **Maintainers**: EasyCart Development Team

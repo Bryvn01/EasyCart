@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 /**
  * ImageWithFallback Component
  * Displays images with lazy loading, skeleton loading state, and fallback on error
- * 
+ *
  * @param {string} src - Image source URL
  * @param {string} alt - Alt text for the image
  * @param {string} fallbackCategory - Category for fallback image (product, hero, category, icon)
@@ -81,7 +81,7 @@ const ImageWithFallback = ({
   const isLoading = imageState === 'loading';
 
   return (
-    <div 
+    <div
       ref={imgRef}
       className={`image-with-fallback ${className}`}
       style={{ position: 'relative', overflow: 'hidden', ...style }}
@@ -93,31 +93,31 @@ const ImageWithFallback = ({
           onLoad={handleImageLoad}
           onError={handleImageError}
           className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-          style={{ 
-            width: '100%', 
-            height: '100%', 
+          style={{
+            width: '100%',
+            height: '100%',
             objectFit: 'cover',
             display: isLoading && showSkeleton ? 'none' : 'block'
           }}
           {...props}
         />
       )}
-      
+
       {/* Skeleton Loader */}
       {showSkeleton && isLoading && (
-        <div 
+        <div
           className="skeleton-loader absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center"
           style={{ width: '100%', height: '100%' }}
         >
-          <svg 
-            className="w-10 h-10 text-gray-400 dark:text-gray-500" 
-            fill="currentColor" 
+          <svg
+            className="w-10 h-10 text-gray-400 dark:text-gray-500"
+            fill="currentColor"
             viewBox="0 0 20 20"
           >
-            <path 
-              fillRule="evenodd" 
-              d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" 
-              clipRule="evenodd" 
+            <path
+              fillRule="evenodd"
+              d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+              clipRule="evenodd"
             />
           </svg>
         </div>
@@ -125,7 +125,7 @@ const ImageWithFallback = ({
 
       {/* Placeholder when not in view (lazy loading) */}
       {!isInView && (
-        <div 
+        <div
           className="placeholder absolute inset-0 bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
           style={{ width: '100%', height: '100%' }}
         >

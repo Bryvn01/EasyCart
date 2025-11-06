@@ -25,7 +25,7 @@ const TrustBadges = ({ variant = 'horizontal' }) => {
   ];
 
   return (
-    <div 
+    <div
       className={`trust-badges ${
         variant === 'vertical' ? 'flex flex-col gap-3' : 'grid grid-cols-2 md:grid-cols-4 gap-3'
       }`}

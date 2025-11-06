@@ -10,7 +10,7 @@ This guide ensures all environment variables are correctly configured across all
 
 ### ✅ Backend (Node.js) - Render Service
 
-**Service Name:** `easycart-backend`  
+**Service Name:** `easycart-backend`
 **URL:** https://easycart-backend.onrender.com
 
 #### Required Environment Variables
@@ -58,7 +58,7 @@ This guide ensures all environment variables are correctly configured across all
 
 ### ✅ Frontend (React) - Render Static Site
 
-**Service Name:** `easycart-frontend`  
+**Service Name:** `easycart-frontend`
 **URL:** https://easycart-1-752r.onrender.com
 
 #### Required Environment Variables
@@ -83,7 +83,7 @@ This guide ensures all environment variables are correctly configured across all
    ```bash
    # Correct format (no trailing slash):
    REACT_APP_API_URL=https://easycart-backend.onrender.com/api ✅
-   
+
    # Incorrect formats:
    REACT_APP_API_URL=https://easycart-backend.onrender.com/api/ ❌
    REACT_APP_API_URL=https://easycart-backend.onrender.com ❌
@@ -105,7 +105,7 @@ This guide ensures all environment variables are correctly configured across all
 
 ### ✅ Admin Dashboard (React) - Render Static Site
 
-**Service Name:** `easycart-admin`  
+**Service Name:** `easycart-admin`
 **URL:** https://easycart-admin.onrender.com
 
 #### Required Environment Variables
@@ -136,8 +136,8 @@ This guide ensures all environment variables are correctly configured across all
 
 ### Database Connection
 
-**Cluster:** [Your cluster name]  
-**Database:** `easycart`  
+**Cluster:** [Your cluster name]
+**Database:** `easycart`
 **Connection String:** `mongodb+srv://...`
 
 #### Verification Checklist
@@ -507,5 +507,5 @@ After configuring all environment variables:
 
 ---
 
-**Last Updated:** [Current Date]  
+**Last Updated:** [Current Date]
 **Version:** 1.0

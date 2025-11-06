@@ -27,7 +27,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div style={{ 
+    <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, var(--primary-50) 0%, var(--gray-50) 100%)',
       display: 'flex',
@@ -35,8 +35,8 @@ const ForgotPassword = () => {
       justifyContent: 'center',
       padding: 'var(--space-4)'
     }}>
-      <div className="card" style={{ 
-        width: '100%', 
+      <div className="card" style={{
+        width: '100%',
         maxWidth: '400px',
         padding: 'var(--space-8)'
       }}>
@@ -48,7 +48,7 @@ const ForgotPassword = () => {
             Enter your email address and we'll send you instructions to reset your password.
           </p>
         </div>
-        
+
         {/* Success Message */}
         {message && (
           <div style={{
@@ -62,7 +62,7 @@ const ForgotPassword = () => {
             {message}
           </div>
         )}
-        
+
         {/* Error Message */}
         {error && (
           <div style={{
@@ -76,7 +76,7 @@ const ForgotPassword = () => {
             {error}
           </div>
         )}
-        
+
         {!emailSent ? (
           <>
             {/* Form */}
@@ -100,11 +100,11 @@ const ForgotPassword = () => {
                   required
                 />
               </div>
-              
+
               <button
                 type="submit"
                 className="btn btn-primary"
-                style={{ 
+                style={{
                   width: '100%',
                   padding: 'var(--space-3)',
                   fontSize: '1rem',
@@ -125,7 +125,7 @@ const ForgotPassword = () => {
                 setMessage('');
               }}
               className="btn btn-secondary"
-              style={{ 
+              style={{
                 width: '100%',
                 padding: 'var(--space-3)',
                 fontSize: '1rem',
@@ -136,15 +136,15 @@ const ForgotPassword = () => {
             </button>
           </div>
         )}
-        
+
         {/* Footer */}
         <div className="text-center" style={{ marginTop: 'var(--space-6)' }}>
           <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem' }}>
             Remember your password?{' '}
-            <Link 
-              to="/login" 
-              style={{ 
-                color: 'var(--primary-600)', 
+            <Link
+              to="/login"
+              style={{
+                color: 'var(--primary-600)',
                 textDecoration: 'none',
                 fontWeight: '500'
               }}

@@ -64,7 +64,7 @@ const Orders = () => {
   return (
     <div className="container py-8">
       <h1 className="text-3xl font-bold mb-8">My Orders</h1>
-      
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
         {orders.map(order => (
           <div key={order.id} className="card">
@@ -100,7 +100,7 @@ const Orders = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
                 <div>
                   <p style={{ fontSize: '0.875rem', color: 'var(--gray-600)' }}>Total Amount</p>
@@ -115,7 +115,7 @@ const Orders = () => {
                   <p className="font-semibold">{order.items?.length || 0} items</p>
                 </div>
               </div>
-              
+
               {order.items && order.items.length > 0 && (
                 <div>
                   <h4 className="font-semibold mb-3">Order Items:</h4>

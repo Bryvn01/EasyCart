@@ -138,13 +138,13 @@ The payment service architecture uses a modular approach:
 # payment_service.py
 class MpesaPaymentService:
     def initiate_stk_push(self, phone, amount, order_id)
-    
+
 class CardPaymentService:
     def initiate_payment(self, amount, email, phone, order_id)
-    
+
 class StripePaymentService:
     def initiate_payment(self, amount, email, phone, order_id)
-    
+
 class PayPalPaymentService:
     def initiate_payment(self, amount, email, phone, order_id)
 ```

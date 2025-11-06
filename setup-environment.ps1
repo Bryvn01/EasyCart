@@ -20,10 +20,10 @@ $backendEnv = "$rootDir\backend\.env"
 
 if (Test-Path $backendEnv) {
     Write-Host "   ✅ backend\.env already exists" -ForegroundColor Green
-    
+
     # Check critical variables
     $envContent = Get-Content $backendEnv -Raw
-    
+
     $checks = @{
         "SECRET_KEY" = $envContent -match "SECRET_KEY=<your_django_secret_key>
         "DEBUG" = $envContent -match "DEBUG=(True|False)"
@@ -32,7 +32,7 @@ if (Test-Path $backendEnv) {
         "CLOUDINARY" = $envContent -match "CLOUDINARY"
         "CORS" = $envContent -match "CORS_ALLOWED_ORIGINS"
     }
-    
+
     Write-Host "`n   Backend Environment Check:" -ForegroundColor Cyan
     foreach ($key in $checks.Keys) {
         if ($checks[$key]) {
@@ -41,7 +41,7 @@ if (Test-Path $backendEnv) {
             Write-Host "   ⚠️  $key missing or not set" -ForegroundColor Red
         }
     }
-    
+
 } else {
     Write-Host "   ⚠️  backend\.env not found" -ForegroundColor Red
     Write-Host "   Creating from .env.example..." -ForegroundColor Yellow
@@ -59,14 +59,14 @@ $frontendEnv = "$rootDir\frontend\.env"
 
 if (Test-Path $frontendEnv) {
     Write-Host "   ✅ frontend\.env already exists" -ForegroundColor Green
-    
+
     $envContent = Get-Content $frontendEnv -Raw
-    
+
     $checks = @{
         "REACT_APP_API_URL" = $envContent -match "REACT_APP_API_URL=.+"
         "CLOUDINARY" = $envContent -match "REACT_APP_CLOUDINARY_CLOUD_NAME"
     }
-    
+
     Write-Host "`n   Frontend Environment Check:" -ForegroundColor Cyan
     foreach ($key in $checks.Keys) {
         if ($checks[$key]) {
@@ -75,11 +75,11 @@ if (Test-Path $frontendEnv) {
             Write-Host "   ⚠️  $key missing or not set" -ForegroundColor Red
         }
     }
-    
+
 } else {
     Write-Host "   ⚠️  frontend\.env not found" -ForegroundColor Red
     Write-Host "   Creating minimal configuration..." -ForegroundColor Yellow
-    
+
     $frontendEnvContent = @"
 # React Build Configuration
 DISABLE_ESLINT_PLUGIN=true
@@ -98,7 +98,7 @@ REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
 REACT_APP_ITEMS_PER_PAGE=12
 REACT_APP_SEARCH_DEBOUNCE=300
 "@
-    
+
     $frontendEnvContent | Out-File -FilePath $frontendEnv -Encoding utf8
     Write-Host "   ✅ Created frontend\.env!" -ForegroundColor Green
 }
@@ -113,14 +113,14 @@ $adminEnv = "$rootDir\admin-dashboard\.env"
 
 if (Test-Path $adminEnv) {
     Write-Host "   ✅ admin-dashboard\.env already exists" -ForegroundColor Green
-    
+
     $envContent = Get-Content $adminEnv -Raw
-    
+
     $checks = @{
         "REACT_APP_API_URL" = $envContent -match "REACT_APP_API_URL=.+"
         "CLOUDINARY" = $envContent -match "REACT_APP_CLOUDINARY_CLOUD_NAME"
     }
-    
+
     Write-Host "`n   Admin Dashboard Environment Check:" -ForegroundColor Cyan
     foreach ($key in $checks.Keys) {
         if ($checks[$key]) {
@@ -129,11 +129,11 @@ if (Test-Path $adminEnv) {
             Write-Host "   ⚠️  $key missing or not set" -ForegroundColor Red
         }
     }
-    
+
 } else {
     Write-Host "   ⚠️  admin-dashboard\.env not found" -ForegroundColor Red
     Write-Host "   Creating from .env.example..." -ForegroundColor Yellow
-    
+
     if (Test-Path "$rootDir\admin-dashboard\.env.example") {
         Copy-Item "$rootDir\admin-dashboard\.env.example" $adminEnv
         Write-Host "   ✅ Created admin-dashboard\.env!" -ForegroundColor Green
@@ -169,7 +169,7 @@ try {
 Write-Host "`n🐍 Python Environment:" -ForegroundColor Yellow
 if (Test-Path "$rootDir\.venv\Scripts\python.exe") {
     Write-Host "   ✅ Virtual environment found" -ForegroundColor Green
-    
+
     # Check if psycopg2 is installed
     $output = & "$rootDir\.venv\Scripts\python.exe" -m pip show psycopg2-binary 2>&1
     if ($LASTEXITCODE -eq 0) {

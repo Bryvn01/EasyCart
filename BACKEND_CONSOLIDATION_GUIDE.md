@@ -284,6 +284,6 @@ For issues with backend deployment, contact the Render support team or repositor
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** $(date)  
+**Document Version:** 1.0
+**Last Updated:** $(date)
 **Author:** EasyCart DevOps Team

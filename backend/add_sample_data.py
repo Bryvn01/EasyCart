@@ -228,7 +228,9 @@ for product_data in products_data:
             "is_active": True,
         },
     )
-    print(f"{'Created' if created else 'Found'} product: {product.name} - KES {product.price}")
+    print(
+        f"{'Created' if created else 'Found'} product: {product.name} - KES {product.price}"
+    )
 
 print(f"\nSample data added successfully!")
 print(f"Categories: {Category.objects.count()}")

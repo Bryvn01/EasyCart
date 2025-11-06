@@ -195,7 +195,7 @@ npm start
 
 ## Known Limitations
 
-1. **MongoDB Connection Required**: 
+1. **MongoDB Connection Required**:
    - Backend falls back to static data if MongoDB unavailable
    - Seeding requires active MongoDB connection
 

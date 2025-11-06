@@ -219,12 +219,12 @@ curl http://localhost:8000/api/products/
 ## 🚨 Troubleshooting
 
 ### Error: "The SECRET_KEY setting must not be empty"
-**Cause:** SECRET_KEY not set in `backend\.env`  
+**Cause:** SECRET_KEY not set in `backend\.env`
 **Fix:** Run the SECRET_KEY generation command and update backend\.env
 
 ### Error: "could not connect to server"
-**Cause:** PostgreSQL not running  
-**Fix:** 
+**Cause:** PostgreSQL not running
+**Fix:**
 ```powershell
 # Check status:
 Get-Service -Name "postgresql*"
@@ -234,23 +234,23 @@ Start-Service -Name "postgresql-x64-15"  # Adjust version number
 ```
 
 ### Error: CORS policy blocked
-**Cause:** Frontend URL not in CORS_ALLOWED_ORIGINS  
+**Cause:** Frontend URL not in CORS_ALLOWED_ORIGINS
 **Fix:** Already set correctly in backend\.env
 
 ### Error: Images not loading
-**Cause:** Cloudinary not configured  
-**Fix:** 
+**Cause:** Cloudinary not configured
+**Fix:**
 1. Get credentials from https://cloudinary.com/console
 2. Add CLOUDINARY_URL to backend\.env
 3. Add REACT_APP_CLOUDINARY_CLOUD_NAME to frontend\.env and admin-dashboard\.env
 4. Clear browser cache (Ctrl+Shift+Delete)
 
 ### Error: "npm: command not found"
-**Cause:** Node.js not in PATH  
+**Cause:** Node.js not in PATH
 **Fix:** Restart terminal or add Node.js to system PATH
 
 ### Error: "python: command not found"
-**Cause:** Using wrong Python path  
+**Cause:** Using wrong Python path
 **Fix:** Use full path: `C:/EasyCart/.venv/Scripts/python.exe`
 
 ---
@@ -308,13 +308,13 @@ Before starting development, verify:
 
 Your environment is correctly set up when:
 
-✅ Backend starts without errors at http://localhost:8000  
-✅ Frontend loads at http://localhost:3000  
-✅ Admin dashboard loads at http://localhost:3001  
-✅ Products page displays with images  
-✅ No CORS errors in browser console  
-✅ Database queries work (check backend logs)  
-✅ Can login to admin with superuser credentials  
+✅ Backend starts without errors at http://localhost:8000
+✅ Frontend loads at http://localhost:3000
+✅ Admin dashboard loads at http://localhost:3001
+✅ Products page displays with images
+✅ No CORS errors in browser console
+✅ Database queries work (check backend logs)
+✅ Can login to admin with superuser credentials
 
 ---
 
@@ -331,19 +331,19 @@ Your environment is correctly set up when:
 
 ### Common Questions:
 
-**Q: Where do I get Cloudinary credentials?**  
+**Q: Where do I get Cloudinary credentials?**
 A: Sign up free at https://cloudinary.com/users/register/free → Go to Dashboard → Copy credentials
 
-**Q: How do I know my SECRET_KEY is secure?**  
+**Q: How do I know my SECRET_KEY is secure?**
 A: Use the provided generation command. It creates a 50-character URL-safe key.
 
-**Q: Do I need Redis/Celery right now?**  
+**Q: Do I need Redis/Celery right now?**
 A: No, those are optional for caching and background tasks. Start without them.
 
-**Q: What about payment gateways?**  
+**Q: What about payment gateways?**
 A: Optional for now. Add Stripe/PayPal keys when ready to accept payments.
 
-**Q: How do I deploy to production?**  
+**Q: How do I deploy to production?**
 A: See `PRODUCTION_READINESS_POSTGRESQL.md` for full deployment checklist.
 
 ---
@@ -375,6 +375,6 @@ A: See `PRODUCTION_READINESS_POSTGRESQL.md` for full deployment checklist.
 
 ---
 
-*Last Updated: EasyCart PostgreSQL Migration*  
-*For: Skilled Fullstack Developer & Senior DevOps Engineer*  
+*Last Updated: EasyCart PostgreSQL Migration*
+*For: Skilled Fullstack Developer & Senior DevOps Engineer*
 *Total Setup Time: ~15 minutes*

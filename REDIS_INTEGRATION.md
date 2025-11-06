@@ -223,7 +223,7 @@ cache.clear()
    ```bash
    # Linux/macOS
    tail -f /var/log/redis/redis-server.log
-   
+
    # Windows WSL
    sudo tail -f /var/log/redis/redis-server.log
    ```

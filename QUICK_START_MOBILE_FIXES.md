@@ -64,9 +64,9 @@ python manage.py add_category_images
 // Use CategoryImageUploader component
 import CategoryImageUploader from './components/Admin/CategoryImageUploader';
 
-<CategoryImageUploader 
-  category={category} 
-  onUpdate={(updated) => console.log(updated)} 
+<CategoryImageUploader
+  category={category}
+  onUpdate={(updated) => console.log(updated)}
 />
 ```
 

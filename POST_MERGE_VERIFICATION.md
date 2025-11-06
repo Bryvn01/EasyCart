@@ -107,7 +107,7 @@ curl https://easycart-backend.onrender.com/api/categories
    - [ ] Returns `count`, `next`, `previous`, `results` fields
    - [ ] `results` array has ≤ 12 items
    - [ ] `count` shows total number of products
-   
+
 2. **Page Navigation**
    - [ ] Page 1 has `previous: false` and `next: true` (if total > page_size)
    - [ ] Last page has `next: false`
@@ -131,7 +131,7 @@ curl https://easycart-backend.onrender.com/api/categories
    ```
    - [ ] Returns products matching "unga" in name or description
    - [ ] Empty results return `{"results": [], "count": 0}`
-   
+
 2. **Frontend Search**
    - [ ] Type "unga" in search box on Products page
    - [ ] Results filter after 300ms delay (debounce)
@@ -158,7 +158,7 @@ curl https://easycart-backend.onrender.com/api/categories
    - [ ] Returns products within price range
    - [ ] Frontend min/max inputs accept valid numbers
    - [ ] Invalid values (NaN, Infinity) are handled gracefully
-   
+
 3. **Sort/Ordering**
    ```bash
    curl 'https://easycart-backend.onrender.com/api/products?ordering=-price'
@@ -174,7 +174,7 @@ curl https://easycart-backend.onrender.com/api/categories
 1. **Cloudinary Images**
    - [ ] Images with Cloudinary URLs load correctly
    - [ ] Cloudinary transformation parameters work (if used)
-   
+
 2. **Relative URLs**
    - [ ] Images with relative paths resolve correctly
    - [ ] Base URL prepends properly for backend images
@@ -283,7 +283,7 @@ Server running on port 5000
    ```bash
    # Install Apache Bench
    apt-get install apache2-utils
-   
+
    # Run load test (100 requests, 10 concurrent)
    ab -n 100 -c 10 https://easycart-backend.onrender.com/api/products
    ```
@@ -554,6 +554,6 @@ For issues or questions:
 
 ---
 
-**Last Updated:** [Current Date]  
-**Version:** 1.0  
+**Last Updated:** [Current Date]
+**Version:** 1.0
 **Author:** EasyCart Team

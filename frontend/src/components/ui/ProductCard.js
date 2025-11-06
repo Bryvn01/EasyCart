@@ -1,9 +1,17 @@
+
 import React, { useRef, useState } from 'react';
 import { useFadeOutOnSuccess } from '../../hooks/useFadeOutOnSuccess';
 import { motion } from 'framer-motion';
 import { getProductImageUrl } from '../../utils/imageUtils';
 
-
+/**
+ * ProductCard: Standardized, accessible, responsive product card for EasyCart
+ * - 1:1 image aspect ratio
+ * - Proper badge stacking and spacing
+ * - 2-line truncation for name/desc
+ * - Uses design system CSS variables
+ * - Accessible and keyboard navigable
+ */
 const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isInWishlist = false }) => {
   const [addToCartBtnRef, addToCartBtnHidden, triggerAddToCartFadeOut] = useFadeOutOnSuccess();
   const successMsgRef = useRef(null);
@@ -13,15 +21,16 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
     <motion.article
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8, scale: 1.03, boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
-      className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden group flex flex-col min-h-[340px] sm:min-h-[360px] md:min-h-[380px] cursor-pointer transition-all duration-200"
+      whileHover={{ y: -8, scale: 1.03, boxShadow: 'var(--shadow, 0 8px 32px rgba(0,0,0,0.12))' }}
+      className="bg-white rounded-[var(--border-radius)] shadow-md border border-gray-100 overflow-hidden group flex flex-col min-h-[340px] sm:min-h-[360px] md:min-h-[380px] cursor-pointer transition-all duration-200"
       tabIndex={0}
       aria-label={product.name}
       onClick={e => {
         if (e.target.tagName !== 'BUTTON' && typeof onQuickView === 'function') onQuickView();
       }}
     >
-      <div className="relative w-full aspect-[1/1] overflow-hidden rounded-t-lg min-h-[160px] sm:min-h-[180px] md:min-h-[200px]">
+      {/* Image Section with stacked badges */}
+      <div className="relative w-full aspect-[1/1] overflow-hidden rounded-t-[var(--border-radius)] min-h-[160px] sm:min-h-[180px] md:min-h-[200px]">
         <img
           src={getProductImageUrl(product, '/placeholder.png')}
           alt={product.name}
@@ -29,26 +38,32 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
           loading="lazy"
           crossOrigin="anonymous"
         />
-        {product.is_flash_sale && (
-          <span className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg animate-pulse">🔥 Hot Deal</span>
-        )}
-        {product.is_top_seller && !product.is_flash_sale && (
-          <span className="absolute top-2 left-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded shadow-lg">⭐ Bestseller</span>
-        )}
-        {product.is_new && (
-          <span className="absolute top-2 right-2 bg-gradient-to-r from-green-500 to-teal-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg">✨ New</span>
-        )}
+        {/* Badge stack: vertical, spaced, no overlap */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+          {product.is_flash_sale && (
+            <span className="bg-gradient-to-r from-red-500 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg animate-pulse whitespace-nowrap">🔥 Flash Sale</span>
+          )}
+          {product.is_top_seller && !product.is_flash_sale && (
+            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap">⭐ Bestseller</span>
+          )}
+        </div>
+        <div className="absolute top-2 right-2 flex flex-col gap-1 z-10">
+          {product.is_new && (
+            <span className="bg-gradient-to-r from-green-500 to-teal-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap">✨ New</span>
+          )}
+        </div>
         {product.old_price && product.price < product.old_price && (
-          <span className="absolute bottom-2 right-2 bg-gradient-to-r from-blue-600 to-cyan-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg">
+          <span className="absolute bottom-2 right-2 bg-gradient-to-r from-blue-600 to-cyan-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap">
             -{Math.round(((product.old_price - product.price) / product.old_price) * 100)}%
           </span>
         )}
       </div>
-      <div className="flex-1 flex flex-col p-3">
-        <div className="text-sm text-gray-500 mb-1">{product.category?.name || product.category_name || 'Uncategorized'}</div>
-        <h3 className="font-semibold text-base mb-1 truncate" title={product.name}>{product.name}</h3>
-        <div className="text-xs text-gray-400 mb-1">{product.brand}</div>
-        
+      {/* Info Section */}
+      <div className="flex-1 flex flex-col p-[var(--space-4)]">
+        <div className="text-sm text-gray-500 mb-1 truncate" title={product.category?.name || product.category_name || 'Uncategorized'}>{product.category?.name || product.category_name || 'Uncategorized'}</div>
+        <h3 className="font-semibold text-base mb-1 line-clamp-2 min-h-[2.5rem]" title={product.name}>{product.name}</h3>
+        <div className="text-xs text-gray-400 mb-1 truncate" title={product.brand}>{product.brand}</div>
+
         {/* Star Rating */}
         {product.rating && (
           <div className="flex items-center gap-1 mb-2">
@@ -65,7 +80,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
             <span className="text-xs text-gray-600 ml-1">({product.rating})</span>
           </div>
         )}
-        
+
         {/* Stock Indicator */}
         {product.stock !== undefined && (
           <div className="mb-2">
@@ -78,9 +93,9 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
             )}
           </div>
         )}
-        
+
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-lg font-bold text-primary">KSh {product.price?.toLocaleString()}</span>
+          <span className="text-lg font-bold text-[color:var(--primary,#2563eb)]">KSh {product.price?.toLocaleString()}</span>
           {product.old_price && product.price < product.old_price && (
             <span className="text-xs line-through text-gray-400">KSh {product.old_price?.toLocaleString()}</span>
           )}
@@ -89,14 +104,14 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
         {product.trust_badges && (
           <div className="flex gap-2 mb-2">
             {product.trust_badges.map(badge => (
-              <span key={badge} className="bg-gradient-to-r from-gray-100 to-gray-200 text-xs text-gray-700 px-2 py-1 rounded border border-gray-200 font-medium shadow">{badge}</span>
+              <span key={badge} className="bg-gradient-to-r from-gray-100 to-gray-200 text-xs text-gray-700 px-2 py-1 rounded border border-gray-200 font-medium shadow whitespace-nowrap">{badge}</span>
             ))}
           </div>
         )}
         <div className="flex gap-2 mt-auto">
           <button
             ref={addToCartBtnRef}
-            className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded transition w-full opacity-100 group-hover:scale-105 group-hover:shadow-lg focus:opacity-100"
+            className="bg-[color:var(--primary,#2563eb)] hover:bg-[color:var(--secondary,#7c3aed)] text-white font-semibold py-2 px-4 rounded-[var(--border-radius)] transition w-full opacity-100 group-hover:scale-105 group-hover:shadow-lg focus:opacity-100"
             style={{ transition: 'opacity 0.4s', opacity: addToCartBtnHidden ? 0 : 1, display: addToCartBtnHidden ? 'none' : undefined }}
             onClick={async e => {
               e.stopPropagation();
@@ -124,10 +139,10 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
               aria-live="polite"
               style={{
                 marginTop: '0.5rem',
-                background: 'var(--success, #22c55e)',
+                background: 'var(--success, #10b981)',
                 color: 'white',
                 padding: 'var(--space-2)',
-                borderRadius: 'var(--radius-md)',
+                borderRadius: 'var(--border-radius)',
                 fontWeight: 600,
                 outline: 'none',
               }}
@@ -136,7 +151,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
             </div>
           )}
           <button
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded transition w-full opacity-100 group-hover:scale-105 group-hover:shadow focus:opacity-100"
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-[var(--border-radius)] transition w-full opacity-100 group-hover:scale-105 group-hover:shadow focus:opacity-100"
             onClick={e => { e.stopPropagation(); if (typeof onQuickView === 'function') onQuickView(); }}
             aria-label={`Quick view ${product.name}`}
           >

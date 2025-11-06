@@ -215,9 +215,9 @@ exports.getAllProducts = async (req, res) => {
       .skip(skip)
       .limit(limitNum)
       .lean();
-    
+
     const total = await Product.countDocuments(query);
-    
+
     return sendResponse(res, 200, true, products, 'Products retrieved successfully', pagination);
   } catch (error) {
     // Fallback to 8 hardcoded products if MongoDB unavailable
@@ -244,13 +244,13 @@ exports.getAllProducts = async (req, res) => {
     console.log('🔍 [DEBUG] Fetching products from MongoDB');
     console.log('📊 [DEBUG] Database:', mongoose.connection.name);
     console.log('🔗 [DEBUG] Connection state:', mongoose.connection.readyState); // 1 = connected
-    
+
     const products = await Product.find(query).sort(sort).skip(skip).limit(limitNum).lean();
     const total = await Product.countDocuments(query);
-    
+
     console.log(`✅ [DEBUG] Retrieved ${products.length} products (Total: ${total})`);
     console.log('📦 [DEBUG] Sample product:', products[0] ? products[0].name : 'No products found');
-    
+
     return sendResponse(res, 200, true, products, 'Products retrieved successfully', pagination);
   } catch (error) {
     console.error('❌ [DEBUG] MongoDB Error:', error.message);
@@ -286,7 +286,7 @@ REACT_APP_API_URL=http://localhost:5000/api
 REACT_APP_API_URL=https://easycart-backend.onrender.com/api
 ```
 
-**Important:** 
+**Important:**
 - If deployed Node.js backend is on port 5000, frontend must point to that URL
 - If using Render, verify the backend service URL matches `REACT_APP_API_URL`
 
@@ -306,11 +306,11 @@ mongoose.connect(process.env.MONGO_URI)
   .then(async () => {
     console.log('✅ MongoDB Connected');
     console.log('📊 Database:', mongoose.connection.name);
-    
+
     const Product = require('./models/Product');
     const count = await Product.countDocuments();
     console.log(\`📦 Total Products: \${count}\`);
-    
+
     if (count === 37) {
       console.log('✅ CORRECT: 37 products found (matches seeded data)');
     } else if (count === 0) {
@@ -318,7 +318,7 @@ mongoose.connect(process.env.MONGO_URI)
     } else {
       console.log(\`ℹ️  INFO: \${count} products found\`);
     }
-    
+
     process.exit(0);
   })
   .catch(err => {
@@ -545,7 +545,7 @@ node routes/seed.js
    ```bash
    # Should be:
    mongodb+srv://<username>:<password>@cluster.mongodb.net/easycart?retryWrites=true&w=majority
-   
+
    # Common mistakes:
    # ❌ mongodb:// (missing srv)
    # ❌ mongodb+srv://.../?... (missing database name)
@@ -594,7 +594,7 @@ SQLite/PostgreSQL (Django models)
 
 **Q: Is the backend correctly pulling from MongoDB Atlas `easycart.products`?**
 
-**A:** YES, but only through the **Node.js backend**. The Django backend does NOT connect to MongoDB for the Product model. 
+**A:** YES, but only through the **Node.js backend**. The Django backend does NOT connect to MongoDB for the Product model.
 
 To verify:
 1. Run: `curl http://localhost:5000/api/products` (Node.js - MongoDB)

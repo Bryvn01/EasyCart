@@ -262,7 +262,7 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
-    
+
     class Meta:
         unique_together = ('cart', 'product')
 ```
@@ -277,7 +277,7 @@ class WishlistItem(models.Model):
     wishlist = models.ForeignKey(Wishlist, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         unique_together = ('wishlist', 'product')
         ordering = ['-added_at']

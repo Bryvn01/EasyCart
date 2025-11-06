@@ -20,7 +20,8 @@ module.exports = {
     '!src/**/__tests__/**',
   ],
   testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
+    '<rootDir>/src/**/__tests__/**/*.test.{js,jsx}',
+    '<rootDir>/src/**/__tests__/**/*.spec.{js,jsx}',
     '<rootDir>/src/**/*.{spec,test}.{js,jsx}',
   ],
   moduleDirectories: ['node_modules', 'src'],

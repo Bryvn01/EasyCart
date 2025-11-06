@@ -34,7 +34,7 @@ function CategoriesPage() {
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">Categories</h1>
-      <CategoryList 
+      <CategoryList
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
       />
@@ -83,9 +83,9 @@ function FilteredProducts() {
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">Shop by Category</h1>
-      
+
       {/* Category Filter */}
-      <CategoryList 
+      <CategoryList
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
       />
@@ -133,13 +133,13 @@ function BestPracticeExample() {
     const fetchProducts = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         const params = {};
         if (selectedCategory) {
           params.category = selectedCategory;
         }
-        
+
         const response = await productsAPI.getProducts(params);
         const productsData = response.data.results || response.data;
         setProducts(Array.isArray(productsData) ? productsData : []);
@@ -157,8 +157,8 @@ function BestPracticeExample() {
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">Products</h1>
-      
-      <CategoryList 
+
+      <CategoryList
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
       />
@@ -174,7 +174,7 @@ function BestPracticeExample() {
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <p className="text-red-600">{error}</p>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
             >
@@ -195,8 +195,8 @@ function BestPracticeExample() {
               <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="h-48 bg-gray-200 flex items-center justify-center">
                   {product.image ? (
-                    <img 
-                      src={product.image} 
+                    <img
+                      src={product.image}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
@@ -371,7 +371,7 @@ beforeEach(() => {
       ]
     }
   };
-  
+
   api.productsAPI.getProducts.mockResolvedValue(mockProducts);
 });
 ```
@@ -394,7 +394,7 @@ import { productsAPI } from '../services/api';
 
 function MyComponent() {
   const [products, setProducts] = useState([]);
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await productsAPI.getProducts();

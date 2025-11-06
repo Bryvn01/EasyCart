@@ -51,7 +51,7 @@ Copy just the error section (usually 10-20 lines) that shows:
 ```
 FAIL src/__tests__/SomeTest.test.js
   ● Test suite failed to run
-    
+
     Error: [specific error message here]
 ```
 

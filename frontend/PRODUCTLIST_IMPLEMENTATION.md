@@ -30,7 +30,7 @@ Each product card shows:
 1. **Loading State**
    - Shows spinner with "Loading products..." message
    - Displays while fetching data from API
-   
+
 2. **Error State**
    - Shows warning icon (⚠️)
    - Displays error message

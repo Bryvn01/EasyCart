@@ -2,24 +2,24 @@
 
 /**
  * Seed Kenyan Products Script
- * 
+ *
  * This script seeds the MongoDB database with authentic Kenyan retail products
- * from the products_kenya.json data file. It optionally uploads product images 
+ * from the products_kenya.json data file. It optionally uploads product images
  * to Cloudinary for optimal delivery.
- * 
+ *
  * Usage:
  *   npm run seed:kenya
  *   OR
  *   node scripts/seedKenyaProducts.js
- * 
+ *
  * Environment Variables Required:
  *   - MONGO_URI: MongoDB connection string
- * 
+ *
  * Optional (for Cloudinary image upload):
  *   - CLOUDINARY_CLOUD_NAME: Your Cloudinary cloud name
  *   - CLOUDINARY_API_KEY: Your Cloudinary API key
  *   - CLOUDINARY_API_SECRET: Your Cloudinary API secret
- * 
+ *
  * Features:
  *   - Non-destructive: Only adds products, doesn't delete existing data
  *   - Supports Cloudinary image uploads (optional)
@@ -125,7 +125,7 @@ async function seedKenyaProducts() {
     // Extract and ensure categories exist
     console.log('📁 Processing categories...');
     const categories = extractCategories(kenyaProducts);
-    
+
     // Insert categories that don't already exist
     for (const category of categories) {
       const existingCategory = await Category.findOne({ name: category.name });
@@ -159,10 +159,10 @@ async function seedKenyaProducts() {
     for (let i = 0; i < kenyaProducts.length; i++) {
       const productData = kenyaProducts[i];
       const productNum = i + 1;
-      
+
       try {
         console.log(`[${productNum}/${kenyaProducts.length}] Processing: ${productData.name}`);
-        
+
         // Check if product already exists (by name and brand)
         const existingProduct = await Product.findOne({
           name: productData.name,
@@ -213,7 +213,7 @@ async function seedKenyaProducts() {
         await product.save();
         successCount++;
         console.log(`   💾 Saved to database\n`);
-        
+
       } catch (error) {
         failCount++;
         console.error(`   ❌ Error: ${error.message}\n`);
@@ -232,7 +232,7 @@ async function seedKenyaProducts() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     console.log('🎉 Kenyan products seeding completed successfully!');
-    
+
   } catch (error) {
     console.error('❌ Fatal error during seeding:', error);
     process.exit(1);

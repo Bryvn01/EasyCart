@@ -1,6 +1,5 @@
 import React from 'react';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
-import { renderWithProviders } from '../../../__tests__/test-utils';
+import { render, screen, fireEvent, waitFor } from '../../../test-utils';
 import ProductCard from '../ProductCard';
 
 describe('ProductCard fade-out/auto-hide', () => {
@@ -13,28 +12,41 @@ describe('ProductCard fade-out/auto-hide', () => {
   };
 
   it('fades out and hides Add to Cart button, shows success message on success', async () => {
-    renderWithProviders(
+    render(
       <ProductCard
         product={product}
         onAddToCart={async () => true}
       />
     );
-    fireEvent.click(screen.getByRole('button', { name: /add to cart/i }));
-    await waitFor(() => expect(screen.queryByRole('button', { name: /add to cart/i })).not.toBeInTheDocument(), { timeout: 1000 });
+
+    // ✅ Use the actual aria-label value
+    fireEvent.click(screen.getByRole('button', { name: "Add Test Product to cart" }));
+
+    // ✅ Wait for button to disappear using the same query
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: "Add Test Product to cart" })).not.toBeInTheDocument(),
+      { timeout: 1000 }
+    );
+
     const msg = await screen.findByText(/added to cart/i);
     expect(msg).toBeInTheDocument();
     expect(document.activeElement).toBe(msg);
   });
 
   it('does not hide Add to Cart button on error', async () => {
-    renderWithProviders(
+    render(
       <ProductCard
         product={product}
         onAddToCart={async () => { throw new Error('fail'); }}
       />
     );
-    fireEvent.click(screen.getByRole('button', { name: /add to cart/i }));
-    await waitFor(() => expect(screen.getByRole('button', { name: /add to cart/i })).toBeInTheDocument());
+
+    // ✅ Use the actual aria-label value consistently
+    fireEvent.click(screen.getByRole('button', { name: "Add Test Product to cart" }));
+
+    // ✅ Button should still be present after error
+    const button = screen.getByRole('button', { name: "Add Test Product to cart" });
+    expect(button).toBeInTheDocument();
     expect(screen.queryByText(/added to cart/i)).not.toBeInTheDocument();
   });
 });

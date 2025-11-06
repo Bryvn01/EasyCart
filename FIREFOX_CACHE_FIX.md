@@ -78,7 +78,7 @@ Add this to disable caching for development:
 if DEBUG:
     MIDDLEWARE.insert(0, 'django.middleware.cache.UpdateCacheMiddleware')
     MIDDLEWARE.append('django.middleware.cache.FetchFromCacheMiddleware')
-    
+
     # Cache headers
     CACHE_MIDDLEWARE_SECONDS = 0
     CACHE_MIDDLEWARE_KEY_PREFIX = ''
@@ -110,12 +110,12 @@ Add these meta tags in the `<head>` section:
 ```html
 <head>
   <!-- Existing meta tags -->
-  
+
   <!-- Disable caching for development -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  
+
   <!-- Rest of head content -->
 </head>
 ```

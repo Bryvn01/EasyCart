@@ -1,6 +1,6 @@
 # 🔐 EasyCart Complete Environment Configuration Guide
 
-**Last Updated**: October 14, 2025  
+**Last Updated**: October 14, 2025
 **For**: Local Development & Production Deployment
 
 ---
@@ -629,7 +629,7 @@ psql -U easycart_user -d easycart -h localhost
 
 ### Issue: Frontend can't connect to backend
 
-**Solution**: 
+**Solution**:
 1. Check backend is running on port 8000
 2. Verify `REACT_APP_API_URL=http://localhost:8000/api` in `frontend/.env`
 3. Check CORS settings in `backend/.env`:

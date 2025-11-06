@@ -14,7 +14,7 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { register } = useAuth();
   const navigate = useNavigate();
   const [registerBtnRef, registerBtnHidden, triggerRegisterFadeOut] = useFadeOutOnSuccess();
@@ -57,9 +57,9 @@ const Register = () => {
       });
     } catch (err) {
       console.error('Registration error:', err);
-      const errorMessage = err.response?.data?.message || 
-                          err.response?.data?.error || 
-                          err.message || 
+      const errorMessage = err.response?.data?.message ||
+                          err.response?.data?.error ||
+                          err.message ||
                           'Registration failed. Please try again.';
       setError(errorMessage);
     } finally {
@@ -68,7 +68,7 @@ const Register = () => {
   };
 
   return (
-    <div style={{ 
+    <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, var(--primary-50) 0%, var(--gray-50) 100%)',
       display: 'flex',
@@ -76,8 +76,8 @@ const Register = () => {
       justifyContent: 'center',
       padding: 'var(--space-4)'
     }}>
-      <div className="card" style={{ 
-        width: '100%', 
+      <div className="card" style={{
+        width: '100%',
         maxWidth: '500px',
         padding: 'var(--space-8)'
       }}>
@@ -89,7 +89,7 @@ const Register = () => {
             Create your account and start shopping
           </p>
         </div>
-        
+
         {/* Error Message */}
         {error && (
           <div style={{
@@ -103,7 +103,7 @@ const Register = () => {
             {error}
           </div>
         )}
-        
+
         {/* Form */}
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
@@ -127,7 +127,7 @@ const Register = () => {
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label style={{
                 display: 'block',
@@ -148,7 +148,7 @@ const Register = () => {
               />
             </div>
           </div>
-          
+
           <div className="form-group">
             <label style={{
               display: 'block',
@@ -169,7 +169,7 @@ const Register = () => {
               required
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="form-group">
               <label style={{
@@ -191,7 +191,7 @@ const Register = () => {
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label style={{
                 display: 'block',
@@ -213,7 +213,7 @@ const Register = () => {
               />
             </div>
           </div>
-          
+
           <div className="form-group">
             <label style={{
               display: 'block',
@@ -233,12 +233,12 @@ const Register = () => {
               rows="3"
             />
           </div>
-          
+
           <button
             ref={registerBtnRef}
             type="submit"
             className="btn btn-primary"
-            style={{ 
+            style={{
               width: '100%',
               padding: 'var(--space-3)',
               fontSize: '1rem',
@@ -270,15 +270,15 @@ const Register = () => {
             </div>
           )}
         </form>
-        
+
         {/* Footer */}
         <div className="text-center" style={{ marginTop: 'var(--space-6)' }}>
           <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem' }}>
             Already have an account?{' '}
-            <Link 
-              to="/login" 
-              style={{ 
-                color: 'var(--primary-600)', 
+            <Link
+              to="/login"
+              style={{
+                color: 'var(--primary-600)',
                 textDecoration: 'none',
                 fontWeight: '500'
               }}

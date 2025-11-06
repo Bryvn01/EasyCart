@@ -11,7 +11,7 @@
 
 2. **Access Admin Panel**: http://localhost:8000/admin/
 
-3. **Login**: 
+3. **Login**:
    - Username: `admin`
    - Password: `admin123`
 
