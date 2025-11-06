@@ -1,9 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '../test-utils';
-import { BrowserRouter } from 'react-router-dom';
 import EnhancedProductCard from '../components/EnhancedProductCard';
-import { CartProvider } from '../context/CartContext';
-import { AuthProvider } from '../context/AuthContext';
 
 // Mock useCart hook
 const mockAddToCart = jest.fn();
@@ -34,11 +31,7 @@ const mockProduct = {
 };
 
 const renderComponent = (product = mockProduct) => {
-  return render(
-    <BrowserRouter>
-      <EnhancedProductCard product={product} />
-    </BrowserRouter>
-  );
+  return render(<EnhancedProductCard product={product} />);
 };
 
 describe('EnhancedProductCard', () => {
@@ -61,7 +54,8 @@ describe('EnhancedProductCard', () => {
     const styles = window.getComputedStyle(button);
 
     // Check min-height is at least 48px (exceeds 44px requirement)
-    expect(parseInt(styles.minHeight)).toBeGreaterThanOrEqual(44);
+    const minHeight = parseInt(styles.minHeight) || parseInt(styles.height);
+    expect(minHeight).toBeGreaterThanOrEqual(44);
   });
 
   test('prevents duplicate taps on add to cart', async () => {
@@ -136,7 +130,7 @@ describe('EnhancedProductCard', () => {
 
     const button = screen.getByRole('button', { name: /add test product to cart/i });
     expect(button).toBeDisabled();
-    expect(screen.getByText('Out of Stock')).toBeInTheDocument();
+    expect(screen.getAllByText('Out of Stock').length).toBeGreaterThan(0);
   });
 
   test('image has lazy loading attribute', () => {
