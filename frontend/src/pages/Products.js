@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
-import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
+import { handleApiError } from '../utils/errorHandler';
 import { useProducts } from '../hooks/useProducts';
 import { getProductImageUrl } from '../utils/imageUtils';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';

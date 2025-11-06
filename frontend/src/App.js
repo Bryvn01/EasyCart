@@ -17,7 +17,6 @@ import SupportChat from './components/Chat/SupportChat';
 import NetworkStatus from './components/NetworkStatus';
 import InstallPWA from './components/InstallPWA';
 import { usePerformance } from './hooks/usePerformance';
-import { analytics } from './services/analytics';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
