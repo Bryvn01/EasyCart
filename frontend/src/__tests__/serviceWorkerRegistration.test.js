@@ -24,12 +24,8 @@ describe('Service Worker Registration', () => {
 
   describe('register', () => {
     it('should register service worker when available', () => {
-      // Mock window.location
-      delete window.location;
-      window.location = {
-        href: 'http://localhost:3000',
-        origin: 'http://localhost:3000'
-      };
+      // Set the URL to a relative path to avoid jsdom SecurityError
+      window.history.pushState({}, '', '/');
 
       // Mock addEventListener
       const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
