@@ -55,6 +55,7 @@ const Products = () => {
       // Clear category if not in URL
       setSelectedCategory('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
   // Debounce search term
