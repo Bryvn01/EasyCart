@@ -1,9 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '../test-utils';
-import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { CartProvider, useCart } from '../context/CartContext';
-import { AuthProvider } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 // Mock the API
 jest.mock('../services/api', () => ({
@@ -38,35 +35,12 @@ const TestComponent = () => {
   );
 };
 
-// Helper to render with all providers
-const renderWithProviders = (ui) => {
-  // Set localStorage token to make user authenticated
-  localStorage.setItem('access_token', 'test-token');
-
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false, cacheTime: 0 },
-      mutations: { retry: false },
-    },
-  });
-
-  return render(
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <CartProvider>
-            {ui}
-          </CartProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
-  );
-};
-
 describe('CartContext', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
+    // Set localStorage token to make user authenticated
+    localStorage.setItem('access_token', 'test-token');
     ordersAPI.getCart.mockResolvedValue({
       data: {
         items: [
@@ -77,7 +51,7 @@ describe('CartContext', () => {
   });
 
   test('provides cart count when authenticated', async () => {
-    renderWithProviders(<TestComponent />);
+    render(<TestComponent />);
 
     // Wait for auth to load and cart to fetch
     await waitFor(() => {
@@ -89,7 +63,7 @@ describe('CartContext', () => {
     ordersAPI.getCart.mockResolvedValue({ data: { items: [] } });
     localStorage.removeItem('access_token'); // Ensure not authenticated
 
-    renderWithProviders(<TestComponent />);
+    render(<TestComponent />);
 
     await waitFor(() => {
       expect(screen.getByTestId('cart-count')).toHaveTextContent('0');
@@ -99,7 +73,7 @@ describe('CartContext', () => {
   test('addToCart calls API and refreshes cart', async () => {
     ordersAPI.addToCart.mockResolvedValue({ data: {} });
 
-    renderWithProviders(<TestComponent />);
+    render(<TestComponent />);
 
     // Wait for component to be ready
     await waitFor(() => {
@@ -119,7 +93,7 @@ describe('CartContext', () => {
   test('updateCartItem calls API and refreshes cart', async () => {
     ordersAPI.updateCartItem.mockResolvedValue({ data: {} });
 
-    renderWithProviders(<TestComponent />);
+    render(<TestComponent />);
 
     // Wait for component to be ready
     await waitFor(() => {
@@ -139,7 +113,7 @@ describe('CartContext', () => {
   test('removeFromCart calls API and refreshes cart', async () => {
     ordersAPI.removeFromCart.mockResolvedValue({ data: {} });
 
-    renderWithProviders(<TestComponent />);
+    render(<TestComponent />);
 
     // Wait for component to be ready
     await waitFor(() => {
@@ -159,7 +133,7 @@ describe('CartContext', () => {
   test('moveToWishlist calls API and refreshes cart', async () => {
     ordersAPI.moveToWishlist.mockResolvedValue({ data: {} });
 
-    renderWithProviders(<TestComponent />);
+    render(<TestComponent />);
 
     // Wait for component to be ready
     await waitFor(() => {
