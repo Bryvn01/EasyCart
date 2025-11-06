@@ -1,30 +1,27 @@
 import React from 'react';
-import { render, waitFor } from '../test-utils';
+import { render, screen, waitFor } from '../test-utils';
+import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CartProvider, useCart } from '../context/CartContext';
-
-// Mock the AuthContext
-jest.mock('../context/AuthContext', () => ({
-  useAuth: jest.fn(() => ({
-    isAuthenticated: true,
-    user: null,
-    login: jest.fn(),
-    logout: jest.fn()
-  }))
-}));
+import { AuthProvider } from '../context/AuthContext';
 
 // Mock the API
 jest.mock('../services/api', () => ({
+  authAPI: {
+    getProfile: jest.fn(() => Promise.resolve({
+      data: { id: 1, email: 'test@example.com', username: 'testuser' }
+    })),
+  },
   ordersAPI: {
     getCart: jest.fn(),
     addToCart: jest.fn(),
     removeFromCart: jest.fn(),
     updateCartItem: jest.fn(),
     moveToWishlist: jest.fn(),
-  }
+  },
 }));
 
 const { ordersAPI } = require('../services/api');
-const { useAuth } = require('../context/AuthContext');
 
 // Test component that uses the cart context
 const TestComponent = () => {
@@ -41,9 +38,35 @@ const TestComponent = () => {
   );
 };
 
+// Helper to render with all providers
+const renderWithProviders = (ui) => {
+  // Set localStorage token to make user authenticated
+  localStorage.setItem('access_token', 'test-token');
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false, cacheTime: 0 },
+      mutations: { retry: false },
+    },
+  });
+
+  return render(
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <CartProvider>
+            {ui}
+          </CartProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  );
+};
+
 describe('CartContext', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    localStorage.clear();
     ordersAPI.getCart.mockResolvedValue({
       data: {
         items: [
@@ -54,106 +77,102 @@ describe('CartContext', () => {
   });
 
   test('provides cart count when authenticated', async () => {
-    useAuth.mockReturnValue({ isAuthenticated: true, user: null });
+    renderWithProviders(<TestComponent />);
 
-    const { getByTestId } = render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
-
+    // Wait for auth to load and cart to fetch
     await waitFor(() => {
-      expect(getByTestId('cart-count')).toHaveTextContent('2');
-    });
+      expect(screen.getByTestId('cart-count')).toHaveTextContent('2');
+    }, { timeout: 3000 });
   });
 
   test('cart count is 0 when not authenticated', async () => {
-    useAuth.mockReturnValue({ isAuthenticated: false, user: null });
+    ordersAPI.getCart.mockResolvedValue({ data: { items: [] } });
+    localStorage.removeItem('access_token'); // Ensure not authenticated
 
-    const { getByTestId } = render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
+    renderWithProviders(<TestComponent />);
 
     await waitFor(() => {
-      expect(getByTestId('cart-count')).toHaveTextContent('0');
+      expect(screen.getByTestId('cart-count')).toHaveTextContent('0');
     });
   });
 
   test('addToCart calls API and refreshes cart', async () => {
-    useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.addToCart.mockResolvedValue({ data: {} });
 
-    const { getByTestId } = render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
+    renderWithProviders(<TestComponent />);
 
-    const addButton = getByTestId('add-to-cart');
+    // Wait for component to be ready
+    await waitFor(() => {
+      expect(screen.getByTestId('cart-count')).toBeInTheDocument();
+    });
+
+    const addButton = screen.getByTestId('add-to-cart');
     addButton.click();
 
     await waitFor(() => {
       expect(ordersAPI.addToCart).toHaveBeenCalledWith({ product_id: 1, quantity: 2 });
-      expect(ordersAPI.getCart).toHaveBeenCalled();
-    });
+    }, { timeout: 3000 });
+
+    expect(ordersAPI.getCart).toHaveBeenCalled();
   });
 
   test('updateCartItem calls API and refreshes cart', async () => {
-    useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.updateCartItem.mockResolvedValue({ data: {} });
 
-    const { getByTestId } = render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
+    renderWithProviders(<TestComponent />);
 
-    const updateButton = getByTestId('update-item');
+    // Wait for component to be ready
+    await waitFor(() => {
+      expect(screen.getByTestId('cart-count')).toBeInTheDocument();
+    });
+
+    const updateButton = screen.getByTestId('update-item');
     updateButton.click();
 
     await waitFor(() => {
       expect(ordersAPI.updateCartItem).toHaveBeenCalledWith(1, 3);
-      expect(ordersAPI.getCart).toHaveBeenCalled();
-    });
+    }, { timeout: 3000 });
+
+    expect(ordersAPI.getCart).toHaveBeenCalled();
   });
 
   test('removeFromCart calls API and refreshes cart', async () => {
-    useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.removeFromCart.mockResolvedValue({ data: {} });
 
-    const { getByTestId } = render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
+    renderWithProviders(<TestComponent />);
 
-    const removeButton = getByTestId('remove-item');
+    // Wait for component to be ready
+    await waitFor(() => {
+      expect(screen.getByTestId('cart-count')).toBeInTheDocument();
+    });
+
+    const removeButton = screen.getByTestId('remove-item');
     removeButton.click();
 
     await waitFor(() => {
       expect(ordersAPI.removeFromCart).toHaveBeenCalledWith(1);
-      expect(ordersAPI.getCart).toHaveBeenCalled();
-    });
+    }, { timeout: 3000 });
+
+    expect(ordersAPI.getCart).toHaveBeenCalled();
   });
 
   test('moveToWishlist calls API and refreshes cart', async () => {
-    useAuth.mockReturnValue({ isAuthenticated: true, user: null });
     ordersAPI.moveToWishlist.mockResolvedValue({ data: {} });
 
-    const { getByTestId } = render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
+    renderWithProviders(<TestComponent />);
 
-    const moveButton = getByTestId('move-to-wishlist');
+    // Wait for component to be ready
+    await waitFor(() => {
+      expect(screen.getByTestId('cart-count')).toBeInTheDocument();
+    });
+
+    const moveButton = screen.getByTestId('move-to-wishlist');
     moveButton.click();
 
     await waitFor(() => {
       expect(ordersAPI.moveToWishlist).toHaveBeenCalledWith(1);
-      expect(ordersAPI.getCart).toHaveBeenCalled();
-    });
+    }, { timeout: 3000 });
+
+    expect(ordersAPI.getCart).toHaveBeenCalled();
   });
 });
