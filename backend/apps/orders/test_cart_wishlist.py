@@ -4,7 +4,7 @@ Tests for cart and wishlist integration features
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from apps.products.models import Product
+from apps.products.models import Product, Category
 from apps.products.wishlist_models import Wishlist, WishlistItem
 from apps.orders.models import Cart, CartItem
 
@@ -17,17 +17,21 @@ class CartWishlistIntegrationTest(TestCase):
     def setUp(self):
         """Set up test data"""
         self.user = User.objects.create_user(
+            username="testuser",
             email="test@example.com",
             password="testpass123",
             first_name="Test",
             last_name="User",
+        )
+        self.category = Category.objects.create(
+            name="Test Category", description="Test category description"
         )
         self.product = Product.objects.create(
             name="Test Product",
             description="Test Description",
             price=100.00,
             stock=10,
-            category="Test",
+            category=self.category,
             is_active=True,
         )
 
