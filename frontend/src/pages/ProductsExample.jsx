@@ -18,14 +18,14 @@ const ProductsExample = () => {
             API-Integrated Products
           </h1>
           <p className="text-gray-600">
-            This page demonstrates ProductList and CategoryList components 
+            This page demonstrates ProductList and CategoryList components
             fetching data from backend API endpoints
           </p>
         </div>
 
         {/* Category Selection */}
         <div className="mb-8 bg-white rounded-lg shadow-md p-6">
-          <CategoryList 
+          <CategoryList
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
           />

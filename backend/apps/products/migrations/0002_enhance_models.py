@@ -37,7 +37,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="product",
             name="compare_price",
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True),
+            field=models.DecimalField(
+                blank=True, decimal_places=2, max_digits=10, null=True
+            ),
         ),
         migrations.AddField(
             model_name="product",
@@ -47,7 +49,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="product",
             name="weight",
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=6, null=True),
+            field=models.DecimalField(
+                blank=True, decimal_places=2, max_digits=6, null=True
+            ),
         ),
         migrations.AddField(
             model_name="product",
@@ -78,7 +82,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="ProductImage",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("image", models.ImageField(upload_to="products/gallery/")),
                 ("alt_text", models.CharField(blank=True, max_length=200)),
                 ("is_primary", models.BooleanField(default=False)),
@@ -86,7 +98,9 @@ class Migration(migrations.Migration):
                 (
                     "product",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, related_name="images", to="products.product"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="images",
+                        to="products.product",
                     ),
                 ),
             ],

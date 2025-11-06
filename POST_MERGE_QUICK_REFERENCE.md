@@ -209,9 +209,9 @@ render logs easycart-backend --tail
 
 ## 📝 Quick Notes
 
-**Last PR Merged:** #121 - Products Page API Integration  
-**Date:** [Check git log]  
-**Status:** ✅ Production Ready  
+**Last PR Merged:** #121 - Products Page API Integration
+**Date:** [Check git log]
+**Status:** ✅ Production Ready
 **Known Issues:** None currently
 
 **Recent Changes:**
@@ -223,5 +223,5 @@ render logs easycart-backend --tail
 
 ---
 
-**Updated:** [Current Date]  
+**Updated:** [Current Date]
 **Maintainer:** EasyCart Team

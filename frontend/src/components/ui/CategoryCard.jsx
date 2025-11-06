@@ -33,7 +33,7 @@ const CategoryCard = ({ category, onClick, isSelected }) => {
       'Household': '🧼',
       'Personal Care': '🧴',
     };
-    
+
     for (const [key, emoji] of Object.entries(emojiMap)) {
       if (name?.toLowerCase().includes(key.toLowerCase())) {
         return emoji;
@@ -77,7 +77,7 @@ const CategoryCard = ({ category, onClick, isSelected }) => {
             </span>
           </div>
         )}
-        
+
         {isSelected && (
           <div className="absolute top-2 right-2 bg-primary text-white rounded-full p-1">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -86,7 +86,7 @@ const CategoryCard = ({ category, onClick, isSelected }) => {
           </div>
         )}
       </div>
-      
+
       <div className="p-3">
         <h3 className="font-semibold text-gray-900 text-sm text-center group-hover:text-primary transition-colors">
           {category.name}

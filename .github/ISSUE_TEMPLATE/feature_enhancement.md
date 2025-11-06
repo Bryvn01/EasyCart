@@ -98,5 +98,5 @@ Use this template to suggest improvements based on the Products page API integra
 
 ---
 
-**Suggested by:** @[username]  
+**Suggested by:** @[username]
 **Date:** [YYYY-MM-DD]

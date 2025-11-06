@@ -5,11 +5,15 @@ from .models import Category, Product
 
 
 class CategoryAdminForm(forms.ModelForm):
-    image_url = forms.URLField(required=False, label="Image URL", help_text="Enter image URL or upload a file below")
-    
+    image_url = forms.URLField(
+        required=False,
+        label="Image URL",
+        help_text="Enter image URL or upload a file below",
+    )
+
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = "__all__"
 
 
 @admin.register(Category)
@@ -19,24 +23,33 @@ class CategoryAdmin(SimpleHistoryAdmin):
     search_fields = ["name"]
     list_filter = ["created_at"]
     readonly_fields = ["image_preview"]
-    
+
     fieldsets = (
         ("Basic Information", {"fields": ("name", "slug", "description", "is_active")}),
         ("Media", {"fields": ("image_url", "image", "image_preview")}),
     )
-    
+
     def image_preview(self, obj):
         if obj.image:
             return f'<img src="{obj.image.url}" width="60" height="60" style="object-fit:cover;" />'
         return ""
-    
+
     image_preview.allow_tags = True
     image_preview.short_description = "Preview"
 
 
 @admin.register(Product)
 class ProductAdmin(SimpleHistoryAdmin):
-    list_display = ["name", "category", "price", "stock", "is_active", "is_featured", "created_at", "image_preview"]
+    list_display = [
+        "name",
+        "category",
+        "price",
+        "stock",
+        "is_active",
+        "is_featured",
+        "created_at",
+        "image_preview",
+    ]
     list_filter = ["category", "is_active", "is_featured", "created_at"]
     search_fields = ["name", "description"]
     list_editable = ["price", "stock", "is_active", "is_featured"]
@@ -45,13 +58,37 @@ class ProductAdmin(SimpleHistoryAdmin):
     actions = ["make_active", "make_featured"]
 
     fieldsets = (
-        ("Basic Information", {"fields": ("name", "slug", "description", "short_description", "category", "brand")}),
+        (
+            "Basic Information",
+            {
+                "fields": (
+                    "name",
+                    "slug",
+                    "description",
+                    "short_description",
+                    "category",
+                    "brand",
+                )
+            },
+        ),
         ("Pricing & Stock", {"fields": ("price", "compare_price", "stock", "sku")}),
-        ("Media", {"fields": ("image_url", "image", "image_preview"), "description": "Enter image URL or upload a file. URL takes precedence if both are provided."}),
+        (
+            "Media",
+            {
+                "fields": ("image_url", "image", "image_preview"),
+                "description": "Enter image URL or upload a file. URL takes precedence if both are provided.",
+            },
+        ),
         ("Status", {"fields": ("is_active", "is_featured")}),
-        ("SEO", {"fields": ("meta_title", "meta_description"), "classes": ("collapse",)}),
+        (
+            "SEO",
+            {"fields": ("meta_title", "meta_description"), "classes": ("collapse",)},
+        ),
         ("Additional", {"fields": ("weight", "dimensions"), "classes": ("collapse",)}),
-        ("Timestamps", {"fields": ("created_at", "updated_at"), "classes": ("collapse",)}),
+        (
+            "Timestamps",
+            {"fields": ("created_at", "updated_at"), "classes": ("collapse",)},
+        ),
     )
 
     def image_preview(self, obj):

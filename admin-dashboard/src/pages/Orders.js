@@ -27,7 +27,7 @@ const Orders = () => {
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       await adminAPI.updateOrderStatus(orderId, newStatus);
-      setOrders(orders.map(order => 
+      setOrders(orders.map(order =>
         order.id === orderId ? { ...order, status: newStatus } : order
       ));
       toast.success('Order status updated');

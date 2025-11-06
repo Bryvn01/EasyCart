@@ -32,7 +32,10 @@ def login_user():
         test_email = os.getenv("TEST_EMAIL", "test@example.com")
         test_password = os.getenv("TEST_PASSWORD", "testpassword")
 
-        response = requests.post(f"{BASE_URL}/auth/login/", json={"email": test_email, "password": test_password})
+        response = requests.post(
+            f"{BASE_URL}/auth/login/",
+            json={"email": test_email, "password": test_password},
+        )
         if response.status_code == 200:
             data = response.json()
             # Validate user role from server response, not client input
@@ -80,7 +83,9 @@ def test_wishlist_apis():
 
     # Test 3: Check wishlist status
     try:
-        response = requests.get(f"{BASE_URL}/products/wishlist/check/1/", headers=headers)
+        response = requests.get(
+            f"{BASE_URL}/products/wishlist/check/1/", headers=headers
+        )
         print_result(
             "Check Wishlist Status",
             response.status_code in [200, 401],
@@ -91,7 +96,9 @@ def test_wishlist_apis():
 
     # Test 4: Remove from wishlist
     try:
-        response = requests.delete(f"{BASE_URL}/products/wishlist/remove/1/", headers=headers)
+        response = requests.delete(
+            f"{BASE_URL}/products/wishlist/remove/1/", headers=headers
+        )
         print_result(
             "Remove from Wishlist",
             response.status_code in [204, 401, 404],

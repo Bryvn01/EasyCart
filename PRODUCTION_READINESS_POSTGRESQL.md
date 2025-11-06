@@ -265,7 +265,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, db_index=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-    
+
     class Meta:
         indexes = [
             models.Index(fields=['name', 'category']),
@@ -684,11 +684,11 @@ LOGGING = {
 
 1. **Connection count**
    - Alert if > 80% of max connections
-   
+
 2. **Query performance**
    - Slow queries (> 1 second)
    - Frequently run queries
-   
+
 3. **Database size**
    - Track growth rate
    - Alert at 80% capacity

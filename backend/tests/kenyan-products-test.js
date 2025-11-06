@@ -2,7 +2,7 @@
 
 /**
  * Kenyan Products Integration Test
- * 
+ *
  * This script validates the Kenyan product seeding data structure
  * and ensures all required fields are present.
  */

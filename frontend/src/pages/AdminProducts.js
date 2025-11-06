@@ -10,7 +10,7 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   const { user } = useAuth();
 
   useEffect(() => {
@@ -41,8 +41,8 @@ const AdminProducts = () => {
   };
 
   const handleUpdateProduct = (updatedProduct) => {
-    setProducts(prev => 
-      prev.map(product => 
+    setProducts(prev =>
+      prev.map(product =>
         product.id === updatedProduct.id ? updatedProduct : product
       )
     );

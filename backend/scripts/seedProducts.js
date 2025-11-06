@@ -2,13 +2,13 @@
 
 /**
  * Seed Products Script with Cloudinary Integration
- * 
+ *
  * This script seeds the MongoDB database with authentic Kenyan supermarket products
  * and uploads product images to Cloudinary for optimal delivery.
- * 
+ *
  * Usage:
  *   node scripts/seedProducts.js
- * 
+ *
  * Environment Variables Required:
  *   - MONGO_URI: MongoDB connection string
  *   - CLOUDINARY_CLOUD_NAME: Your Cloudinary cloud name
@@ -867,7 +867,7 @@ const categories = [
  */
 async function seedProducts(options = {}) {
   const { clearExisting = true, skipExisting = false } = options;
-  
+
   try {
     console.log('🌱 Starting product seeding process...\n');
     console.log(`   Mode: ${clearExisting ? 'Full Reset' : (skipExisting ? 'Idempotent (Skip Existing)' : 'Upsert')}\n`);
@@ -941,15 +941,15 @@ async function seedProducts(options = {}) {
     for (let i = 0; i < kenyanProducts.length; i++) {
       const productData = kenyanProducts[i];
       const productNum = i + 1;
-      
+
       try {
         console.log(`[${productNum}/${kenyanProducts.length}] Processing: ${productData.name}`);
-        
+
         // Check if product exists (by name and brand)
         if (skipExisting && !clearExisting) {
-          const existingProduct = await Product.findOne({ 
-            name: productData.name, 
-            brand: productData.brand 
+          const existingProduct = await Product.findOne({
+            name: productData.name,
+            brand: productData.brand
           });
           if (existingProduct) {
             console.log(`   ⏭️  Product already exists, skipping\n`);
@@ -957,7 +957,7 @@ async function seedProducts(options = {}) {
             continue;
           }
         }
-        
+
         let imageUrl = productData.sourceImageUrl;
 
         // Upload to Cloudinary if configured
@@ -996,7 +996,7 @@ async function seedProducts(options = {}) {
         await product.save();
         successCount++;
         console.log(`   💾 Saved to database\n`);
-        
+
       } catch (error) {
         failCount++;
         console.error(`   ❌ Error: ${error.message}\n`);
@@ -1018,7 +1018,7 @@ async function seedProducts(options = {}) {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     console.log('🎉 Product seeding completed successfully!');
-    
+
   } catch (error) {
     console.error('❌ Fatal error during seeding:', error);
     process.exit(1);
@@ -1038,7 +1038,7 @@ if (require.main === module) {
     clearExisting: !args.includes('--no-clear') && !args.includes('--idempotent'),
     skipExisting: args.includes('--skip-existing') || args.includes('--idempotent')
   };
-  
+
   // Show help
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
@@ -1064,7 +1064,7 @@ Environment Variables:
 `);
     process.exit(0);
   }
-  
+
   seedProducts(options);
 }
 

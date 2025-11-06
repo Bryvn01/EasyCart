@@ -20,10 +20,10 @@ const MobileBottomNav = () => {
       const paddingValue = `calc(64px + max(${safeAreaBottom}, 8px))`;
       document.body.style.paddingBottom = paddingValue;
     };
-    
+
     addPadding();
     window.addEventListener('resize', addPadding);
-    
+
     return () => {
       document.body.style.paddingBottom = '0';
       window.removeEventListener('resize', addPadding);
@@ -31,7 +31,7 @@ const MobileBottomNav = () => {
   }, []);
 
   return (
-    <nav 
+    <nav
       className="md:hidden fixed bottom-0 left-0 right-0 bg-white/98 backdrop-blur-lg border-t border-gray-200 z-50"
       style={{
         paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
@@ -60,7 +60,7 @@ const MobileBottomNav = () => {
                   isActive ? 'scale-110' : ''
                 }`}>{item.icon}</span>
                 {item.badge > 0 && (
-                  <span 
+                  <span
                     className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-sm"
                     style={{ fontSize: '9px' }}
                   >
@@ -72,7 +72,7 @@ const MobileBottomNav = () => {
                 isActive ? 'font-semibold' : ''
               }`}>{item.label}</span>
               {isActive && (
-                <div 
+                <div
                   className="absolute top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary-600 rounded-b-full"
                 />
               )}

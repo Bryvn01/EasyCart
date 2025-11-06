@@ -2,29 +2,29 @@
 <svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
   <rect width="192" height="192" fill="#2563eb"/>
-  
+
   <!-- Shopping Cart Icon -->
   <g transform="translate(38, 48)">
     <!-- Cart body -->
-    <path d="M 10 20 L 25 20 L 35 80 L 85 80 L 95 20 L 110 20" 
-          stroke="white" 
-          stroke-width="6" 
-          fill="none" 
-          stroke-linecap="round" 
+    <path d="M 10 20 L 25 20 L 35 80 L 85 80 L 95 20 L 110 20"
+          stroke="white"
+          stroke-width="6"
+          fill="none"
+          stroke-linecap="round"
           stroke-linejoin="round"/>
-    
+
     <!-- Cart bottom -->
-    <path d="M 35 80 L 85 80" 
-          stroke="white" 
-          stroke-width="6" 
+    <path d="M 35 80 L 85 80"
+          stroke="white"
+          stroke-width="6"
           stroke-linecap="round"/>
-    
+
     <!-- Wheel 1 -->
     <circle cx="45" cy="95" r="7" fill="white"/>
-    
+
     <!-- Wheel 2 -->
     <circle cx="75" cy="95" r="7" fill="white"/>
-    
+
     <!-- Items in cart -->
     <rect x="45" y="40" width="15" height="15" fill="white" opacity="0.8" rx="2"/>
     <rect x="62" y="35" width="15" height="20" fill="white" opacity="0.8" rx="2"/>

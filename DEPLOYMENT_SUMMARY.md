@@ -2,8 +2,8 @@
 
 ## ✅ Successfully Pushed to GitHub
 
-**Commit:** `8fa9f82`  
-**Branch:** `main`  
+**Commit:** `8fa9f82`
+**Branch:** `main`
 **Date:** 2024
 
 ## 📦 Changes Deployed
@@ -42,15 +42,15 @@
 
 ## 🌐 Live Deployment
 
-**Frontend:** https://easycart-frontend-wj9x.onrender.com/  
-**Backend:** https://easycart-backend-2k8l.onrender.com/api/  
+**Frontend:** https://easycart-frontend-wj9x.onrender.com/
+**Backend:** https://easycart-backend-2k8l.onrender.com/api/
 **Admin:** https://easycart-admin-08xf.onrender.com/
 
 ## ⚠️ GitHub Notifications
 
 **Security Alerts:** 15 vulnerabilities detected
 - 9 high
-- 4 moderate  
+- 4 moderate
 - 2 low
 
 **Action Required:** Review at https://github.com/Bryvn01/EasyCart/security/dependabot
@@ -78,6 +78,6 @@
 
 ---
 
-**Status:** ✅ Successfully Deployed to GitHub  
-**Auto-Deploy:** Render will deploy automatically  
+**Status:** ✅ Successfully Deployed to GitHub
+**Auto-Deploy:** Render will deploy automatically
 **Estimated Deploy Time:** 5-10 minutes

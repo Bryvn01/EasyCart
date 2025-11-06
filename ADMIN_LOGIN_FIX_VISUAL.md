@@ -384,5 +384,5 @@ NODE_VERSION=18.17.0
 - `ADMIN_LOGIN_FIX_SUMMARY.md` - Quick reference
 - `test-admin-login.sh` - Automated testing
 
-**Backend Health:** https://easycart-backend-0u8r.onrender.com/api/health  
+**Backend Health:** https://easycart-backend-0u8r.onrender.com/api/health
 **Admin Login:** https://easycart-admin.onrender.com/admin/login

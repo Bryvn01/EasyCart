@@ -8,7 +8,11 @@ urlpatterns = [
     path("cart/add/", views.add_to_cart, name="add-to-cart"),
     path("cart/remove/<int:item_id>/", views.remove_from_cart, name="remove-from-cart"),
     path("cart/update/<int:item_id>/", views.update_cart_item, name="update-cart-item"),
-    path("cart/move-to-wishlist/<int:item_id>/", views.move_to_wishlist, name="move-to-wishlist"),
+    path(
+        "cart/move-to-wishlist/<int:item_id>/",
+        views.move_to_wishlist,
+        name="move-to-wishlist",
+    ),
     path("checkout/", views.checkout, name="checkout"),
     path("payment/initiate/", views.initiate_payment, name="initiate-payment"),
     path("payment/mpesa/callback/", views.mpesa_callback, name="mpesa-callback"),

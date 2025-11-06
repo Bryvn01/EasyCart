@@ -14,7 +14,7 @@ function NotFound() {
             Sorry, we couldn't find the page you're looking for.
           </p>
         </div>
-        
+
         <div className="space-y-4">
           <Link
             to="/"
@@ -22,7 +22,7 @@ function NotFound() {
           >
             Go to Home
           </Link>
-          
+
           <Link
             to="/products"
             className="inline-flex items-center justify-center w-full px-6 py-3 border border-gray-300 dark:border-gray-700 text-base font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"

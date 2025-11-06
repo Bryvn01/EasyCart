@@ -40,16 +40,16 @@ def validate_environment_variables():
         'EMAIL_HOST',
         'CORS_ALLOWED_ORIGINS'
     ]
-    
+
     if backend_env.exists():
         with open(backend_env) as f:
             env_content = f.read()
-        
+
         missing_vars = []
         for var in required_vars:
             if f"{var}=" not in env_content:
                 missing_vars.append(var)
-        
+
         if missing_vars:
             print(f"[WARNING] Missing environment variables: {', '.join(missing_vars)}")
         else:
@@ -64,7 +64,7 @@ def check_file_permissions():
         "backend/db.sqlite3",
         "backend/logs/django.log"
     ]
-    
+
     for file_path in sensitive_files:
         if os.path.exists(file_path):
             try:
@@ -80,11 +80,11 @@ def validate_cors_settings():
     if settings_file.exists():
         with open(settings_file) as f:
             content = f.read()
-        
+
         # Check for overly permissive CORS settings
         if "CORS_ALLOW_ALL_ORIGINS = True" in content:
             print("[WARNING] CORS_ALLOW_ALL_ORIGINS is set to True - this is insecure for production")
-        
+
         if "CORS_ALLOWED_ORIGINS" in content:
             print("[OK] CORS origins are properly configured")
         else:
@@ -139,7 +139,7 @@ def create_production_checklist():
 - [ ] Set up alerting for critical issues
 - [ ] Monitor resource usage
 """
-    
+
     with open("PRODUCTION_CHECKLIST.md", "w") as f:
         f.write(checklist)
     print("[OK] Created production deployment checklist")
@@ -147,13 +147,13 @@ def create_production_checklist():
 def main():
     """Run all security and stability checks"""
     print("Running security and stability checks...\n")
-    
+
     fix_frontend_security_headers()
     validate_environment_variables()
     check_file_permissions()
     validate_cors_settings()
     create_production_checklist()
-    
+
     print("\nSecurity and stability checks completed!")
     print("Review PRODUCTION_CHECKLIST.md before deploying to production")
 

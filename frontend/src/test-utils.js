@@ -1,30 +1,39 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
 const AllTheProviders = ({ children }) => {
   const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } }
+    defaultOptions: {
+      queries: {
+        retry: false,
+        cacheTime: 0,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
   });
-  
+
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <CartProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <CartProvider>
+          <MemoryRouter>
             {children}
-          </CartProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
+          </MemoryRouter>
+        </CartProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 
 const customRender = (ui, options) =>
   render(ui, { wrapper: AllTheProviders, ...options });
 
+// Re-export all testing-library/react exports
 export * from '@testing-library/react';
 export { customRender as render };

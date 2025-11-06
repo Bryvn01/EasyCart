@@ -86,7 +86,7 @@ function MyPage() {
   return (
     <div>
       <h1>Categories</h1>
-      <CategoryList 
+      <CategoryList
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
       />
@@ -115,7 +115,7 @@ function MyPage() {
 
   return (
     <div>
-      <CategoryNav 
+      <CategoryNav
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
       />
@@ -212,7 +212,7 @@ useEffect(() => {
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/products/`);
       setData(response.data);
@@ -222,7 +222,7 @@ useEffect(() => {
       setLoading(false);
     }
   };
-  
+
   fetchData();
 }, []);
 ```
@@ -275,7 +275,7 @@ useEffect(() => {
 
 ### Issue: Empty data returned
 
-**Solution:** 
+**Solution:**
 1. Verify backend has data (run seed script if needed)
 2. Check API response in Network tab
 3. Verify response format matches expected structure

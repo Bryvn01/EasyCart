@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import ProductGrid from './ProductGrid';
 import CategoryNav from './CategoryNav';
 import dynamic from 'next/dynamic';
-const BannerCarousel = dynamic(() => import('./BannerCarousel'), { ssr: false, loading: () => <div className="h-40 bg-gray-100 animate-pulse rounded-lg mb-8" /> });
 import WhatsAppButton from './WhatsAppButton';
 import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +11,7 @@ import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 import { imageFallback } from '../utils/images';
 
 import { Helmet } from 'react-helmet-async';
+const BannerCarousel = dynamic(() => import('./BannerCarousel'), { ssr: false, loading: () => <div className="h-40 bg-gray-100 animate-pulse rounded-lg mb-8" /> });
 
 const sectionMap = [
   { title: 'Flash Sales', filter: p => p.is_flash_sale },
@@ -29,7 +29,8 @@ const Homepage = () => {
 
   const fetchProducts = async () => {
     const res = await productsAPI.getProducts();
-    return res.data.results || res.data || [];
+    const data = res?.data?.results ?? res?.data;
+    return Array.isArray(data) ? data : [];
   };
 
   const {
@@ -45,6 +46,8 @@ const Homepage = () => {
     retry: 2,
     refetchOnWindowFocus: false,
   });
+
+  const productsArray = Array.isArray(products) ? products : [];
 
   // Refetch products after admin CRUD (optional: use context/event for real-time)
   useEffect(() => {
@@ -69,7 +72,7 @@ const Homepage = () => {
   };
 
   const renderSection = (section) => {
-    const filtered = products.filter(section.filter);
+    const filtered = productsArray.filter(section.filter);
     if (isLoading) {
       return (
         <section key={section.title} className="mb-10">
@@ -136,7 +139,7 @@ const Homepage = () => {
         <title>EasyCart - Kenya's Leading Online Supermarket</title>
         <meta name="description" content="Shop groceries, electronics, fashion, and more. Fast delivery, best prices, and trusted brands in Kenya." />
       </Helmet>
-      
+
       {/* Enhanced Hero Section with Better Images */}
       <section className="relative flex flex-col md:flex-row items-center justify-between gap-8 py-12 md:py-20 px-6 md:px-12 bg-gradient-to-br from-primary-50 via-blue-50 to-green-50 rounded-2xl shadow-lg mb-8 overflow-hidden">
         <div className="z-10 max-w-xl">
@@ -170,10 +173,10 @@ const Homepage = () => {
           </div>
         </div>
         <div className="hidden md:block absolute right-0 bottom-0 z-0">
-          <img 
-            src="/images/hero-shopping.svg" 
-            alt="Happy Kenyan family shopping online with EasyCart" 
-            className="w-96 max-w-xs md:max-w-md lg:max-w-lg opacity-90 rounded-lg shadow-xl" 
+          <img
+            src="/images/hero-shopping.svg"
+            alt="Happy Kenyan family shopping online with EasyCart"
+            className="w-96 max-w-xs md:max-w-md lg:max-w-lg opacity-90 rounded-lg shadow-xl"
             loading="eager"
             onError={(e) => imageFallback(e, 'hero')}
           />
@@ -181,7 +184,7 @@ const Homepage = () => {
       </section>
 
       <BannerCarousel />
-      
+
       {/* Sticky Category Bar */}
       <div className="sticky top-0 z-30 bg-white shadow-sm border-b border-gray-100">
         <CategoryNav
@@ -193,32 +196,32 @@ const Homepage = () => {
       {/* Deals Carousel/Section */}
       <section className="my-8">
         <h2 className="text-2xl font-bold mb-4">Today's Deals</h2>
-        <ProductGrid products={products.filter(p => p.is_flash_sale).slice(0, 10)} onAddToCart={handleAddToCart} loading={isLoading} />
+        <ProductGrid products={productsArray.filter(p => p.is_flash_sale).slice(0, 10)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Full Product Grid */}
       <section className="my-8">
         <h2 className="text-2xl font-bold mb-4">All Products</h2>
-        <ProductGrid products={selectedCategory ? products.filter(categorySections[selectedCategory]?.filter || (() => true)) : products} onAddToCart={handleAddToCart} loading={isLoading} />
+        <ProductGrid products={selectedCategory ? productsArray.filter(categorySections[selectedCategory]?.filter || (() => true)) : productsArray} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Top Picks Section */}
       <section className="my-8">
         <h2 className="text-xl font-semibold mb-4">Top Picks</h2>
-        <ProductGrid products={products.filter(p => p.is_top_seller).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
+        <ProductGrid products={productsArray.filter(p => p.is_top_seller).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Essentials Section */}
       <section className="my-8">
         <h2 className="text-xl font-semibold mb-4">Essentials</h2>
-        <ProductGrid products={products.filter(p => p.category_name && ['Groceries', 'Baby & Kids', 'Beauty & Personal Care', 'Essentials'].some(cat => p.category_name.includes(cat))).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
+        <ProductGrid products={productsArray.filter(p => p.category_name && ['Groceries', 'Baby & Kids', 'Beauty & Personal Care', 'Essentials'].some(cat => p.category_name.includes(cat))).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Popular in Selected Category */}
       {selectedCategory && (
         <section className="my-8">
           <h2 className="text-xl font-semibold mb-4">Popular in {selectedCategory}</h2>
-          <ProductGrid products={products.filter(categorySections[selectedCategory]?.filter || (() => true)).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
+          <ProductGrid products={productsArray.filter(categorySections[selectedCategory]?.filter || (() => true)).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
         </section>
       )}
 

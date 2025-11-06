@@ -64,7 +64,7 @@ export const normalizeImageUrl = (imageUrl) => {
   // Step 1: Decode URL encoding (%3A → :)
   let decodedUrl = decodeURIComponent(imageUrl);
   // Result: /media/https:/res.cloudinary.com/...
-  
+
   // Step 2: Extract clean URL
   if (decodedUrl.includes('/media/https:')) {
     const match = decodedUrl.match(/\/media\/(https?:\/?\/?[^"'\s]+)/);
@@ -119,8 +119,8 @@ Null pointer exception when accessing `product.description.substring(0, 80)` on 
 ### Solution
 Added null check with ternary operator:
 ```javascript
-{product.description 
-  ? product.description.substring(0, 80) + '...' 
+{product.description
+  ? product.description.substring(0, 80) + '...'
   : 'No description available'}
 ```
 
@@ -339,7 +339,7 @@ class CloudinaryStorage(Storage):
 # backend/products/serializers.py
 class ProductSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
-    
+
     def get_image(self, obj):
         if obj.image and obj.image.startswith('http'):
             return obj.image

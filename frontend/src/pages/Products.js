@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
-import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
+import { handleApiError } from '../utils/errorHandler';
 import { useProducts } from '../hooks/useProducts';
 import { getProductImageUrl } from '../utils/imageUtils';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
@@ -24,7 +24,7 @@ const Products = () => {
   const [lightboxImage, setLightboxImage] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successProduct, setSuccessProduct] = useState('');
-  
+
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
   const location = useLocation();
@@ -44,17 +44,18 @@ const Products = () => {
     const urlParams = new URLSearchParams(location.search);
     const urlSearch = urlParams.get('search');
     const urlCategory = urlParams.get('category');
-    
+
     if (urlSearch) {
       setSearchTerm(urlSearch);
     }
-    
+
     if (urlCategory) {
       setSelectedCategory(urlCategory);
     } else if (!urlCategory && selectedCategory) {
       // Clear category if not in URL
       setSelectedCategory('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
   // Debounce search term
@@ -98,7 +99,7 @@ const Products = () => {
       fetchCartCount();
       setSuccessProduct(product.name);
       setShowSuccess(true);
-      
+
       // Haptic feedback
       if ('vibrate' in navigator) {
         navigator.vibrate(50);
@@ -143,13 +144,13 @@ const Products = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">
-          {selectedCategory ? 
-            `${selectedCategory} Products` : 
+          {selectedCategory ?
+            `${selectedCategory} Products` :
             'Our Products'
           }
         </h1>
         <p style={{ color: 'var(--gray-600)' }}>
-          {debouncedSearchTerm ? 
+          {debouncedSearchTerm ?
             `Search results for "${debouncedSearchTerm}"` :
             'Discover quality Kenyan products at great prices'
           }
@@ -160,13 +161,13 @@ const Products = () => {
           </p>
         )}
       </div>
-      
+
       {/* Active Filters Summary */}
       {(selectedCategory || debouncedSearchTerm || sortBy || priceRange.min || priceRange.max) && (
-        <div style={{ 
-          background: 'var(--primary-50)', 
-          padding: 'var(--space-3)', 
-          borderRadius: 'var(--radius-md)', 
+        <div style={{
+          background: 'var(--primary-50)',
+          padding: 'var(--space-3)',
+          borderRadius: 'var(--radius-md)',
           marginBottom: 'var(--space-4)',
           display: 'flex',
           alignItems: 'center',
@@ -201,9 +202,9 @@ const Products = () => {
           </button>
         </div>
       )}
-      
+
       {/* Mobile Category Scroll */}
-      <HorizontalCategoryScroll 
+      <HorizontalCategoryScroll
         categories={categories}
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
@@ -281,22 +282,22 @@ const Products = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Products Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-20 md:pb-8">
         {products.map(product => (
-          <div 
-            key={product.id} 
+          <div
+            key={product.id}
             className="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 active:scale-98"
-            style={{ 
-              cursor: 'pointer', 
+            style={{
+              cursor: 'pointer',
               overflow: 'hidden',
               touchAction: 'manipulation',
               borderRadius: '8px'
             }}
           >
             {/* Product Image */}
-            <div 
+            <div
               onClick={() => setLightboxImage({ url: getProductImageUrl(product), name: product.name })}
               style={{
                 cursor: 'zoom-in',
@@ -338,7 +339,7 @@ const Products = () => {
               }}>
                 📦
               </div>
-              
+
               {/* Badges */}
               {product.stock === 0 ? (
                 <div style={{
@@ -383,7 +384,7 @@ const Products = () => {
                   In Stock
                 </div>
               )}
-              
+
               {/* New/Featured Badge */}
               {product.is_featured && (
                 <div style={{
@@ -401,7 +402,7 @@ const Products = () => {
                 </div>
               )}
             </div>
-            
+
             {/* Product Info */}
             <div className="p-4">
               <div style={{
@@ -414,7 +415,7 @@ const Products = () => {
               }}>
                 {product.category?.name || product.category_name || 'Uncategorized'}
               </div>
-              
+
               {product.brand && (
                 <div style={{
                   fontSize: '0.75rem',
@@ -424,9 +425,9 @@ const Products = () => {
                   {product.brand}
                 </div>
               )}
-              
+
               <Link to={`/products/${product.id}`}>
-                <h3 
+                <h3
                   className="hover:text-primary-600 transition-colors"
                   style={{
                     fontSize: '1rem',
@@ -444,7 +445,7 @@ const Products = () => {
                   {product.name}
                 </h3>
               </Link>
-              
+
               {/* Star Rating */}
               {product.rating && (
                 <div className="flex items-center gap-1 mb-2">
@@ -461,7 +462,7 @@ const Products = () => {
                   <span className="text-xs text-gray-600 ml-1">({product.rating})</span>
                 </div>
               )}
-              
+
               {/* Price */}
               <div className="mb-4">
                 <div className="flex items-baseline gap-2">
@@ -495,9 +496,9 @@ const Products = () => {
                   )}
                 </div>
               </div>
-              
+
               <div className="flex justify-between items-center gap-2">
-                
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -516,7 +517,7 @@ const Products = () => {
                   {product.stock === 0 ? '❌ Sold Out' : '🛒 Add to Cart'}
                 </button>
               </div>
-              
+
               {/* Quick View Button (appears on hover) */}
               <Link
                 to={`/products/${product.id}`}
@@ -540,9 +541,9 @@ const Products = () => {
           </div>
         ))}
       </div>
-      
+
       {products.length === 0 && !loading && (
-        <EmptyState 
+        <EmptyState
           type={debouncedSearchTerm ? 'search' : 'products'}
           onAction={debouncedSearchTerm ? () => {
             setSearchTerm('');

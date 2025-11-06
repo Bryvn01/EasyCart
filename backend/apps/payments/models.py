@@ -18,7 +18,9 @@ class Payment(models.Model):
         ("cancelled", "Cancelled"),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments")
-    order = models.ForeignKey("orders.Order", on_delete=models.CASCADE, related_name="payments")
+    order = models.ForeignKey(
+        "orders.Order", on_delete=models.CASCADE, related_name="payments"
+    )
     method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=10, default="KES")

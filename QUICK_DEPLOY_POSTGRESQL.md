@@ -120,7 +120,7 @@ python -c "import secrets; print(secrets.token_urlsafe(50))"
 
 1. Go to **"Settings"** tab in backend service
 2. **Root Directory**: Leave blank (or set to `backend` if needed)
-3. **Start Command**: 
+3. **Start Command**:
    ```bash
    python manage.py migrate && gunicorn ecommerce.wsgi:application --bind 0.0.0.0:$PORT
    ```
@@ -470,7 +470,7 @@ Running migrations:
 ---
 
 ### Issue: "Internal Server Error"
-**Solution**: 
+**Solution**:
 1. Check backend logs
 2. Verify all environment variables set
 3. Verify DATABASE_URL is correct

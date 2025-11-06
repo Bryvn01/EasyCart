@@ -12,7 +12,7 @@ const Products = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [uploading, setUploading] = useState(false);
-  
+
   // Pagination and search state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -73,14 +73,14 @@ const Products = () => {
         category: categoryFilter
       };
       const response = await adminAPI.getProducts(params);
-      
+
       // Handle different API response formats
       const productsData = response.data?.results || response.data?.products || response.data || [];
       const totalCount = response.data?.total || response.data?.count || productsData.length;
-      
+
       setProducts(productsData);
       setTotalPages(Math.ceil(totalCount / itemsPerPage));
-      
+
       // Clear any previous error messages
       if (productsData.length === 0 && !searchTerm && !categoryFilter) {
         // Only show message if it's genuinely empty, not filtered
@@ -114,14 +114,14 @@ const Products = () => {
         toast.error('Image size must be less than 5MB');
         return;
       }
-      
+
       if (!file.type.startsWith('image/')) {
         toast.error('Please select a valid image file');
         return;
       }
-      
+
       setImageFile(file);
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -136,7 +136,7 @@ const Products = () => {
     const formData = new FormData();
     formData.append('image', file);
     formData.append('folder', 'products'); // Organize uploads by folder
-    
+
     try {
       const response = await adminAPI.uploadImage(formData);
       return response.data?.url || response.data?.file_url || imagePreview;
@@ -150,7 +150,7 @@ const Products = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.price || !formData.category) {
       toast.error('Please fill in all required fields');
       return;
@@ -159,14 +159,14 @@ const Products = () => {
     setUploading(true);
     try {
       let imageUrl = formData.image;
-      
+
       // Upload image if a file was selected
       if (imageFile) {
         imageUrl = await uploadImageToServer(imageFile);
       }
-      
+
       const productData = { ...formData, image: imageUrl };
-      
+
       if (editingProduct) {
         await adminAPI.updateProduct(editingProduct.id, productData);
         setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...productData } : p));
@@ -274,17 +274,17 @@ const Products = () => {
           await adminAPI.bulkDeleteProducts(productIds);
         } catch (bulkError) {
           // Fallback to individual deletes
-          const deletePromises = productIds.map(id => 
+          const deletePromises = productIds.map(id =>
             adminAPI.deleteProduct(id).catch(() => {}) // Continue even if some fail
           );
           await Promise.allSettled(deletePromises);
         }
-        
+
         setProducts(products.filter(p => !selectedProducts.has(p.id)));
         setSelectedProducts(new Set());
         setSelectAll(false);
         toast.success(`Successfully deleted ${selectedProducts.size} products`);
-        
+
         // Refresh products to ensure consistency
         if (products.length - selectedProducts.size <= 0 && currentPage > 1) {
           setCurrentPage(currentPage - 1);
@@ -312,7 +312,7 @@ const Products = () => {
 
     const csvContent = [
       Object.keys(csvData[0]).join(','),
-      ...csvData.map(row => Object.values(row).map(val => 
+      ...csvData.map(row => Object.values(row).map(val =>
         `"${String(val).replace(/"/g, '""')}"`
       ).join(','))
     ].join('\n');
@@ -326,7 +326,7 @@ const Products = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     toast.success('Products exported to CSV successfully');
   };
 
@@ -498,9 +498,9 @@ const Products = () => {
                         </button>
 
                         <div className="flex-shrink-0 h-16 w-16">
-                          <img 
-                            className="h-16 w-16 rounded-lg object-cover border border-gray-200" 
-                            src={product.image || 'https://via.placeholder.com/64'} 
+                          <img
+                            className="h-16 w-16 rounded-lg object-cover border border-gray-200"
+                            src={product.image || 'https://via.placeholder.com/64'}
                             alt={product.name}
                             onError={(e) => {
                               e.target.src = 'https://via.placeholder.com/64';
@@ -617,8 +617,8 @@ const Products = () => {
 
       {/* Enhanced Product Modal */}
       {showModal && (
-        <div 
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" 
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
           onClick={(e) => e.target === e.currentTarget && closeModal()}
           role="dialog"
           aria-modal="true"
@@ -629,15 +629,15 @@ const Products = () => {
               <h3 id="modal-title" className="text-lg font-medium text-gray-900">
                 {editingProduct ? 'Edit Product' : 'Add New Product'}
               </h3>
-              <button 
-                onClick={closeModal} 
+              <button
+                onClick={closeModal}
                 className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100 transition-colors"
                 aria-label="Close modal"
               >
                 <X className="h-6 w-6" />
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name */}
               <div>
@@ -653,7 +653,7 @@ const Products = () => {
                   placeholder="Enter product name"
                 />
               </div>
-              
+
               {/* Price and Stock Row */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -671,7 +671,7 @@ const Products = () => {
                     placeholder="0.00"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Stock <span className="text-red-500">*</span>
@@ -687,7 +687,7 @@ const Products = () => {
                   />
                 </div>
               </div>
-              
+
               {/* Category */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -707,7 +707,7 @@ const Products = () => {
                   ))}
                 </select>
               </div>
-              
+
               {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -719,11 +719,11 @@ const Products = () => {
                   placeholder="Enter product description..."
                 />
               </div>
-              
+
               {/* Image Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
-                
+
                 {/* Image Preview */}
                 {imagePreview && (
                   <div className="mb-3">
@@ -734,11 +734,11 @@ const Products = () => {
                     />
                   </div>
                 )}
-                
+
                 {/* File Upload */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-center w-full">
-                    <label 
+                    <label
                       className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
                       tabIndex="0"
                       onKeyDown={(e) => {
@@ -764,7 +764,7 @@ const Products = () => {
                       />
                     </label>
                   </div>
-                  
+
                   {/* Alternative: Image URL */}
                   <div className="text-center text-sm text-gray-500">or</div>
                   <input
@@ -779,7 +779,7 @@ const Products = () => {
                   />
                 </div>
               </div>
-              
+
               {/* Form Actions */}
               <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
                 <button

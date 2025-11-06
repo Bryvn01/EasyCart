@@ -11,7 +11,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [, setError] = useState(null);
-  
+
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
 
@@ -78,10 +78,10 @@ const ProductDetail = () => {
       {/* Breadcrumb */}
       <nav style={{ marginBottom: 'var(--space-8)' }}>
         <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--gray-600)' }}>
-          <button onClick={() => navigate('/products')} style={{ 
-            background: 'none', 
-            border: 'none', 
-            color: 'var(--primary-600)', 
+          <button onClick={() => navigate('/products')} style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--primary-600)',
             cursor: 'pointer',
             textDecoration: 'underline'
           }}>
@@ -133,7 +133,7 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Product Info */}
         <div>
           <div style={{
@@ -144,9 +144,9 @@ const ProductDetail = () => {
           }}>
             {product.category_name}
           </div>
-          
+
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-          
+
           <div className="flex items-center gap-4 mb-6">
             <span style={{
               fontSize: '2rem',
@@ -155,7 +155,7 @@ const ProductDetail = () => {
             }}>
               KES {product.price}
             </span>
-            
+
             {product.stock > 0 ? (
               <span style={{
                 background: 'var(--success)',
@@ -180,7 +180,7 @@ const ProductDetail = () => {
               </span>
             )}
           </div>
-          
+
           <div style={{
             background: 'var(--gray-50)',
             padding: 'var(--space-6)',
@@ -195,7 +195,7 @@ const ProductDetail = () => {
               {product.description}
             </p>
           </div>
-          
+
           {product.stock > 0 && (
             <div style={{ marginBottom: 'var(--space-8)' }}>
               <label style={{
@@ -228,7 +228,7 @@ const ProductDetail = () => {
               </div>
             </div>
           )}
-          
+
           <div className="flex gap-4">
             <button
               onClick={addToCart}
@@ -244,7 +244,7 @@ const ProductDetail = () => {
             >
               {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
             </button>
-            
+
             <button
               onClick={() => navigate('/products')}
               className="btn btn-secondary"

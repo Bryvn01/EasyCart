@@ -37,9 +37,9 @@ Enhanced with accessibility features:
 - Sizes: `sm`, `md`, `lg`
 
 ```jsx
-<Button 
-  variant="primary" 
-  size="md" 
+<Button
+  variant="primary"
+  size="md"
   loading={isLoading}
   ariaLabel="Add to cart"
 >

@@ -27,7 +27,7 @@ class ErrorBoundary extends React.Component {
         }}>
           <h2>Something went wrong</h2>
           <p>We're sorry, but something unexpected happened.</p>
-          <button 
+          <button
             onClick={() => this.setState({ hasError: false, error: null })}
             style={{
               padding: '10px 20px',

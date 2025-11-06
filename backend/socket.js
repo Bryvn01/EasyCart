@@ -119,8 +119,8 @@ const emitInventoryAlert = (alertData) => {
   }
 };
 
-module.exports = { 
-  initSocket, 
+module.exports = {
+  initSocket,
   getIO,
   emitProductStockUpdate,
   emitLowStockAlert,

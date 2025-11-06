@@ -11,6 +11,8 @@ class Command(BaseCommand):
             user = User.objects.get(username="admin")
             user.set_password("easycart2025")
             user.save()
-            self.stdout.write(self.style.SUCCESS("Admin password reset to: easycart2025"))
+            self.stdout.write(
+                self.style.SUCCESS("Admin password reset to: easycart2025")
+            )
         except User.DoesNotExist:
             self.stdout.write(self.style.ERROR("Admin user not found"))

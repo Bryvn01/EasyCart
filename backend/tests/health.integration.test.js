@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const app = require('../server');
 
 describe('Enhanced Health Check Integration Tests', () => {
-  
+
   afterAll(async () => {
     // Close mongoose connection after tests
     await mongoose.connection.close();
@@ -68,13 +68,13 @@ describe('Enhanced Health Check Integration Tests', () => {
 
     test('Should return health status quickly', async () => {
       const startTime = Date.now();
-      
+
       await request(app)
         .get('/api/health')
         .expect('Content-Type', /json/);
-      
+
       const duration = Date.now() - startTime;
-      
+
       // Health check should respond in less than 2 seconds
       expect(duration).toBeLessThan(2000);
     });
@@ -87,7 +87,7 @@ describe('Enhanced Health Check Integration Tests', () => {
       const dbComponent = response.body.components.database;
       expect(dbComponent).toHaveProperty('details');
       expect(dbComponent.details).toHaveProperty('state');
-      
+
       // State should be one of the mongoose connection states
       const validStates = ['disconnected', 'connected', 'connecting', 'disconnecting'];
       expect(validStates).toContain(dbComponent.details.state);
@@ -100,11 +100,11 @@ describe('Enhanced Health Check Integration Tests', () => {
 
       const memoryComponent = response.body.components.memory;
       const usage = parseInt(memoryComponent.details.usage);
-      
+
       // Usage should be a valid percentage
       expect(usage).toBeGreaterThanOrEqual(0);
       expect(usage).toBeLessThanOrEqual(100);
-      
+
       // Status should reflect usage
       if (usage >= 90) {
         expect(memoryComponent.status).toBe('WARNING');

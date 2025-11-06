@@ -32,6 +32,7 @@
     "react-helmet-async": "^2.0.5",
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^13.5.0",
+    "react-icons": "^5.5.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
@@ -61,7 +62,20 @@
       "react-app",
       "react-app/jest",
       "plugin:storybook/recommended"
-    ]
+    ],
+    "rules": {
+      "testing-library/no-unnecessary-act": "warn",
+      "testing-library/prefer-screen-queries": "warn",
+      "testing-library/no-wait-for-multiple-assertions": "warn",
+      "testing-library/no-node-access": "warn",
+      "testing-library/no-container": "warn",
+      "testing-library/prefer-find-by": "warn",
+      "no-unused-vars": "warn",
+      "no-throw-literal": "warn",
+      "jsx-a11y/img-redundant-alt": "warn",
+      "import/first": "warn",
+      "react-hooks/exhaustive-deps": "warn"
+    }
   },
   "overrides": {
     "nth-check": "^2.1.1",

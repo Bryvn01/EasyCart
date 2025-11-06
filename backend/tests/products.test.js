@@ -1,6 +1,6 @@
 /**
  * Backend Products API Integration Test
- * 
+ *
  * This test validates that:
  * 1. Products can be seeded to MongoDB
  * 2. The /api/products endpoint returns the seeded products
@@ -27,11 +27,11 @@ describe('Products API Integration Tests', () => {
   beforeAll(async () => {
     const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/easycart_test';
     await mongoose.connect(mongoUri);
-    
+
     // Clear test database
     await Product.deleteMany({});
     await Category.deleteMany({});
-    
+
     console.log('✅ Connected to test database');
   });
 
@@ -103,12 +103,12 @@ describe('Products API Integration Tests', () => {
       expect(response.body).toHaveProperty('success', true);
       expect(response.body).toHaveProperty('data');
       expect(response.body).toHaveProperty('pagination');
-      
+
       // Validate products data
       const products = response.body.data;
       expect(Array.isArray(products)).toBe(true);
       expect(products.length).toBeGreaterThanOrEqual(2);
-      
+
       // Validate first product structure
       const product = products[0];
       expect(product).toHaveProperty('name');
@@ -117,18 +117,18 @@ describe('Products API Integration Tests', () => {
       expect(product).toHaveProperty('category');
       expect(product).toHaveProperty('brand');
       expect(product).toHaveProperty('stock');
-      
+
       // Validate image field exists (for frontend compatibility)
       expect(product).toHaveProperty('image');
       expect(typeof product.image).toBe('string');
-      
+
       // Validate pagination
       const pagination = response.body.pagination;
       expect(pagination).toHaveProperty('total');
       expect(pagination.total).toBeGreaterThanOrEqual(2);
       expect(pagination).toHaveProperty('page');
       expect(pagination).toHaveProperty('totalPages');
-      
+
       console.log('✅ API returned products correctly');
       console.log(`   Total: ${pagination.total} products`);
       console.log(`   Sample: ${product.name} - KES ${product.price}`);
@@ -143,7 +143,7 @@ describe('Products API Integration Tests', () => {
       expect(response.body.data.length).toBeLessThanOrEqual(1);
       expect(response.body.pagination).toHaveProperty('page', 1);
       expect(response.body.pagination).toHaveProperty('limit', 1);
-      
+
       console.log('✅ Pagination works correctly');
     });
 
@@ -154,12 +154,12 @@ describe('Products API Integration Tests', () => {
 
       expect(response.body.success).toBe(true);
       const products = response.body.data;
-      
+
       // All products should be in the Test Category
       products.forEach(product => {
         expect(product.category).toBe('Test Category');
       });
-      
+
       console.log('✅ Category filtering works correctly');
     });
 
@@ -170,12 +170,12 @@ describe('Products API Integration Tests', () => {
 
       expect(response.body.success).toBe(true);
       const products = response.body.data;
-      
+
       // Should find the product with "Test Product 1" in the name
       expect(products.length).toBeGreaterThan(0);
       const found = products.some(p => p.name.includes('Test Product 1'));
       expect(found).toBe(true);
-      
+
       console.log('✅ Search functionality works correctly');
     });
 
@@ -187,7 +187,7 @@ describe('Products API Integration Tests', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data).toEqual([]);
       expect(response.body.pagination.total).toBe(0);
-      
+
       console.log('✅ Empty result handling works correctly');
     });
   });
@@ -205,7 +205,7 @@ describe('Products API Integration Tests', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveProperty('name', product.name);
       expect(response.body.data).toHaveProperty('price', product.price);
-      
+
       console.log('✅ Single product retrieval works correctly');
     });
 
@@ -217,9 +217,8 @@ describe('Products API Integration Tests', () => {
 
       expect(response.body.success).toBe(false);
       expect(response.body.message).toMatch(/not found/i);
-      
+
       console.log('✅ 404 handling works correctly');
     });
   });
 });
-

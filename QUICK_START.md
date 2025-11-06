@@ -61,9 +61,9 @@ Double-click `start_servers.bat` to run everything automatically.
 - And 16 more Kenyan products!
 
 ## Features Available:
-✅ User Registration/Login  
-✅ Product Catalog  
-✅ Shopping Cart  
-✅ Order Processing  
-✅ Admin Panel  
+✅ User Registration/Login
+✅ Product Catalog
+✅ Shopping Cart
+✅ Order Processing
+✅ Admin Panel
 ✅ Responsive Design

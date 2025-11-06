@@ -50,7 +50,9 @@ def test_backend_api():
                     sample = products[0]
                 else:
                     sample = products.get("results", [])[0]
-                print_info(f"  Sample: {sample.get('name', 'N/A')} - ${sample.get('price', 'N/A')}")
+                print_info(
+                    f"  Sample: {sample.get('name', 'N/A')} - ${sample.get('price', 'N/A')}"
+                )
         else:
             print_error(f"Products API failed: {response.status_code}")
             return False
@@ -92,15 +94,23 @@ def test_cors():
             "Access-Control-Request-Method": "GET",
         }
 
-        response = requests.get("http://127.0.0.1:8000/api/products/", headers=headers, timeout=10)
+        response = requests.get(
+            "http://127.0.0.1:8000/api/products/", headers=headers, timeout=10
+        )
 
         cors_headers = {
-            "Access-Control-Allow-Origin": response.headers.get("Access-Control-Allow-Origin"),
-            "Access-Control-Allow-Credentials": response.headers.get("Access-Control-Allow-Credentials"),
+            "Access-Control-Allow-Origin": response.headers.get(
+                "Access-Control-Allow-Origin"
+            ),
+            "Access-Control-Allow-Credentials": response.headers.get(
+                "Access-Control-Allow-Credentials"
+            ),
         }
 
         print_success(f"CORS Origin: {cors_headers['Access-Control-Allow-Origin']}")
-        print_success(f"CORS Credentials: {cors_headers['Access-Control-Allow-Credentials']}")
+        print_success(
+            f"CORS Credentials: {cors_headers['Access-Control-Allow-Credentials']}"
+        )
 
         if cors_headers["Access-Control-Allow-Origin"] == "http://localhost:3000":
             print_success("CORS properly configured for localhost:3000")
@@ -150,7 +160,9 @@ def test_database_sync():
         if isinstance(products_data, list):
             api_count = len(products_data)
         else:
-            api_count = products_data.get("count", len(products_data.get("results", [])))
+            api_count = products_data.get(
+                "count", len(products_data.get("results", []))
+            )
 
         print_success(f"API serving {api_count} products from PostgreSQL")
 

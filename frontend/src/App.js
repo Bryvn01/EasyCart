@@ -7,16 +7,16 @@ import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
-import MobileBottomNav from './components/MobileBottomNav';
+import BottomNav from './components/BottomNav';
 import BackToTop from './components/BackToTop';
 import ProtectedRoute from './components/ProtectedRoute';
+import StickyMiniCart from './components/StickyMiniCart';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
 import NetworkStatus from './components/NetworkStatus';
 import InstallPWA from './components/InstallPWA';
 import { usePerformance } from './hooks/usePerformance';
-import { analytics } from './services/analytics';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -34,11 +34,11 @@ import NotFound from './pages/NotFound';
 
 function App() {
   usePerformance();
-  
+
   useEffect(() => {
   // analytics.page('App Loaded');
   }, []);
-  
+
   return (
     <ErrorBoundary>
       <AuthProvider>
@@ -102,12 +102,13 @@ function App() {
                     </Suspense>
                   </main>
                   <Footer />
-                  <MobileBottomNav />
+                  <BottomNav />
+                  <StickyMiniCart />
                   <BackToTop />
                   <SupportChat />
                   <NetworkStatus />
                   <InstallPWA />
-                  <Toaster 
+                  <Toaster
                     position="top-right"
                     toastOptions={{
                       duration: 4000,

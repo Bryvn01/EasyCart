@@ -14,7 +14,12 @@ def run_command(command, cwd=None):
     """Run a shell command and return success status"""
     try:
         result = subprocess.run(
-            command, shell=True, cwd=cwd, capture_output=True, text=True, timeout=300  # 5 minute timeout
+            command,
+            shell=True,
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            timeout=300,  # 5 minute timeout
         )
         print(f"Command: {command}")
         print(f"Return code: {result.returncode}")

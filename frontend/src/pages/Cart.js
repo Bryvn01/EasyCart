@@ -14,7 +14,7 @@ const Cart = () => {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null);
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const Cart = () => {
 
   const handleUpdateQuantity = async (itemId, newQuantity) => {
     if (newQuantity < 1) return;
-    
+
     try {
       await updateCartItem(itemId, newQuantity);
       toast.success('Cart updated');
@@ -81,7 +81,7 @@ const Cart = () => {
         phone_number: phoneNumber.trim(),
         payment_method: paymentMethod
       });
-      
+
       setCurrentOrder(response.data);
       setShowPaymentModal(true);
     } catch (error) {
@@ -132,7 +132,7 @@ const Cart = () => {
   return (
     <div className="container py-8">
       <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
-      
+
       <div className="grid grid-cols-3 gap-8">
         {/* Cart Items */}
         <div style={{ gridColumn: 'span 2' }}>
@@ -141,7 +141,7 @@ const Cart = () => {
               <h2 className="text-xl font-semibold mb-6">
                 Cart Items ({cart.items.length})
               </h2>
-              
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
                 {cart.items.map(item => (
                   <div key={item.id} style={{
@@ -189,18 +189,18 @@ const Cart = () => {
                         📦
                       </div>
                     </div>
-                    
+
                     {/* Product Details */}
                     <div style={{ flex: 1 }}>
                       <h3 className="font-semibold mb-1">{item.product.name}</h3>
                       <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
                         KSh {item.product.price} each
                       </p>
-                      
+
                       {/* Quantity Controls */}
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
                         gap: '0.5rem',
                         marginTop: '0.5rem'
                       }}>
@@ -223,8 +223,8 @@ const Cart = () => {
                         >
                           −
                         </button>
-                        <span style={{ 
-                          minWidth: '30px', 
+                        <span style={{
+                          minWidth: '30px',
                           textAlign: 'center',
                           fontWeight: '500'
                         }}>
@@ -251,7 +251,7 @@ const Cart = () => {
                         </button>
                       </div>
                     </div>
-                    
+
                     {/* Price & Actions */}
                     <div style={{ textAlign: 'right' }}>
                       <div className="font-bold mb-2" style={{ fontSize: '1.125rem' }}>
@@ -295,13 +295,13 @@ const Cart = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Order Summary */}
         <div>
           <div className="card">
             <div className="p-6">
               <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
-              
+
               <div style={{ marginBottom: 'var(--space-6)' }}>
                 <div className="flex justify-between mb-2">
                   <span>Subtotal:</span>
@@ -329,7 +329,7 @@ const Cart = () => {
                   </p>
                 )}
               </div>
-              
+
               <div className="form-group">
                 <label style={{
                   display: 'block',
@@ -350,7 +350,7 @@ const Cart = () => {
                   style={{ marginBottom: 'var(--space-4)' }}
                 />
               </div>
-              
+
               <div className="form-group">
                 <label style={{
                   display: 'block',
@@ -371,7 +371,7 @@ const Cart = () => {
                   style={{ marginBottom: 'var(--space-4)' }}
                 />
               </div>
-              
+
               <div className="form-group">
                 <label style={{
                   display: 'block',
@@ -397,16 +397,16 @@ const Cart = () => {
                   <option value="cash">Cash on Delivery</option>
                 </select>
               </div>
-              
+
               <button
                 onClick={checkout}
                 className="btn btn-primary"
-                style={{ 
+                style={{
                   width: '100%',
                   padding: 'var(--space-4)',
                   fontSize: '1rem',
                   fontWeight: '600',
-                  background: paymentMethod === 'mpesa' ? 'linear-gradient(135deg, #00A651 0%, #00D86E 100%)' : 
+                  background: paymentMethod === 'mpesa' ? 'linear-gradient(135deg, #00A651 0%, #00D86E 100%)' :
                              paymentMethod === 'stripe' ? 'linear-gradient(135deg, #635BFF 0%, #7A73FF 100%)' :
                              paymentMethod === 'paypal' ? 'linear-gradient(135deg, #0070BA 0%, #1F8DE3 100%)' : undefined,
                   display: 'flex',
@@ -418,21 +418,21 @@ const Cart = () => {
               >
                 {checkoutLoading ? '⏳ Processing...' : (
                   <>
-                    {paymentMethod === 'mpesa' && '💳'} 
+                    {paymentMethod === 'mpesa' && '💳'}
                     {paymentMethod === 'stripe' && '💳'}
                     {paymentMethod === 'paypal' && '💰'}
                     Checkout with {
-                      paymentMethod === 'mpesa' ? 'M-Pesa' : 
-                      paymentMethod === 'airtel' ? 'Airtel Money' : 
+                      paymentMethod === 'mpesa' ? 'M-Pesa' :
+                      paymentMethod === 'airtel' ? 'Airtel Money' :
                       paymentMethod === 'stripe' ? 'Stripe' :
                       paymentMethod === 'paypal' ? 'PayPal' :
-                      paymentMethod === 'card' ? 'Card' : 
+                      paymentMethod === 'card' ? 'Card' :
                       paymentMethod
                     }
                   </>
                 )}
               </button>
-              
+
               {/* Trust Indicators */}
               <div className="mt-4 text-xs text-gray-600 text-center">
                 <p className="flex items-center justify-center gap-2 mb-1">
@@ -446,7 +446,7 @@ const Cart = () => {
           </div>
         </div>
       </div>
-      
+
       <PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}

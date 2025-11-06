@@ -43,7 +43,7 @@ const CategoryManager = () => {
         await productsAPI.createCategory(formData);
         handleApiSuccess('Category created successfully!');
       }
-      
+
       // Reset form and refresh categories
       setFormData({ name: '', description: '', image_url: '', is_active: true });
       setEditingCategory(null);
@@ -69,7 +69,7 @@ const CategoryManager = () => {
   // Handle delete
   const handleDelete = async (categoryId) => {
     if (!window.confirm('Are you sure you want to delete this category?')) return;
-    
+
     try {
       await productsAPI.deleteCategory(categoryId);
       handleApiSuccess('Category deleted successfully!');
@@ -165,7 +165,7 @@ const CategoryManager = () => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 placeholder="https://example.com/image.jpg"
               />
-              
+
               {/* Suggested image button */}
               {formData.name && getSuggestedImage(formData.name) && (
                 <button
@@ -219,7 +219,7 @@ const CategoryManager = () => {
               >
                 {editingCategory ? 'Update Category' : 'Create Category'}
               </button>
-              
+
               {editingCategory && (
                 <button
                   type="button"
@@ -276,8 +276,8 @@ const CategoryManager = () => {
                   )}
                   <div className="flex items-center gap-2 mt-1">
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      category.is_active 
-                        ? 'bg-green-100 text-green-800' 
+                      category.is_active
+                        ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
                     }`}>
                       {category.is_active ? 'Active' : 'Inactive'}

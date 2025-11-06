@@ -6,7 +6,11 @@ from django.shortcuts import get_object_or_404
 from django.utils.html import escape
 import re
 from .review_models import Review, ReviewHelpful
-from .review_serializers import ReviewSerializer, ReviewCreateSerializer, ReviewHelpfulSerializer
+from .review_serializers import (
+    ReviewSerializer,
+    ReviewCreateSerializer,
+    ReviewHelpfulSerializer,
+)
 from apps.products.models import Product
 
 
@@ -37,7 +41,9 @@ def mark_review_helpful(request):
     try:
         review_id = int(review_id)
     except (ValueError, TypeError):
-        return Response({"error": "Invalid review ID"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Invalid review ID"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     review = get_object_or_404(Review, id=review_id)
 

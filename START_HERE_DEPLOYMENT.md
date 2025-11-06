@@ -76,19 +76,19 @@ DB_PORT=5432
    - OR Render PostgreSQL
    - OR Supabase
    - OR Neon
-   
+
 2. **Security** ⏱️ 10 minutes
    - Generate new SECRET_KEY
    - Set DEBUG=False
    - Configure ALLOWED_HOSTS
    - Enable SSL
-   
+
 3. **Dependencies** ⏱️ 5 minutes
    ```powershell
    pip install psycopg2-binary>=2.9.9
    pip freeze > requirements.txt
    ```
-   
+
 4. **Migrations** ⏱️ 5 minutes
    ```powershell
    python manage.py migrate

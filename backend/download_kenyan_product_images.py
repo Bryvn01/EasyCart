@@ -39,7 +39,11 @@ def download_kenyan_product_images():
         try:
             print(f"Downloading {filename}...")
             response = requests.get(
-                url, timeout=30, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+                url,
+                timeout=30,
+                headers={
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                },
             )
 
             if response.status_code == 200:

@@ -63,7 +63,9 @@ def test_django_mongodb_connection():
     if not mongo_uri:
         print("❌ MONGO_URI not configured in settings")
         print("💡 Set MONGO_URI in .env file:\n")
-        print("MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/easycart?retryWrites=true&w=majority\n")
+        print(
+            "MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/easycart?retryWrites=true&w=majority\n"
+        )
         return False
 
     # Mask password for safe logging
@@ -175,7 +177,9 @@ def test_django_mongodb_connection():
 
             django_product_count = Product.objects.count()
             print(f"   Django Product.objects.count(): {django_product_count}")
-            print(f"   MongoDB products count: {total_products if 'products' in collections else 0}")
+            print(
+                f"   MongoDB products count: {total_products if 'products' in collections else 0}"
+            )
 
             if django_product_count != total_products:
                 print("\n   ⚠️  WARNING: Counts don't match!")
@@ -191,10 +195,16 @@ def test_django_mongodb_connection():
         print("=" * 70 + "\n")
 
         print("✅ Final Checklist:")
-        print(f"   [{'✅' if db_name == 'easycart' else '❌'}] Database name is 'easycart'")
+        print(
+            f"   [{'✅' if db_name == 'easycart' else '❌'}] Database name is 'easycart'"
+        )
         print(f"   [✅] MongoDB connected via PyMongo")
-        print(f"   [{'✅' if 'products' in collections else '❌'}] products collection exists")
-        print(f"   [{'✅' if total_products > 0 else '⚠️ '}] Products in database: {total_products}")
+        print(
+            f"   [{'✅' if 'products' in collections else '❌'}] products collection exists"
+        )
+        print(
+            f"   [{'✅' if total_products > 0 else '⚠️ '}] Products in database: {total_products}"
+        )
         print()
 
         print("📝 Important Notes:")

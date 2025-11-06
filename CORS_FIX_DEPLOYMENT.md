@@ -188,7 +188,7 @@ curl https://easycart-backend.onrender.com/api/health/
 # Test products endpoint
 curl https://easycart-backend.onrender.com/api/products/
 
-# Test categories endpoint  
+# Test categories endpoint
 curl https://easycart-backend.onrender.com/api/categories/
 
 # Test with CORS headers (simulating frontend request)

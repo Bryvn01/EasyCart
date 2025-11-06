@@ -16,10 +16,10 @@ class ErrorBoundary extends React.Component {
 
   handleRetry = () => {
     if (this.state.retryCount < 3) {
-      this.setState({ 
-        hasError: false, 
-        error: null, 
-        retryCount: this.state.retryCount + 1 
+      this.setState({
+        hasError: false,
+        error: null,
+        retryCount: this.state.retryCount + 1
       });
     } else {
       window.location.href = '/';
@@ -34,7 +34,7 @@ class ErrorBoundary extends React.Component {
             <div className="text-red-500 text-6xl mb-4">⚠️</div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
             <p className="text-gray-600 mb-4">
-              {this.state.retryCount < 3 
+              {this.state.retryCount < 3
                 ? "We're having trouble loading this page. Please try again."
                 : "Multiple errors occurred. Redirecting to home page..."
               }

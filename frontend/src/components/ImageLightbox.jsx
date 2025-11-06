@@ -4,13 +4,13 @@ const ImageLightbox = ({ imageUrl, productName, onClose }) => {
   useEffect(() => {
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
-    
+
     // Close on Escape key
     const handleEscape = (e) => {
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', handleEscape);
-    
+
     return () => {
       document.body.style.overflow = 'unset';
       document.removeEventListener('keydown', handleEscape);
@@ -18,7 +18,7 @@ const ImageLightbox = ({ imageUrl, productName, onClose }) => {
   }, [onClose]);
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-[9999] bg-black bg-opacity-90 flex items-center justify-center p-4"
       onClick={onClose}
     >
@@ -34,7 +34,7 @@ const ImageLightbox = ({ imageUrl, productName, onClose }) => {
       </button>
 
       {/* Image Container */}
-      <div 
+      <div
         className="relative max-w-4xl max-h-[90vh] w-full"
         onClick={(e) => e.stopPropagation()}
       >
@@ -47,7 +47,7 @@ const ImageLightbox = ({ imageUrl, productName, onClose }) => {
             touchAction: 'pinch-zoom'
           }}
         />
-        
+
         {/* Product Name */}
         {productName && (
           <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-4 rounded-b-lg">

@@ -19,7 +19,9 @@ from apps.products.models import Product
 
 def optimize_image(image_url):
     try:
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        }
         response = requests.get(image_url, headers=headers, timeout=15)
         if response.status_code == 200:
             img = Image.open(BytesIO(response.content))
@@ -55,8 +57,12 @@ def update_specific_images():
                 if product.image:
                     product.image.delete(save=False)
 
-                safe_name = "".join(c for c in product_name if c.isalnum() or c in " -_").strip()
-                file_name = get_valid_filename(f"{safe_name.replace(' ', '_').lower()}.jpg")
+                safe_name = "".join(
+                    c for c in product_name if c.isalnum() or c in " -_"
+                ).strip()
+                file_name = get_valid_filename(
+                    f"{safe_name.replace(' ', '_').lower()}.jpg"
+                )
                 product.image.save(file_name, File(optimized_image), save=True)
                 print(f"[OK] Updated: {product_name}")
             else:

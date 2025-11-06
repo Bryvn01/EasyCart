@@ -11,7 +11,7 @@ const testRegistration = async () => {
       phone: '0712345678',
       address: 'Test Address'
     });
-    
+
     console.log('Registration successful:', response.data);
   } catch (error) {
     console.error('Registration failed:', error.response?.data || error.message);

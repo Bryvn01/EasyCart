@@ -129,7 +129,7 @@ Use optional chaining (`?.`) to safely access nested properties:
 
 This pattern handles three scenarios:
 1. **New API response**: category is an object → extract `.name`
-2. **Legacy response**: category_name is a string → use it directly  
+2. **Legacy response**: category_name is a string → use it directly
 3. **Missing data**: No category info → show 'Uncategorized'
 
 ---

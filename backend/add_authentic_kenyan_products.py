@@ -287,23 +287,27 @@ def add_authentic_kenyan_products():
                 response = requests.get(
                     prod["image_url"],
                     timeout=30,
-                    headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
+                    headers={
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                    },
                 )
 
                 if response.status_code == 200:
                     image_content = ContentFile(response.content)
-                    file_name = (
-                        f"{prod['brand'].lower().replace(' ', '_')}_{prod['name'].lower().replace(' ', '_')}.jpg"
-                    )
+                    file_name = f"{prod['brand'].lower().replace(' ', '_')}_{prod['name'].lower().replace(' ', '_')}.jpg"
                     product.image.save(file_name, image_content, save=True)
                     print(f"✅ Added authentic image for {full_name}")
                 else:
-                    print(f"❌ Failed to download image for {full_name}: HTTP {response.status_code}")
+                    print(
+                        f"❌ Failed to download image for {full_name}: HTTP {response.status_code}"
+                    )
 
             except Exception as e:
                 print(f"❌ Error downloading image for {full_name}: {e}")
 
-    print("\n🎉 Successfully populated EasyCart with authentic Kenyan supermarket products!")
+    print(
+        "\n🎉 Successfully populated EasyCart with authentic Kenyan supermarket products!"
+    )
     print(f"📊 Total Categories: {len(categories_data)}")
     print(f"📦 Total Products: {len(products_data)}")
     print(

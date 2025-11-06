@@ -33,7 +33,7 @@ This comprehensive guide covers everything needed to deploy EasyCart as a **robu
 
 #### Option B: VPS Hosting
 - **Provider**: DigitalOcean, Linode, Vultr, AWS EC2
-- **Requirements**: 
+- **Requirements**:
   - Minimum 2GB RAM
   - 2 CPU cores
   - 20GB SSD storage
@@ -156,7 +156,7 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    
+
     # Content Security Policy
     CSP_DEFAULT_SRC = ("'self'",)
     CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://js.stripe.com")
@@ -348,24 +348,24 @@ Create `public/_headers` for security:
    // Users collection
    db.users.createIndex({ "email": 1 }, { unique: true });
    db.users.createIndex({ "username": 1 }, { unique: true });
-   
+
    // Products collection
    db.products.createIndex({ "slug": 1 }, { unique: true });
    db.products.createIndex({ "category": 1 });
    db.products.createIndex({ "name": "text", "description": "text" });
    db.products.createIndex({ "price": 1 });
    db.products.createIndex({ "is_active": 1 });
-   
+
    // Orders collection
    db.orders.createIndex({ "user_id": 1 });
    db.orders.createIndex({ "order_number": 1 }, { unique: true });
    db.orders.createIndex({ "status": 1 });
    db.orders.createIndex({ "created_at": -1 });
-   
+
    // Cart collection
    db.cart.createIndex({ "user_id": 1 });
    db.cart.createIndex({ "session_id": 1 });
-   
+
    // Reviews collection
    db.reviews.createIndex({ "product_id": 1 });
    db.reviews.createIndex({ "user_id": 1 });
@@ -391,7 +391,7 @@ Create `public/_headers` for security:
    ```python
    # Add to views
    from django_ratelimit.decorators import ratelimit
-   
+
    @ratelimit(key='ip', rate='10/m', method='POST')
    def login_view(request):
        pass
@@ -401,7 +401,7 @@ Create `public/_headers` for security:
    ```python
    # Add to serializers
    from django.core.validators import MinLengthValidator, MaxLengthValidator
-   
+
    class ProductSerializer(serializers.ModelSerializer):
        name = serializers.CharField(
            max_length=200,
@@ -435,8 +435,8 @@ Create `public/_headers` for security:
 3. **Content Security Policy**:
    ```html
    <!-- Add to public/index.html -->
-   <meta http-equiv="Content-Security-Policy" 
-         content="default-src 'self'; 
+   <meta http-equiv="Content-Security-Policy"
+         content="default-src 'self';
                   script-src 'self' https://js.stripe.com;
                   img-src 'self' https://res.cloudinary.com data:;">
    ```
@@ -496,10 +496,10 @@ Create `public/_headers` for security:
            'TIMEOUT': 300,
        }
    }
-   
+
    # Cache product listings
    from django.views.decorators.cache import cache_page
-   
+
    @cache_page(60 * 15)  # Cache for 15 minutes
    def product_list(request):
        pass
@@ -509,10 +509,10 @@ Create `public/_headers` for security:
    ```python
    # Use select_related and prefetch_related
    products = Product.objects.select_related('category').prefetch_related('images')
-   
+
    # Add pagination
    from rest_framework.pagination import PageNumberPagination
-   
+
    class StandardResultsSetPagination(PageNumberPagination):
        page_size = 20
        page_size_query_param = 'page_size'
@@ -535,7 +535,7 @@ Create `public/_headers` for security:
    // Use React.lazy for route-based splitting
    const Products = React.lazy(() => import('./pages/Products'));
    const Checkout = React.lazy(() => import('./pages/Checkout'));
-   
+
    function App() {
      return (
        <Suspense fallback={<LoadingSpinner />}>
@@ -573,7 +573,7 @@ Create `public/_headers` for security:
    # Backend: settings.py
    import sentry_sdk
    from sentry_sdk.integrations.django import DjangoIntegration
-   
+
    sentry_sdk.init(
        dsn=os.getenv('SENTRY_DSN'),
        integrations=[DjangoIntegration()],
@@ -585,7 +585,7 @@ Create `public/_headers` for security:
    ```javascript
    // Frontend: index.js
    import * as Sentry from "@sentry/react";
-   
+
    Sentry.init({
      dsn: process.env.REACT_APP_SENTRY_DSN,
      environment: "production",
@@ -603,9 +603,9 @@ Create `public/_headers` for security:
 1. **Structured Logging**:
    ```python
    import logging
-   
+
    logger = logging.getLogger(__name__)
-   
+
    logger.info('Order created', extra={
        'order_id': order.id,
        'user_id': user.id,
@@ -682,13 +682,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Run Backend Tests
         run: |
           cd backend
           pip install -r requirements.txt
           python manage.py test
-      
+
       - name: Run Frontend Tests
         run: |
           cd frontend
@@ -700,7 +700,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -713,7 +713,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -960,7 +960,7 @@ Your app is production-ready when:
 
 **Estimated Setup Time**: 4-6 hours for first deployment
 
-**Recommended Launch Strategy**: 
+**Recommended Launch Strategy**:
 1. Beta test with limited users (1 week)
 2. Soft launch to target audience
 3. Full public launch with marketing campaign

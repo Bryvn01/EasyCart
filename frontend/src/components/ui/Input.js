@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Input = ({ 
-  label, 
-  error, 
-  className = '', 
+const Input = ({
+  label,
+  error,
+  className = '',
   type = 'text',
   id,
   required = false,
-  ...props 
+  ...props
 }) => {
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
-  
+
   const inputStyles = `
     w-full px-3 py-2 border rounded-lg text-sm transition-colors
     focus:outline-none focus:ring-2 focus:border-transparent
@@ -23,8 +23,8 @@ const Input = ({
   return (
     <div className="space-y-1">
       {label && (
-        <label 
-          htmlFor={inputId} 
+        <label
+          htmlFor={inputId}
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
           {label}

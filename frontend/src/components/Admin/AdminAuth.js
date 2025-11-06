@@ -37,15 +37,15 @@ const AdminAuth = ({ onLogin }) => {
           onChange={(e) => setCredentials({...credentials, password: e.target.value})}
           style={{ width: '100%', padding: '10px', margin: '10px 0', border: '1px solid #ddd', borderRadius: '4px' }}
         />
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading}
-          style={{ 
-            width: '100%', 
-            padding: '12px', 
-            backgroundColor: '#007bff', 
-            color: 'white', 
-            border: 'none', 
+          style={{
+            width: '100%',
+            padding: '12px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
             borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer'
           }}

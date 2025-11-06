@@ -13,7 +13,9 @@ from apps.accounts.models import User
 @permission_classes([IsAuthenticated])
 def dashboard_stats(request):
     if not (request.user.is_authenticated and getattr(request.user, "is_admin", False)):
-        return Response({"error": "Admin access required"}, status=status.HTTP_403_FORBIDDEN)
+        return Response(
+            {"error": "Admin access required"}, status=status.HTTP_403_FORBIDDEN
+        )
 
     days = int(request.GET.get("days", 30))
     start_date = timezone.now() - timedelta(days=days)
@@ -24,11 +26,17 @@ def dashboard_stats(request):
 
     # Payment method breakdown
     payment_methods = (
-        orders_qs.values("payment_method").annotate(count=Count("id"), revenue=Sum("total_amount")).order_by("-count")
+        orders_qs.values("payment_method")
+        .annotate(count=Count("id"), revenue=Sum("total_amount"))
+        .order_by("-count")
     )
 
     # Payment status breakdown
-    payment_status = orders_qs.values("payment_status").annotate(count=Count("id")).order_by("-count")
+    payment_status = (
+        orders_qs.values("payment_status")
+        .annotate(count=Count("id"))
+        .order_by("-count")
+    )
 
     # Successful payments (completed)
     completed_payments = orders_qs.filter(payment_status="completed").count()
@@ -45,10 +53,20 @@ def dashboard_stats(request):
     recent_orders = (
         Order.objects.select_related("user")
         .order_by("-created_at")[:10]
-        .values("id", "total_amount", "status", "payment_status", "payment_method", "user__email", "created_at")
+        .values(
+            "id",
+            "total_amount",
+            "status",
+            "payment_status",
+            "payment_method",
+            "user__email",
+            "created_at",
+        )
     )
 
-    active_customers = User.objects.filter(orders__created_at__gte=start_date).distinct().count()
+    active_customers = (
+        User.objects.filter(orders__created_at__gte=start_date).distinct().count()
+    )
 
     return Response(
         {

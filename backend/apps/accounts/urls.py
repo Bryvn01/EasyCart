@@ -12,5 +12,9 @@ urlpatterns = [
     path("admin-access/", views.django_admin_access, name="django-admin-access"),
     # Customer Management Endpoints
     path("customers/", views.CustomerListView.as_view(), name="customer-list"),
-    path("customers/<int:pk>/", views.CustomerDetailView.as_view(), name="customer-detail"),
+    path(
+        "customers/<int:pk>/",
+        views.CustomerDetailView.as_view(),
+        name="customer-detail",
+    ),
 ]

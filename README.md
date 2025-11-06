@@ -353,7 +353,7 @@ EasyCart uses Cloudinary for cloud-based image storage and delivery. Follow thes
    - Navigate to your Dashboard to get your credentials
 
 2. **Configure Environment Variables**
-   
+
    Add these to your `backend/.env` file:
    ```env
    CLOUDINARY_CLOUD_NAME=your-cloud-name

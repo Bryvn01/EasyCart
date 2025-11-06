@@ -20,7 +20,7 @@ This guide will help you add Redis to your EasyCart production deployment on Ren
    Plan: Free (25MB, 10 connections)
         OR
         Starter ($7/mo, 256MB, 25 connections) - Recommended for production
-   
+
    Maxmemory Policy: allkeys-lru (evict least recently used keys)
    ```
 
@@ -32,7 +32,7 @@ This guide will help you add Redis to your EasyCart production deployment on Ren
    After creation, you'll see:
    - **Internal Redis URL**: `redis://red-xxxxx:6379` (use this)
    - **External Redis URL**: `rediss://red-xxxxx:6379` (for external access)
-   
+
    Copy the **Internal Redis URL** - you'll need it next.
 
 ## Step 2: Add Redis URL to Backend Environment
@@ -43,12 +43,12 @@ This guide will help you add Redis to your EasyCart production deployment on Ren
 2. **Add Environment Variable**
    - Click "Environment" tab (left sidebar)
    - Click "Add Environment Variable"
-   
+
    ```
    Key: REDIS_URL
    Value: redis://red-xxxxx:6379
    ```
-   
+
    (Paste the Internal Redis URL you copied)
 
 3. **Save Changes**
@@ -85,7 +85,7 @@ This guide will help you add Redis to your EasyCart production deployment on Ren
    - Memory: 25MB
    - Connections: 10 concurrent
    - Bandwidth: Unlimited
-   
+
    If you exceed limits, upgrade to Starter plan ($7/mo).
 
 ## Step 5: Update Frontend (Optional)

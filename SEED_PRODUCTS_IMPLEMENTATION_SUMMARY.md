@@ -15,7 +15,7 @@ Successfully implemented a Django management command that seeds MongoDB Atlas wi
 ### ✓ Each product includes required fields
 All products include:
 - ✅ name
-- ✅ description  
+- ✅ description
 - ✅ price (in KES - Kenyan Shillings)
 - ✅ category
 - ✅ image_url

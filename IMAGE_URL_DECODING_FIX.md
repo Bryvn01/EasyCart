@@ -161,7 +161,7 @@ class CloudinaryStorage(Storage):
 # serializers.py
 class ProductSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
-    
+
     def get_image(self, obj):
         if obj.image.startswith('http'):
             return obj.image

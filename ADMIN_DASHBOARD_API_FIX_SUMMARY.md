@@ -32,7 +32,7 @@ The admin dashboard was configured to connect to a Node.js backend on port 5000,
 ```javascript
 } catch (error) {
   console.warn('API connection failed, using demo data:', error.message);
-  
+
   // Fallback data for development/demo
   const mockData = [
     { id: 1, name: 'Sample Product 1', ... },
@@ -122,10 +122,10 @@ The admin dashboard was configured to connect to a Node.js backend on port 5000,
   - Admin authentication required
   - Calls `update_product_in_mongodb()`
   - Returns 200 OK or 404 NOT FOUND
-  
+
 - **PATCH method (lines 263-265)**: Implemented partial product update
   - Delegates to PUT method
-  
+
 - **DELETE method (lines 267-294)**: Implemented product deletion
   - Admin authentication required
   - Calls `delete_product_from_mongodb()`
