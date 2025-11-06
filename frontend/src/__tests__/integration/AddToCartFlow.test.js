@@ -3,10 +3,7 @@
  */
 
 import { render, screen, fireEvent, waitFor } from '../../test-utils';
-import { BrowserRouter } from 'react-router-dom';
 import EnhancedProductCard from '../../components/EnhancedProductCard';
-import { CartProvider } from '../../context/CartContext';
-import { AuthProvider } from '../../context/AuthContext';
 import * as api from '../../services/api';
 
 jest.mock('../../services/api', () => ({
@@ -17,16 +14,24 @@ jest.mock('../../services/api', () => ({
   }
 }));
 
+// Mock auth context to simulate logged-in user
+jest.mock('../../context/AuthContext', () => ({
+  ...jest.requireActual('../../context/AuthContext'),
+  useAuth: () => ({
+    user: { id: 1, name: 'Test User', email: 'test@example.com' },
+    token: 'mock-token',
+    isAuthenticated: true,
+    login: jest.fn(),
+    logout: jest.fn(),
+    register: jest.fn(),
+  }),
+}));
+
 const mockProduct = {
   id: 1,
   name: 'Test Product',
   price: 1000,
   stock: 10
-};
-
-const mockOrder = {
-  id: 1,
-  total_amount: 1000
 };
 
 describe('Add-to-Cart → STK Push Integration', () => {
@@ -38,15 +43,8 @@ describe('Add-to-Cart → STK Push Integration', () => {
   test('complete flow with success', async () => {
     api.ordersAPI.addToCart.mockResolvedValue({ data: { message: 'Added' } });
 
-    render(
-      <BrowserRouter>
-        <AuthProvider>
-          <CartProvider>
-            <EnhancedProductCard product={mockProduct} />
-          </CartProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    );
+    // Just render the component directly - test-utils provides all providers
+    render(<EnhancedProductCard product={mockProduct} />);
 
     const addButton = screen.getByRole('button', { name: /add.*to cart/i });
     fireEvent.click(addButton);
@@ -55,7 +53,10 @@ describe('Add-to-Cart → STK Push Integration', () => {
       expect(api.ordersAPI.addToCart).toHaveBeenCalledTimes(1);
     }, { timeout: 3000 });
 
-    expect(api.ordersAPI.addToCart).toHaveBeenCalledWith(1, 1);
+    expect(api.ordersAPI.addToCart).toHaveBeenCalledWith({
+      product_id: 1,
+      quantity: 1
+    });
   });
 
   test('prevents duplicate additions', async () => {
@@ -63,15 +64,8 @@ describe('Add-to-Cart → STK Push Integration', () => {
       new Promise(resolve => setTimeout(() => resolve({ data: {} }), 100))
     );
 
-    render(
-      <BrowserRouter>
-        <AuthProvider>
-          <CartProvider>
-            <EnhancedProductCard product={mockProduct} />
-          </CartProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    );
+    // Just render the component directly - test-utils provides all providers
+    render(<EnhancedProductCard product={mockProduct} />);
 
     const addButton = screen.getByRole('button', { name: /add.*to cart/i });
 
