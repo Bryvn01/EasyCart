@@ -113,7 +113,10 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
       {/* Product Info Section */}
       <div className="p-4 space-y-3">
         <Link to={`/products/${product.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors line-clamp-2 min-h-[3.5rem]">
+          <h3
+            className="text-lg font-semibold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors line-clamp-2 min-h-[3.5rem]"
+            title={product.name && product.name.length > 30 ? product.name : undefined}
+          >
             {product.name}
           </h3>
         </Link>

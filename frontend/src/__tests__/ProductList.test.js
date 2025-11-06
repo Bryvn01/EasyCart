@@ -188,9 +188,12 @@ describe('ProductList Component', () => {
 
     // Wait for product to load and find the heading element by role
     const heading = await screen.findByRole('heading', {
-      name: 'This is a very long product name that should be truncated in the display'
+      name: /This is a very long product name that should be truncated in the display/
     });
-    expect(heading).toHaveAttribute('title', 'This is a very long product name that should be truncated in the display');
+
+    // The title attribute should be set when product name length > 30
+    expect(heading).toHaveAttribute('title');
+    expect(heading.getAttribute('title')).toBe('This is a very long product name that should be truncated in the display');
   });
 
   test('uses responsive grid layout', async () => {
