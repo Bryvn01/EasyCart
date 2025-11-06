@@ -186,7 +186,10 @@ describe('ProductList Component', () => {
     api.productsAPI.getProducts.mockResolvedValue(longNameProduct);
     render(<ProductList />);
 
-    const heading = await screen.findByText('This is a very long product name that should be truncated in the display');
+    // Wait for product to load and find the heading element by role
+    const heading = await screen.findByRole('heading', {
+      name: 'This is a very long product name that should be truncated in the display'
+    });
     expect(heading).toHaveAttribute('title', 'This is a very long product name that should be truncated in the display');
   });
 
