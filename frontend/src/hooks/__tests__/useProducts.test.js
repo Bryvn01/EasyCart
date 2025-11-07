@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '../../test-utils';
+import { renderHook, waitFor, createWrapper } from '../../test-utils';
 import { useProducts } from '../useProducts';
 import { productsAPI } from '../../services/api';
 
@@ -69,7 +69,9 @@ describe('useProducts hook', () => {
 
     productsAPI.getProducts.mockResolvedValue(mockResponse);
 
-    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
+    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }), {
+      wrapper: createWrapper(),
+    });
 
     // Initially loading
     expect(result.current.loading).toBe(true);
@@ -95,7 +97,9 @@ describe('useProducts hook', () => {
     const mockError = new Error('Network error');
     productsAPI.getProducts.mockRejectedValue(mockError);
 
-    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
+    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

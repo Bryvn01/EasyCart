@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '../test-utils';
+import { renderHook, waitFor, createWrapper, act } from '../test-utils';
 import { useProducts } from '../hooks/useProducts';
 import * as api from '../services/api';
 
@@ -38,7 +38,9 @@ describe('useProducts hook', () => {
   });
 
   test('fetches products on mount', async () => {
-    const { result } = renderHook(() => useProducts());
+    const { result } = renderHook(() => useProducts(), {
+      wrapper: createWrapper(),
+    });
 
     // Initially loading
     expect(result.current.loading).toBe(true);
@@ -55,7 +57,9 @@ describe('useProducts hook', () => {
   });
 
   test('includes pagination information', async () => {
-    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
+    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -72,7 +76,9 @@ describe('useProducts hook', () => {
   });
 
   test('handles search parameter', async () => {
-    renderHook(() => useProducts({ search: 'laptop' }));
+    renderHook(() => useProducts({ search: 'laptop' }), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
@@ -84,7 +90,9 @@ describe('useProducts hook', () => {
   });
 
   test('handles category filter', async () => {
-    renderHook(() => useProducts({ category: '1' }));
+    renderHook(() => useProducts({ category: '1' }), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
@@ -96,7 +104,9 @@ describe('useProducts hook', () => {
   });
 
   test('handles ordering parameter', async () => {
-    renderHook(() => useProducts({ ordering: '-price' }));
+    renderHook(() => useProducts({ ordering: '-price' }), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
@@ -108,7 +118,9 @@ describe('useProducts hook', () => {
   });
 
   test('handles price range filter', async () => {
-    renderHook(() => useProducts({ priceRange: { min: '100', max: '500' } }));
+    renderHook(() => useProducts({ priceRange: { min: '100', max: '500' } }), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
@@ -121,7 +133,9 @@ describe('useProducts hook', () => {
   });
 
   test('normalizes image URLs', async () => {
-    const { result } = renderHook(() => useProducts());
+    const { result } = renderHook(() => useProducts(), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -138,7 +152,9 @@ describe('useProducts hook', () => {
     const testError = new Error('API Error');
     api.productsAPI.getProducts.mockRejectedValue(testError);
 
-    const { result } = renderHook(() => useProducts());
+    const { result } = renderHook(() => useProducts(), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -149,7 +165,9 @@ describe('useProducts hook', () => {
   });
 
   test('refresh function refetches data', async () => {
-    const { result } = renderHook(() => useProducts());
+    const { result } = renderHook(() => useProducts(), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -159,7 +177,9 @@ describe('useProducts hook', () => {
     api.productsAPI.getProducts.mockClear();
 
     // Call refresh
-    result.current.refresh();
+    act(() => {
+      result.current.refresh();
+    });
 
     // Should trigger a new API call
     await waitFor(() => {
@@ -168,7 +188,9 @@ describe('useProducts hook', () => {
   });
 
   test('handles pagination parameters correctly', async () => {
-    renderHook(() => useProducts({ page: 2, pageSize: 10 }));
+    renderHook(() => useProducts({ page: 2, pageSize: 10 }), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
@@ -188,7 +210,9 @@ describe('useProducts hook', () => {
       ]
     });
 
-    const { result } = renderHook(() => useProducts());
+    const { result } = renderHook(() => useProducts(), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -205,7 +229,9 @@ describe('useProducts hook', () => {
       }
     });
 
-    const { result } = renderHook(() => useProducts());
+    const { result } = renderHook(() => useProducts(), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -216,19 +242,25 @@ describe('useProducts hook', () => {
 
   test('calculates hasNext and hasPrevious correctly', async () => {
     // Test page 1
-    const { result: result1 } = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
+    const { result: result1 } = renderHook(() => useProducts({ page: 1, pageSize: 12 }), {
+      wrapper: createWrapper(),
+    });
     await waitFor(() => expect(result1.current.loading).toBe(false));
     expect(result1.current.pagination.hasPrevious).toBe(false);
     expect(result1.current.pagination.hasNext).toBe(true);
 
     // Test middle page
-    const { result: result2 } = renderHook(() => useProducts({ page: 2, pageSize: 12 }));
+    const { result: result2 } = renderHook(() => useProducts({ page: 2, pageSize: 12 }), {
+      wrapper: createWrapper(),
+    });
     await waitFor(() => expect(result2.current.loading).toBe(false));
     expect(result2.current.pagination.hasPrevious).toBe(true);
     expect(result2.current.pagination.hasNext).toBe(true);
 
     // Test last page
-    const { result: result3 } = renderHook(() => useProducts({ page: 3, pageSize: 12 }));
+    const { result: result3 } = renderHook(() => useProducts({ page: 3, pageSize: 12 }), {
+      wrapper: createWrapper(),
+    });
     await waitFor(() => expect(result3.current.loading).toBe(false));
     expect(result3.current.pagination.hasPrevious).toBe(true);
     expect(result3.current.pagination.hasNext).toBe(false);
