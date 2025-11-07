@@ -68,7 +68,7 @@ describe('Navbar Component', () => {
 
   test('mobile menu is closed by default', () => {
     renderNavbar();
-    const mobileMenu = screen.getByRole('navigation').querySelector('#mobile-menu');
+    const mobileMenu = screen.getByTestId('mobile-menu');
     expect(mobileMenu).toHaveClass('-translate-x-full');
   });
 
@@ -77,8 +77,8 @@ describe('Navbar Component', () => {
     const menuButton = screen.getByLabelText('Open menu');
     fireEvent.click(menuButton);
     
+    const mobileMenu = screen.getByTestId('mobile-menu');
     await waitFor(() => {
-      const mobileMenu = screen.getByRole('navigation').querySelector('#mobile-menu');
       expect(mobileMenu).toHaveClass('translate-x-0');
     });
   });
@@ -93,8 +93,8 @@ describe('Navbar Component', () => {
     // Click to open menu
     fireEvent.click(menuButton);
     
+    expect(document.body.style.overflow).toBe('hidden');
     await waitFor(() => {
-      expect(document.body.style.overflow).toBe('hidden');
       expect(document.documentElement.style.overflow).toBe('hidden');
     });
   });
@@ -106,8 +106,8 @@ describe('Navbar Component', () => {
     const openButton = screen.getByLabelText('Open menu');
     fireEvent.click(openButton);
     
+    const mobileMenu = screen.getByTestId('mobile-menu');
     await waitFor(() => {
-      const mobileMenu = screen.getByRole('navigation').querySelector('#mobile-menu');
       expect(mobileMenu).toHaveClass('translate-x-0');
     });
     
@@ -116,7 +116,6 @@ describe('Navbar Component', () => {
     fireEvent.click(closeButton);
     
     await waitFor(() => {
-      const mobileMenu = screen.getByRole('navigation').querySelector('#mobile-menu');
       expect(mobileMenu).toHaveClass('-translate-x-full');
     });
   });
@@ -135,8 +134,8 @@ describe('Navbar Component', () => {
     const closeButton = screen.getByLabelText('Close menu');
     fireEvent.click(closeButton);
     
+    expect(document.body.style.overflow).toBe('unset');
     await waitFor(() => {
-      expect(document.body.style.overflow).toBe('unset');
       expect(document.documentElement.style.overflow).toBe('unset');
     });
   });
@@ -148,8 +147,8 @@ describe('Navbar Component', () => {
     const menuButton = screen.getByLabelText('Open menu');
     fireEvent.click(menuButton);
     
+    const mobileMenu = screen.getByTestId('mobile-menu');
     await waitFor(() => {
-      const mobileMenu = screen.getByRole('navigation').querySelector('#mobile-menu');
       expect(mobileMenu).toHaveClass('translate-x-0');
     });
     
@@ -157,7 +156,6 @@ describe('Navbar Component', () => {
     fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
     
     await waitFor(() => {
-      const mobileMenu = screen.getByRole('navigation').querySelector('#mobile-menu');
       expect(mobileMenu).toHaveClass('-translate-x-full');
     });
   });
@@ -165,29 +163,27 @@ describe('Navbar Component', () => {
   test('overlay backdrop is rendered when menu is open', async () => {
     renderNavbar();
     
-    // Initially no overlay (using role for better selector)
-    const overlayBefore = document.querySelector('[aria-hidden="true"].fixed.inset-0');
-    expect(overlayBefore).not.toBeInTheDocument();
+    // Initially no overlay
+    expect(screen.queryByTestId('mobile-menu-overlay')).not.toBeInTheDocument();
     
     // Open menu
     const menuButton = screen.getByLabelText('Open menu');
     fireEvent.click(menuButton);
     
     await waitFor(() => {
-      const overlayAfter = document.querySelector('[aria-hidden="true"].fixed.inset-0');
-      expect(overlayAfter).toBeInTheDocument();
+      expect(screen.getByTestId('mobile-menu-overlay')).toBeInTheDocument();
     });
   });
 
   test('mobile menu has correct z-index for overlay effect', () => {
     renderNavbar();
-    const mobileMenu = screen.getByRole('navigation').querySelector('#mobile-menu');
+    const mobileMenu = screen.getByTestId('mobile-menu');
     expect(mobileMenu).toHaveClass('z-[70]');
   });
 
   test('mobile menu slides from left (not right)', () => {
     renderNavbar();
-    const mobileMenu = screen.getByRole('navigation').querySelector('#mobile-menu');
+    const mobileMenu = screen.getByTestId('mobile-menu');
     expect(mobileMenu).toHaveClass('left-0');
     expect(mobileMenu).not.toHaveClass('right-0');
   });
