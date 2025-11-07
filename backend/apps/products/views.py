@@ -93,7 +93,8 @@ class ProductListView(APIView):
                     )
                     return Response(cached_data, status=status.HTTP_200_OK)
 
-            queryset = Product.objects.all()
+            # Optimize queryset with select_related to eliminate N+1 queries
+            queryset = Product.objects.select_related('category').all()
             if category:
                 queryset = queryset.filter(category__name__iexact=category)
             if search:
@@ -211,8 +212,8 @@ class ProductDetailView(APIView):
                 logger.info(f"Returned product {pk} from cache")
                 return Response(cached_data, status=status.HTTP_200_OK)
 
-            # Cache miss - fetch from DB
-            product = Product.objects.filter(id=pk).first()
+            # Cache miss - fetch from DB with optimized query
+            product = Product.objects.select_related('category').filter(id=pk).first()
             if not product:
                 return Response(
                     {"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND

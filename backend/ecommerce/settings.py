@@ -68,6 +68,7 @@ except ImportError:
     pass
 
 MIDDLEWARE = [
+    "django.middleware.gzip.GZipMiddleware",  # Enable GZip compression
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -78,6 +79,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "ecommerce.middleware.PerformanceLoggingMiddleware",  # Performance monitoring
     "ecommerce.middleware.ErrorHandlingMiddleware",
 ]
 # --- Rate Limiting ---

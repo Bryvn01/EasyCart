@@ -1,10 +1,39 @@
 import logging
+import time
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError, PermissionDenied
 from rest_framework.views import exception_handler
 from rest_framework import status
 
 logger = logging.getLogger(__name__)
+
+
+class PerformanceLoggingMiddleware:
+    """Middleware to log slow requests and add response time header"""
+    
+    def __init__(self, get_response):
+        self.get_response = get_response
+        
+    def __call__(self, request):
+        # Start timer
+        start_time = time.time()
+        
+        # Process request
+        response = self.get_response(request)
+        
+        # Calculate duration
+        duration = time.time() - start_time
+        
+        # Log slow requests (over 500ms)
+        if duration > 0.5:
+            logger.warning(
+                f'Slow request: {request.method} {request.path} took {duration:.2f}s'
+            )
+        
+        # Add response time header
+        response['X-Response-Time'] = f'{duration:.3f}s'
+        
+        return response
 
 
 class ErrorHandlingMiddleware:

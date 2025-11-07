@@ -2,7 +2,7 @@
 import React, { useRef, useState } from 'react';
 import { useFadeOutOnSuccess } from '../../hooks/useFadeOutOnSuccess';
 import { motion } from 'framer-motion';
-import { getProductImageUrl } from '../../utils/imageUtils';
+import { getProductImageUrl, applyCloudinaryTransformations } from '../../utils/imageUtils';
 
 /**
  * ProductCard: Standardized, accessible, responsive product card for EasyCart
@@ -32,10 +32,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
       {/* Image Section with stacked badges */}
       <div className="relative w-full aspect-[1/1] overflow-hidden rounded-t-[var(--border-radius)] min-h-[160px] sm:min-h-[180px] md:min-h-[200px]">
         <img
-          src={getProductImageUrl(product, '/placeholder.png')}
+          src={getProductImageUrl(product, { width: 400, height: 400, quality: 'auto', format: 'auto' }, '/placeholder.png')}
           alt={product.name}
           className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-200"
           loading="lazy"
+          decoding="async"
           crossOrigin="anonymous"
         />
         {/* Badge stack: vertical, spaced, no overlap */}
