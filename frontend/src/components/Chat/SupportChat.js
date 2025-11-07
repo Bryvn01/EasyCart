@@ -63,10 +63,14 @@ const SupportChat = () => {
         timestamp: new Date()
       };
       setMessages(prev => [...prev, supportMessage]);
-      // Set unread messages flag if chat is closed
-      if (!isOpen) {
-        setHasUnreadMessages(true);
-      }
+      // Set unread messages flag only if chat was closed before this timeout
+      // This ensures new messages received while chat is closed trigger the notification
+      setTimeout(() => {
+        setHasUnreadMessages(prevHasUnread => {
+          // Only set to true if there are new support messages and chat is still closed
+          return !isOpen || prevHasUnread;
+        });
+      }, 100);
     }, 1500);
   };
 

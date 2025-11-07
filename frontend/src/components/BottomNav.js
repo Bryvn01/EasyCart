@@ -33,10 +33,10 @@ const BottomNav = () => {
   };
 
   const navItems = [
-    { to: '/', icon: <FiHome className="w-6 h-6" />, label: 'Home' },
-    { to: '/products', icon: <FiSearch className="w-6 h-6" />, label: 'Search', onClick: handleSearchClick },
-    { to: '/cart', icon: <FiShoppingCart className="w-6 h-6" />, label: 'Cart', badge: cartCount },
-    { to: '/profile', icon: <FiUser className="w-6 h-6" />, label: 'Account' },
+    { to: '/', icon: <FiHome className="w-6 h-6" />, label: 'Home', isSearchButton: false },
+    { to: '/products', icon: <FiSearch className="w-6 h-6" />, label: 'Search', onClick: handleSearchClick, isSearchButton: true },
+    { to: '/cart', icon: <FiShoppingCart className="w-6 h-6" />, label: 'Cart', badge: cartCount, isSearchButton: false },
+    { to: '/profile', icon: <FiUser className="w-6 h-6" />, label: 'Account', isSearchButton: false },
   ];
 
   return (
@@ -107,7 +107,7 @@ const BottomNav = () => {
       >
         <div className="flex justify-around items-center h-16 px-2">
           {navItems.map((item) => {
-            const isActive = location.pathname === item.to && item.label !== 'Search';
+            const isActive = location.pathname === item.to && !item.isSearchButton;
             const Component = item.onClick ? 'button' : Link;
             const componentProps = item.onClick 
               ? { onClick: item.onClick, type: 'button' }

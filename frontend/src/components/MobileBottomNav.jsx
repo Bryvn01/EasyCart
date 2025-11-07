@@ -25,10 +25,10 @@ const MobileBottomNav = () => {
   };
 
   const navItems = [
-    { path: '/', icon: '🏠', label: 'Home' },
-    { path: '/products', icon: '🔍', label: 'Search', onClick: handleSearchClick },
-    { path: '/cart', icon: '🛒', label: 'Cart', badge: cartCount },
-    { path: '/profile', icon: '👤', label: 'Account' },
+    { path: '/', icon: '🏠', label: 'Home', isSearchButton: false },
+    { path: '/products', icon: '🔍', label: 'Search', onClick: handleSearchClick, isSearchButton: true },
+    { path: '/cart', icon: '🛒', label: 'Cart', badge: cartCount, isSearchButton: false },
+    { path: '/profile', icon: '👤', label: 'Account', isSearchButton: false },
   ];
 
   // Add padding to body to prevent content overlap
@@ -116,7 +116,7 @@ const MobileBottomNav = () => {
       >
         <div className="flex justify-around items-center h-16 px-2">
           {navItems.map((item) => {
-            const isActive = location.pathname === item.path && item.label !== 'Search';
+            const isActive = location.pathname === item.path && !item.isSearchButton;
             const Component = item.onClick ? 'button' : Link;
             const componentProps = item.onClick 
               ? { onClick: item.onClick, type: 'button' }
