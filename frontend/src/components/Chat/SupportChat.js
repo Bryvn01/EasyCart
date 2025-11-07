@@ -8,11 +8,16 @@ const SupportChat = () => {
   ]);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    // Mark messages as read when chat is open
+    if (isOpen && hasUnreadMessages) {
+      setHasUnreadMessages(false);
+    }
+  }, [messages, isOpen, hasUnreadMessages]);
 
   // Add safe area support for mobile devices
   useEffect(() => {
@@ -51,12 +56,21 @@ const SupportChat = () => {
 
     setTimeout(() => {
       setIsTyping(false);
-      setMessages(prev => [...prev, {
+      const supportMessage = {
         id: Date.now() + 1,
         text: "Thanks for your message! Our team will get back to you shortly. We typically respond within 2-4 hours during business hours.",
         sender: 'support',
         timestamp: new Date()
-      }]);
+      };
+      setMessages(prev => [...prev, supportMessage]);
+      // Set unread messages flag only if chat was closed before this timeout
+      // This ensures new messages received while chat is closed trigger the notification
+      setTimeout(() => {
+        setHasUnreadMessages(prevHasUnread => {
+          // Only set to true if there are new support messages and chat is still closed
+          return !isOpen || prevHasUnread;
+        });
+      }, 100);
     }, 1500);
   };
 
@@ -64,9 +78,11 @@ const SupportChat = () => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200 group"
+        className="fixed transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200 group md:!bottom-[calc(24px+env(safe-area-inset-bottom,0px))]"
         style={{
-          bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
+          // On mobile (< 768px), position above the bottom nav (64px height + 16px spacing)
+          // On desktop (>= 768px), use standard bottom positioning via Tailwind class
+          bottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
           right: '20px',
           width: '60px',
           height: '60px',
@@ -85,21 +101,26 @@ const SupportChat = () => {
         aria-label="Open support chat"
       >
         <FiMessageCircle className="w-7 h-7" />
-        <div
-          className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse border-2 border-white"
-          style={{
-            boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.3)'
-          }}
-        />
+        {hasUnreadMessages && (
+          <div
+            className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse border-2 border-white"
+            style={{
+              boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.3)'
+            }}
+            aria-label="Unread messages"
+          />
+        )}
       </button>
     );
   }
 
   return (
     <div
-      className="fixed flex flex-col bg-white border border-gray-200 rounded-2xl shadow-2xl backdrop-blur-sm"
+      className="fixed flex flex-col bg-white border border-gray-200 rounded-2xl shadow-2xl backdrop-blur-sm md:!bottom-[calc(100px+env(safe-area-inset-bottom,0px))]"
       style={{
-        bottom: 'calc(100px + env(safe-area-inset-bottom, 0px))',
+        // On mobile (< 768px), position above the bottom nav
+        // On desktop (>= 768px), use standard positioning via Tailwind class
+        bottom: 'calc(156px + env(safe-area-inset-bottom, 0px))',
         right: '20px',
         width: 'min(calc(100vw - 40px), 380px)',
         height: 'min(500px, calc(100vh - 160px))',
