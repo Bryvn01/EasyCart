@@ -1,16 +1,34 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { FiSearch, FiX } from 'react-icons/fi';
 
 const MobileBottomNav = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { cartCount } = useCart();
+  const [showSearchOverlay, setShowSearchOverlay] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+      setShowSearchOverlay(false);
+    }
+  };
+
+  const handleSearchClick = (e) => {
+    e.preventDefault();
+    setShowSearchOverlay(true);
+  };
 
   const navItems = [
-    { path: '/', icon: '🏠', label: 'Home' },
-    { path: '/products', icon: '🛍️', label: 'Shop' },
-    { path: '/cart', icon: '🛒', label: 'Cart', badge: cartCount },
-    { path: '/profile', icon: '👤', label: 'Account' },
+    { path: '/', icon: '🏠', label: 'Home', isSearchButton: false },
+    { path: '/products', icon: '🔍', label: 'Search', onClick: handleSearchClick, isSearchButton: true },
+    { path: '/cart', icon: '🛒', label: 'Cart', badge: cartCount, isSearchButton: false },
+    { path: '/profile', icon: '👤', label: 'Account', isSearchButton: false },
   ];
 
   // Add padding to body to prevent content overlap
@@ -31,56 +49,119 @@ const MobileBottomNav = () => {
   }, []);
 
   return (
-    <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 bg-white/98 backdrop-blur-lg border-t border-gray-200 z-50"
-      style={{
-        paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
-        boxShadow: '0 -4px 25px rgba(0,0,0,0.08)',
-        backdropFilter: 'blur(20px)'
-      }}
-    >
-      <div className="flex justify-around items-center h-16 px-2">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex flex-col items-center justify-center flex-1 h-full relative rounded-lg mx-1 transition-all duration-200 ${
-                isActive ? 'bg-primary-50' : 'hover:bg-gray-50 active:bg-gray-100'
-              }`}
-              style={{
-                color: isActive ? 'var(--primary-600)' : 'var(--gray-600)',
-                touchAction: 'manipulation',
-                minWidth: '44px'
-              }}
-            >
-              <div className="relative">
-                <span className={`text-xl mb-1 transition-transform duration-200 ${
-                  isActive ? 'scale-110' : ''
-                }`}>{item.icon}</span>
-                {item.badge > 0 && (
-                  <span
-                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-sm"
-                    style={{ fontSize: '9px' }}
-                  >
-                    {item.badge > 99 ? '99+' : item.badge}
-                  </span>
-                )}
+    <>
+      {/* Search Overlay */}
+      {showSearchOverlay && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] md:hidden"
+          onClick={() => setShowSearchOverlay(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Search overlay"
+        >
+          <div 
+            className="absolute top-0 left-0 right-0 bg-white shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4">
+              <div className="flex items-center gap-3 mb-4">
+                <h2 className="text-lg font-semibold text-gray-900 flex-1">Search Products</h2>
+                <button
+                  onClick={() => setShowSearchOverlay(false)}
+                  className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  aria-label="Close search"
+                >
+                  <FiX className="w-6 h-6 text-gray-600" />
+                </button>
               </div>
-              <span className={`text-xs font-medium transition-all duration-200 ${
-                isActive ? 'font-semibold' : ''
-              }`}>{item.label}</span>
-              {isActive && (
-                <div
-                  className="absolute top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary-600 rounded-b-full"
-                />
-              )}
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+              <form onSubmit={handleSearchSubmit}>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <FiSearch className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search for products..."
+                    className="w-full h-12 pl-12 pr-4 text-base bg-gray-50 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    style={{ fontSize: '16px' }}
+                    autoFocus
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="mt-3 w-full h-12 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full font-medium hover:from-primary-600 hover:to-primary-700 active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  disabled={!searchQuery.trim()}
+                >
+                  Search
+                </button>
+              </form>
+              <div className="mt-4 text-sm text-gray-500">
+                <p>Popular searches: Electronics, Fashion, Home & Garden</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Navigation */}
+      <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 bg-white/98 backdrop-blur-lg border-t border-gray-200 z-50"
+        style={{
+          paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
+          boxShadow: '0 -4px 25px rgba(0,0,0,0.08)',
+          backdropFilter: 'blur(20px)'
+        }}
+      >
+        <div className="flex justify-around items-center h-16 px-2">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path && !item.isSearchButton;
+            const Component = item.onClick ? 'button' : Link;
+            const componentProps = item.onClick 
+              ? { onClick: item.onClick, type: 'button' }
+              : { to: item.path };
+
+            return (
+              <Component
+                key={item.path}
+                {...componentProps}
+                className={`flex flex-col items-center justify-center flex-1 h-full relative rounded-lg mx-1 transition-all duration-200 ${
+                  isActive ? 'bg-primary-50' : 'hover:bg-gray-50 active:bg-gray-100'
+                }`}
+                style={{
+                  color: isActive ? 'var(--primary-600)' : 'var(--gray-600)',
+                  touchAction: 'manipulation',
+                  minWidth: '44px'
+                }}
+              >
+                <div className="relative">
+                  <span className={`text-xl mb-1 transition-transform duration-200 ${
+                    isActive ? 'scale-110' : ''
+                  }`}>{item.icon}</span>
+                  {item.badge > 0 && (
+                    <span
+                      className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-sm"
+                      style={{ fontSize: '9px' }}
+                    >
+                      {item.badge > 99 ? '99+' : item.badge}
+                    </span>
+                  )}
+                </div>
+                <span className={`text-xs font-medium transition-all duration-200 ${
+                  isActive ? 'font-semibold' : ''
+                }`}>{item.label}</span>
+                {isActive && (
+                  <div
+                    className="absolute top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary-600 rounded-b-full"
+                  />
+                )}
+              </Component>
+            );
+          })}
+        </div>
+      </nav>
+    </>
   );
 };
 
