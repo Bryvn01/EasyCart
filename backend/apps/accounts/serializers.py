@@ -3,6 +3,12 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import User
+from .validators import (
+    validate_password_strength,
+    validate_phone_number,
+    validate_username,
+    PHONE_PATTERN,
+)
 import re
 
 
@@ -29,38 +35,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         """
         Validate password strength and security requirements.
         """
-        # Minimum length check
-        if len(value) < 8:
-            raise serializers.ValidationError(
-                "Password must be at least 8 characters long."
-            )
-        
-        # Maximum length check to prevent DoS
-        if len(value) > 128:
-            raise serializers.ValidationError(
-                "Password must not exceed 128 characters."
-            )
-        
-        # Complexity checks
-        if not re.search(r"[A-Z]", value):
-            raise serializers.ValidationError(
-                "Password must contain at least one uppercase letter."
-            )
-        
-        if not re.search(r"[a-z]", value):
-            raise serializers.ValidationError(
-                "Password must contain at least one lowercase letter."
-            )
-        
-        if not re.search(r"\d", value):
-            raise serializers.ValidationError(
-                "Password must contain at least one digit."
-            )
-        
-        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', value):
-            raise serializers.ValidationError(
-                "Password must contain at least one special character."
-            )
+        # Use centralized validation
+        is_valid, error_message = validate_password_strength(value)
+        if not is_valid:
+            raise serializers.ValidationError(error_message)
         
         # Use Django's password validators
         try:
@@ -74,22 +52,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         """
         Validate username format and security.
         """
-        # Length check
-        if len(value) < 3:
-            raise serializers.ValidationError(
-                "Username must be at least 3 characters long."
-            )
-        
-        if len(value) > 150:
-            raise serializers.ValidationError(
-                "Username must not exceed 150 characters."
-            )
-        
-        # Alphanumeric and safe characters only
-        if not re.match(r'^[a-zA-Z0-9_.-]+$', value):
-            raise serializers.ValidationError(
-                "Username can only contain letters, numbers, dots, hyphens, and underscores."
-            )
+        # Use centralized validation
+        is_valid, error_message = validate_username(value)
+        if not is_valid:
+            raise serializers.ValidationError(error_message)
         
         return value
 
@@ -97,10 +63,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         """
         Validate phone number format.
         """
-        if value and not re.match(r'^\+?[1-9]\d{1,14}$', value):
-            raise serializers.ValidationError(
-                "Please enter a valid phone number."
-            )
+        # Use centralized validation
+        is_valid, error_message = validate_phone_number(value)
+        if not is_valid:
+            raise serializers.ValidationError(error_message)
+        
         return value
 
     def validate(self, attrs):

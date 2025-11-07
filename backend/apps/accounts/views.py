@@ -15,6 +15,7 @@ import os
 from .models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 from .permissions import IsSuperAdmin, IsAdminUser
+from .validators import validate_phone_number, PHONE_PATTERN
 from rest_framework import generics, permissions
 
 # --- Customer Management API Views ---
@@ -133,9 +134,10 @@ def profile(request):
         # Validate and sanitize inputs
         if 'phone' in data and data['phone']:
             phone = data['phone'].strip()
-            if not re.match(r'^\+?[1-9]\d{1,14}$', phone):
+            is_valid, error_msg = validate_phone_number(phone)
+            if not is_valid:
                 return Response(
-                    {"phone": ["Invalid phone number format"]},
+                    {"phone": [error_msg]},
                     status=status.HTTP_400_BAD_REQUEST
                 )
         

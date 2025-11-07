@@ -51,6 +51,13 @@ class AuditLoggingMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         """Log response for sensitive operations"""
         if hasattr(request, 'audit_action'):
+            # Get user info (now that authentication middleware has run)
+            user_id = None
+            username = None
+            if hasattr(request, 'user') and request.user.is_authenticated:
+                user_id = request.user.id
+                username = request.user.username
+            
             # Get client IP
             x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
             if x_forwarded_for:
@@ -61,8 +68,8 @@ class AuditLoggingMiddleware(MiddlewareMixin):
             # Log the audit event
             audit_data = {
                 'action': request.audit_action,
-                'user_id': request.audit_user_id,
-                'username': request.audit_username,
+                'user_id': user_id,
+                'username': username,
                 'ip_address': ip_address,
                 'path': request.path,
                 'method': request.method,
@@ -74,14 +81,14 @@ class AuditLoggingMiddleware(MiddlewareMixin):
             if response.status_code >= 400:
                 logger.warning(
                     f"AUDIT: {request.audit_action} FAILED - "
-                    f"User: {request.audit_username or 'Anonymous'}, "
+                    f"User: {username or 'Anonymous'}, "
                     f"IP: {ip_address}, "
                     f"Status: {response.status_code}"
                 )
             else:
                 logger.info(
                     f"AUDIT: {request.audit_action} SUCCESS - "
-                    f"User: {request.audit_username or 'Anonymous'}, "
+                    f"User: {username or 'Anonymous'}, "
                     f"IP: {ip_address}"
                 )
         
