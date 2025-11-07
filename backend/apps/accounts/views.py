@@ -36,27 +36,27 @@ class CustomerDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         # Admins can access any user; users can only access/update themselves
+        from rest_framework.exceptions import PermissionDenied, NotFound
+        from django.http import Http404
+        
         try:
             obj = super().get_object()
-            user = self.request.user
-
-            # Allow superusers and admins full access
-            if user.is_superuser or getattr(user, "is_admin", False):
-                return obj
-
-            # Regular users can only access their own data
-            if obj.pk != user.pk:
-                from rest_framework.exceptions import PermissionDenied
-
-                raise PermissionDenied(
-                    "You do not have permission to access this user."
-                )
-
-            return obj
-        except Exception as e:
-            from rest_framework.exceptions import NotFound
-
+        except Http404:
             raise NotFound("User not found")
+            
+        user = self.request.user
+
+        # Allow superusers and admins full access
+        if user.is_superuser or getattr(user, "is_admin", False):
+            return obj
+
+        # Regular users can only access their own data
+        if obj.pk != user.pk:
+            raise PermissionDenied(
+                "You do not have permission to access this user."
+            )
+
+        return obj
 
 
 @api_view(["POST"])
