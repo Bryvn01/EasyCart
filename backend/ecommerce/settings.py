@@ -78,6 +78,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "middleware.audit_logging.AuditLoggingMiddleware",  # Security audit logging
     "ecommerce.middleware.ErrorHandlingMiddleware",
 ]
 # --- Rate Limiting ---
@@ -370,6 +371,11 @@ LOGGING = {
         "apps": {
             "handlers": ["console", "file"],
             "level": "DEBUG" if DEBUG else "INFO",
+            "propagate": False,
+        },
+        "security_audit": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
             "propagate": False,
         },
     },
