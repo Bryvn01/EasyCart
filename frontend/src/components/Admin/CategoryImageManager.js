@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 const CategoryImageManager = ({ category, onUpdate }) => {
@@ -161,7 +161,7 @@ const CategoryImageManager = ({ category, onUpdate }) => {
               >
                 <img
                   src={suggestedUrl}
-                  alt={`Suggested ${category?.name} image ${index + 1}`}
+                  alt={`Suggested ${category?.name} option ${index + 1}`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity flex items-center justify-center">
