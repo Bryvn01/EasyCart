@@ -64,6 +64,10 @@ html {
   .mobile-content-padding {
     padding-bottom: calc(100px + var(--safe-area-bottom));
   }
+
+  html {
+    overflow-x: hidden;
+  }
 }
 
 /* ===== Z-Index Management ===== */
@@ -71,12 +75,20 @@ html {
   z-index: 50;
 }
 
+.z-mobile-menu-overlay {
+  z-index: 60;
+}
+
+.z-mobile-menu {
+  z-index: 70;
+}
+
 .z-chat {
   z-index: 45;
 }
 
 .z-modal {
-  z-index: 60;
+  z-index: 80;
 }
 
 .z-dropdown {
