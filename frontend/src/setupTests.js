@@ -66,3 +66,6 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({}),
   useLocation: () => ({ pathname: '/' })
 }));
+
+// Mock scrollIntoView (not available in JSDOM)
+Element.prototype.scrollIntoView = jest.fn();
