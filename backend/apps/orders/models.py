@@ -62,7 +62,7 @@ class PromoCode(models.Model):
     def calculate_discount(self, subtotal):
         """Calculate discount amount for given subtotal"""
         if subtotal < self.min_purchase:
-            return 0
+            return Decimal('0')
         
         if self.discount_type == "percentage":
             discount = subtotal * (self.discount_value / 100)

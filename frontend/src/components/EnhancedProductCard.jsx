@@ -4,6 +4,12 @@ import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import './EnhancedProductCard.css';
 
+/**
+ * EnhancedProductCard component
+ * 
+ * Uses react-hot-toast for notifications (migrated from custom Toast component)
+ * to provide consistent, global notification experience across the app.
+ */
 const EnhancedProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const [isAdding, setIsAdding] = useState(false);

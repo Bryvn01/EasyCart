@@ -82,6 +82,7 @@ export const CartProvider = ({ children }) => {
 
     // Optimistic update - immediately update local state
     const previousCart = cart;
+    const previousCount = cartCount;
     if (cart) {
       const existingItem = cart.items?.find(item => item.product.id === productId);
       if (existingItem) {
@@ -107,6 +108,7 @@ export const CartProvider = ({ children }) => {
       const response = await ordersAPI.addToCart({ product_id: productId, quantity });
       
       // Fetch fresh cart data from backend (source of truth)
+      // Note: fetchCart is stable due to useCallback with isAuthenticated dep
       const freshCart = await fetchCart();
       
       pendingOperations.current.delete(operationKey);
@@ -120,13 +122,13 @@ export const CartProvider = ({ children }) => {
     } catch (error) {
       // Rollback optimistic update on error
       setCart(previousCart);
-      setCartCount(previousCart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0);
+      setCartCount(previousCount);
       
       pendingOperations.current.delete(operationKey);
       console.error('Error adding to cart:', error);
       throw error;
     }
-  }, [isAuthenticated, cart, cartCount, fetchCart]);
+  }, [isAuthenticated, cart, cartCount, fetchCart]); // fetchCart is stable (useCallback)
 
   const updateCartItem = useCallback(async (itemId, quantity) => {
     if (!isAuthenticated) {

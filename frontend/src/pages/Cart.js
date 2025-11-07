@@ -93,6 +93,18 @@ const Cart = () => {
     }
   };
 
+  const getCheckoutErrorMessage = (error) => {
+    // Extract error message with fallbacks
+    const errorData = error.response?.data;
+    if (!errorData) return 'Checkout failed. Please try again.';
+    
+    if (errorData.details && Array.isArray(errorData.details)) {
+      return errorData.details.join(', ');
+    }
+    
+    return errorData.error || 'Checkout failed. Please try again.';
+  };
+
   const checkout = async () => {
     if (!shippingAddress.trim()) {
       toast.error('Please enter shipping address');
@@ -119,7 +131,7 @@ const Cart = () => {
       setShowPaymentModal(true);
     } catch (error) {
       console.error('Error during checkout:', error);
-      const errorMsg = error.response?.data?.error || error.response?.data?.details?.join(', ') || 'Checkout failed. Please try again.';
+      const errorMsg = getCheckoutErrorMessage(error);
       toast.error(errorMsg);
     } finally {
       setCheckoutLoading(false);
