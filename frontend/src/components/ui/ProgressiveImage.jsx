@@ -44,9 +44,11 @@ const ProgressiveImage = ({
       if (onError) onError();
     };
 
+    // Cleanup function to prevent memory leaks
     return () => {
       img.onload = null;
       img.onerror = null;
+      img.src = ''; // Release image reference
     };
   }, [src, placeholder, onLoad, onError]);
 

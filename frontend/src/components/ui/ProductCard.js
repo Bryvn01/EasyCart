@@ -2,7 +2,7 @@
 import React, { useRef, useState } from 'react';
 import { useFadeOutOnSuccess } from '../../hooks/useFadeOutOnSuccess';
 import { motion } from 'framer-motion';
-import { getProductImageUrl, applyCloudinaryTransformations } from '../../utils/imageUtils';
+import { getProductImageUrl } from '../../utils/imageUtils';
 
 /**
  * ProductCard: Standardized, accessible, responsive product card for EasyCart

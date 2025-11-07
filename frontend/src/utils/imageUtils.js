@@ -47,6 +47,25 @@ export const normalizeImageUrl = (imageUrl) => {
 };
 
 /**
+ * Check if URL is a valid Cloudinary URL
+ * @param {string} url - URL to check
+ * @returns {boolean} - True if valid Cloudinary URL
+ */
+const isCloudinaryUrl = (url) => {
+  if (!url) return false;
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname.toLowerCase();
+    // Exact match for Cloudinary domains (no partial matches)
+    return hostname === 'res.cloudinary.com' || 
+           hostname === 'cloudinary.com' ||
+           /^[a-zA-Z0-9-]+\.cloudinary\.com$/.test(hostname);
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
  * Apply Cloudinary transformations to optimize image delivery
  * @param {string} imageUrl - Original Cloudinary image URL
  * @param {Object} options - Transformation options
@@ -59,7 +78,7 @@ export const normalizeImageUrl = (imageUrl) => {
  * @returns {string} - Optimized image URL
  */
 export const applyCloudinaryTransformations = (imageUrl, options = {}) => {
-  if (!imageUrl || !imageUrl.includes('cloudinary.com')) {
+  if (!isCloudinaryUrl(imageUrl)) {
     return imageUrl;
   }
 
@@ -85,7 +104,7 @@ export const applyCloudinaryTransformations = (imageUrl, options = {}) => {
     transformations.push('fl_progressive');
   }
 
-  // Add lazy loading flag for better performance
+  // Add lossy compression for smaller file sizes
   transformations.push('fl_lossy');
 
   const transformString = transformations.join(',');
@@ -120,7 +139,7 @@ export const getProductImageUrl = (product, optionsOrFallback = {}, fallback = '
   if (!normalized) return finalFallback;
 
   // Apply Cloudinary transformations if it's a Cloudinary URL and options provided
-  if (normalized.includes('cloudinary.com') && Object.keys(options).length > 0) {
+  if (isCloudinaryUrl(normalized) && Object.keys(options).length > 0) {
     return applyCloudinaryTransformations(normalized, options);
   }
 
@@ -134,7 +153,7 @@ export const getProductImageUrl = (product, optionsOrFallback = {}, fallback = '
  * @returns {string} - srcset string
  */
 export const generateSrcSet = (imageUrl, sizes = [320, 640, 768, 1024, 1280]) => {
-  if (!imageUrl || !imageUrl.includes('cloudinary.com')) {
+  if (!isCloudinaryUrl(imageUrl)) {
     return '';
   }
 
@@ -170,7 +189,8 @@ const imageUtils = {
   applyCloudinaryTransformations,
   getProductImageUrl,
   generateSrcSet,
-  preloadImage
+  preloadImage,
+  isCloudinaryUrl
 };
 
 export default imageUtils;

@@ -29,7 +29,7 @@ const Products = () => {
   const location = useLocation();
 
   // Use React Query hooks
-  const { categories, loading: categoriesLoading } = useCategories();
+  const { categories } = useCategories();
   const { products, loading, pagination, isFetching } = useProducts({
     page: currentPage,
     pageSize: 12,
