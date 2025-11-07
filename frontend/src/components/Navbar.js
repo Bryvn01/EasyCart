@@ -38,21 +38,18 @@ const Navbar = () => {
 
     if (isMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      // Prevent body scroll and horizontal overflow when menu is open
+      // Prevent body scroll when menu is open
       document.body.style.overflow = 'hidden';
-      document.body.style.overflowX = 'hidden';
-      document.documentElement.style.overflowX = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
-      document.body.style.overflowX = 'unset';
-      document.documentElement.style.overflowX = 'unset';
+      document.documentElement.style.overflow = 'unset';
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.body.style.overflow = 'unset';
-      document.body.style.overflowX = 'unset';
-      document.documentElement.style.overflowX = 'unset';
+      document.documentElement.style.overflow = 'unset';
     };
   }, [isMenuOpen]);
 

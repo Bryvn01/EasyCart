@@ -95,7 +95,7 @@ describe('Navbar Component', () => {
     
     await waitFor(() => {
       expect(document.body.style.overflow).toBe('hidden');
-      expect(document.body.style.overflowX).toBe('hidden');
+      expect(document.documentElement.style.overflow).toBe('hidden');
     });
   });
 
@@ -137,7 +137,7 @@ describe('Navbar Component', () => {
     
     await waitFor(() => {
       expect(document.body.style.overflow).toBe('unset');
-      expect(document.body.style.overflowX).toBe('unset');
+      expect(document.documentElement.style.overflow).toBe('unset');
     });
   });
 
@@ -165,17 +165,17 @@ describe('Navbar Component', () => {
   test('overlay backdrop is rendered when menu is open', async () => {
     renderNavbar();
     
-    // Initially no overlay
-    let overlay = document.querySelector('.fixed.inset-0.bg-black\\/50');
-    expect(overlay).not.toBeInTheDocument();
+    // Initially no overlay (using role for better selector)
+    const overlayBefore = document.querySelector('[aria-hidden="true"].fixed.inset-0');
+    expect(overlayBefore).not.toBeInTheDocument();
     
     // Open menu
     const menuButton = screen.getByLabelText('Open menu');
     fireEvent.click(menuButton);
     
     await waitFor(() => {
-      overlay = document.querySelector('.fixed.inset-0.bg-black\\/50');
-      expect(overlay).toBeInTheDocument();
+      const overlayAfter = document.querySelector('[aria-hidden="true"].fixed.inset-0');
+      expect(overlayAfter).toBeInTheDocument();
     });
   });
 
