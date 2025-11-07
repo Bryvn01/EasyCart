@@ -96,7 +96,7 @@ const CategoryImageUpload = ({ category, onImageUpdate, apiUrl }) => {
         img.src = imageUrl;
       });
 
-      const response = await axios.patch(
+      await axios.patch(
         `${apiUrl}/admin/categories/${category.id}/`,
         { image_url: imageUrl },
         {
