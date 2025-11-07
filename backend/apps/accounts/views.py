@@ -61,6 +61,7 @@ class CustomerDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
+@ratelimit(key="ip", rate="3/h", method="POST", block=True)
 def register(request):
     # Sanitize all input fields to prevent injection attacks
     data = request.data.copy()
@@ -112,12 +113,39 @@ def login(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET", "PUT"])
+@api_view(["GET", "PUT", "PATCH"])
 def profile(request):
+    """
+    Get or update user profile with enhanced validation.
+    """
     if request.method == "GET":
         return Response(UserSerializer(request.user).data)
-    elif request.method == "PUT":
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
+    
+    elif request.method in ["PUT", "PATCH"]:
+        # Don't allow sensitive fields to be updated via this endpoint
+        data = request.data.copy()
+        
+        # Remove fields that shouldn't be updated here
+        sensitive_fields = ['is_admin', 'is_staff', 'is_superuser', 'role', 'email']
+        for field in sensitive_fields:
+            data.pop(field, None)
+        
+        # Validate and sanitize inputs
+        if 'phone' in data and data['phone']:
+            phone = data['phone'].strip()
+            if not re.match(r'^\+?[1-9]\d{1,14}$', phone):
+                return Response(
+                    {"phone": ["Invalid phone number format"]},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if 'address' in data and data['address']:
+            # Sanitize address
+            raw_address = str(data['address'])[:500]
+            clean_address = re.sub(r'[.]{2,}|[/\\]|%2e|%2f|%5c|%00', '', raw_address)
+            data['address'] = escape(clean_address).strip()
+        
+        serializer = UserSerializer(request.user, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -213,6 +241,58 @@ def reset_password(request):
         return Response(
             {"error": "Invalid reset link"}, status=status.HTTP_400_BAD_REQUEST
         )
+
+
+@api_view(["POST"])
+def change_password(request):
+    """
+    Allow authenticated users to change their password.
+    """
+    from django.contrib.auth.password_validation import validate_password as django_validate_password
+    from django.core.exceptions import ValidationError as DjangoValidationError
+    
+    current_password = request.data.get("current_password", "")
+    new_password = request.data.get("new_password", "")
+    confirm_password = request.data.get("confirm_password", "")
+
+    # Validate all fields are present
+    if not all([current_password, new_password, confirm_password]):
+        return Response(
+            {"error": "All fields are required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Verify current password
+    if not request.user.check_password(current_password):
+        return Response(
+            {"error": "Current password is incorrect"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Verify new passwords match
+    if new_password != confirm_password:
+        return Response(
+            {"error": "New passwords do not match"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Validate password strength
+    try:
+        django_validate_password(new_password, request.user)
+    except DjangoValidationError as e:
+        return Response(
+            {"error": list(e.messages)},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Change password
+    request.user.set_password(new_password)
+    request.user.save()
+
+    return Response(
+        {"message": "Password changed successfully"},
+        status=status.HTTP_200_OK
+    )
 
 
 @api_view(["GET"])

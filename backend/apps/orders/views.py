@@ -8,6 +8,8 @@ from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 from django.utils.html import escape
 from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.db.models import F
 import json
 import re
 import requests
@@ -197,11 +199,12 @@ def move_to_wishlist(request, item_id):
 
 @api_view(["POST"])
 def checkout(request):
+    """
+    Process checkout with atomic transaction to ensure data consistency.
+    """
     cart = get_object_or_404(Cart, user=request.user)
     if not cart.items.exists():
         return Response({"error": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST)
-
-    total_amount = sum(item.product.price * item.quantity for item in cart.items.all())
 
     # Sanitize and validate inputs
     raw_address = request.data.get("shipping_address", "").strip()
@@ -209,7 +212,7 @@ def checkout(request):
     shipping_address = re.sub(r"[.]{2,}|[/\\]", "", escape(raw_address))
     if not shipping_address or len(shipping_address) < 10:
         return Response(
-            {"error": "Valid shipping address is required"},
+            {"error": "Valid shipping address is required (minimum 10 characters)"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -235,35 +238,60 @@ def checkout(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    order = Order.objects.create(
-        user=request.user,
-        total_amount=total_amount,
-        shipping_address=shipping_address,
-        payment_method=payment_method,
-        phone_number=phone_number,
-    )
+    # Use atomic transaction to ensure consistency
+    try:
+        with transaction.atomic():
+            # Lock cart items for update to prevent race conditions
+            cart_items = cart.items.select_for_update().select_related('product')
+            
+            # Validate stock availability for all items before creating order
+            for cart_item in cart_items:
+                # Refresh product from database with lock
+                product = Product.objects.select_for_update().get(pk=cart_item.product.pk)
+                if product.stock < cart_item.quantity:
+                    return Response(
+                        {"error": f"Insufficient stock for {product.name}. Only {product.stock} available."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            
+            # Calculate total amount
+            total_amount = sum(item.product.price * item.quantity for item in cart_items)
 
-    for cart_item in cart.items.all():
-        # Check stock availability
-        if cart_item.product.stock < cart_item.quantity:
-            return Response(
-                {"error": f"Insufficient stock for {cart_item.product.name}"},
-                status=status.HTTP_400_BAD_REQUEST,
+            # Create order
+            order = Order.objects.create(
+                user=request.user,
+                total_amount=total_amount,
+                shipping_address=shipping_address,
+                payment_method=payment_method,
+                phone_number=phone_number,
             )
 
-        order.items.create(
-            product=cart_item.product,
-            quantity=cart_item.quantity,
-            price=cart_item.product.price,
+            # Create order items and update stock atomically
+            for cart_item in cart_items:
+                order.items.create(
+                    product=cart_item.product,
+                    quantity=cart_item.quantity,
+                    price=cart_item.product.price,
+                )
+
+                # Update stock using F() expression to prevent race conditions
+                Product.objects.filter(pk=cart_item.product.pk).update(
+                    stock=F('stock') - cart_item.quantity
+                )
+
+            # Clear cart
+            cart.items.all().delete()
+
+            return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
+            
+    except Exception as e:
+        # Log the error
+        import logging
+        logging.error(f"Checkout error: {str(e)}")
+        return Response(
+            {"error": "An error occurred during checkout. Please try again."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
-        # Update stock
-        cart_item.product.stock -= cart_item.quantity
-        cart_item.product.save()
-
-    cart.items.all().delete()
-
-    return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])

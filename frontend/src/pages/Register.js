@@ -14,6 +14,11 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    feedback: '',
+    color: 'gray'
+  });
 
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -21,11 +26,52 @@ const Register = () => {
   const successMsgRef = useRef(null);
   const [registerSuccess, setRegisterSuccess] = useState(false);
 
+  const checkPasswordStrength = (password) => {
+    let score = 0;
+    let feedback = [];
+    
+    if (password.length >= 8) score++;
+    if (password.length >= 12) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
+    
+    // Feedback messages
+    if (password.length < 8) feedback.push('at least 8 characters');
+    if (!/[A-Z]/.test(password)) feedback.push('one uppercase letter');
+    if (!/[a-z]/.test(password)) feedback.push('one lowercase letter');
+    if (!/\d/.test(password)) feedback.push('one number');
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) feedback.push('one special character');
+    
+    let strength = { score: 0, feedback: '', color: 'gray' };
+    
+    if (score <= 2) {
+      strength = { score, feedback: 'Weak', color: '#ef4444' };
+    } else if (score <= 4) {
+      strength = { score, feedback: 'Medium', color: '#f59e0b' };
+    } else {
+      strength = { score, feedback: 'Strong', color: '#10b981' };
+    }
+    
+    if (feedback.length > 0) {
+      strength.feedback += ` (Need: ${feedback.join(', ')})`;
+    }
+    
+    return strength;
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+    
+    // Check password strength when password changes
+    if (name === 'password') {
+      setPasswordStrength(checkPasswordStrength(value));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -40,8 +86,33 @@ const Register = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      setLoading(false);
+      return;
+    }
+    
+    // Enhanced password validation
+    if (!/[A-Z]/.test(formData.password)) {
+      setError('Password must contain at least one uppercase letter');
+      setLoading(false);
+      return;
+    }
+    
+    if (!/[a-z]/.test(formData.password)) {
+      setError('Password must contain at least one lowercase letter');
+      setLoading(false);
+      return;
+    }
+    
+    if (!/\d/.test(formData.password)) {
+      setError('Password must contain at least one digit');
+      setLoading(false);
+      return;
+    }
+    
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
+      setError('Password must contain at least one special character');
       setLoading(false);
       return;
     }
@@ -190,6 +261,31 @@ const Register = () => {
                 onChange={handleChange}
                 required
               />
+              {/* Password Strength Indicator */}
+              {formData.password && (
+                <div style={{ marginTop: 'var(--space-2)' }}>
+                  <div style={{
+                    height: '4px',
+                    backgroundColor: '#e5e7eb',
+                    borderRadius: '2px',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      height: '100%',
+                      width: `${(passwordStrength.score / 6) * 100}%`,
+                      backgroundColor: passwordStrength.color,
+                      transition: 'all 0.3s ease'
+                    }} />
+                  </div>
+                  <p style={{
+                    fontSize: '0.75rem',
+                    marginTop: 'var(--space-1)',
+                    color: passwordStrength.color
+                  }}>
+                    {passwordStrength.feedback}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="form-group">
