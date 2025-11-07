@@ -133,10 +133,15 @@ export const CartProvider = ({ children }) => {
       throw new Error('Please login to update cart');
     }
 
-    const operationKey = `update-${itemId}-${Date.now()}`;
+    const operationKey = `update-${itemId}`;
     
-    // Prevent duplicate operations
-    if (pendingOperations.current.has(operationKey)) {
+    // Prevent duplicate operations on same item
+    const isDuplicate = Array.from(pendingOperations.current).some(
+      key => key.startsWith(`update-${itemId}`)
+    );
+    
+    if (isDuplicate) {
+      console.log('Duplicate update operation detected, skipping');
       return;
     }
 
@@ -178,7 +183,13 @@ export const CartProvider = ({ children }) => {
 
     const operationKey = `remove-${itemId}`;
     
-    if (pendingOperations.current.has(operationKey)) {
+    // Prevent duplicate operations on same item
+    const isDuplicate = Array.from(pendingOperations.current).some(
+      key => key.startsWith(`remove-${itemId}`)
+    );
+    
+    if (isDuplicate) {
+      console.log('Duplicate remove operation detected, skipping');
       return;
     }
 
@@ -216,9 +227,15 @@ export const CartProvider = ({ children }) => {
       throw new Error('Please login to move items to wishlist');
     }
 
-    const operationKey = `wishlist-${itemId}`;
+    const operationKey = `wishlist-${itemId}-${Date.now()}`;
     
-    if (pendingOperations.current.has(operationKey)) {
+    // Prevent duplicate operations on same item
+    const isDuplicate = Array.from(pendingOperations.current).some(
+      key => key.startsWith(`wishlist-${itemId}`)
+    );
+    
+    if (isDuplicate) {
+      console.log('Duplicate wishlist operation detected, skipping');
       return;
     }
 

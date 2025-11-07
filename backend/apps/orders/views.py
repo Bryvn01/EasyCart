@@ -273,6 +273,9 @@ def checkout(request):
     """
     from django.db import transaction
     from django.db.models import F
+    import logging
+    
+    logger = logging.getLogger(__name__)
     
     cart = get_object_or_404(Cart, user=request.user)
     if not cart.items.exists():
@@ -383,13 +386,16 @@ def checkout(request):
         return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
         
     except ValidationError as e:
+        # Log the full error for debugging (server-side only)
+        logger.error(f"Checkout validation error for user {request.user.id}: {str(e)}")
+        # Return generic error message to user
         return Response(
-            {"error": str(e)},
+            {"error": "Unable to complete checkout. Please check your cart and try again."},
             status=status.HTTP_400_BAD_REQUEST,
         )
     except Exception as e:
-        # Log the error for debugging
-        print(f"Checkout error: {str(e)}")
+        # Log the error for debugging (server-side only)
+        logger.exception(f"Checkout error for user {request.user.id}: {str(e)}")
         return Response(
             {"error": "Checkout failed. Please try again."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
