@@ -149,12 +149,11 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--space-4);
-  overflow-x: hidden;
 }
 
 #root {
   overflow-x: hidden;
-  max-width: 100vw;
+  max-width: 100%;
 }
 
 .flex { display: flex; }
