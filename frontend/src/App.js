@@ -1,10 +1,10 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
-import { WishlistProvider } from './context/WishlistProvider';
+import { WishlistProvider } from './context/WishlistContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -19,20 +19,22 @@ import SupportChat from './components/Chat/SupportChat';
 import NetworkStatus from './components/NetworkStatus';
 import InstallPWA from './components/InstallPWA';
 import { usePerformance } from './hooks/usePerformance';
-import LandingPage from './pages/LandingPage';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import Products from './pages/Products';
-import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
-import Orders from './pages/Orders';
-import Profile from './pages/Profile';
-import Wishlist from './pages/Wishlist';
-import AdminProducts from './pages/AdminProducts';
-import AdminDashboard from './pages/AdminDashboard';
-import ProductManager from './components/Admin/ProductManager';
-import NotFound from './pages/NotFound';
+
+// Lazy load pages for code splitting
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const Products = lazy(() => import('./pages/Products'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail'));
+const Cart = lazy(() => import('./pages/Cart'));
+const Orders = lazy(() => import('./pages/Orders'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Wishlist = lazy(() => import('./pages/Wishlist'));
+const AdminProducts = lazy(() => import('./pages/AdminProducts'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const ProductManager = lazy(() => import('./components/Admin/ProductManager'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Configure React Query client with optimal settings
 const queryClient = new QueryClient({
@@ -66,7 +68,11 @@ function App() {
                   <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
                     <Navbar />
                     <main className="flex-1">
-                      <Suspense fallback={<Loading size="lg" className="py-20" />}>
+                      <Suspense fallback={
+                        <div className="flex items-center justify-center min-h-[60vh]">
+                          <Loading size="lg" className="py-20" />
+                        </div>
+                      }>
                         <Routes>
                           <Route path="/" element={<LandingPage />} />
                           <Route path="/login" element={<Login />} />

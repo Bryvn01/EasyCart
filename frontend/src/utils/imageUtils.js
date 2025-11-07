@@ -97,20 +97,30 @@ export const applyCloudinaryTransformations = (imageUrl, options = {}) => {
 /**
  * Get product image URL with fallback and optional Cloudinary transformations
  * @param {Object} product - Product object
- * @param {Object} options - Transformation options (see applyCloudinaryTransformations)
- * @param {string} fallback - Fallback image URL
+ * @param {Object|string} optionsOrFallback - Transformation options object or fallback string (for backward compatibility)
+ * @param {string} fallback - Fallback image URL (when options is provided)
  * @returns {string} - Image URL or fallback
  */
-export const getProductImageUrl = (product, options = {}, fallback = '/placeholder.png') => {
-  if (!product) return fallback;
+export const getProductImageUrl = (product, optionsOrFallback = {}, fallback = '/placeholder.png') => {
+  // Backward compatibility: if second arg is a string, it's the fallback
+  let options = {};
+  let finalFallback = fallback;
+  
+  if (typeof optionsOrFallback === 'string') {
+    finalFallback = optionsOrFallback;
+  } else {
+    options = optionsOrFallback || {};
+  }
+
+  if (!product) return finalFallback;
 
   const imageUrl = product.image || product.image_url;
   const normalized = normalizeImageUrl(imageUrl);
 
-  if (!normalized) return fallback;
+  if (!normalized) return finalFallback;
 
-  // Apply Cloudinary transformations if it's a Cloudinary URL
-  if (normalized.includes('cloudinary.com')) {
+  // Apply Cloudinary transformations if it's a Cloudinary URL and options provided
+  if (normalized.includes('cloudinary.com') && Object.keys(options).length > 0) {
     return applyCloudinaryTransformations(normalized, options);
   }
 
