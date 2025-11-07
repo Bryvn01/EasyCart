@@ -97,7 +97,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",
-    "@babel/preset-env": "^7.14.0",
+    "@babel/preset-env": "^7.28.5",
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.27.1",
     "@chromatic-com/storybook": "^4.1.1",
@@ -125,7 +125,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "jsdom": "^27.0.0",
     "playwright": "^1.56.1",
-    "storybook": "^9.1.13",
+    "storybook": "^9.1.16",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }
