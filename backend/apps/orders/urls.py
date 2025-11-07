@@ -13,6 +13,8 @@ urlpatterns = [
         views.move_to_wishlist,
         name="move-to-wishlist",
     ),
+    path("cart/promo/apply/", views.apply_promo_code, name="apply-promo"),
+    path("cart/promo/remove/", views.remove_promo_code, name="remove-promo"),
     path("checkout/", views.checkout, name="checkout"),
     path("payment/initiate/", views.initiate_payment, name="initiate-payment"),
     path("payment/mpesa/callback/", views.mpesa_callback, name="mpesa-callback"),

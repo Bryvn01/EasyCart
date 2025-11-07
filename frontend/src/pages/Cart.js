@@ -14,6 +14,8 @@ const Cart = () => {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null);
+  const [promoCode, setPromoCode] = useState('');
+  const [applyingPromo, setApplyingPromo] = useState(false);
 
   const navigate = useNavigate();
 
@@ -60,6 +62,37 @@ const Cart = () => {
     }
   };
 
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) {
+      toast.error('Please enter a promo code');
+      return;
+    }
+
+    setApplyingPromo(true);
+    try {
+      const response = await ordersAPI.applyPromoCode(promoCode.trim());
+      toast.success(`Promo code applied! Saved KSh ${parseFloat(response.data.discount).toFixed(2)}`);
+      setPromoCode('');
+      await fetchCart(); // Refresh cart to show updated totals
+    } catch (error) {
+      console.error('Error applying promo code:', error);
+      toast.error(error.response?.data?.error || 'Invalid promo code');
+    } finally {
+      setApplyingPromo(false);
+    }
+  };
+
+  const handleRemovePromo = async () => {
+    try {
+      await ordersAPI.removePromoCode();
+      toast.success('Promo code removed');
+      await fetchCart();
+    } catch (error) {
+      console.error('Error removing promo code:', error);
+      toast.error('Failed to remove promo code');
+    }
+  };
+
   const checkout = async () => {
     if (!shippingAddress.trim()) {
       toast.error('Please enter shipping address');
@@ -86,7 +119,7 @@ const Cart = () => {
       setShowPaymentModal(true);
     } catch (error) {
       console.error('Error during checkout:', error);
-      const errorMsg = error.response?.data?.error || 'Checkout failed. Please try again.';
+      const errorMsg = error.response?.data?.error || error.response?.data?.details?.join(', ') || 'Checkout failed. Please try again.';
       toast.error(errorMsg);
     } finally {
       setCheckoutLoading(false);
@@ -307,6 +340,77 @@ const Cart = () => {
                   <span>Subtotal:</span>
                   <span>KSh {parseFloat(cart.subtotal || cart.total_price || 0).toFixed(2)}</span>
                 </div>
+                
+                {/* Promo Code Section */}
+                {cart.promo_code_details ? (
+                  <div className="flex justify-between mb-2" style={{ 
+                    background: 'var(--success-bg, #d1fae5)', 
+                    padding: 'var(--space-2)',
+                    borderRadius: 'var(--radius-sm)',
+                    marginBottom: 'var(--space-2)'
+                  }}>
+                    <div>
+                      <div style={{ fontWeight: '500', color: 'var(--success, #059669)' }}>
+                        🎉 {cart.promo_code_details.code}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--gray-600)' }}>
+                        {cart.promo_code_details.description}
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleRemovePromo}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--error)',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                        padding: '0'
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ marginBottom: 'var(--space-2)' }}>
+                    <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Promo code"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        onKeyPress={(e) => e.key === 'Enter' && handleApplyPromo()}
+                        disabled={applyingPromo}
+                        style={{ flex: 1 }}
+                      />
+                      <button
+                        onClick={handleApplyPromo}
+                        disabled={applyingPromo || !promoCode.trim()}
+                        style={{
+                          background: 'var(--primary)',
+                          color: 'white',
+                          border: 'none',
+                          padding: 'var(--space-2) var(--space-3)',
+                          borderRadius: 'var(--radius-sm)',
+                          fontSize: '0.875rem',
+                          cursor: applyingPromo || !promoCode.trim() ? 'not-allowed' : 'pointer',
+                          opacity: applyingPromo || !promoCode.trim() ? 0.6 : 1
+                        }}
+                      >
+                        {applyingPromo ? 'Applying...' : 'Apply'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
+                {cart.discount > 0 && (
+                  <div className="flex justify-between mb-2" style={{ color: 'var(--success, #059669)' }}>
+                    <span>Discount:</span>
+                    <span>-KSh {parseFloat(cart.discount || 0).toFixed(2)}</span>
+                  </div>
+                )}
+                
                 <div className="flex justify-between mb-2">
                   <span>Tax (16% VAT):</span>
                   <span>KSh {parseFloat(cart.tax || 0).toFixed(2)}</span>

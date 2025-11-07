@@ -196,6 +196,76 @@ def move_to_wishlist(request, item_id):
 
 
 @api_view(["POST"])
+def apply_promo_code(request):
+    """Apply a promo code to the cart"""
+    from .models import PromoCode
+    from .serializers import CartSerializer
+    
+    cart = get_object_or_404(Cart, user=request.user)
+    code = request.data.get("code", "").strip().upper()
+    
+    if not code:
+        return Response(
+            {"error": "Promo code is required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        promo_code = PromoCode.objects.get(code=code)
+    except PromoCode.DoesNotExist:
+        return Response(
+            {"error": "Invalid promo code"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    # Validate promo code
+    is_valid, message = promo_code.is_valid()
+    if not is_valid:
+        return Response(
+            {"error": message},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Calculate subtotal to check minimum purchase
+    subtotal = sum(item.product.price * item.quantity for item in cart.items.all())
+    if subtotal < promo_code.min_purchase:
+        return Response(
+            {
+                "error": f"Minimum purchase of KSh {promo_code.min_purchase} required"
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Apply promo code
+    cart.promo_code = promo_code
+    cart.save()
+    
+    # Calculate discount amount
+    discount = promo_code.calculate_discount(subtotal)
+    
+    return Response({
+        "message": "Promo code applied successfully",
+        "discount": float(discount),
+        "cart": CartSerializer(cart).data
+    })
+
+
+@api_view(["POST"])
+def remove_promo_code(request):
+    """Remove promo code from cart"""
+    from .serializers import CartSerializer
+    
+    cart = get_object_or_404(Cart, user=request.user)
+    cart.promo_code = None
+    cart.save()
+    
+    return Response({
+        "message": "Promo code removed",
+        "cart": CartSerializer(cart).data
+    })
+
+
+@api_view(["POST"])
 def checkout(request):
     """
     Enhanced checkout with atomic transactions and inventory locking

@@ -1,5 +1,56 @@
 from django.contrib import admin
-from .models import Order, OrderItem, Cart, CartItem
+from .models import Order, OrderItem, Cart, CartItem, PromoCode
+
+
+@admin.register(PromoCode)
+class PromoCodeAdmin(admin.ModelAdmin):
+    list_display = [
+        "code",
+        "discount_type",
+        "discount_value",
+        "min_purchase",
+        "usage_count",
+        "usage_limit",
+        "active",
+        "valid_from",
+        "valid_until",
+    ]
+    list_filter = ["discount_type", "active", "valid_from", "valid_until"]
+    search_fields = ["code", "description"]
+    list_editable = ["active"]
+    readonly_fields = ["usage_count", "created_at"]
+    
+    fieldsets = (
+        (
+            "Promo Code Details",
+            {
+                "fields": (
+                    "code",
+                    "description",
+                    "discount_type",
+                    "discount_value",
+                    "min_purchase",
+                    "max_discount",
+                )
+            },
+        ),
+        (
+            "Validity",
+            {
+                "fields": (
+                    "active",
+                    "valid_from",
+                    "valid_until",
+                    "usage_limit",
+                    "usage_count",
+                )
+            },
+        ),
+        (
+            "Metadata",
+            {"fields": ("created_at",), "classes": ("collapse",)},
+        ),
+    )
 
 
 class OrderItemInline(admin.TabularInline):
@@ -14,6 +65,8 @@ class OrderAdmin(admin.ModelAdmin):
         "id",
         "user",
         "total_amount",
+        "discount_amount",
+        "promo_code",
         "status",
         "payment_status",
         "payment_method",
@@ -42,6 +95,8 @@ class OrderAdmin(admin.ModelAdmin):
                 "fields": (
                     "user",
                     "total_amount",
+                    "discount_amount",
+                    "promo_code",
                     "status",
                     "shipping_address",
                     "phone_number",
@@ -73,6 +128,7 @@ class CartItemInline(admin.TabularInline):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ["user", "created_at"]
+    list_display = ["user", "promo_code", "created_at", "updated_at"]
     search_fields = ["user__username"]
+    list_filter = ["created_at", "updated_at"]
     inlines = [CartItemInline]
