@@ -10,6 +10,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 from django.conf import settings
+from django.http import Http404
+from rest_framework.exceptions import PermissionDenied
 import re
 import os
 from .models import User
@@ -37,27 +39,20 @@ class CustomerDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         # Admins can access any user; users can only access/update themselves
-        try:
-            obj = super().get_object()
-            user = self.request.user
+        obj = super().get_object()
+        user = self.request.user
 
-            # Allow superusers and admins full access
-            if user.is_superuser or getattr(user, "is_admin", False):
-                return obj
-
-            # Regular users can only access their own data
-            if obj.pk != user.pk:
-                from rest_framework.exceptions import PermissionDenied
-
-                raise PermissionDenied(
-                    "You do not have permission to access this user."
-                )
-
+        # Allow superusers and admins full access
+        if user.is_superuser or getattr(user, "is_admin", False):
             return obj
-        except Exception as e:
-            from rest_framework.exceptions import NotFound
 
-            raise NotFound("User not found")
+        # Regular users can only access their own data
+        if obj.pk != user.pk:
+            raise PermissionDenied(
+                "You do not have permission to access this user."
+            )
+
+        return obj
 
 
 @api_view(["POST"])
