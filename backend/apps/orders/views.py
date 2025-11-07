@@ -197,11 +197,16 @@ def move_to_wishlist(request, item_id):
 
 @api_view(["POST"])
 def checkout(request):
+    """
+    Enhanced checkout with atomic transactions and inventory locking
+    Ensures all-or-nothing behavior for orders
+    """
+    from django.db import transaction
+    from django.db.models import F
+    
     cart = get_object_or_404(Cart, user=request.user)
     if not cart.items.exists():
         return Response({"error": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST)
-
-    total_amount = sum(item.product.price * item.quantity for item in cart.items.all())
 
     # Sanitize and validate inputs
     raw_address = request.data.get("shipping_address", "").strip()
@@ -235,35 +240,90 @@ def checkout(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    order = Order.objects.create(
-        user=request.user,
-        total_amount=total_amount,
-        shipping_address=shipping_address,
-        payment_method=payment_method,
-        phone_number=phone_number,
-    )
-
-    for cart_item in cart.items.all():
-        # Check stock availability
-        if cart_item.product.stock < cart_item.quantity:
-            return Response(
-                {"error": f"Insufficient stock for {cart_item.product.name}"},
-                status=status.HTTP_400_BAD_REQUEST,
+    try:
+        # Use atomic transaction to ensure all-or-nothing behavior
+        with transaction.atomic():
+            # Select cart items with row-level locks to prevent race conditions
+            cart_items = cart.items.select_related('product').select_for_update()
+            
+            # Pre-validate all items before creating order
+            validation_errors = []
+            total_amount = 0
+            
+            for cart_item in cart_items:
+                # Refresh product from DB with lock to get latest stock
+                product = Product.objects.select_for_update().get(id=cart_item.product.id)
+                
+                # Check stock availability
+                if product.stock < cart_item.quantity:
+                    validation_errors.append(
+                        f"{product.name}: Only {product.stock} available, you requested {cart_item.quantity}"
+                    )
+                
+                # Calculate total with current prices
+                total_amount += product.price * cart_item.quantity
+            
+            # If any validation errors, abort before creating order
+            if validation_errors:
+                return Response(
+                    {
+                        "error": "Stock validation failed",
+                        "details": validation_errors
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            # Create order
+            order = Order.objects.create(
+                user=request.user,
+                total_amount=total_amount,
+                shipping_address=shipping_address,
+                payment_method=payment_method,
+                phone_number=phone_number,
             )
 
-        order.items.create(
-            product=cart_item.product,
-            quantity=cart_item.quantity,
-            price=cart_item.product.price,
+            # Create order items and update stock atomically
+            for cart_item in cart_items:
+                # Get fresh product with lock
+                product = Product.objects.select_for_update().get(id=cart_item.product.id)
+                
+                # Double-check stock (in case of concurrent operations)
+                if product.stock < cart_item.quantity:
+                    # This should rarely happen due to earlier validation
+                    raise ValidationError(
+                        f"Stock changed for {product.name}. Please refresh your cart."
+                    )
+                
+                # Create order item
+                order.items.create(
+                    product=product,
+                    quantity=cart_item.quantity,
+                    price=product.price,  # Capture price at time of order
+                )
+
+                # Update stock using F() expression to prevent race conditions
+                Product.objects.filter(id=product.id).update(
+                    stock=F('stock') - cart_item.quantity
+                )
+
+            # Clear cart only after successful order creation
+            cart.items.all().delete()
+
+        # Transaction committed successfully
+        return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
+        
+    except ValidationError as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_400_BAD_REQUEST,
         )
-
-        # Update stock
-        cart_item.product.stock -= cart_item.quantity
-        cart_item.product.save()
-
-    cart.items.all().delete()
-
-    return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Checkout error: {str(e)}")
+        return Response(
+            {"error": "Checkout failed. Please try again."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @api_view(["POST"])

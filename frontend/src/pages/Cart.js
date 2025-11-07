@@ -305,27 +305,31 @@ const Cart = () => {
               <div style={{ marginBottom: 'var(--space-6)' }}>
                 <div className="flex justify-between mb-2">
                   <span>Subtotal:</span>
-                  <span>KSh {cart.total_price}</span>
+                  <span>KSh {parseFloat(cart.subtotal || cart.total_price || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between mb-2">
-                  <span>Delivery:</span>
-                  <span className="text-green-600 font-semibold">
-                    {parseFloat(cart.total_price) >= 2000 ? 'FREE' : 'KSh 100'}
+                  <span>Tax (16% VAT):</span>
+                  <span>KSh {parseFloat(cart.tax || 0).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <span>Shipping:</span>
+                  <span className={cart.shipping === 0 ? "text-green-600 font-semibold" : ""}>
+                    {cart.shipping === 0 || parseFloat(cart.subtotal || cart.total_price || 0) >= 2000 ? 'FREE' : 'KSh 100.00'}
                   </span>
                 </div>
                 <hr style={{ margin: 'var(--space-4) 0', border: 'none', borderTop: '1px solid var(--gray-200)' }} />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total:</span>
-                  <span>KSh {(parseFloat(cart.total_price) + (parseFloat(cart.total_price) >= 2000 ? 0 : 100)).toFixed(2)}</span>
+                  <span>KSh {parseFloat(cart.total_price || 0).toFixed(2)}</span>
                 </div>
-                {parseFloat(cart.total_price) >= 2000 && (
+                {(cart.shipping === 0 || parseFloat(cart.subtotal || cart.total_price || 0) >= 2000) && (
                   <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
-                    <span>🎉</span> You qualify for FREE delivery!
+                    <span>🎉</span> You qualify for FREE shipping!
                   </p>
                 )}
-                {parseFloat(cart.total_price) < 2000 && (
+                {parseFloat(cart.subtotal || cart.total_price || 0) < 2000 && (
                   <p className="text-sm text-gray-600 mt-2">
-                    Add KSh {(2000 - parseFloat(cart.total_price)).toFixed(2)} more for FREE delivery
+                    Add KSh {(2000 - parseFloat(cart.subtotal || cart.total_price || 0)).toFixed(2)} more for FREE shipping
                   </p>
                 )}
               </div>
