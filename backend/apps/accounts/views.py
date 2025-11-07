@@ -10,6 +10,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 from django.conf import settings
+from django.http import Http404
+from rest_framework.exceptions import PermissionDenied
 import re
 import os
 from .models import User
@@ -36,14 +38,7 @@ class CustomerDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         # Admins can access any user; users can only access/update themselves
-        from rest_framework.exceptions import PermissionDenied, NotFound
-        from django.http import Http404
-        
-        try:
-            obj = super().get_object()
-        except Http404:
-            raise NotFound("User not found")
-            
+        obj = super().get_object()
         user = self.request.user
 
         # Allow superusers and admins full access
