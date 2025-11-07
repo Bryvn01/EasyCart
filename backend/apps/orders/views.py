@@ -8,11 +8,12 @@ from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 from django.utils.html import escape
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.db.models import F
 import json
 import re
 import requests
+import logging
 from .models import Order, Cart, CartItem
 from apps.products.models import Product
 from .serializers import OrderSerializer, CartSerializer, CartItemSerializer
@@ -22,6 +23,8 @@ from .payment_service import (
     StripePaymentService,
     PayPalPaymentService,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class OrderListView(generics.ListCreateAPIView):
@@ -284,10 +287,21 @@ def checkout(request):
 
             return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
             
+    except Product.DoesNotExist as e:
+        logger.error(f"Checkout error - Product not found: {str(e)}")
+        return Response(
+            {"error": "One or more products in your cart no longer exist."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    except IntegrityError as e:
+        logger.error(f"Checkout error - Database integrity issue: {str(e)}")
+        return Response(
+            {"error": "An error occurred processing your order. Please try again."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
     except Exception as e:
         # Log the error
-        import logging
-        logging.error(f"Checkout error: {str(e)}")
+        logger.error(f"Checkout error - Unexpected: {str(e)}")
         return Response(
             {"error": "An error occurred during checkout. Please try again."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
