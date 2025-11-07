@@ -1,8 +1,10 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
-import { WishlistProvider } from './context/WishlistContext';
+import { WishlistProvider } from './context/WishlistProvider';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -32,6 +34,20 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProductManager from './components/Admin/ProductManager';
 import NotFound from './pages/NotFound';
 
+// Configure React Query client with optimal settings
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,        // 5 minutes - data stays fresh
+      cacheTime: 10 * 60 * 1000,       // 10 minutes - cache retention
+      refetchOnWindowFocus: false,     // Don't refetch on window focus
+      refetchOnReconnect: true,        // Refetch on reconnect
+      retry: 1,                         // Retry failed requests once
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+  },
+});
+
 function App() {
   usePerformance();
 
@@ -41,113 +57,119 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <ThemeProvider>
-              <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-                  <Navbar />
-                  <main className="flex-1">
-                    <Suspense fallback={<Loading size="lg" className="py-20" />}>
-                      <Routes>
-                        <Route path="/" element={<LandingPage />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/forgot-password" element={<ForgotPassword />} />
-                        <Route path="/products" element={<Products />} />
-                        <Route path="/products/:id" element={<ProductDetail />} />
-                        <Route path="/cart" element={
-                          <ProtectedRoute>
-                            <Cart />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/orders" element={
-                          <ProtectedRoute>
-                            <Orders />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/profile" element={
-                          <ProtectedRoute>
-                            <Profile />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/wishlist" element={
-                          <ProtectedRoute>
-                            <Wishlist />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/admin/products" element={
-                          <ProtectedRoute requireAdmin={true}>
-                            <AdminProducts />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/admin/dashboard" element={
-                          <ProtectedRoute requireAdmin={true}>
-                            <AdminDashboard />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/admin/manage" element={
-                          <ProtectedRoute requireAdmin={true}>
-                            <ProductManager />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/admin" element={
-                          <ProtectedRoute requireAdmin={true}>
-                            <AdminDashboard />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Suspense>
-                  </main>
-                  <Footer />
-                  <BottomNav />
-                  <StickyMiniCart />
-                  <BackToTop />
-                  <SupportChat />
-                  <NetworkStatus />
-                  <InstallPWA />
-                  <Toaster
-                    position="top-right"
-                    toastOptions={{
-                      duration: 4000,
-                      style: {
-                        background: '#363636',
-                        color: '#fff',
-                        padding: '16px',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                      },
-                      success: {
-                        duration: 3000,
-                        iconTheme: {
-                          primary: '#10b981',
-                          secondary: '#fff',
-                        },
-                      },
-                      error: {
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <ThemeProvider>
+                <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                  <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+                    <Navbar />
+                    <main className="flex-1">
+                      <Suspense fallback={<Loading size="lg" className="py-20" />}>
+                        <Routes>
+                          <Route path="/" element={<LandingPage />} />
+                          <Route path="/login" element={<Login />} />
+                          <Route path="/register" element={<Register />} />
+                          <Route path="/forgot-password" element={<ForgotPassword />} />
+                          <Route path="/products" element={<Products />} />
+                          <Route path="/products/:id" element={<ProductDetail />} />
+                          <Route path="/cart" element={
+                            <ProtectedRoute>
+                              <Cart />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/orders" element={
+                            <ProtectedRoute>
+                              <Orders />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/profile" element={
+                            <ProtectedRoute>
+                              <Profile />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/wishlist" element={
+                            <ProtectedRoute>
+                              <Wishlist />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/admin/products" element={
+                            <ProtectedRoute requireAdmin={true}>
+                              <AdminProducts />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/admin/dashboard" element={
+                            <ProtectedRoute requireAdmin={true}>
+                              <AdminDashboard />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/admin/manage" element={
+                            <ProtectedRoute requireAdmin={true}>
+                              <ProductManager />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/admin" element={
+                            <ProtectedRoute requireAdmin={true}>
+                              <AdminDashboard />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </Suspense>
+                    </main>
+                    <Footer />
+                    <BottomNav />
+                    <StickyMiniCart />
+                    <BackToTop />
+                    <SupportChat />
+                    <NetworkStatus />
+                    <InstallPWA />
+                    <Toaster
+                      position="top-right"
+                      toastOptions={{
                         duration: 4000,
-                        iconTheme: {
-                          primary: '#ef4444',
-                          secondary: '#fff',
+                        style: {
+                          background: '#363636',
+                          color: '#fff',
+                          padding: '16px',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          fontWeight: '500',
                         },
-                      },
-                      loading: {
-                        iconTheme: {
-                          primary: '#3b82f6',
-                          secondary: '#fff',
+                        success: {
+                          duration: 3000,
+                          iconTheme: {
+                            primary: '#10b981',
+                            secondary: '#fff',
+                          },
                         },
-                      },
-                    }}
-                  />
-                </div>
-              </Router>
-            </ThemeProvider>
-          </WishlistProvider>
-        </CartProvider>
-      </AuthProvider>
+                        error: {
+                          duration: 4000,
+                          iconTheme: {
+                            primary: '#ef4444',
+                            secondary: '#fff',
+                          },
+                        },
+                        loading: {
+                          iconTheme: {
+                            primary: '#3b82f6',
+                            secondary: '#fff',
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+                </Router>
+                {/* React Query DevTools - only in development */}
+                {process.env.NODE_ENV === 'development' && (
+                  <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+                )}
+              </ThemeProvider>
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 }

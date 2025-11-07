@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { productsAPI, ordersAPI } from '../services/api';
+import { ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
 import { handleApiError } from '../utils/errorHandler';
-import { useProducts } from '../hooks/useProducts';
+import { useProducts, useCategories } from '../hooks/useProducts';
 import { getProductImageUrl } from '../utils/imageUtils';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import ImageLightbox from '../components/ImageLightbox';
@@ -14,7 +14,6 @@ import SuccessAnimation from '../components/SuccessAnimation';
 import EmptyState from '../components/EmptyState';
 
 const Products = () => {
-  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -29,8 +28,9 @@ const Products = () => {
   const { fetchCartCount } = useCart();
   const location = useLocation();
 
-  // Use the products hook
-  const { products, loading, pagination } = useProducts({
+  // Use React Query hooks
+  const { categories, loading: categoriesLoading } = useCategories();
+  const { products, loading, pagination, isFetching } = useProducts({
     page: currentPage,
     pageSize: 12,
     search: debouncedSearchTerm,
@@ -72,22 +72,6 @@ const Products = () => {
     setCurrentPage(1);
   }, [selectedCategory, sortBy, priceRange.min, priceRange.max]);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await productsAPI.getCategories();
-      // Handle paginated response from Django REST framework
-      const categoriesData = response.data.results || response.data;
-      setCategories(Array.isArray(categoriesData) ? categoriesData : []);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      setCategories([]);
-    }
-  };
-
   const addToCart = async (product) => {
     if (!isAuthenticated) {
       handleApiError({ message: 'Please login to add items to cart' });
@@ -110,7 +94,7 @@ const Products = () => {
     }
   };
 
-  if (loading) {
+  if (loading && !isFetching) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -124,6 +108,17 @@ const Products = () => {
 
   return (
     <div className="container py-8">
+      {/* Background fetching indicator */}
+      {isFetching && !loading && (
+        <div className="fixed top-20 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2">
+          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+          <span className="text-sm">Updating...</span>
+        </div>
+      )}
+      
       {/* Breadcrumb */}
       <nav className="mb-6" aria-label="Breadcrumb">
         <ol className="flex items-center gap-2 text-sm text-gray-600">
