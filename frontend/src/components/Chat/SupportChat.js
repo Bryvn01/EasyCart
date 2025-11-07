@@ -64,9 +64,11 @@ const SupportChat = () => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200 group"
+        className="fixed transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200 group md:!bottom-[calc(24px+env(safe-area-inset-bottom,0px))]"
         style={{
-          bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
+          // On mobile (< 768px), position above the bottom nav (64px height + 16px spacing)
+          // On desktop (>= 768px), use standard bottom positioning via Tailwind class
+          bottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
           right: '20px',
           width: '60px',
           height: '60px',
@@ -97,9 +99,11 @@ const SupportChat = () => {
 
   return (
     <div
-      className="fixed flex flex-col bg-white border border-gray-200 rounded-2xl shadow-2xl backdrop-blur-sm"
+      className="fixed flex flex-col bg-white border border-gray-200 rounded-2xl shadow-2xl backdrop-blur-sm md:!bottom-[calc(100px+env(safe-area-inset-bottom,0px))]"
       style={{
-        bottom: 'calc(100px + env(safe-area-inset-bottom, 0px))',
+        // On mobile (< 768px), position above the bottom nav
+        // On desktop (>= 768px), use standard positioning via Tailwind class
+        bottom: 'calc(156px + env(safe-area-inset-bottom, 0px))',
         right: '20px',
         width: 'min(calc(100vw - 40px), 380px)',
         height: 'min(500px, calc(100vh - 160px))',
