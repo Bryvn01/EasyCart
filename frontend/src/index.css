@@ -48,6 +48,13 @@
 }
 
 /* Base Styles */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  position: relative;
+}
+
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--gray-900);
@@ -142,6 +149,12 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--space-4);
+  overflow-x: hidden;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 .flex { display: flex; }

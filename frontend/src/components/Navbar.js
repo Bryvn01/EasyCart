@@ -38,15 +38,21 @@ const Navbar = () => {
 
     if (isMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      // Prevent body scroll when menu is open
+      // Prevent body scroll and horizontal overflow when menu is open
       document.body.style.overflow = 'hidden';
+      document.body.style.overflowX = 'hidden';
+      document.documentElement.style.overflowX = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
+      document.body.style.overflowX = 'unset';
+      document.documentElement.style.overflowX = 'unset';
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.body.style.overflow = 'unset';
+      document.body.style.overflowX = 'unset';
+      document.documentElement.style.overflowX = 'unset';
     };
   }, [isMenuOpen]);
 
@@ -82,7 +88,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-all duration-300"
+      className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-[50] transition-all duration-300"
       style={{
         backdropFilter: scrolled ? 'blur(10px)' : 'none',
         backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'white',
@@ -97,7 +103,7 @@ const Navbar = () => {
             className="flex items-center space-x-2 text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors flex-shrink-0"
           >
             <FiShoppingCart className="w-7 h-7" />
-            <span className="hidden sm:inline">EasyCart</span>
+            <span>EasyCart</span>
           </Link>
 
           {/* Search Bar - Desktop */}
@@ -199,7 +205,7 @@ const Navbar = () => {
         {/* Mobile Menu Overlay */}
         {isMenuOpen && (
           <div
-            className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300"
+            className="fixed inset-0 bg-black/50 z-[60] md:hidden transition-opacity duration-300"
             onClick={() => setIsMenuOpen(false)}
             aria-hidden="true"
           />
@@ -209,8 +215,8 @@ const Navbar = () => {
         <div
           ref={mobileMenuRef}
           id="mobile-menu"
-          className={`fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 max-w-[85vw] bg-white dark:bg-gray-800 shadow-2xl z-50 md:hidden transform transition-transform duration-300 ease-in-out overflow-y-auto ${
-            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-80 max-w-[85vw] bg-white dark:bg-gray-800 shadow-2xl z-[70] md:hidden transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+            isMenuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
           <div className="flex flex-col p-6 space-y-4">
