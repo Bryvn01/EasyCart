@@ -10,7 +10,7 @@ const AllTheProviders = ({ children }) => {
     defaultOptions: {
       queries: {
         retry: false,
-        cacheTime: 0,
+        gcTime: 0,
       },
       mutations: {
         retry: false,
@@ -36,29 +36,31 @@ const customRender = (ui, options) =>
 
 // Create wrapper for renderHook
 export const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        cacheTime: 0,
+  return ({ children }) => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+          gcTime: 0,
+        },
+        mutations: {
+          retry: false,
+        },
       },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
+    });
 
-  return ({ children }) => (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <CartProvider>
-          <MemoryRouter>
-            {children}
-          </MemoryRouter>
-        </CartProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  );
+    return (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <CartProvider>
+            <MemoryRouter>
+              {children}
+            </MemoryRouter>
+          </CartProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    );
+  };
 };
 
 // Re-export all testing-library/react exports
