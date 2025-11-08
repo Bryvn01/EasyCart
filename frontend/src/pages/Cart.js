@@ -328,11 +328,9 @@ const Cart = () => {
                       overflow: 'hidden',
                       position: 'relative'
                     }}>
-                      {item.product?.image ? (
+                      {(item.product?.image || item.product?.image_url) ? (
                         <img
-                          src={item.product.image.startsWith('http')
-                            ? item.product.image
-                            : `http://localhost:8000${item.product.image}`}
+                          src={item.product.image || item.product.image_url}
                           alt={item.product?.name || 'Product'}
                           style={{
                             width: '100%',
@@ -350,7 +348,7 @@ const Cart = () => {
                       <div
                         className="fallback-icon"
                         style={{
-                          display: item.product?.image ? 'none' : 'flex',
+                          display: (item.product?.image || item.product?.image_url) ? 'none' : 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           color: 'var(--gray-400)',
