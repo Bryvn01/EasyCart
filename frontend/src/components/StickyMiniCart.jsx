@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { formatPriceLocale } from '../utils/formatPrice';
 import './StickyMiniCart.css';
 
 const StickyMiniCart = () => {
@@ -26,7 +27,7 @@ const StickyMiniCart = () => {
         </span>
         <span className="cart-info">
           <span className="cart-count">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
-          <span className="cart-total">KSh {parseFloat(totalPrice).toLocaleString()}</span>
+          <span className="cart-total">KSh {formatPriceLocale(totalPrice)}</span>
         </span>
         <span className="cart-arrow" aria-hidden="true">→</span>
       </button>

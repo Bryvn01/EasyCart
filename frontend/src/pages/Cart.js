@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import PaymentModal from '../components/PaymentModal';
 import { ordersAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../utils/formatPrice';
 
 const Cart = () => {
   // Handler to update item quantity
@@ -11,6 +12,8 @@ const Cart = () => {
     try {
       await updateCartItem(itemId, newQuantity);
       await fetchCart();
+      // Announce to screen readers
+      announceToScreenReader(`Quantity updated to ${newQuantity}`);
     } catch (error) {
       toast.error('Failed to update quantity');
     }
@@ -22,6 +25,8 @@ const Cart = () => {
       await removeFromCart(itemId);
       await fetchCart();
       toast.success('Item removed from cart');
+      // Announce to screen readers
+      announceToScreenReader('Item removed from cart');
     } catch (error) {
       toast.error('Failed to remove item');
     }
@@ -33,6 +38,8 @@ const Cart = () => {
       await moveToWishlist(itemId);
       await fetchCart();
       toast.success('Item moved to wishlist');
+      // Announce to screen readers
+      announceToScreenReader('Item moved to wishlist');
     } catch (error) {
       toast.error('Failed to move item to wishlist');
     }
@@ -45,8 +52,16 @@ const Cart = () => {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null);
+  const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
 
   const navigate = useNavigate();
+
+  // Function to announce to screen readers
+  const announceToScreenReader = (message) => {
+    setScreenReaderAnnouncement(message);
+    // Clear after announcement
+    setTimeout(() => setScreenReaderAnnouncement(''), 1000);
+  };
 
   useEffect(() => {
     const loadCart = async () => {
@@ -256,6 +271,16 @@ const Cart = () => {
 
   return (
     <div className="container py-8">
+      {/* Screen Reader Announcements */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {screenReaderAnnouncement}
+      </div>
+
       {/* Breadcrumb */}
       <nav className="breadcrumb-nav" style={{
         fontSize: '0.875rem',
@@ -364,7 +389,7 @@ const Cart = () => {
                     <div style={{ flex: 1 }}>
                       <h3 className="font-semibold mb-1 product-title">{item.product?.name || 'Product'}</h3>
                       <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                        KSh {parseFloat(item.product?.price || 0).toFixed(2)} each
+                        KSh {formatPrice(item.product?.price || 0)} each
                       </p>
 
                       {/* Stock Warning */}
@@ -408,6 +433,7 @@ const Cart = () => {
                         <button
                           onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                           disabled={item.quantity <= 1}
+                          aria-label="Decrease quantity"
                           style={{
                             width: '28px',
                             height: '28px',
@@ -434,6 +460,7 @@ const Cart = () => {
                         <button
                           onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                           disabled={item.quantity >= (item.product?.stock || 0)}
+                          aria-label="Increase quantity"
                           style={{
                             width: '28px',
                             height: '28px',
@@ -456,19 +483,20 @@ const Cart = () => {
                     {/* Price & Actions */}
                     <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
                       <div className="font-bold product-price" style={{ fontSize: '1.25rem', marginBottom: 'var(--space-2)' }}>
-                        KSh {(parseFloat(item.product?.price || 0) * item.quantity).toFixed(2)}
+                        KSh {formatPrice((item.product?.price || 0) * item.quantity)}
                       </div>
 
                       {/* Action Links - Industry Standard */}
                       <div className="cart-actions" style={{
                         display: 'flex',
-                        gap: 'var(--space-3)',
+                        gap: 'var(--space-4)',
                         fontSize: '0.875rem',
                         justifyContent: 'flex-end',
                         flexWrap: 'wrap'
                       }}>
                         <button
                           onClick={() => handleRemoveFromCart(item.id)}
+                          aria-label={`Remove ${item.product?.name || 'item'} from cart`}
                           style={{
                             background: 'none',
                             color: '#dc2626',
@@ -487,6 +515,7 @@ const Cart = () => {
                         <span style={{ color: 'var(--gray-300)' }}>|</span>
                         <button
                           onClick={() => handleMoveToWishlist(item.id)}
+                          aria-label={`Move ${item.product?.name || 'item'} to wishlist`}
                           style={{
                             background: 'none',
                             color: 'var(--primary)',
@@ -528,7 +557,7 @@ const Cart = () => {
                   <span style={{ color: 'var(--gray-600)' }}>
                     Subtotal ({cart.items.length} {cart.items.length === 1 ? 'item' : 'items'}):
                   </span>
-                  <span className="font-semibold">KSh {parseFloat(cart.total_price).toFixed(2)}</span>
+                  <span className="font-semibold">KSh {formatPrice(cart.total_price)}</span>
                 </div>
 
                 {/* Delivery */}
@@ -543,7 +572,7 @@ const Cart = () => {
                     fontWeight: '600',
                     color: parseFloat(cart.total_price) >= 2000 ? '#10b981' : 'inherit'
                   }}>
-                    {parseFloat(cart.total_price) >= 2000 ? 'FREE' : 'KSh 100.00'}
+                    {parseFloat(cart.total_price) >= 2000 ? 'FREE' : 'KSh ' + formatPrice(100)}
                   </span>
                 </div>
 
@@ -562,7 +591,7 @@ const Cart = () => {
                 }}>
                   <span className="font-bold text-lg">Order Total:</span>
                   <span className="font-bold text-xl" style={{ color: 'var(--primary)' }}>
-                    KSh {(parseFloat(cart.total_price) + (parseFloat(cart.total_price) >= 2000 ? 0 : 100)).toFixed(2)}
+                    KSh {formatPrice(parseFloat(cart.total_price) + (parseFloat(cart.total_price) >= 2000 ? 0 : 100))}
                   </span>
                 </div>
 
@@ -595,7 +624,7 @@ const Cart = () => {
                     color: 'var(--gray-700)'
                   }}>
                     <div style={{ marginBottom: 'var(--space-2)', fontWeight: '500' }}>
-                      Add KSh {(2000 - parseFloat(cart.total_price)).toFixed(2)} for FREE delivery
+                      Add KSh {formatPrice(2000 - parseFloat(cart.total_price))} for FREE delivery
                     </div>
                     <div style={{
                       width: '100%',
@@ -716,6 +745,7 @@ const Cart = () => {
                 onClick={checkout}
                 className="btn btn-primary"
                 disabled={checkoutLoading || cart.items.some(item => item.product?.stock === 0)}
+                aria-label={checkoutLoading ? 'Processing checkout' : 'Proceed to checkout'}
                 style={{
                   width: '100%',
                   padding: 'var(--space-4)',
@@ -937,8 +967,9 @@ const Cart = () => {
 
           /* Action buttons (Delete | Save for Later) */
           .cart-actions button {
-            min-height: 40px !important;
-            padding: var(--space-2) !important;
+            min-height: 44px !important;
+            min-width: 44px !important;
+            padding: var(--space-2) var(--space-3) !important;
           }
         }
 
@@ -987,6 +1018,19 @@ const Cart = () => {
         .cart-items-section,
         .order-summary-section {
           transition: all 0.3s ease;
+        }
+
+        /* Screen reader only class */
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border-width: 0;
         }
       `}</style>
     </div>
