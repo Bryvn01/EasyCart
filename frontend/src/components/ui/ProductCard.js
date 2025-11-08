@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import { useFadeOutOnSuccess } from '../../hooks/useFadeOutOnSuccess';
 import { motion } from 'framer-motion';
 import { getProductImageUrl } from '../../utils/imageUtils';
+import { formatPriceLocale } from '../../utils/formatPrice';
 
 /**
  * ProductCard: Standardized, accessible, responsive product card for EasyCart
@@ -95,9 +96,9 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
         )}
 
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-lg font-bold text-[color:var(--primary,#2563eb)]">KSh {product.price?.toLocaleString()}</span>
+          <span className="text-lg font-bold text-[color:var(--primary,#2563eb)]">KSh {formatPriceLocale(product.price)}</span>
           {product.old_price && product.price < product.old_price && (
-            <span className="text-xs line-through text-gray-400">KSh {product.old_price?.toLocaleString()}</span>
+            <span className="text-xs line-through text-gray-400">KSh {formatPriceLocale(product.old_price)}</span>
           )}
         </div>
         {/* Trust badges beside info */}
