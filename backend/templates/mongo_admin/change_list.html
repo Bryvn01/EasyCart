@@ -1,0 +1,11 @@
+{% extends "mongo_admin/base.html" %}
+{% block content %}
+<h1>{{ cl.opts.verbose_name_plural|capfirst }}</h1>
+<ul>
+  {% for obj in cl.result_list %}
+    <li>{{ obj }}</li>
+  {% empty %}
+    <li>No objects found.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

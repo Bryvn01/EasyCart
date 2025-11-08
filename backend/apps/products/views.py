@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db import models
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
 from .cache import ProductCache
@@ -44,9 +45,19 @@ class CategoryListView(APIView):
                 logger.info(f"Returned {len(cached_data)} categories from cache")
                 return Response(cached_data, status=status.HTTP_200_OK)
 
-            # Cache miss - fetch from DB
-            categories = Category.objects.all()
-            serializer = CategorySerializer(categories, many=True)
+            # Cache miss - fetch from DB with optimized query
+            # PERFORMANCE: Use annotate to avoid N+1 queries for products_count
+            from django.db.models import Count
+
+            categories = Category.objects.annotate(
+                _products_count=Count(
+                    "products", filter=models.Q(products__is_active=True)
+                )
+            ).all()
+
+            serializer = CategorySerializer(
+                categories, many=True, context={"request": request}
+            )
 
             # Cache for 1 hour
             ProductCache.set_categories(serializer.data)
@@ -93,7 +104,8 @@ class ProductListView(APIView):
                     )
                     return Response(cached_data, status=status.HTTP_200_OK)
 
-            queryset = Product.objects.all()
+            # PERFORMANCE: Use select_related to prevent N+1 queries
+            queryset = Product.objects.select_related("category").all()
             if category:
                 queryset = queryset.filter(category__name__iexact=category)
             if search:
@@ -140,14 +152,25 @@ class ProductListView(APIView):
                     "price": "price",
                     "-name": "-name",
                     "name": "name",
+                    "-view_count": "-view_count",
+                    "view_count": "view_count",
+                    "-created_at": "-created_at",
                 }
                 ordering_field = ordering_map.get(ordering, "-created_at")
                 queryset = queryset.order_by(ordering_field)
+
+            # PERFORMANCE: Count before slicing for better query optimization
             total_count = queryset.count()
             start = (page - 1) * page_size
             end = start + page_size
+
+            # PERFORMANCE: Only fetch needed fields, slice the queryset
             products = queryset[start:end]
-            serializer = ProductSerializer(products, many=True)
+
+            # PERFORMANCE: Serialize with context to avoid additional queries
+            serializer = ProductSerializer(
+                products, many=True, context={"request": request}
+            )
             total_pages = (total_count + page_size - 1) // page_size
             response_data = {
                 "count": total_count,

@@ -62,29 +62,47 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Components */
+/* Components - PWA Compliant */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
   padding: var(--space-3) var(--space-6);
+  min-height: 44px; /* PWA/WCAG AA touch target minimum */
   border: none;
   border-radius: var(--radius-md);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(14 165 233 / 0.3);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-primary {
   background: var(--primary-600);
   color: white;
 }
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: var(--primary-700);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn-secondary {
@@ -92,8 +110,11 @@ body {
   color: var(--gray-700);
   border: 1px solid var(--gray-200);
 }
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: var(--gray-200);
+}
+.btn-secondary:active:not(:disabled) {
+  background: var(--gray-300);
 }
 
 .card {

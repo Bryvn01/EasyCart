@@ -22,6 +22,9 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ["slug", "created_at"]
 
     def get_products_count(self, obj):
+        # PERFORMANCE: Use cached count if available
+        if hasattr(obj, "_products_count"):
+            return obj._products_count
         return obj.products.filter(is_active=True).count()
 
     def get_image(self, obj):

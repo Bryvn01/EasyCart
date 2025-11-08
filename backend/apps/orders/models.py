@@ -52,6 +52,9 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ["-created_at"]  # Most recent orders first
+
     def __str__(self):
         return f"Order #{self.id} - {escape(str(self.user.email))}"
 

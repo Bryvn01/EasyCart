@@ -3,8 +3,21 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError, PermissionDenied
 from rest_framework.views import exception_handler
 from rest_framework import status
+from django.utils.deprecation import MiddlewareMixin
 
 logger = logging.getLogger(__name__)
+
+
+class DisableCSRFForAPIMiddleware(MiddlewareMixin):
+    """
+    Disable CSRF protection for API endpoints that use JWT authentication.
+    CSRF is not needed for stateless JWT authentication.
+    """
+
+    def process_request(self, request):
+        if request.path.startswith("/api/"):
+            setattr(request, "_dont_enforce_csrf_checks", True)
+            logger.info(f"CSRF disabled for {request.path}")
 
 
 class ErrorHandlingMiddleware:

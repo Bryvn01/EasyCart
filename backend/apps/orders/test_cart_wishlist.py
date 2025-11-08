@@ -4,8 +4,7 @@ Tests for cart and wishlist integration features
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from apps.products.models import Product, Category
-from apps.products.wishlist_models import Wishlist, WishlistItem
+from apps.products.models import Product, Category, Wishlist, WishlistItem
 from apps.orders.models import Cart, CartItem
 
 User = get_user_model()

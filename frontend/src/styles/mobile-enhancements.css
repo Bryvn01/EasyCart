@@ -181,6 +181,7 @@
   border-radius: 20px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   z-index: 40;
 }
@@ -307,6 +308,7 @@
 .category-section-header {
   padding: 16px 16px 8px;
   background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -434,16 +436,13 @@
 /* High DPI Screen Optimizations */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .category-image {
-    image-rendering: -webkit-optimize-contrast;
+    image-rendering: auto;
+    image-rendering: crisp-edges;
   }
 }
 
-/* Connection-Aware Loading */
-@media (prefers-reduced-data: reduce) {
-  .category-image {
-    image-rendering: pixelated;
-  }
-}
+/* Connection-Aware Loading - removed unsupported media feature */
+/* Note: prefers-reduced-data is not widely supported yet */
 
 /* PWA Standalone Mode */
 @media (display-mode: standalone) {
@@ -452,10 +451,12 @@
   }
 
   body {
+    -webkit-user-select: none;
     user-select: none;
   }
 
   input, textarea, button {
+    -webkit-user-select: auto;
     user-select: auto;
   }
 }
