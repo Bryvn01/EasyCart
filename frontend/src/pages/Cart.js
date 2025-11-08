@@ -6,6 +6,37 @@ import { ordersAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 const Cart = () => {
+  // Handler to update item quantity
+  const handleUpdateQuantity = async (itemId, newQuantity) => {
+    try {
+      await updateCartItem(itemId, newQuantity);
+      await fetchCart();
+    } catch (error) {
+      toast.error('Failed to update quantity');
+    }
+  };
+
+  // Handler to remove item from cart
+  const handleRemoveFromCart = async (itemId) => {
+    try {
+      await removeFromCart(itemId);
+      await fetchCart();
+      toast.success('Item removed from cart');
+    } catch (error) {
+      toast.error('Failed to remove item');
+    }
+  };
+
+  // Handler to move item to wishlist
+  const handleMoveToWishlist = async (itemId) => {
+    try {
+      await moveToWishlist(itemId);
+      await fetchCart();
+      toast.success('Item moved to wishlist');
+    } catch (error) {
+      toast.error('Failed to move item to wishlist');
+    }
+  };
   const { cart, loading, fetchCart, updateCartItem, removeFromCart, moveToWishlist } = useCart();
   const [localLoading, setLocalLoading] = useState(true);
   const [shippingAddress, setShippingAddress] = useState('');
@@ -38,49 +69,12 @@ const Cart = () => {
         console.log('First product:', cart.items[0].product);
       }
     }
-  }, [cart]);
+  });
 
-  const handleRemoveFromCart = async (itemId) => {
-    try {
-      await removeFromCart(itemId);
-      toast.success('Item removed from cart');
-    } catch (error) {
-      console.error('Error removing from cart:', error);
-      toast.error('Failed to remove item from cart');
-    }
-  };
-
-  const handleUpdateQuantity = async (itemId, newQuantity) => {
-    if (newQuantity < 1) return;
-
-    try {
-      await updateCartItem(itemId, newQuantity);
-      toast.success('Cart updated');
-    } catch (error) {
-      console.error('Error updating quantity:', error);
-      toast.error(error.response?.data?.error || 'Failed to update quantity');
-    }
-  };
-
-  const handleMoveToWishlist = async (itemId) => {
-    try {
-      await moveToWishlist(itemId);
-      toast.success('Item moved to wishlist');
-    } catch (error) {
-      console.error('Error moving to wishlist:', error);
-      toast.error(error.response?.data?.message || 'Failed to move to wishlist');
-    }
-  };
-
+  // Validate checkout form
   const validateCheckoutForm = () => {
     const errors = [];
-
-    // Shipping address validation
-    if (!shippingAddress.trim()) {
-      errors.push('Shipping address is required');
-    } else if (shippingAddress.trim().length < 10) {
-      errors.push('Shipping address must be at least 10 characters');
-    } else if (shippingAddress.trim().length > 500) {
+    if (shippingAddress.length > 500) {
       errors.push('Shipping address is too long (max 500 characters)');
     }
 

@@ -271,7 +271,7 @@ const Orders = () => {
             </svg>
             <h3 className="text-xl font-bold mb-2" style={{ color: '#ef4444' }}>Error Loading Orders</h3>
             <p style={{ color: 'var(--gray-600)', marginBottom: 'var(--space-6)' }}>{error}</p>
-            <button onClick={fetchOrders} className="btn btn-primary">
+            <button onClick={fetchOrders} className="btn btn-primary mobile-rounded-md" style={{ width: '100%' }}>
               Try Again
             </button>
           </div>
@@ -295,7 +295,7 @@ const Orders = () => {
             <p style={{ color: 'var(--gray-600)', marginBottom: 'var(--space-6)', maxWidth: '500px', margin: '0 auto 2rem' }}>
               You haven't placed any orders yet. Start shopping to discover our amazing products!
             </p>
-            <Link to="/products" className="btn btn-primary" style={{ display: 'inline-block' }}>
+            <Link to="/products" className="btn btn-primary mobile-rounded-md" style={{ width: '100%' }}>
               Browse Products
             </Link>
           </div>

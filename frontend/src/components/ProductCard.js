@@ -53,18 +53,18 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
             <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
               {productImages.map((_, index) => (
                 <button
-                  key={index}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setCurrentImageIndex(index);
-                  }}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    currentImageIndex === index
-                      ? 'bg-white scale-125'
-                      : 'bg-white bg-opacity-50'
-                  }`}
-                  aria-label={`View image ${index + 1}`}
+                    key={index}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setCurrentImageIndex(index);
+                    }}
+                    className={`mobile-button w-2 h-2 rounded-full transition-all ${
+                      currentImageIndex === index
+                        ? 'bg-white scale-125'
+                        : 'bg-white bg-opacity-50'
+                    }`}
+                    aria-label={`View image ${index + 1}`}
                 />
               ))}
             </div>
@@ -153,11 +153,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
           </div>
 
           <Button
-            onClick={() => onAddToCart(product)}
-            disabled={product.stock === 0 || loading}
-            loading={loading}
-            size="sm"
-            className="shrink-0 transition-all hover:scale-105 bg-primary-600 hover:bg-primary-700 border-primary-600"
+          onClick={() => onAddToCart(product)}
+          disabled={product.stock === 0 || loading}
+          loading={loading}
+          size="sm"
+          className="mobile-button shrink-0 transition-all hover:scale-105 bg-primary-600 hover:bg-primary-700 border-primary-600"
           >
             {product.stock === 0 ? t('outOfStock', 'Out of Stock') : t('addToCart', 'Add to Cart')}
           </Button>
