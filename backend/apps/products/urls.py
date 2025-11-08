@@ -14,10 +14,7 @@ admin_router.register(
 urlpatterns = [
     # Categories must come before <str:pk> to avoid conflict
     path("categories/", views.CategoryListView.as_view(), name="category-list"),
-    # Product list and detail
-    path("", views.ProductListView.as_view(), name="product-list"),
-    path("<str:pk>/", views.ProductDetailView.as_view(), name="product-detail"),
-    # Wishlist endpoints
+    # Wishlist endpoints - must come before <str:pk> to avoid conflict
     path("wishlist/", wishlist_views.WishlistView.as_view(), name="wishlist-detail"),
     path("wishlist/add/", wishlist_views.add_to_wishlist, name="wishlist-add"),
     path(
@@ -35,7 +32,7 @@ urlpatterns = [
         wishlist_views.check_wishlist_status,
         name="wishlist-check",
     ),
-    # Review endpoints
+    # Review endpoints - must come before <str:pk> to avoid conflict
     path(
         "reviews/<int:product_id>/",
         review_views.ReviewListView.as_view(),
@@ -45,6 +42,9 @@ urlpatterns = [
         "reviews/create/", review_views.ReviewCreateView.as_view(), name="review-create"
     ),
     path("reviews/helpful/", review_views.mark_review_helpful, name="review-helpful"),
+    # Product list and detail - keep these LAST
+    path("", views.ProductListView.as_view(), name="product-list"),
+    path("<str:pk>/", views.ProductDetailView.as_view(), name="product-detail"),
 ]
 
 # Admin endpoints

@@ -3,6 +3,9 @@ from django.utils.text import slugify
 from django.utils.html import escape
 from django.db.models import Avg
 from simple_history.models import HistoricalRecords
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Category(models.Model):
@@ -65,6 +68,9 @@ class Product(models.Model):
             models.Index(fields=["category", "is_active"]),
             models.Index(fields=["is_featured", "is_active"]),
             models.Index(fields=["price"]),
+            models.Index(fields=["-created_at"]),  # For newest first sorting
+            models.Index(fields=["-view_count"]),  # For most popular sorting
+            models.Index(fields=["name"]),  # For name sorting
         ]
 
     def save(self, *args, **kwargs):
@@ -121,3 +127,26 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{escape(self.product.name)} - Image {self.id}"
+
+
+class Wishlist(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="wishlist")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email}'s Wishlist"
+
+
+class WishlistItem(models.Model):
+    wishlist = models.ForeignKey(
+        Wishlist, on_delete=models.CASCADE, related_name="items"
+    )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("wishlist", "product")
+        ordering = ["-added_at"]
+
+    def __str__(self):
+        return f"{self.product.name} in wishlist"

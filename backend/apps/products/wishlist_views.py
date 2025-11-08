@@ -5,8 +5,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.utils.html import escape
 import re
-from .wishlist_models import Wishlist, WishlistItem
-from .models import Product
+from .models import Wishlist, WishlistItem, Product
 from .wishlist_serializers import WishlistSerializer, WishlistItemSerializer
 
 
