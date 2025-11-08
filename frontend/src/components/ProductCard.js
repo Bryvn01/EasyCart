@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Card } from './ui';
 import PropTypes from 'prop-types';
 import OptimizedImage from './OptimizedImage';
+import { formatPriceLocale } from '../utils/formatPrice';
 
 const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => {
   const { t } = useTranslation();
@@ -130,11 +131,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
           <div className="flex flex-col">
             <div className="flex items-center space-x-2">
               <span className="text-2xl font-bold text-primary-600 dark:text-primary-400">
-                KSh {product.price?.toLocaleString()}
+                KSh {formatPriceLocale(product.price)}
               </span>
               {product.original_price > product.price && (
                 <span className="text-sm text-gray-500 line-through">
-                  KSh {product.original_price?.toLocaleString()}
+                  KSh {formatPriceLocale(product.original_price)}
                 </span>
               )}
             </div>
@@ -157,7 +158,8 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
           disabled={product.stock === 0 || loading}
           loading={loading}
           size="sm"
-          className="mobile-button shrink-0 transition-all hover:scale-105 bg-primary-600 hover:bg-primary-700 border-primary-600"
+          className="mobile-button shrink-0 transition-all hover:scale-105 bg-primary-600 hover:bg-primary-700 border-primary-600 min-h-[44px] min-w-[44px]"
+          aria-label={product.stock === 0 ? `${product.name} is out of stock` : `Add ${product.name} to cart`}
           >
             {product.stock === 0 ? t('outOfStock', 'Out of Stock') : t('addToCart', 'Add to Cart')}
           </Button>
