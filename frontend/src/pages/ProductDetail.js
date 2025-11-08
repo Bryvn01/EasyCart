@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { formatPriceLocale } from '../utils/formatPrice';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [, setError] = useState(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
@@ -39,6 +41,7 @@ const ProductDetail = () => {
       return;
     }
 
+    setIsAddingToCart(true);
     try {
       await ordersAPI.addToCart({ product_id: product.id, quantity });
       fetchCartCount();
@@ -46,6 +49,8 @@ const ProductDetail = () => {
     } catch (error) {
       console.error('Error adding to cart:', error);
       alert('Failed to add product to cart');
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
@@ -186,7 +191,7 @@ const ProductDetail = () => {
               fontWeight: '700',
               color: 'var(--gray-900)'
             }}>
-              KES {product.price?.toLocaleString()}
+              KSh {formatPriceLocale(product.price)}
             </span>
 
             {product.stock > 10 ? (
@@ -282,21 +287,29 @@ const ProductDetail = () => {
             </div>
           )}
 
-          <div className="flex gap-4">
+          <div className="button-container">
             <button
               onClick={addToCart}
               className="btn btn-primary min-h-[44px] inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              disabled={product.stock === 0}
+              disabled={product.stock === 0 || isAddingToCart}
               style={{
                 padding: 'var(--space-4) var(--space-8)',
                 fontSize: '1rem',
                 fontWeight: '600',
                 flex: 1,
-                opacity: product.stock === 0 ? 0.5 : 1,
-                cursor: product.stock === 0 ? 'not-allowed' : 'pointer'
+                opacity: (product.stock === 0 || isAddingToCart) ? 0.5 : 1,
+                cursor: (product.stock === 0 || isAddingToCart) ? 'not-allowed' : 'pointer'
               }}
             >
-              {product.stock === 0 ? (
+              {isAddingToCart ? (
+                <>
+                  <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Adding...
+                </>
+              ) : product.stock === 0 ? (
                 <>
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
@@ -327,6 +340,37 @@ const ProductDetail = () => {
               Continue Shopping
             </button>
           </div>
+
+          <style jsx="true">{`
+            .button-container {
+              display: flex;
+              gap: 1rem;
+            }
+
+            @media (max-width: 640px) {
+              .button-container {
+                flex-direction: column;
+              }
+              
+              .button-container button {
+                width: 100% !important;
+                flex: none !important;
+              }
+            }
+
+            @keyframes spin {
+              from {
+                transform: rotate(0deg);
+              }
+              to {
+                transform: rotate(360deg);
+              }
+            }
+
+            .animate-spin {
+              animation: spin 1s linear infinite;
+            }
+          `}</style>
         </div>
       </div>
     </div>
