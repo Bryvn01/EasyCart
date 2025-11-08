@@ -134,21 +134,26 @@ const Wishlist = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleMoveToCart(item.id, item.product_name)}
-                    disabled={item.product_stock === 0}
-                    size="sm"
-                    className="flex-1"
-                  >
-                    {item.product_stock === 0 ? 'Sold Out' : '🛒 Move to Cart'}
-                  </Button>
-                  <Button
-                    onClick={() => handleRemoveFromWishlist(item.id)}
-                    variant="danger"
-                    size="sm"
-                  >
-                    Remove
-                  </Button>
+                    <div className="mobile-flex mobile-flex-col mobile-gap-3 mobile-items-center" style={{ width: '100%' }}>
+                      <Button
+                        onClick={() => handleMoveToCart(item.id, item.product_name)}
+                        disabled={item.product_stock === 0}
+                        size="sm"
+                        className="mobile-rounded-md"
+                        style={{ width: '100%' }}
+                      >
+                        {item.product_stock === 0 ? 'Sold Out' : '🛒 Move to Cart'}
+                      </Button>
+                      <Button
+                        onClick={() => handleRemoveFromWishlist(item.id)}
+                        variant="danger"
+                        size="sm"
+                        className="mobile-rounded-md"
+                        style={{ width: '100%' }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
                 </div>
               </div>
             </Card>
