@@ -202,6 +202,22 @@
   transform: translateX(4px);
 }
 
+/* Animation respects user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .sticky-mini-cart {
+    transition: none;
+    animation: none;
+  }
+  
+  .mini-cart-error {
+    animation: none;
+  }
+  
+  .spinner {
+    animation: none;
+  }
+}
+
 @media (min-width: 768px) {
   .sticky-mini-cart {
     display: none;

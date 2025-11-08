@@ -31,17 +31,18 @@ export const useCart = () => {
  * @param {number} wait - Debounce delay in milliseconds
  * @returns {Function} Debounced function
  */
-const debounce = (func, wait) => {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-};
+// Utility function available for future use
+// const debounce = (func, wait) => {
+//   let timeout;
+//   return function executedFunction(...args) {
+//     const later = () => {
+//       clearTimeout(timeout);
+//       func(...args);
+//     };
+//     clearTimeout(timeout);
+//     timeout = setTimeout(later, wait);
+//   };
+// };
 
 export const CartProvider = ({ children }) => {
   // State management
@@ -62,6 +63,7 @@ export const CartProvider = ({ children }) => {
     return () => {
       isMountedRef.current = false;
       // Cancel all pending requests
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       abortControllersRef.current.forEach(controller => controller.abort());
       abortControllersRef.current.clear();
     };
@@ -142,7 +144,8 @@ export const CartProvider = ({ children }) => {
         }
         
         // Wait before retrying (exponential backoff)
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 500));
+        const delay = Math.pow(2, attempt) * 500;
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
     
