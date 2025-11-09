@@ -1,37 +1,149 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { formatPriceLocale } from '../utils/formatPrice';
 import './StickyMiniCart.css';
 
+/**
+ * StickyMiniCart - Enterprise-grade mobile cart summary bar
+ * 
+ * Features:
+ * - Real-time cart count and total display
+ * - Loading and error state handling
+ * - WCAG AA accessibility compliance
+ * - Smooth animations and transitions
+ * - Keyboard navigation support
+ * - Screen reader announcements
+ * 
+ * @returns {JSX.Element|null} Sticky cart bar or null if no items
+ */
 const StickyMiniCart = () => {
-  const { cartCount, cart } = useCart();
+  const { cartCount, cart, loading, error, clearError } = useCart();
   const navigate = useNavigate();
+  const [isVisible, setIsVisible] = useState(false);
+  const announcementRef = useRef(null);
+  const prevCountRef = useRef(0);
 
+  // Show/hide with animation based on cart count
+  useEffect(() => {
+    if (cartCount > 0) {
+      // Small delay to trigger animation
+      const timer = setTimeout(() => setIsVisible(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
+    }
+  }, [cartCount]);
+
+  // Announce cart changes to screen readers
+  useEffect(() => {
+    if (cartCount !== prevCountRef.current && cartCount > 0) {
+      const change = cartCount - prevCountRef.current;
+      const announcement = change > 0 
+        ? `${Math.abs(change)} item${Math.abs(change) !== 1 ? 's' : ''} added to cart. Total: ${cartCount} item${cartCount !== 1 ? 's' : ''}`
+        : `Item removed from cart. Total: ${cartCount} item${cartCount !== 1 ? 's' : ''}`;
+      
+      if (announcementRef.current) {
+        announcementRef.current.textContent = announcement;
+      }
+      
+      prevCountRef.current = cartCount;
+    }
+  }, [cartCount]);
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navigate('/cart');
+    } else if (e.key === 'Escape' && error) {
+      e.preventDefault();
+      clearError();
+    }
+  };
+
+  // Don't render if no items in cart
   if (!cartCount || cartCount === 0) return null;
 
   const totalPrice = cart?.total_price || 0;
+  const itemText = cartCount === 1 ? 'item' : 'items';
 
   return (
-    <div className="sticky-mini-cart" role="complementary" aria-label="Shopping cart summary">
-      <button
-        className="sticky-mini-cart-button"
-        onClick={() => navigate('/cart')}
-        aria-label={`View cart with ${cartCount} items, total ${totalPrice} KSh`}
+    <>
+      {/* Screen reader announcements - visually hidden */}
+      <div
+        ref={announcementRef}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      />
+
+      <div 
+        className={`sticky-mini-cart ${isVisible ? 'visible' : ''} ${error ? 'has-error' : ''}`}
+        role="complementary" 
+        aria-label="Shopping cart summary"
       >
-        <span className="cart-icon" aria-hidden="true">
-          🛒
-          {cartCount > 0 && (
-            <span className="cart-badge">{cartCount > 99 ? '99+' : cartCount}</span>
+        {/* Error notification */}
+        {error && (
+          <div 
+            className="mini-cart-error" 
+            role="alert"
+            aria-live="assertive"
+          >
+            <span className="error-icon" aria-hidden="true">⚠️</span>
+            <span className="error-message">{error.message}</span>
+            <button
+              className="error-dismiss"
+              onClick={clearError}
+              aria-label="Dismiss error"
+              type="button"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        <button
+          className={`sticky-mini-cart-button ${loading ? 'loading' : ''}`}
+          onClick={() => navigate('/cart')}
+          onKeyDown={handleKeyDown}
+          aria-label={`View shopping cart with ${cartCount} ${itemText}, total ${formatPriceLocale(totalPrice)} Kenya Shillings`}
+          aria-busy={loading}
+          type="button"
+        >
+          {/* Loading indicator */}
+          {loading && (
+            <span className="loading-spinner" aria-hidden="true">
+              <span className="spinner"></span>
+            </span>
           )}
-        </span>
-        <span className="cart-info">
-          <span className="cart-count">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
-          <span className="cart-total">KSh {formatPriceLocale(totalPrice)}</span>
-        </span>
-        <span className="cart-arrow" aria-hidden="true">→</span>
-      </button>
-    </div>
+
+          {/* Cart icon with badge */}
+          <span className="cart-icon" aria-hidden="true">
+            🛒
+            {cartCount > 0 && (
+              <span className="cart-badge">
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
+          </span>
+
+          {/* Cart information */}
+          <span className="cart-info">
+            <span className="cart-count">
+              {cartCount} {itemText}
+            </span>
+            <span className="cart-total">
+              KSh {formatPriceLocale(totalPrice)}
+            </span>
+          </span>
+
+          {/* Arrow indicator */}
+          <span className="cart-arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+    </>
   );
 };
 
