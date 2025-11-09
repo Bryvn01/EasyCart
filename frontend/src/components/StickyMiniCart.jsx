@@ -123,7 +123,7 @@ const StickyMiniCart = () => {
           <span className="cart-icon" aria-hidden="true">
             🛒
             {cartCount > 0 && (
-              <span className="cart-badge" aria-label={`${cartCount} items`}>
+              <span className="cart-badge">
                 {cartCount > 99 ? '99+' : cartCount}
               </span>
             )}
@@ -134,7 +134,7 @@ const StickyMiniCart = () => {
             <span className="cart-count">
               {cartCount} {itemText}
             </span>
-            <span className="cart-total" aria-label={`Total: ${formatPriceLocale(totalPrice)} Kenya Shillings`}>
+            <span className="cart-total">
               KSh {formatPriceLocale(totalPrice)}
             </span>
           </span>

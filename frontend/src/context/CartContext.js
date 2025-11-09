@@ -26,23 +26,14 @@ export const useCart = () => {
 };
 
 /**
- * Debounce utility to prevent rapid successive calls
- * @param {Function} func - Function to debounce
- * @param {number} wait - Debounce delay in milliseconds
- * @returns {Function} Debounced function
+ * Calculate total items in cart from cart data
+ * @param {Object} cartData - Cart data from API
+ * @returns {number} Total number of items
  */
-// Utility function available for future use
-// const debounce = (func, wait) => {
-//   let timeout;
-//   return function executedFunction(...args) {
-//     const later = () => {
-//       clearTimeout(timeout);
-//       func(...args);
-//     };
-//     clearTimeout(timeout);
-//     timeout = setTimeout(later, wait);
-//   };
-// };
+const calculateTotalItems = (cartData) => {
+  if (!cartData?.items || !Array.isArray(cartData.items)) return 0;
+  return cartData.items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+};
 
 export const CartProvider = ({ children }) => {
   // State management
@@ -63,20 +54,9 @@ export const CartProvider = ({ children }) => {
     return () => {
       isMountedRef.current = false;
       // Cancel all pending requests
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       abortControllersRef.current.forEach(controller => controller.abort());
       abortControllersRef.current.clear();
     };
-  }, []);
-
-  /**
-   * Calculate total items in cart from cart data
-   * @param {Object} cartData - Cart data from API
-   * @returns {number} Total number of items
-   */
-  const calculateTotalItems = useCallback((cartData) => {
-    if (!cartData?.items || !Array.isArray(cartData.items)) return 0;
-    return cartData.items.reduce((sum, item) => sum + (item.quantity || 0), 0);
   }, []);
 
   /**
@@ -151,7 +131,7 @@ export const CartProvider = ({ children }) => {
     
     pendingRequestsRef.current.delete(requestKey);
     return null;
-  }, [isAuthenticated, calculateTotalItems]);
+  }, [isAuthenticated]);
 
   /**
    * Legacy method for backwards compatibility
@@ -266,7 +246,7 @@ export const CartProvider = ({ children }) => {
     } finally {
       pendingRequestsRef.current.delete(requestKey);
     }
-  }, [isAuthenticated, cart, cartCount, fetchCart, calculateTotalItems]);
+  }, [isAuthenticated, cart, cartCount, fetchCart]);
 
   /**
    * Remove item from cart with optimistic update
@@ -318,7 +298,7 @@ export const CartProvider = ({ children }) => {
     } finally {
       pendingRequestsRef.current.delete(requestKey);
     }
-  }, [isAuthenticated, cart, cartCount, fetchCart, calculateTotalItems]);
+  }, [isAuthenticated, cart, cartCount, fetchCart]);
 
   /**
    * Move item to wishlist with optimistic update
@@ -370,7 +350,7 @@ export const CartProvider = ({ children }) => {
     } finally {
       pendingRequestsRef.current.delete(requestKey);
     }
-  }, [isAuthenticated, cart, cartCount, fetchCart, calculateTotalItems]);
+  }, [isAuthenticated, cart, cartCount, fetchCart]);
 
   /**
    * Manually update cart count (for edge cases)

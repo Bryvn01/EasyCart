@@ -11,7 +11,8 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '../test-utils';
+import { render as rtlRender, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import StickyMiniCart from '../components/StickyMiniCart';
 import { useCart } from '../context/CartContext';
 
@@ -20,10 +21,20 @@ const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
+  MemoryRouter: jest.requireActual('react-router-dom').MemoryRouter,
 }));
 
 // Mock CartContext
 jest.mock('../context/CartContext');
+
+// Custom render that only wraps with Router (not CartProvider since we're mocking useCart)
+const render = (ui) => {
+  return rtlRender(
+    <MemoryRouter>
+      {ui}
+    </MemoryRouter>
+  );
+};
 
 describe('StickyMiniCart Component', () => {
   beforeEach(() => {

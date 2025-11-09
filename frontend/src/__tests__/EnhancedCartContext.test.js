@@ -45,16 +45,48 @@ const TestComponent = () => {
     clearError
   } = useCart();
 
+  const handleAddToCart = async () => {
+    try {
+      await addToCart(1, 2);
+    } catch (err) {
+      // Error is handled by context, component just needs to catch to prevent unhandled rejection
+    }
+  };
+
+  const handleUpdateItem = async () => {
+    try {
+      await updateCartItem(1, 3);
+    } catch (err) {
+      // Error is handled by context
+    }
+  };
+
+  const handleRemoveItem = async () => {
+    try {
+      await removeFromCart(1);
+    } catch (err) {
+      // Error is handled by context
+    }
+  };
+
+  const handleMoveToWishlist = async () => {
+    try {
+      await moveToWishlist(1);
+    } catch (err) {
+      // Error is handled by context
+    }
+  };
+
   return (
     <div>
       <div data-testid="cart-count">{cartCount}</div>
       <div data-testid="loading-state">{loading ? 'loading' : 'idle'}</div>
       <div data-testid="error-state">{error ? error.message : 'no-error'}</div>
       <div data-testid="cart-items">{cart?.items?.length || 0}</div>
-      <button onClick={() => addToCart(1, 2)} data-testid="add-to-cart">Add to Cart</button>
-      <button onClick={() => updateCartItem(1, 3)} data-testid="update-item">Update Item</button>
-      <button onClick={() => removeFromCart(1)} data-testid="remove-item">Remove Item</button>
-      <button onClick={() => moveToWishlist(1)} data-testid="move-to-wishlist">Move to Wishlist</button>
+      <button onClick={handleAddToCart} data-testid="add-to-cart">Add to Cart</button>
+      <button onClick={handleUpdateItem} data-testid="update-item">Update Item</button>
+      <button onClick={handleRemoveItem} data-testid="remove-item">Remove Item</button>
+      <button onClick={handleMoveToWishlist} data-testid="move-to-wishlist">Move to Wishlist</button>
       <button onClick={clearError} data-testid="clear-error">Clear Error</button>
     </div>
   );
