@@ -1,0 +1,356 @@
+/**
+ * Mobile Compact Layout Optimizations
+ * 
+ * Purpose: Optimize mobile view for compact, professional appearance
+ * with reduced spacing and improved visual density
+ * 
+ * Target: Mobile viewports <768px
+ * Focus: Products page and category navigation
+ */
+
+/* ===== Mobile Products Page Layout Optimizations ===== */
+@media (max-width: 767px) {
+  /* Main container - reduce vertical padding */
+  .container.py-8 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  /* Hide breadcrumb on mobile to save space */
+  nav[aria-label="Breadcrumb"] {
+    display: none;
+  }
+
+  /* Compact header section */
+  .container .mb-8 {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Main heading - reduce size for mobile */
+  .container h1.text-3xl {
+    font-size: 1.5rem !important; /* 24px instead of 30px */
+    line-height: 1.3 !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* Subtitle text - smaller and lighter */
+  .container h1 + p {
+    font-size: 0.875rem !important; /* 14px */
+    color: rgb(107 114 128) !important; /* gray-500 */
+    margin-top: 0.25rem !important;
+  }
+
+  /* Product count text */
+  .container h1 + p + p {
+    font-size: 0.75rem !important; /* 12px */
+    margin-top: 0.5rem !important;
+  }
+
+  /* Active filters section - more compact */
+  .container > div[style*="background: var(--primary-50)"] {
+    padding: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Category scroll section heading */
+  .md\:hidden .px-4.mb-3 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .md\:hidden .px-4.mb-3 h2 {
+    font-size: 1rem !important; /* 16px instead of 18px */
+    margin-bottom: 0.25rem !important;
+  }
+
+  .md\:hidden .px-4.mb-3 p {
+    font-size: 0.75rem !important; /* 12px instead of 14px */
+  }
+
+  /* Category scroll container - reduce spacing */
+  .md\:hidden.mb-4 {
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Category scroll padding */
+  .overflow-x-auto.scrollbar-hide.py-3 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+}
+
+/* ===== Compact Category Cards ===== */
+@media (max-width: 767px) {
+  /* Reduce category card dimensions */
+  .flex-shrink-0.flex.flex-col.items-center.justify-center {
+    min-width: 80px !important;
+    width: 80px !important;
+    min-height: 80px !important;
+    padding: 0.5rem !important;
+    gap: 0.375rem !important;
+  }
+
+  /* Reduce category icon/image size */
+  .flex-shrink-0 .w-11.h-11 {
+    width: 2.25rem !important; /* 36px instead of 44px */
+    height: 2.25rem !important;
+  }
+
+  /* Category name text - smaller */
+  .flex-shrink-0 span.text-xs {
+    font-size: 0.6875rem !important; /* 11px instead of 12px */
+    line-height: 1.2 !important;
+  }
+
+  /* Category card gap spacing */
+  .flex.gap-3.px-4 {
+    gap: 0.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Pagination dots - more compact */
+  .flex.justify-center.mt-2 {
+    margin-top: 0.5rem !important;
+  }
+
+  .flex.space-x-1\.5 {
+    gap: 0.25rem !important;
+  }
+
+  .flex.space-x-1\.5 > div {
+    width: 0.375rem !important; /* 6px */
+    height: 0.375rem !important;
+  }
+}
+
+/* ===== Product Grid Optimizations ===== */
+@media (max-width: 767px) {
+  /* Reduce grid gap for tighter layout */
+  .grid.grid-cols-2.sm\:grid-cols-3.lg\:grid-cols-4 {
+    gap: 0.5rem !important; /* 8px instead of 12px */
+    padding-bottom: 5rem !important; /* Keep bottom padding for navigation */
+  }
+
+  /* Product card - reduce padding */
+  .grid > div.card {
+    padding: 0 !important;
+  }
+
+  /* Product image container - reduce height */
+  .grid > div.card > div[style*="height: 200px"] {
+    height: 160px !important;
+  }
+
+  /* Product info section - reduce padding */
+  .grid > div.card > div.p-4 {
+    padding: 0.625rem !important; /* 10px instead of 16px */
+  }
+
+  /* Category badge - smaller */
+  .grid > div.card div[style*="fontSize: '0.75rem'"] {
+    font-size: 0.625rem !important; /* 10px */
+    margin-bottom: 0.25rem !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  /* Product title - slightly smaller */
+  .grid > div.card h3 {
+    font-size: 0.875rem !important; /* 14px instead of 16px */
+    margin-bottom: 0.5rem !important;
+    min-height: 2.4em !important;
+  }
+
+  /* Star rating - smaller */
+  .grid > div.card .flex.items-center.gap-1.mb-2 svg {
+    width: 0.875rem !important;
+    height: 0.875rem !important;
+  }
+
+  /* Price section - reduce spacing */
+  .grid > div.card .mb-4 {
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Price text - slightly smaller */
+  .grid > div.card span[style*="fontSize: '1.5rem'"] {
+    font-size: 1.25rem !important; /* 20px instead of 24px */
+  }
+
+  /* Compare price - smaller */
+  .grid > div.card span[style*="fontSize: '1rem'"][style*="textDecoration: 'line-through'"] {
+    font-size: 0.875rem !important;
+  }
+
+  /* Discount badge - smaller */
+  .grid > div.card span[style*="fontSize: '0.75rem'"][style*="background: '#d1fae5'"] {
+    font-size: 0.625rem !important;
+    padding: 1px 4px !important;
+  }
+
+  /* Add to cart button - maintain touch target but reduce visual size */
+  .grid > div.card button.btn-primary {
+    padding: 0.625rem !important;
+    font-size: 0.8125rem !important; /* 13px */
+    min-height: 44px !important; /* Maintain WCAG touch target */
+  }
+
+  .grid > div.card button.btn-primary svg {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  /* Stock badges - smaller */
+  .grid > div.card > div > div[style*="position: 'absolute'"] {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.625rem !important; /* 10px */
+    top: 0.375rem !important;
+  }
+}
+
+/* ===== Section Spacing Reductions ===== */
+@media (max-width: 767px) {
+  /* Reduce spacing between all major sections */
+  .container > .mb-6 {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .container > .mb-8 {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Pagination section - reduce top margin */
+  .grid + div[style*="marginTop"] {
+    margin-top: 1.5rem !important;
+    padding: 0.75rem !important;
+  }
+
+  /* Pagination buttons - maintain touch targets */
+  .grid + div button.btn {
+    min-height: 44px !important;
+    padding: 0.625rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Page number buttons */
+  .grid + div button[style*="minWidth: '40px'"] {
+    min-width: 36px !important;
+    min-height: 36px !important;
+    padding: 0.375rem 0.625rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Pagination info text */
+  .grid + div div[style*="fontSize: '0.875rem'"] {
+    font-size: 0.75rem !important;
+    margin-left: 0.75rem !important;
+  }
+}
+
+/* ===== Typography Hierarchy for Mobile ===== */
+@media (max-width: 767px) {
+  /* Ensure consistent, readable typography */
+  .container h1 {
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .container h2 {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* Maintain readability with appropriate line heights */
+  .container p {
+    line-height: 1.5 !important;
+  }
+}
+
+/* ===== Ensure 4+ Category Cards Visible ===== */
+@media (max-width: 767px) {
+  /* Calculate to ensure 4+ cards are visible in viewport */
+  /* Card width: 80px, gap: 8px, padding: 16px each side */
+  /* Minimum visible: (viewport - 32px) / 88px should be > 4 */
+  /* For 320px viewport: (320 - 32) / 88 = 3.27 cards */
+  /* For 360px viewport: (360 - 32) / 88 = 3.73 cards */
+  /* For 375px viewport: (375 - 32) / 88 = 3.90 cards */
+  /* For 390px viewport: (390 - 32) / 88 = 4.07 cards ✓ */
+}
+
+/* Extra small devices - further optimize */
+@media (max-width: 360px) {
+  /* Even more compact on very small screens */
+  .flex-shrink-0.flex.flex-col.items-center.justify-center {
+    min-width: 72px !important;
+    width: 72px !important;
+    min-height: 72px !important;
+  }
+
+  .flex-shrink-0 .w-11.h-11 {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+
+  .flex.gap-3.px-4 {
+    gap: 0.375rem !important;
+  }
+
+  /* Product grid - even tighter */
+  .grid.grid-cols-2.sm\:grid-cols-3.lg\:grid-cols-4 {
+    gap: 0.375rem !important;
+  }
+
+  .grid > div.card > div[style*="height: 200px"] {
+    height: 140px !important;
+  }
+}
+
+/* ===== Accessibility Maintenance ===== */
+@media (max-width: 767px) {
+  /* Ensure all interactive elements maintain minimum touch target */
+  button,
+  a.btn,
+  .touch-target {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  /* Focus indicators remain visible */
+  *:focus-visible {
+    outline: 2px solid #3b82f6 !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Maintain text contrast ratios */
+  .text-gray-600 {
+    color: rgb(75 85 99) !important; /* Ensure WCAG AA compliance */
+  }
+
+  .text-gray-500 {
+    color: rgb(107 114 128) !important;
+  }
+}
+
+/* ===== Performance Optimizations ===== */
+@media (max-width: 767px) {
+  /* GPU acceleration for smooth scrolling */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch !important;
+    transform: translateZ(0) !important;
+  }
+
+  /* Optimize animations */
+  .transition-all,
+  .transition-transform {
+    transition-duration: 0.2s !important;
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
