@@ -4,6 +4,7 @@ import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatPriceLocale } from '../utils/formatPrice';
+import StickyCartBar from '../components/mobile/StickyCartBar';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -174,12 +175,14 @@ const ProductDetail = () => {
 
         {/* Product Info */}
         <div>
-          <div style={{
-            fontSize: '0.875rem',
-            color: 'var(--primary-600)',
-            fontWeight: '500',
-            marginBottom: 'var(--space-2)'
-          }}>
+          <div 
+            data-sticky-trigger
+            style={{
+              fontSize: '0.875rem',
+              color: 'var(--primary-600)',
+              fontWeight: '500',
+              marginBottom: 'var(--space-2)'
+            }}>
             {product.category_name}
           </div>
 
@@ -373,6 +376,13 @@ const ProductDetail = () => {
           `}</style>
         </div>
       </div>
+
+      {/* Sticky Cart Bar - Mobile Only */}
+      <StickyCartBar
+        product={product}
+        onAddToCart={addToCart}
+        isAdding={isAddingToCart}
+      />
     </div>
   );
 };
