@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import models
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
 from .cache import ProductCache
@@ -35,6 +37,10 @@ class CategoryListView(APIView):
     """
 
     permission_classes = [AllowAny]
+
+    @method_decorator(cache_page(60 * 15))  # 15 min cache
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def get(self, request):
         """Fetch categories from PostgreSQL with caching."""
@@ -81,6 +87,13 @@ class ProductListView(APIView):
 
     permission_classes = [IsRoleOrReadOnly]
     required_role = "editor"  # Only editors, managers, superadmins can create
+
+    @method_decorator(cache_page(60 * 15))  # 15 min cache for GET requests
+    def dispatch(self, *args, **kwargs):
+        # Only cache GET requests
+        if self.request.method == 'GET':
+            return super().dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get(self, request):
         """Fetch products from PostgreSQL with filters, pagination, and caching."""

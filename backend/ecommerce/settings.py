@@ -68,8 +68,9 @@ except ImportError:
     pass
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "django.middleware.gzip.GZipMiddleware",  # Add GZip compression early in the stack
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -305,7 +306,7 @@ CACHES = {
             "CONNECTION_POOL_KWARGS": {"max_connections": 50},
         },
         "KEY_PREFIX": "easycart",
-        "TIMEOUT": 300,  # 5 minutes default
+        "TIMEOUT": 900,  # 15 minutes default for better performance
     }
 }
 
