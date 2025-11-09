@@ -734,7 +734,6 @@ const Cart = () => {
                   <option value="mpesa">M-Pesa</option>
                   <option value="airtel">Airtel Money</option>
                   <option value="card">Credit/Debit Card (Flutterwave)</option>
-                  <option value="stripe">Credit/Debit Card (Stripe)</option>
                   <option value="paypal">PayPal</option>
                   <option value="bank">Bank Transfer</option>
                   <option value="cash">Cash on Delivery</option>
@@ -755,11 +754,9 @@ const Cart = () => {
                     ? 'var(--gray-400)'
                     : paymentMethod === 'mpesa'
                       ? 'linear-gradient(135deg, #00A651 0%, #00D86E 100%)'
-                      : paymentMethod === 'stripe'
-                        ? 'linear-gradient(135deg, #635BFF 0%, #7A73FF 100%)'
-                        : paymentMethod === 'paypal'
-                          ? 'linear-gradient(135deg, #0070BA 0%, #1F8DE3 100%)'
-                          : undefined,
+                      : paymentMethod === 'paypal'
+                        ? 'linear-gradient(135deg, #0070BA 0%, #1F8DE3 100%)'
+                        : undefined,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -797,7 +794,6 @@ const Cart = () => {
                     Checkout with {
                       paymentMethod === 'mpesa' ? 'M-Pesa' :
                       paymentMethod === 'airtel' ? 'Airtel Money' :
-                      paymentMethod === 'stripe' ? 'Stripe' :
                       paymentMethod === 'paypal' ? 'PayPal' :
                       paymentMethod === 'card' ? 'Card' :
                       paymentMethod
@@ -828,7 +824,6 @@ const Cart = () => {
                   </svg>
                   <span>Secure checkout powered by {
                     paymentMethod === 'mpesa' ? 'Safaricom' :
-                    paymentMethod === 'stripe' ? 'Stripe' :
                     paymentMethod === 'paypal' ? 'PayPal' :
                     paymentMethod === 'card' ? 'Flutterwave' :
                     'trusted payment partners'
