@@ -17,7 +17,6 @@ from .serializers import OrderSerializer, CartSerializer, CartItemSerializer
 from .payment_service import (
     MpesaPaymentService,
     CardPaymentService,
-    StripePaymentService,
     PayPalPaymentService,
 )
 
@@ -219,7 +218,6 @@ def checkout(request):
         "airtel",
         "tkash",
         "card",
-        "stripe",
         "paypal",
         "bank",
         "cash",
@@ -343,36 +341,6 @@ def initiate_payment(request):
         except Exception as e:
             # Handle other unexpected errors
             print(f"Unexpected error processing card payment: {e}")
-            return Response(
-                {"success": False, "message": "Payment processing failed"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-    elif payment_method == "stripe":
-        stripe_service = StripePaymentService()
-        try:
-            result = stripe_service.initiate_payment(
-                order.total_amount, request.user.email, phone_number, order_id
-            )
-            if result.get("status") == "success":
-                order.payment_status = "processing"
-                order.transaction_id = result.get("session_id")
-                order.save()
-                return Response(
-                    {"success": True, "payment_url": result.get("checkout_url")}
-                )
-            else:
-                return Response(
-                    {
-                        "success": False,
-                        "message": result.get(
-                            "message", "Payment initialization failed"
-                        ),
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        except Exception as e:
-            print(f"Error processing Stripe payment: {e}")
             return Response(
                 {"success": False, "message": "Payment processing failed"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
