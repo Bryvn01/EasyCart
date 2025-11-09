@@ -4,7 +4,6 @@ from datetime import datetime
 from django.conf import settings
 from django.utils.text import get_valid_filename
 import os
-import stripe
 
 
 class MpesaPaymentService:
@@ -119,52 +118,6 @@ class CardPaymentService:
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException:
-            return {"status": "error", "message": "Payment initialization failed"}
-
-
-class StripePaymentService:
-    def __init__(self):
-        self.api_key = os.environ.get("STRIPE_SECRET_KEY", "")
-        stripe.api_key = self.api_key
-
-    def initiate_payment(self, amount, email, phone, order_id):
-        if not self.api_key:
-            return {"status": "error", "message": "Stripe not configured"}
-
-        try:
-            # Create a Stripe Checkout Session
-            session = stripe.checkout.Session.create(
-                payment_method_types=["card"],
-                line_items=[
-                    {
-                        "price_data": {
-                            "currency": "kes",
-                            "unit_amount": int(
-                                float(amount) * 100
-                            ),  # Stripe expects amount in cents
-                            "product_data": {
-                                "name": f"Order #{order_id}",
-                                "description": f"Payment for Order {order_id}",
-                            },
-                        },
-                        "quantity": 1,
-                    }
-                ],
-                mode="payment",
-                success_url=f'{os.environ.get("FRONTEND_URL", "http://localhost:3000")}/payment/success?order_id={order_id}',
-                cancel_url=f'{os.environ.get("FRONTEND_URL", "http://localhost:3000")}/payment/cancel?order_id={order_id}',
-                customer_email=email,
-                metadata={"order_id": str(order_id), "phone": phone},
-            )
-            return {
-                "status": "success",
-                "session_id": session.id,
-                "checkout_url": session.url,
-                "data": {"link": session.url},
-            }
-        except stripe.error.StripeError as e:
-            return {"status": "error", "message": str(e)}
-        except Exception as e:
             return {"status": "error", "message": "Payment initialization failed"}
 
 

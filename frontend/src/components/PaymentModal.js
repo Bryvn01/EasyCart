@@ -26,7 +26,7 @@ const PaymentModal = (props) => {
       if (response.data.success) {
         const { payment_method } = variables;
 
-        if ((payment_method === 'card' || payment_method === 'stripe' || payment_method === 'paypal') && response.data.payment_url) {
+        if ((payment_method === 'card' || payment_method === 'paypal') && response.data.payment_url) {
           toast.success('Redirecting to payment gateway...', {
             duration: 2000,
             icon: '🔄'
@@ -216,7 +216,6 @@ const PaymentModal = (props) => {
               <option value="mpesa">M-Pesa (Instant mobile payment)</option>
               <option value="airtel">Airtel Money (Mobile wallet)</option>
               <option value="card">Credit/Debit Card (Flutterwave)</option>
-              <option value="stripe">Credit/Debit Card (Stripe)</option>
               <option value="paypal">PayPal (Online payment)</option>
               <option value="bank">Bank Transfer (Manual)</option>
               <option value="cash">Cash on Delivery</option>
@@ -239,7 +238,7 @@ const PaymentModal = (props) => {
               <span>
                 {paymentMethod === 'mpesa' && 'You will receive an STK push notification on your phone'}
                 {paymentMethod === 'airtel' && 'You will receive a payment prompt on your phone'}
-                {(paymentMethod === 'card' || paymentMethod === 'stripe') && 'You will be redirected to a secure payment page'}
+                {paymentMethod === 'card' && 'You will be redirected to a secure payment page'}
                 {paymentMethod === 'paypal' && 'You will be redirected to PayPal to complete payment'}
                 {paymentMethod === 'bank' && 'Bank details will be provided after order confirmation'}
                 {paymentMethod === 'cash' && 'Pay with cash when your order is delivered'}

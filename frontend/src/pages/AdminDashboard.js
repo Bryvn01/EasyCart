@@ -242,7 +242,6 @@ const AdminDashboard = () => {
                         <div>
                           <p className="text-sm font-medium text-gray-900 capitalize">
                             {method.payment_method === 'mpesa' ? 'M-Pesa' :
-                             method.payment_method === 'stripe' ? 'Stripe' :
                              method.payment_method === 'paypal' ? 'PayPal' :
                              method.payment_method}
                           </p>
