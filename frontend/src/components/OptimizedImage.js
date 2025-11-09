@@ -9,7 +9,9 @@ import PropTypes from 'prop-types';
 const OptimizedImage = ({ src, alt, width = 400, height = 400, ...props }) => {
   // fallback to regular img if not running in Next.js (e.g., during tests)
   if (typeof window === 'undefined') {
-    return <img src={src} alt={alt} width={width} height={height} {...props} />;
+    // Extract only valid HTML img attributes, exclude Next.js specific props
+    const { blurDataURL, placeholder, priority, quality, ...htmlProps } = props;
+    return <img src={src} alt={alt} width={width} height={height} {...htmlProps} />;
   }
   return (
     <Image

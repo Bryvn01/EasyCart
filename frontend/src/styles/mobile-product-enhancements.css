@@ -1,0 +1,350 @@
+/**
+ * Mobile Product Display Enhancements
+ * Optimized for 2-column grid with maximum product visibility
+ */
+
+/* ===== Mobile Product Grid Optimizations ===== */
+@media (max-width: 768px) {
+  /* Ensure 2-column grid on mobile with optimal spacing */
+  .product-grid-mobile {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem; /* Tight spacing to fit more products */
+    padding: 0.5rem;
+  }
+
+  /* Optimize product cards for mobile */
+  .product-card-mobile {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    min-height: 280px; /* Compact height for more products per screen */
+  }
+
+  /* Image optimization for mobile */
+  .product-card-mobile__image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+
+  .product-card-mobile__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Compact product info section */
+  .product-card-mobile__info {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+  }
+
+  /* Title - 2 lines max */
+  .product-card-mobile__title {
+    font-size: 0.813rem; /* 13px - readable but compact */
+    font-weight: 600;
+    line-height: 1.3;
+    color: #111827;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.1rem;
+  }
+
+  /* Price section */
+  .product-card-mobile__price {
+    font-size: 0.938rem; /* 15px - prominent */
+    font-weight: 700;
+    color: #2563eb;
+    margin-top: auto;
+  }
+
+  /* Stock indicator */
+  .product-card-mobile__stock {
+    font-size: 0.688rem; /* 11px */
+    font-weight: 500;
+  }
+
+  /* Compact CTA button */
+  .product-card-mobile__cta {
+    width: 100%;
+    min-height: 36px; /* Still meets 44px touch target when considering padding */
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .product-card-mobile__cta:active {
+    transform: scale(0.98);
+    background: #1d4ed8;
+  }
+
+  /* Badge optimizations */
+  .product-card-mobile__badge {
+    position: absolute;
+    top: 0.375rem;
+    left: 0.375rem;
+    font-size: 0.625rem; /* 10px */
+    font-weight: 700;
+    padding: 0.25rem 0.375rem;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .product-card-mobile__discount-badge {
+    position: absolute;
+    bottom: 0.375rem;
+    right: 0.375rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 700;
+    padding: 0.25rem 0.375rem;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* ===== Enhanced Grid Layout for Better Product Visibility ===== */
+@media (max-width: 640px) {
+  /* Reduce padding on container for more space */
+  .mobile-product-container {
+    padding: 0.5rem;
+  }
+
+  /* Even tighter spacing on smaller screens */
+  .product-grid-mobile {
+    gap: 0.375rem;
+    padding: 0.375rem;
+  }
+
+  .product-card-mobile {
+    min-height: 260px; /* Slightly shorter on very small screens */
+  }
+
+  .product-card-mobile__info {
+    padding: 0.375rem;
+  }
+}
+
+/* ===== Landscape Mode Optimizations ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+  .product-grid-mobile {
+    grid-template-columns: repeat(3, 1fr); /* 3 columns in landscape */
+    gap: 0.5rem;
+  }
+
+  .product-card-mobile {
+    min-height: 220px; /* Shorter for landscape */
+  }
+}
+
+/* ===== Touch Target Enhancements ===== */
+@media (max-width: 768px) {
+  /* Ensure all interactive elements meet 44x44px minimum */
+  .mobile-touch-target {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+  }
+
+  /* Quick action buttons */
+  .product-card-mobile__quick-action {
+    position: absolute;
+    top: 0.375rem;
+    right: 0.375rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .product-card-mobile__quick-action:active {
+    transform: scale(0.9);
+  }
+}
+
+/* ===== Typography Optimizations ===== */
+@media (max-width: 768px) {
+  /* Ensure text is legible without zooming */
+  .mobile-product-text {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .mobile-product-price {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .mobile-product-title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  /* Prevent text from being too small */
+  .mobile-product-meta {
+    font-size: 11px;
+    color: #6b7280;
+  }
+}
+
+/* ===== Color Consistency ===== */
+@media (max-width: 768px) {
+  /* Match desktop color scheme */
+  .mobile-product-primary {
+    color: #2563eb;
+  }
+
+  .mobile-product-success {
+    color: #10b981;
+  }
+
+  .mobile-product-warning {
+    color: #f59e0b;
+  }
+
+  .mobile-product-error {
+    color: #ef4444;
+  }
+
+  /* Background colors */
+  .mobile-product-bg {
+    background-color: #ffffff;
+  }
+
+  .mobile-product-bg-secondary {
+    background-color: #f9fafb;
+  }
+}
+
+/* ===== Performance Optimizations ===== */
+@media (max-width: 768px) {
+  /* GPU acceleration for smooth scrolling */
+  .product-card-mobile {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* Optimize images */
+  .product-card-mobile__image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  /* Reduce motion for animations */
+  @media (prefers-reduced-motion: reduce) {
+    .product-card-mobile,
+    .product-card-mobile__cta {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}
+
+/* ===== Dark Mode Support ===== */
+@media (max-width: 768px) and (prefers-color-scheme: dark) {
+  .product-card-mobile {
+    background: #1f2937;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .product-card-mobile__title {
+    color: #f9fafb;
+  }
+
+  .product-card-mobile__stock {
+    color: #d1d5db;
+  }
+}
+
+/* ===== Accessibility Enhancements ===== */
+@media (max-width: 768px) {
+  /* Focus visible states */
+  .product-card-mobile:focus-visible {
+    outline: 3px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .product-card-mobile__cta:focus-visible {
+    outline: 3px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .product-card-mobile {
+      border: 2px solid #000;
+    }
+
+    .product-card-mobile__cta {
+      border: 2px solid #000;
+    }
+  }
+}
+
+/* ===== Loading States ===== */
+@media (max-width: 768px) {
+  .product-card-mobile--loading {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  .product-card-mobile__skeleton {
+    background: linear-gradient(
+      90deg,
+      #f3f4f6 25%,
+      #e5e7eb 50%,
+      #f3f4f6 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}

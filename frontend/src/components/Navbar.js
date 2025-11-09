@@ -202,6 +202,7 @@ const Navbar = () => {
         {/* Mobile Menu Overlay */}
         {isMenuOpen && (
           <div
+            data-testid="mobile-menu-overlay"
             className="fixed inset-0 bg-black/50 z-[60] md:hidden transition-opacity duration-300"
             onClick={() => setIsMenuOpen(false)}
             aria-hidden="true"
@@ -212,6 +213,7 @@ const Navbar = () => {
         <div
           ref={mobileMenuRef}
           id="mobile-menu"
+          data-testid="mobile-menu"
           className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-80 max-w-[85vw] bg-white dark:bg-gray-800 shadow-2xl z-[70] md:hidden transform transition-transform duration-300 ease-in-out overflow-y-auto ${
             isMenuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}

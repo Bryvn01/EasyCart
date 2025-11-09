@@ -1,0 +1,371 @@
+/**
+ * Instagram-Inspired Mobile Layout Styles
+ * Design System: Clean, minimal, content-focused
+ */
+
+/* ===== Mobile Content Container (Instagram Feed Style) ===== */
+.mobile-feed {
+  max-width: 100%;
+  margin: 0 auto;
+  background: var(--bg-primary, #fafafa);
+}
+
+/* Post/Product Card - Instagram Style */
+.instagram-card {
+  background: var(--card-bg, #fff);
+  margin-bottom: 12px;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/* Card Header (like Instagram post header) */
+.instagram-card__header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+.instagram-card__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-500, #3b82f6);
+}
+
+.instagram-card__header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.instagram-card__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary, #262626);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.instagram-card__subtitle {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #8e8e8e);
+  margin: 0;
+}
+
+.instagram-card__action {
+  padding: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-primary, #262626);
+  touch-action: manipulation;
+}
+
+/* Card Image (like Instagram photo) */
+.instagram-card__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--skeleton-bg, #f0f0f0);
+  overflow: hidden;
+}
+
+.instagram-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Double-tap to like indicator */
+.instagram-card__like-animation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 80px;
+  height: 80px;
+  color: white;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.instagram-card__like-animation--active {
+  transform: translate(-50%, -50%) scale(1.2);
+  opacity: 1;
+}
+
+/* Card Actions (like Instagram's action bar) */
+.instagram-card__actions {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 16px;
+}
+
+.instagram-card__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--icon-color, #262626);
+  transition: transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.instagram-card__action-btn:active {
+  transform: scale(0.9);
+}
+
+.instagram-card__action-btn--liked {
+  color: #ed4956;
+}
+
+.instagram-card__action-icon {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+}
+
+.instagram-card__action-spacer {
+  flex: 1;
+}
+
+/* Card Info (like Instagram's caption section) */
+.instagram-card__info {
+  padding: 0 16px 12px;
+}
+
+.instagram-card__likes {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #262626);
+  margin-bottom: 8px;
+}
+
+.instagram-card__caption {
+  font-size: 0.875rem;
+  color: var(--text-primary, #262626);
+  line-height: 1.4;
+}
+
+.instagram-card__caption-user {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.instagram-card__price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.instagram-card__price-current {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--primary-600, #2563eb);
+}
+
+.instagram-card__price-original {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #8e8e8e);
+  text-decoration: line-through;
+}
+
+.instagram-card__discount-badge {
+  padding: 2px 6px;
+  background: #10b981;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+/* Stories Section (like Instagram stories) */
+.mobile-stories {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  background: var(--card-bg, #fff);
+  border-bottom: 1px solid var(--border-color, #dbdbdb);
+}
+
+.mobile-stories::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-story {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-story__ring {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-story__ring--viewed {
+  background: var(--border-color, #dbdbdb);
+}
+
+.mobile-story__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--card-bg, #fff);
+}
+
+.mobile-story__label {
+  font-size: 0.75rem;
+  color: var(--text-primary, #262626);
+  max-width: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Search Bar (Instagram style) */
+.mobile-search {
+  padding: 12px 16px;
+  background: var(--card-bg, #fff);
+  border-bottom: 1px solid var(--border-color, #dbdbdb);
+}
+
+.mobile-search__input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--search-bg, #efefef);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  color: var(--text-primary, #262626);
+  outline: none;
+}
+
+.mobile-search__input::placeholder {
+  color: var(--text-tertiary, #a8a8a8);
+}
+
+/* Tab Bar (Instagram explore/shop tabs) */
+.mobile-tabs {
+  display: flex;
+  background: var(--card-bg, #fff);
+  border-bottom: 1px solid var(--border-color, #dbdbdb);
+  position: sticky;
+  top: calc(56px + env(safe-area-inset-top, 0px));
+  z-index: 10;
+}
+
+.mobile-tab {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #8e8e8e);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-tab--active {
+  color: var(--text-primary, #262626);
+  border-bottom-color: var(--text-primary, #262626);
+}
+
+/* Grid Layout (Instagram explore grid) */
+.mobile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--bg-primary, #fafafa);
+}
+
+.mobile-grid__item {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.mobile-grid__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mobile-grid__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.mobile-grid__item:active .mobile-grid__overlay {
+  opacity: 1;
+}
+
+.mobile-grid__stats {
+  display: flex;
+  gap: 16px;
+  color: white;
+  font-weight: 600;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mobile-feed {
+    --bg-primary: #000;
+    --card-bg: #000;
+    --text-primary: #fafafa;
+    --text-secondary: #a8a8a8;
+    --text-tertiary: #737373;
+    --border-color: #262626;
+    --icon-color: #fafafa;
+    --search-bg: #262626;
+    --skeleton-bg: #1a1a1a;
+  }
+}
+
+/* Desktop - hide Instagram-style elements */
+@media (min-width: 768px) {
+  .mobile-feed,
+  .mobile-stories,
+  .mobile-search,
+  .mobile-tabs {
+    display: none;
+  }
+}

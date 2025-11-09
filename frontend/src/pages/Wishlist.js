@@ -97,7 +97,7 @@ const Wishlist = () => {
               <Link to={`/products/${item.product}`}>
                 <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100">
                   <img
-                    src={item.product_image || '/api/placeholder/300/300'}
+                    src={item.product_image || item.image || item.image_url || '/api/placeholder/300/300'}
                     alt={item.product_name}
                     className="h-48 w-full object-cover object-center hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
@@ -105,8 +105,12 @@ const Wishlist = () => {
                       e.target.nextSibling.style.display = 'flex';
                     }}
                   />
-                  <div className="flex items-center justify-center text-4xl text-gray-400">
-                    📦
+                  <div className="flex items-center justify-center text-4xl text-gray-400" style={{ display: 'none' }}>
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
                   </div>
                 </div>
               </Link>
@@ -130,21 +134,26 @@ const Wishlist = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleMoveToCart(item.id, item.product_name)}
-                    disabled={item.product_stock === 0}
-                    size="sm"
-                    className="flex-1"
-                  >
-                    {item.product_stock === 0 ? 'Sold Out' : '🛒 Move to Cart'}
-                  </Button>
-                  <Button
-                    onClick={() => handleRemoveFromWishlist(item.id)}
-                    variant="danger"
-                    size="sm"
-                  >
-                    Remove
-                  </Button>
+                    <div className="mobile-flex mobile-flex-col mobile-gap-3 mobile-items-center" style={{ width: '100%' }}>
+                      <Button
+                        onClick={() => handleMoveToCart(item.id, item.product_name)}
+                        disabled={item.product_stock === 0}
+                        size="sm"
+                        className="mobile-rounded-md"
+                        style={{ width: '100%' }}
+                      >
+                        {item.product_stock === 0 ? 'Sold Out' : '🛒 Move to Cart'}
+                      </Button>
+                      <Button
+                        onClick={() => handleRemoveFromWishlist(item.id)}
+                        variant="danger"
+                        size="sm"
+                        className="mobile-rounded-md"
+                        style={{ width: '100%' }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
                 </div>
               </div>
             </Card>

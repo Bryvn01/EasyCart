@@ -31,10 +31,10 @@ describe('BottomNav Component', () => {
     
     await waitFor(() => {
       expect(screen.getByText('Home')).toBeInTheDocument();
-      expect(screen.getByText('Search')).toBeInTheDocument();
-      expect(screen.getByText('Cart')).toBeInTheDocument();
-      expect(screen.getByText('Account')).toBeInTheDocument();
     });
+    expect(screen.getByText('Search')).toBeInTheDocument();
+    expect(screen.getByText('Cart')).toBeInTheDocument();
+    expect(screen.getByText('Account')).toBeInTheDocument();
   });
 
   test('opens search overlay when search button is clicked', async () => {
@@ -50,8 +50,8 @@ describe('BottomNav Component', () => {
     
     await waitFor(() => {
       expect(screen.getByText('Search Products')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Search for products...')).toBeInTheDocument();
     });
+    expect(screen.getByPlaceholderText('Search for products...')).toBeInTheDocument();
   });
 
   test('closes search overlay when close button is clicked', async () => {

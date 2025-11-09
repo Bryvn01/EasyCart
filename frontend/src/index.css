@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import './styles/mobile-optimizations.css';
+@import './styles/instagram-mobile.css';
+@import './styles/mobile-product-enhancements.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -26,6 +28,33 @@
   --gray-600: #4b5563;
   --gray-900: #111827;
 
+  /* Z-Index Scale - Enterprise Standard */
+  --z-base: 1;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-fixed: 30;
+  --z-bottom-nav: 100;
+  --z-fab: 101;
+  --z-modal-backdrop: 110;
+  --z-modal: 120;
+  --z-notification: 130;
+  --z-tooltip: 140;
+
+  /* Safe Area & Mobile Layout */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --nav-height: 64px;
+  --mobile-header-height: 56px;
+  --fab-offset: calc(var(--nav-height) + 16px);
+  --content-bottom-padding: calc(var(--nav-height) + var(--safe-area-bottom) + 16px);
+  --content-top-padding: calc(var(--mobile-header-height) + var(--safe-area-top));
+
+  /* Touch Target Standards (WCAG 2.5.5) */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+
   /* Spacing */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -48,13 +77,6 @@
 }
 
 /* Base Styles */
-html,
-body {
-  overflow-x: hidden;
-  max-width: 100%;
-  position: relative;
-}
-
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--gray-900);
@@ -149,11 +171,6 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--space-4);
-}
-
-#root {
-  overflow-x: hidden;
-  max-width: 100%;
 }
 
 .flex { display: flex; }
@@ -620,6 +637,7 @@ img {
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -910,6 +928,19 @@ img {
   }
 }
 
+/* Screen reader only (accessibility) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* ===== PWA AND MOBILE TOUCH ENHANCEMENTS ===== */
 
 /* Touch-friendly tap targets (minimum 44x44px) */
@@ -1021,7 +1052,8 @@ input:focus:not(:focus-visible) {
 /* High DPI screens */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   img {
-    image-rendering: -webkit-optimize-contrast;
+    image-rendering: auto;
+    image-rendering: crisp-edges;
   }
 }
 
@@ -1040,6 +1072,7 @@ input:focus:not(:focus-visible) {
 @media (display-mode: standalone) {
   body {
     /* App is installed, adjust UI accordingly */
+    -webkit-user-select: none;
     user-select: none; /* Prevent text selection in PWA mode */
   }
 
@@ -1047,6 +1080,7 @@ input:focus:not(:focus-visible) {
   button,
   input,
   textarea {
+    -webkit-user-select: auto;
     user-select: auto; /* Allow selection in interactive elements */
   }
 
@@ -1104,10 +1138,5 @@ input:focus:not(:focus-visible) {
   animation: shimmer 2s infinite;
 }
 
-/* Connection-aware image loading */
-@media (prefers-reduced-data: reduce) {
-  img {
-    /* Lower quality on reduced data mode */
-    image-rendering: pixelated;
-  }
-}
+/* Connection-aware image loading - removed unsupported media feature */
+/* Note: prefers-reduced-data is not widely supported yet, will use JavaScript fallback */

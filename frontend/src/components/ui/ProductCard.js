@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import { useFadeOutOnSuccess } from '../../hooks/useFadeOutOnSuccess';
 import { motion } from 'framer-motion';
 import { getProductImageUrl } from '../../utils/imageUtils';
+import { formatPriceLocale } from '../../utils/formatPrice';
 
 /**
  * ProductCard: Standardized, accessible, responsive product card for EasyCart
@@ -95,9 +96,9 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
         )}
 
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-lg font-bold text-[color:var(--primary,#2563eb)]">KSh {product.price?.toLocaleString()}</span>
+          <span className="text-lg font-bold text-[color:var(--primary,#2563eb)]">KSh {formatPriceLocale(product.price)}</span>
           {product.old_price && product.price < product.old_price && (
-            <span className="text-xs line-through text-gray-400">KSh {product.old_price?.toLocaleString()}</span>
+            <span className="text-xs line-through text-gray-400">KSh {formatPriceLocale(product.old_price)}</span>
           )}
         </div>
         {/* Trust badges beside info */}
@@ -111,7 +112,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
         <div className="flex gap-2 mt-auto">
           <button
             ref={addToCartBtnRef}
-            className="bg-[color:var(--primary,#2563eb)] hover:bg-[color:var(--secondary,#7c3aed)] text-white font-semibold py-2 px-4 rounded-[var(--border-radius)] transition w-full opacity-100 group-hover:scale-105 group-hover:shadow-lg focus:opacity-100"
+            className="bg-[color:var(--primary,#2563eb)] hover:bg-[color:var(--secondary,#7c3aed)] text-white font-semibold py-2.5 px-4 rounded-[var(--border-radius)] transition w-full opacity-100 group-hover:scale-105 group-hover:shadow-lg focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-h-[44px] inline-flex items-center justify-center gap-2"
             style={{ transition: 'opacity 0.4s', opacity: addToCartBtnHidden ? 0 : 1, display: addToCartBtnHidden ? 'none' : undefined }}
             onClick={async e => {
               e.stopPropagation();
@@ -130,7 +131,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
             }}
             aria-label={`Add ${product.name} to cart`}
           >
-            Add to Cart
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span className="hidden sm:inline">Add to Cart</span>
+            <span className="sm:hidden">Add</span>
           </button>
           {addToCartSuccess && (
             <div
@@ -151,11 +156,16 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
             </div>
           )}
           <button
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-[var(--border-radius)] transition w-full opacity-100 group-hover:scale-105 group-hover:shadow focus:opacity-100"
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 px-4 rounded-[var(--border-radius)] transition w-full opacity-100 group-hover:scale-105 group-hover:shadow focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 min-h-[44px] inline-flex items-center justify-center gap-2"
             onClick={e => { e.stopPropagation(); if (typeof onQuickView === 'function') onQuickView(); }}
             aria-label={`Quick view ${product.name}`}
           >
-            Quick View
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <span className="hidden sm:inline">Quick View</span>
+            <span className="sm:hidden">View</span>
           </button>
         </div>
       </div>

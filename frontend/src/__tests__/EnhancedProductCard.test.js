@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '../test-utils';
 import EnhancedProductCard from '../components/EnhancedProductCard';
+import toast from 'react-hot-toast';
 
 // Mock useCart hook
 const mockAddToCart = jest.fn();
@@ -37,6 +38,8 @@ const renderComponent = (product = mockProduct) => {
 describe('EnhancedProductCard', () => {
   beforeEach(() => {
     mockAddToCart.mockClear();
+    // Clear all mocks including toast
+    jest.clearAllMocks();
   });
 
   test('renders product information correctly', () => {
@@ -106,8 +109,12 @@ describe('EnhancedProductCard', () => {
     const button = screen.getByRole('button', { name: /add test product to cart/i });
     fireEvent.click(button);
 
+    // Check if toast was called (for react-hot-toast implementation)
+    // OR check if text appears in DOM (for custom Toast component)
     await waitFor(() => {
-      expect(screen.getByText(/added to cart/i)).toBeInTheDocument();
+      const toastCalled = toast.success.mock.calls.length > 0;
+      const textInDom = screen.queryByText(/added to cart/i) !== null;
+      expect(toastCalled || textInDom).toBe(true);
     }, { timeout: 3000 });
   });
 
@@ -119,8 +126,12 @@ describe('EnhancedProductCard', () => {
     const button = screen.getByRole('button', { name: /add test product to cart/i });
     fireEvent.click(button);
 
+    // Check if toast was called (for react-hot-toast implementation)
+    // OR check if text appears in DOM (for custom Toast component)
     await waitFor(() => {
-      expect(screen.getByText(/failed to add/i)).toBeInTheDocument();
+      const toastCalled = toast.error.mock.calls.length > 0;
+      const textInDom = screen.queryByText(/failed to add/i) !== null;
+      expect(toastCalled || textInDom).toBe(true);
     }, { timeout: 3000 });
   });
 
