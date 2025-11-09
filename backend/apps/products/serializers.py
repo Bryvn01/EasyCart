@@ -48,6 +48,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.name", read_only=True)
     image = serializers.SerializerMethodField()
+    thumbnail_url = serializers.SerializerMethodField()
 
     def get_image(self, obj):
         """Return clean image URL without /media/ prefix for external URLs"""
@@ -63,6 +64,19 @@ class ProductSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
 
+    def get_thumbnail_url(self, obj):
+        """Return thumbnail URL or generate one from image_url"""
+        if obj.thumbnail_url:
+            return obj.thumbnail_url
+        # Fallback: generate thumbnail from image_url if available
+        if obj.image_url and 'cloudinary.com' in obj.image_url:
+            return obj.image_url.replace('/upload/', '/upload/w_100,q_auto,f_auto/')
+        # Fallback: use image method
+        image_url = self.get_image(obj)
+        if image_url and 'cloudinary.com' in image_url:
+            return image_url.replace('/upload/', '/upload/w_100,q_auto,f_auto/')
+        return image_url
+
     class Meta:
         model = Product
         fields = [
@@ -77,6 +91,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "category_name",
             "image",
             "image_url",
+            "thumbnail_url",
+            "blurhash",
             "stock",
             "sku",
             "weight",

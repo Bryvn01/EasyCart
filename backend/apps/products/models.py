@@ -51,6 +51,9 @@ class Product(models.Model):
     dimensions = models.CharField(max_length=100, blank=True)
     brand = models.CharField(max_length=100, blank=True)
     image_url = models.CharField(max_length=500, blank=True)
+    # Progressive image loading fields
+    thumbnail_url = models.URLField(blank=True, max_length=500)
+    blurhash = models.CharField(max_length=100, blank=True)
     is_active = models.BooleanField(default=True, db_index=True)
     is_featured = models.BooleanField(default=False, db_index=True)
     view_count = models.PositiveIntegerField(default=0)
@@ -85,6 +88,23 @@ class Product(models.Model):
             timestamp = int(time.time())
             unique_id = str(uuid.uuid4())[:8]
             self.sku = f"PRD-{timestamp}-{unique_id}-{slugify(self.name)[:10]}"
+
+        # Generate thumbnail URL for Cloudinary images
+        if self.image_url and not self.thumbnail_url:
+            # Check if it's a Cloudinary URL
+            if 'cloudinary.com' in self.image_url:
+                # Insert thumbnail transformation into Cloudinary URL
+                self.thumbnail_url = self.image_url.replace(
+                    '/upload/', 
+                    '/upload/w_100,q_auto,f_auto/'
+                )
+            elif self.image and hasattr(self.image, 'url'):
+                # For ImageField, try to generate thumbnail URL
+                if 'cloudinary.com' in self.image.url:
+                    self.thumbnail_url = self.image.url.replace(
+                        '/upload/',
+                        '/upload/w_100,q_auto,f_auto/'
+                    )
 
         super().save(*args, **kwargs)
 

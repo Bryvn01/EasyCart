@@ -12,6 +12,7 @@ import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import ImageLightbox from '../components/ImageLightbox';
 import SuccessAnimation from '../components/SuccessAnimation';
 import EmptyState from '../components/EmptyState';
+import ProgressiveImage from '../components/ui/ProgressiveImage';
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
@@ -304,46 +305,16 @@ const Products = () => {
                 cursor: 'zoom-in',
                 height: '200px',
                 background: 'var(--gray-100)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
                 position: 'relative',
                 overflow: 'hidden'
               }}>
-              {product.image ? (
-                <img
-                  src={getProductImageUrl(product, '/placeholder.png')}
-                  alt={product.name}
-                  crossOrigin="anonymous"
-                  loading="lazy"
-                  className="group-hover:scale-110 transition-transform duration-500"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
-                  }}
-                  onError={(e) => {
-                    // Fallback to placeholder if image fails to load
-                    e.target.onerror = null; // Prevent infinite loop
-                    e.target.style.display = 'none';
-                    if (e.target.nextSibling) {
-                      e.target.nextSibling.style.display = 'flex';
-                    }
-                  }}
-                />
-              ) : null}
-              <div style={{
-                display: product.image ? 'none' : 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                gap: 'var(--space-2)',
-                color: 'var(--gray-300)'
-              }}>
-                <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
+              <ProgressiveImage
+                src={getProductImageUrl(product, '/placeholder.png')}
+                thumbnail={product.thumbnail_url}
+                alt={product.name}
+                aspectRatio="auto"
+                className="group-hover:scale-110 transition-transform duration-500"
+              />
 
               {/* Badges */}
               {product.stock === 0 ? (
