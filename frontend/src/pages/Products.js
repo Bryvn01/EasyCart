@@ -6,7 +6,8 @@ import { useCart } from '../context/CartContext';
 import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
 import { handleApiError } from '../utils/errorHandler';
-import { useProducts } from '../hooks/useProducts';
+import { useInfiniteProducts } from '../hooks/useInfiniteProducts';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { getProductImageUrl } from '../utils/imageUtils';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import ImageLightbox from '../components/ImageLightbox';
@@ -21,7 +22,6 @@ const Products = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const [currentPage, setCurrentPage] = useState(1);
   const [lightboxImage, setLightboxImage] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successProduct, setSuccessProduct] = useState('');
@@ -30,15 +30,36 @@ const Products = () => {
   const { fetchCartCount } = useCart();
   const location = useLocation();
 
-  // Use the products hook
-  const { products, loading, pagination } = useProducts({
-    page: currentPage,
-    pageSize: 12,
+  // Use infinite scroll hook
+  const {
+    products,
+    totalCount,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    isError,
+    error
+  } = useInfiniteProducts({
     search: debouncedSearchTerm,
     category: selectedCategory,
     ordering: sortBy,
-    priceRange
+    priceRange,
+    pageSize: 12
   });
+
+  // Infinite scroll observer
+  const { sentinelRef } = useInfiniteScroll(
+    () => {
+      if (hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    {
+      enabled: hasNextPage && !isFetchingNextPage,
+      threshold: 200
+    }
+  );
 
   useEffect(() => {
     // Get search term and category from URL parameters
@@ -63,15 +84,9 @@ const Products = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-      setCurrentPage(1); // Reset to first page on search
     }, 300);
     return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedCategory, sortBy, priceRange.min, priceRange.max]);
 
   useEffect(() => {
     fetchCategories();
@@ -112,7 +127,7 @@ const Products = () => {
   };
 
   // PERFORMANCE: Loading skeleton optimized
-  if (loading && products.length === 0) {
+  if (isLoading && products.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -120,6 +135,18 @@ const Products = () => {
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-96 animate-pulse"></div>
         </div>
         <ProductGridSkeleton count={8} />
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <h2 className="text-xl font-semibold text-red-800 mb-2">Error Loading Products</h2>
+          <p className="text-red-600">{error?.message || 'Failed to load products'}</p>
+        </div>
       </div>
     );
   }
@@ -157,9 +184,9 @@ const Products = () => {
             'Discover quality Kenyan products at great prices'
           }
         </p>
-        {pagination.totalCount > 0 && (
+        {totalCount > 0 && (
           <p className="text-sm text-gray-500 mt-2">
-            Showing {((currentPage - 1) * 12) + 1}-{Math.min(currentPage * 12, pagination.totalCount)} of {pagination.totalCount} products
+            Showing {products.length} of {totalCount} products
           </p>
         )}
       </div>
@@ -541,7 +568,7 @@ const Products = () => {
         ))}
       </div>
 
-      {products.length === 0 && !loading && (
+      {products.length === 0 && !isLoading && (
         <EmptyState
           type={debouncedSearchTerm ? 'search' : 'products'}
           onAction={debouncedSearchTerm ? () => {
@@ -568,84 +595,43 @@ const Products = () => {
         />
       )}
 
-      {/* Pagination Controls */}
-      {products.length > 0 && pagination.totalPages > 1 && (
+      {/* Infinite Scroll Sentinel - invisible element to trigger loading */}
+      {products.length > 0 && (
+        <div ref={sentinelRef} style={{ height: '20px', marginTop: '20px' }} />
+      )}
+
+      {/* Loading indicator for next page */}
+      {isFetchingNextPage && (
         <div style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: 'var(--space-2)',
-          marginTop: 'var(--space-8)',
-          padding: 'var(--space-4)'
+          padding: 'var(--space-8)',
+          gap: 'var(--space-2)'
         }}>
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-            disabled={!pagination.hasPrevious}
-            className="btn btn-secondary"
+          <div 
             style={{
-              opacity: pagination.hasPrevious ? 1 : 0.5,
-              cursor: pagination.hasPrevious ? 'pointer' : 'not-allowed'
+              width: '40px',
+              height: '40px',
+              border: '4px solid var(--gray-200)',
+              borderTop: '4px solid var(--primary-600)',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
             }}
-          >
-            Previous
-          </button>
+          />
+          <span style={{ color: 'var(--gray-600)' }}>Loading more products...</span>
+        </div>
+      )}
 
-          <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
-            {/* Show page numbers */}
-            {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-              // Calculate which pages to show
-              let pageNum;
-              if (pagination.totalPages <= 5) {
-                pageNum = i + 1;
-              } else if (currentPage <= 3) {
-                pageNum = i + 1;
-              } else if (currentPage >= pagination.totalPages - 2) {
-                pageNum = pagination.totalPages - 4 + i;
-              } else {
-                pageNum = currentPage - 2 + i;
-              }
-
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => setCurrentPage(pageNum)}
-                  style={{
-                    padding: 'var(--space-2) var(--space-3)',
-                    border: '1px solid var(--gray-300)',
-                    borderRadius: 'var(--radius-sm)',
-                    background: currentPage === pageNum ? 'var(--primary-600)' : 'white',
-                    color: currentPage === pageNum ? 'white' : 'var(--gray-700)',
-                    cursor: 'pointer',
-                    fontWeight: currentPage === pageNum ? '600' : '400',
-                    minWidth: '40px'
-                  }}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
-          </div>
-
-          <button
-            onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
-            disabled={!pagination.hasNext}
-            className="btn btn-secondary"
-            style={{
-              opacity: pagination.hasNext ? 1 : 0.5,
-              cursor: pagination.hasNext ? 'pointer' : 'not-allowed'
-            }}
-          >
-            Next
-          </button>
-
-          <div style={{
-            marginLeft: 'var(--space-4)',
-            color: 'var(--gray-600)',
-            fontSize: '0.875rem'
-          }}>
-            Page {pagination.currentPage} of {pagination.totalPages}
-            {pagination.totalCount > 0 && ` (${pagination.totalCount} products)`}
-          </div>
+      {/* End of results message */}
+      {!hasNextPage && products.length > 0 && (
+        <div style={{
+          textAlign: 'center',
+          padding: 'var(--space-8)',
+          color: 'var(--gray-500)',
+          fontSize: '0.875rem'
+        }}>
+          You've reached the end of the product list
         </div>
       )}
     </div>
