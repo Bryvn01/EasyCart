@@ -90,13 +90,13 @@ jobs:
       - name: Run frontend tests
         run: cd frontend && npm test -- --coverage --watchAll=false --passWithNoTests
       - name: Upload backend coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         continue-on-error: true
         with:
           files: backend/coverage.xml
           flags: backend
       - name: Upload frontend coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         continue-on-error: true
         with:
           files: frontend/coverage/lcov.info
