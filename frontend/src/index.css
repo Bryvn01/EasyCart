@@ -2,6 +2,7 @@
 @import './styles/mobile-optimizations.css';
 @import './styles/instagram-mobile.css';
 @import './styles/mobile-product-enhancements.css';
+@import './styles/mobile-compact-layout.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
