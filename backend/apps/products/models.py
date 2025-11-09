@@ -91,8 +91,9 @@ class Product(models.Model):
 
         # Generate thumbnail URL for Cloudinary images
         if self.image_url and not self.thumbnail_url:
-            # Check if it's a Cloudinary URL
-            if 'cloudinary.com' in self.image_url:
+            # Check if it's a Cloudinary URL (must start with http/https and contain cloudinary.com)
+            if (self.image_url.startswith('http://res.cloudinary.com/') or 
+                self.image_url.startswith('https://res.cloudinary.com/')):
                 # Insert thumbnail transformation into Cloudinary URL
                 self.thumbnail_url = self.image_url.replace(
                     '/upload/', 
@@ -100,8 +101,10 @@ class Product(models.Model):
                 )
             elif self.image and hasattr(self.image, 'url'):
                 # For ImageField, try to generate thumbnail URL
-                if 'cloudinary.com' in self.image.url:
-                    self.thumbnail_url = self.image.url.replace(
+                image_url = str(self.image.url)
+                if (image_url.startswith('http://res.cloudinary.com/') or 
+                    image_url.startswith('https://res.cloudinary.com/')):
+                    self.thumbnail_url = image_url.replace(
                         '/upload/',
                         '/upload/w_100,q_auto,f_auto/'
                     )

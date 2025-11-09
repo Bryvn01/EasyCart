@@ -68,12 +68,14 @@ class ProductSerializer(serializers.ModelSerializer):
         """Return thumbnail URL or generate one from image_url"""
         if obj.thumbnail_url:
             return obj.thumbnail_url
-        # Fallback: generate thumbnail from image_url if available
-        if obj.image_url and 'cloudinary.com' in obj.image_url:
+        # Fallback: generate thumbnail from image_url if available and it's a Cloudinary URL
+        if obj.image_url and (obj.image_url.startswith('http://res.cloudinary.com/') or 
+                              obj.image_url.startswith('https://res.cloudinary.com/')):
             return obj.image_url.replace('/upload/', '/upload/w_100,q_auto,f_auto/')
         # Fallback: use image method
         image_url = self.get_image(obj)
-        if image_url and 'cloudinary.com' in image_url:
+        if image_url and (image_url.startswith('http://res.cloudinary.com/') or 
+                         image_url.startswith('https://res.cloudinary.com/')):
             return image_url.replace('/upload/', '/upload/w_100,q_auto,f_auto/')
         return image_url
 
