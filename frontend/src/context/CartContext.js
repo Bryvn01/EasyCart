@@ -51,11 +51,13 @@ export const CartProvider = ({ children }) => {
   // Cleanup on unmount
   useEffect(() => {
     isMountedRef.current = true;
+    // Capture the current ref value for cleanup
+    const abortControllers = abortControllersRef.current;
     return () => {
       isMountedRef.current = false;
       // Cancel all pending requests
-      abortControllersRef.current.forEach(controller => controller.abort());
-      abortControllersRef.current.clear();
+      abortControllers.forEach(controller => controller.abort());
+      abortControllers.clear();
     };
   }, []);
 
