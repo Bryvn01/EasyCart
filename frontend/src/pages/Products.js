@@ -12,6 +12,7 @@ import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import ImageLightbox from '../components/ImageLightbox';
 import SuccessAnimation from '../components/SuccessAnimation';
 import EmptyState from '../components/EmptyState';
+import CompactProductCard from '../components/CompactProductCard';
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
@@ -108,6 +109,16 @@ const Products = () => {
       console.error('Error adding to cart:', error);
       handleApiError(error, 'Failed to add product to cart');
     }
+  };
+
+  // Handle pagination with smooth scroll to top
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    // Scroll to top of product grid smoothly
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   // PERFORMANCE: Loading skeleton optimized
@@ -284,289 +295,16 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Products Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-20 md:pb-8">
-        {products.map(product => (
-          <div
+      {/* Products Grid - Optimized for 100+ products */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 pb-20 md:pb-8">
+        {products.map((product, index) => (
+          <CompactProductCard
             key={product.id}
-            className="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 active:scale-98"
-            style={{
-              cursor: 'pointer',
-              overflow: 'hidden',
-              touchAction: 'manipulation',
-              borderRadius: '8px'
-            }}
-          >
-            {/* Product Image */}
-            <div
-              onClick={() => setLightboxImage({ url: getProductImageUrl(product), name: product.name })}
-              style={{
-                cursor: 'zoom-in',
-                height: '200px',
-                background: 'var(--gray-100)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-              {product.image ? (
-                <img
-                  src={getProductImageUrl(product, '/placeholder.png')}
-                  alt={product.name}
-                  crossOrigin="anonymous"
-                  loading="lazy"
-                  className="group-hover:scale-110 transition-transform duration-500"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
-                  }}
-                  onError={(e) => {
-                    // Fallback to placeholder if image fails to load
-                    e.target.onerror = null; // Prevent infinite loop
-                    e.target.style.display = 'none';
-                    if (e.target.nextSibling) {
-                      e.target.nextSibling.style.display = 'flex';
-                    }
-                  }}
-                />
-              ) : null}
-              <div style={{
-                display: product.image ? 'none' : 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                gap: 'var(--space-2)',
-                color: 'var(--gray-300)'
-              }}>
-                <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-
-              {/* Badges */}
-              {product.stock === 0 ? (
-                <div style={{
-                  position: 'absolute',
-                  top: 'var(--space-2)',
-                  right: 'var(--space-2)',
-                  background: '#ef4444',
-                  color: 'white',
-                  padding: 'var(--space-1) var(--space-2)',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: '0.75rem',
-                  fontWeight: '600'
-                }}>
-                  Out of Stock
-                </div>
-              ) : product.stock < 10 ? (
-                <div style={{
-                  position: 'absolute',
-                  top: 'var(--space-2)',
-                  right: 'var(--space-2)',
-                  background: '#f59e0b',
-                  color: 'white',
-                  padding: 'var(--space-1) var(--space-2)',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: '0.75rem',
-                  fontWeight: '600'
-                }}>
-                  Only {product.stock} left
-                </div>
-              ) : (
-                <div style={{
-                  position: 'absolute',
-                  top: 'var(--space-2)',
-                  right: 'var(--space-2)',
-                  background: '#10b981',
-                  color: 'white',
-                  padding: 'var(--space-1) var(--space-2)',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: '0.75rem',
-                  fontWeight: '600'
-                }}>
-                  In Stock
-                </div>
-              )}
-
-              {/* New/Featured Badge */}
-              {product.is_featured && (
-                <div style={{
-                  position: 'absolute',
-                  top: 'var(--space-2)',
-                  left: 'var(--space-2)',
-                  background: '#8b5cf6',
-                  color: 'white',
-                  padding: 'var(--space-1) var(--space-2)',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}>
-                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  Featured
-                </div>
-              )}
-            </div>
-
-            {/* Product Info */}
-            <div className="p-4">
-              <div style={{
-                fontSize: '0.75rem',
-                color: 'var(--primary-600)',
-                fontWeight: '500',
-                marginBottom: 'var(--space-1)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>
-                {product.category?.name || product.category_name || 'Uncategorized'}
-              </div>
-
-              {product.brand && (
-                <div style={{
-                  fontSize: '0.75rem',
-                  color: 'var(--gray-500)',
-                  marginBottom: 'var(--space-1)'
-                }}>
-                  {product.brand}
-                </div>
-              )}
-
-              <Link to={`/products/${product.id}`}>
-                <h3
-                  className="hover:text-primary-600 transition-colors"
-                  style={{
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    marginBottom: 'var(--space-2)',
-                    lineHeight: '1.4',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                    minHeight: '2.8em'
-                  }}
-                  title={product.name}
-                >
-                  {product.name}
-                </h3>
-              </Link>
-
-              {/* Star Rating */}
-              {product.rating && (
-                <div className="flex items-center gap-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                  <span className="text-xs text-gray-600 ml-1">({product.rating})</span>
-                </div>
-              )}
-
-              {/* Price */}
-              <div className="mb-4">
-                <div className="flex items-baseline gap-2">
-                  <span style={{
-                    fontSize: '1.5rem',
-                    fontWeight: '700',
-                    color: 'var(--primary-600)'
-                  }}>
-                    KSh {parseFloat(product.price).toLocaleString()}
-                  </span>
-                  {product.compare_price && parseFloat(product.compare_price) > parseFloat(product.price) && (
-                    <>
-                      <span style={{
-                        fontSize: '1rem',
-                        color: 'var(--gray-400)',
-                        textDecoration: 'line-through'
-                      }}>
-                        KSh {parseFloat(product.compare_price).toLocaleString()}
-                      </span>
-                      <span style={{
-                        fontSize: '0.75rem',
-                        fontWeight: '600',
-                        color: '#10b981',
-                        background: '#d1fae5',
-                        padding: '2px 6px',
-                        borderRadius: '4px'
-                      }}>
-                        {Math.round(((parseFloat(product.compare_price) - parseFloat(product.price)) / parseFloat(product.compare_price)) * 100)}% OFF
-                      </span>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center gap-2">
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addToCart(product);
-                  }}
-                  className="btn btn-primary w-full hover:scale-105 transition-transform min-h-[44px] inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                  disabled={product.stock === 0}
-                  style={{
-                    padding: 'var(--space-3)',
-                    fontSize: '0.875rem',
-                    fontWeight: '600',
-                    opacity: product.stock === 0 ? 0.5 : 1,
-                    cursor: product.stock === 0 ? 'not-allowed' : 'pointer'
-                  }}
-                >
-                  {product.stock === 0 ? (
-                    <>
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                      <span>Sold Out</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      <span>Add to Cart</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Quick View Button (appears on hover) - PWA compliant */}
-              <Link
-                to={`/products/${product.id}`}
-                className="absolute inset-x-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 min-h-[44px] flex items-center justify-center gap-2"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.98)',
-                  padding: 'var(--space-3)',
-                  borderRadius: 'var(--radius-md)',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  color: 'var(--primary-600)',
-                  border: '2px solid var(--primary-600)',
-                  textDecoration: 'none',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                <span>Quick View</span>
-              </Link>
-            </div>
-          </div>
+            product={product}
+            onAddToCart={addToCart}
+            priority={index < 8}
+            getProductImageUrl={getProductImageUrl}
+          />
         ))}
       </div>
 
@@ -608,7 +346,7 @@ const Products = () => {
           padding: 'var(--space-4)'
         }}>
           <button
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
             disabled={!pagination.hasPrevious}
             className="btn btn-secondary"
             style={{
@@ -637,7 +375,7 @@ const Products = () => {
               return (
                 <button
                   key={pageNum}
-                  onClick={() => setCurrentPage(pageNum)}
+                  onClick={() => handlePageChange(pageNum)}
                   style={{
                     padding: 'var(--space-2) var(--space-3)',
                     border: '1px solid var(--gray-300)',
@@ -656,7 +394,7 @@ const Products = () => {
           </div>
 
           <button
-            onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+            onClick={() => handlePageChange(Math.min(pagination.totalPages, currentPage + 1))}
             disabled={!pagination.hasNext}
             className="btn btn-secondary"
             style={{
