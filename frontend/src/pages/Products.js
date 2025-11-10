@@ -295,14 +295,14 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Products Grid - Optimized for 100+ products */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 pb-20 md:pb-8">
+      {/* Products Grid - Optimized for mobile and desktop */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 pb-20 md:pb-8">
         {products.map((product, index) => (
           <CompactProductCard
             key={product.id}
             product={product}
             onAddToCart={addToCart}
-            priority={index < 8}
+            priority={index < 10}
             getProductImageUrl={getProductImageUrl}
           />
         ))}

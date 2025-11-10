@@ -122,41 +122,51 @@ const PWAInstallPrompt = () => {
   return (
     <div className="pwa-install-prompt" role="dialog" aria-labelledby="pwa-prompt-title">
       <div className="pwa-prompt-content">
-        {/* App Icon */}
-        <div className="pwa-prompt-icon">
-          <img src="/icons/icon-192x192.png" alt="EasyCart icon" />
+        {/* Header with Icon and Text */}
+        <div className="pwa-prompt-header">
+          <div className="pwa-prompt-icon">
+            <img src="/icons/icon-192x192.png" alt="EasyCart icon" />
+          </div>
+
+          <div className="pwa-prompt-text">
+            <h3 id="pwa-prompt-title">Install EasyCart</h3>
+            <p>
+              {isIOS
+                ? 'Add to home screen for faster access'
+                : 'Install for faster access and offline shopping'
+              }
+            </p>
+          </div>
+
+          {/* Close button */}
+          <button
+            className="pwa-close-btn"
+            onClick={handleDismiss}
+            aria-label="Close install prompt"
+          >
+            ✕
+          </button>
         </div>
 
-        {/* Content */}
-        <div className="pwa-prompt-text">
-          <h3 id="pwa-prompt-title">Install EasyCart</h3>
-          <p>
-            {isIOS
-              ? 'Add to home screen for faster access and offline shopping'
-              : 'Install our app for faster access, offline browsing, and exclusive features'
-            }
-          </p>
-
-          {/* iOS-specific instructions */}
-          {isIOS && (
-            <div className="pwa-ios-instructions">
-              <ol>
-                <li>
-                  Tap the <strong>Share</strong> button{' '}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.9-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/>
-                  </svg>
-                </li>
-                <li>
-                  Select <strong>"Add to Home Screen"</strong>
-                </li>
-                <li>
-                  Tap <strong>"Add"</strong> to confirm
-                </li>
-              </ol>
-            </div>
-          )}
-        </div>
+        {/* iOS-specific instructions */}
+        {isIOS && (
+          <div className="pwa-ios-instructions">
+            <ol>
+              <li>
+                Tap <strong>Share</strong>{' '}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.9-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/>
+                </svg>
+              </li>
+              <li>
+                Select <strong>"Add to Home Screen"</strong>
+              </li>
+              <li>
+                Tap <strong>"Add"</strong>
+              </li>
+            </ol>
+          </div>
+        )}
 
         {/* Actions */}
         <div className="pwa-prompt-actions">
@@ -166,7 +176,7 @@ const PWAInstallPrompt = () => {
               onClick={handleInstall}
               aria-label="Install EasyCart app"
             >
-              Install App
+              Install
             </button>
           )}
           <button
@@ -174,18 +184,9 @@ const PWAInstallPrompt = () => {
             onClick={handleDismiss}
             aria-label="Dismiss install prompt"
           >
-            {isIOS ? 'Got it' : 'Maybe later'}
+            {isIOS ? 'Got it' : 'Later'}
           </button>
         </div>
-
-        {/* Close button */}
-        <button
-          className="pwa-close-btn"
-          onClick={handleDismiss}
-          aria-label="Close install prompt"
-        >
-          ✕
-        </button>
       </div>
     </div>
   );

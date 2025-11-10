@@ -2,11 +2,12 @@
 
 .pwa-install-prompt {
   position: fixed;
-  bottom: max(80px, env(safe-area-inset-bottom));
+  /* Position above sticky cart (80px) and bottom nav (60px) */
+  bottom: max(150px, calc(env(safe-area-inset-bottom) + 150px));
   left: 0;
   right: 0;
-  z-index: 999;
-  padding: 0 16px 16px;
+  z-index: 997; /* Below sticky cart (998) but above content */
+  padding: 0 12px;
   animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
@@ -24,28 +25,38 @@
 
 .pwa-prompt-content {
   background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-  border-radius: 16px 16px 0 0;
+  border-radius: 12px;
   box-shadow:
-    0 -4px 12px rgba(0, 0, 0, 0.1),
-    0 -1px 3px rgba(0, 0, 0, 0.05);
-  padding: 20px;
+    0 -2px 16px rgba(0, 0, 0, 0.12),
+    0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 16px;
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
   position: relative;
   pointer-events: auto;
-  border-top: 3px solid #10b981;
+  border: 2px solid #10b981;
+  max-width: 100%;
 }
 
 .pwa-prompt-icon {
   flex-shrink: 0;
+  align-self: flex-start;
 }
 
 .pwa-prompt-icon img {
-  width: 64px;
-  height: 64px;
-  border-radius: 14px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+/* Header section with icon and text side-by-side */
+.pwa-prompt-header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
 }
 
 .pwa-prompt-text {
@@ -55,14 +66,15 @@
 
 .pwa-prompt-text h3 {
   margin: 0 0 4px 0;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   color: #1f2937;
+  line-height: 1.3;
 }
 
 .pwa-prompt-text p {
-  margin: 0 0 12px 0;
-  font-size: 14px;
+  margin: 0;
+  font-size: 12px;
   color: #6b7280;
   line-height: 1.5;
 }
@@ -187,35 +199,60 @@
 /* Responsive Adjustments */
 @media (max-width: 640px) {
   .pwa-install-prompt {
-    bottom: max(70px, env(safe-area-inset-bottom));
+    /* Ensure proper spacing above bottom nav (60px) + sticky cart (56px) + margin */
+    bottom: max(130px, calc(env(safe-area-inset-bottom) + 130px));
+    padding: 0 8px;
   }
 
   .pwa-prompt-content {
-    padding: 16px;
-    gap: 12px;
+    padding: 12px;
+    gap: 10px;
+    border-radius: 10px;
   }
 
   .pwa-prompt-icon img {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
   }
 
   .pwa-prompt-text h3 {
-    font-size: 16px;
+    font-size: 15px;
+    margin: 0 0 4px 0;
   }
 
   .pwa-prompt-text p {
-    font-size: 13px;
+    font-size: 12px;
+    margin: 0 0 8px 0;
+  }
+
+  .pwa-ios-instructions {
+    padding: 10px;
+    margin-top: 8px;
+  }
+
+  .pwa-ios-instructions ol {
+    font-size: 11px;
+    padding-left: 16px;
   }
 
   .pwa-prompt-actions {
-    flex-direction: column;
-    width: 100%;
+    flex-direction: row;
+    gap: 6px;
   }
 
   .pwa-install-btn,
   .pwa-dismiss-btn {
-    width: 100%;
+    flex: 1;
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .pwa-close-btn {
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
   }
 }
 
@@ -225,13 +262,27 @@
     left: 50%;
     right: auto;
     transform: translateX(-50%);
-    max-width: 420px;
-    bottom: 24px;
+    max-width: 400px;
+    bottom: 80px;
     padding: 0;
   }
 
   .pwa-prompt-content {
-    border-radius: 16px;
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .pwa-prompt-icon img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .pwa-prompt-text h3 {
+    font-size: 17px;
+  }
+
+  .pwa-prompt-text p {
+    font-size: 13px;
   }
 }
 
