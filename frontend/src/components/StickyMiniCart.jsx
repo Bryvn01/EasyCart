@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { formatPriceLocale } from '../utils/formatPrice';
 import './StickyMiniCart.css';
@@ -9,6 +9,9 @@ import './StickyMiniCart.css';
  *
  * Features:
  * - Real-time cart count and total display
+ * - Context-aware visibility (hides on cart/checkout pages)
+ * - Scroll-aware auto-hide behavior
+ * - Safe area support for modern devices
  * - Loading and error state handling
  * - WCAG AA accessibility compliance
  * - Smooth animations and transitions
@@ -20,9 +23,51 @@ import './StickyMiniCart.css';
 const StickyMiniCart = () => {
   const { cartCount, cart, loading, error, clearError } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
   const announcementRef = useRef(null);
   const prevCountRef = useRef(0);
+  const lastScrollY = useRef(0);
+
+  // Context-aware visibility: Hide on cart/checkout pages (2025 best practice)
+  const hideOnPaths = ['/cart', '/checkout'];
+  const shouldHideOnPage = hideOnPaths.some(path => location.pathname.includes(path));
+
+  // Scroll-aware behavior: Hide when scrolling down, show when scrolling up
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Only trigger on significant scroll (> 100px from top)
+      if (currentScrollY > 100) {
+        if (currentScrollY > lastScrollY.current) {
+          setIsScrollingDown(true); // Scrolling down
+        } else {
+          setIsScrollingDown(false); // Scrolling up
+        }
+      } else {
+        setIsScrollingDown(false); // Always show near top
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    // Throttle scroll events for performance
+    let ticking = false;
+    const throttledScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+    return () => window.removeEventListener('scroll', throttledScroll);
+  }, []);
 
   // Show/hide with animation based on cart count
   useEffect(() => {
@@ -62,8 +107,8 @@ const StickyMiniCart = () => {
     }
   };
 
-  // Don't render if no items in cart
-  if (!cartCount || cartCount === 0) return null;
+  // Don't render if no items in cart OR on cart/checkout pages (redundant)
+  if (!cartCount || cartCount === 0 || shouldHideOnPage) return null;
 
   const totalPrice = cart?.total_price || 0;
   const itemText = cartCount === 1 ? 'item' : 'items';
@@ -80,7 +125,7 @@ const StickyMiniCart = () => {
       />
 
       <div
-        className={`sticky-mini-cart ${isVisible ? 'visible' : ''} ${error ? 'has-error' : ''}`}
+        className={`sticky-mini-cart ${isVisible ? 'visible' : ''} ${error ? 'has-error' : ''} ${isScrollingDown ? 'scrolling-down' : ''}`}
         role="complementary"
         aria-label="Shopping cart summary"
       >
