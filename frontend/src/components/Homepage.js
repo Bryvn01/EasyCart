@@ -64,7 +64,7 @@ const Homepage = () => {
 
   const handleAddToCart = async (product) => {
     if (!isAuthenticated) {
-      handleApiError({ message: 'Please login to add items to cart' });
+      handleApiError({ message: 'Please sign in to continue' });
       return;
     }
     try {
@@ -72,7 +72,7 @@ const Homepage = () => {
       fetchCartCount();
       handleApiSuccess(`${product.name} added to cart!`);
     } catch (error) {
-      handleApiError(error, 'Failed to add product to cart');
+      handleApiError(error, 'Unable to add product. Please try again.');
     }
   };
 

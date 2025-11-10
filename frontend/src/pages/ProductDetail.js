@@ -4,6 +4,7 @@ import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatPriceLocale } from '../utils/formatPrice';
+import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -37,7 +38,8 @@ const ProductDetail = () => {
 
   const addToCart = async () => {
     if (!isAuthenticated) {
-      alert('Please login to add items to cart');
+      handleApiError({ message: 'Please sign in to continue' });
+      navigate('/login');
       return;
     }
 
@@ -45,10 +47,15 @@ const ProductDetail = () => {
     try {
       await ordersAPI.addToCart({ product_id: product.id, quantity });
       fetchCartCount();
-      alert('Product added to cart! 🛒');
+      handleApiSuccess('Added to cart successfully');
+
+      // Haptic feedback on mobile
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Failed to add product to cart');
+      handleApiError(error, 'Unable to add product. Please try again.');
     } finally {
       setIsAddingToCart(false);
     }
@@ -351,7 +358,7 @@ const ProductDetail = () => {
               .button-container {
                 flex-direction: column;
               }
-              
+
               .button-container button {
                 width: 100% !important;
                 flex: none !important;
