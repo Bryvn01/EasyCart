@@ -13,6 +13,9 @@ import ImageLightbox from '../components/ImageLightbox';
 import SuccessAnimation from '../components/SuccessAnimation';
 import EmptyState from '../components/EmptyState';
 import CompactProductCard from '../components/CompactProductCard';
+import AuthModal from '../components/AuthModal';
+import useGuestCart from '../hooks/useGuestCart';
+import { toast } from 'react-hot-toast';
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
@@ -25,10 +28,15 @@ const Products = () => {
   const [lightboxImage, setLightboxImage] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successProduct, setSuccessProduct] = useState('');
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingCartProduct, setPendingCartProduct] = useState(null);
 
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
   const location = useLocation();
+
+  // Guest cart hook for non-authenticated users
+  const { addToGuestCart, guestCartCount, migrateGuestCartToServer } = useGuestCart(isAuthenticated);
 
   // Use the products hook
   const { products, loading, pagination } = useProducts({
@@ -39,6 +47,24 @@ const Products = () => {
     ordering: sortBy,
     priceRange
   });
+
+  // INDUSTRY BEST PRACTICE: Auto-migrate guest cart to server on login
+  useEffect(() => {
+    if (isAuthenticated && guestCartCount > 0) {
+      const migrate = async () => {
+        const result = await migrateGuestCartToServer();
+        if (result.success && result.itemsMigrated > 0) {
+          toast.success(
+            `Welcome back! ${result.itemsMigrated} item(s) from your guest cart have been added to your account.`,
+            { duration: 5000 }
+          );
+          fetchCartCount(); // Refresh cart count
+        }
+      };
+      migrate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   useEffect(() => {
     // Get search term and category from URL parameters
@@ -90,11 +116,40 @@ const Products = () => {
   };
 
   const addToCart = async (product) => {
+    // INDUSTRY BEST PRACTICE: Allow guest cart, show auth modal with guest option
     if (!isAuthenticated) {
-      handleApiError({ message: 'Please sign in to continue' });
+      // Add to guest cart immediately (localStorage)
+      addToGuestCart(product, 1);
+
+      // Show success feedback
+      setSuccessProduct(product.name);
+      setShowSuccess(true);
+
+      // Haptic feedback
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+
+      // Show professional auth modal (non-blocking)
+      setPendingCartProduct(product);
+      setTimeout(() => {
+        setShowAuthModal(true);
+      }, 1500); // Show after success animation
+
+      // Toast notification
+      toast.success(
+        <div>
+          <strong>{product.name}</strong> added to cart!
+          <br />
+          <small>Sign in to save your cart across devices</small>
+        </div>,
+        { duration: 4000 }
+      );
+
       return;
     }
 
+    // Authenticated: Add to server cart
     try {
       await ordersAPI.addToCart({ product_id: product.id, quantity: 1 });
       fetchCartCount();
@@ -105,6 +160,8 @@ const Products = () => {
       if ('vibrate' in navigator) {
         navigator.vibrate(50);
       }
+
+      toast.success(`${product.name} added to cart!`);
     } catch (error) {
       console.error('Error adding to cart:', error);
       handleApiError(error, 'Unable to add product. Please try again.');
@@ -334,6 +391,20 @@ const Products = () => {
           onComplete={() => setShowSuccess(false)}
         />
       )}
+
+      {/* Professional Auth Modal - Industry Best Practice */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false);
+          setPendingCartProduct(null);
+        }}
+        mode="login"
+        message={`Sign in to save your cart and ${pendingCartProduct ? `continue shopping for ${pendingCartProduct.name}` : 'access exclusive features'}`}
+        feature="add items to cart"
+        allowGuest={false} // Already added to guest cart
+        returnUrl={location.pathname + location.search}
+      />
 
       {/* Pagination Controls */}
       {products.length > 0 && pagination.totalPages > 1 && (
