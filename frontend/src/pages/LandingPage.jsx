@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { productsAPI, ordersAPI, getApiBaseUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess, retryWithBackoff, checkApiHealth, getDetailedErrorMessage } from '../utils/errorHandler';
+import { toast } from 'react-hot-toast';
+import AuthModal from '../components/AuthModal';
+import useGuestCart from '../hooks/useGuestCart';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import MobileSearchBar from '../components/MobileSearchBar';
 import {
@@ -249,9 +252,37 @@ const LandingPage = () => {
   const [isRetrying, setIsRetrying] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingCartProduct, setPendingCartProduct] = useState(null);
 
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
+  const location = useLocation();
+
+  // INDUSTRY BEST PRACTICE: Guest cart with localStorage
+  const {
+    addToGuestCart,
+    migrateGuestCartToServer,
+    guestCartCount
+  } = useGuestCart(isAuthenticated);
+
+  // INDUSTRY BEST PRACTICE: Auto-migrate guest cart on login
+  useEffect(() => {
+    if (isAuthenticated && guestCartCount > 0) {
+      const migrate = async () => {
+        const result = await migrateGuestCartToServer();
+        if (result.success && result.itemsMigrated > 0) {
+          toast.success(
+            `Welcome back! ${result.itemsMigrated} item(s) from your guest cart have been added to your account.`,
+            { duration: 5000 }
+          );
+          fetchCartCount(); // Refresh cart count
+        }
+      };
+      migrate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   // Memoized category icons - Professional icons instead of emojis
   const getCategoryIcon = useCallback((name) => {
@@ -340,11 +371,35 @@ const LandingPage = () => {
 
   // Add to cart handler with useCallback
   const handleAddToCart = useCallback(async (product) => {
+    // INDUSTRY BEST PRACTICE: Allow guest cart, show auth modal with guest option
     if (!isAuthenticated) {
-      handleApiError({ message: 'Please login to add items to cart' });
+      // Add to guest cart immediately (localStorage)
+      addToGuestCart(product, 1);
+
+      // Haptic feedback for mobile
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+
+      // Show professional auth modal (non-blocking)
+      setPendingCartProduct(product);
+      setTimeout(() => {
+        setShowAuthModal(true);
+      }, 1500); // Show after a brief delay
+
+      // Toast notification
+      toast.success(
+        <div>
+          <strong>{product.name}</strong> added to cart!
+          <br />
+          <small>Sign in to save your cart across devices</small>
+        </div>,
+        { duration: 4000 }
+      );
       return;
     }
 
+    // Authenticated: Add to server cart
     try {
       await ordersAPI.addToCart({ product_id: product.id, quantity: 1 });
       fetchCartCount();
@@ -352,7 +407,7 @@ const LandingPage = () => {
     } catch (error) {
       handleApiError(error, 'Failed to add item to cart');
     }
-  }, [isAuthenticated, fetchCartCount]);
+  }, [isAuthenticated, fetchCartCount, addToGuestCart]);
 
   // Newsletter handler
   const handleNewsletterSubmit = useCallback(async (e) => {
@@ -791,6 +846,20 @@ const LandingPage = () => {
           </div>
         </section>
       </main>
+
+      {/* Professional Auth Modal - Industry Best Practice */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false);
+          setPendingCartProduct(null);
+        }}
+        mode="login"
+        message={`Sign in to save your cart and ${pendingCartProduct ? `continue shopping for ${pendingCartProduct.name}` : 'access exclusive features'}`}
+        feature="add items to cart"
+        allowGuest={false}
+        returnUrl={location.pathname + location.search}
+      />
     </>
   );
 };
