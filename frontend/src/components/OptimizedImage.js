@@ -160,6 +160,7 @@ const OptimizedImage = ({
           height={height}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
+          crossOrigin="anonymous"
           onLoad={handleLoad}
           onError={handleError}
           className={`optimized-image ${isLoaded ? 'loaded' : ''}`}
