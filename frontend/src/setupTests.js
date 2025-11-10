@@ -70,6 +70,62 @@ jest.mock('react-router-dom', () => ({
 // Mock scrollIntoView (not available in JSDOM)
 Element.prototype.scrollIntoView = jest.fn();
 
+// Mock IntersectionObserver (not available in JSDOM)
+global.IntersectionObserver = class IntersectionObserver {
+  constructor(callback, options) {
+    this.callback = callback;
+    this.options = options;
+  }
+
+  observe() {
+    // Immediately trigger the callback to simulate intersection
+    this.callback([{ isIntersecting: true, target: {} }], this);
+    return null;
+  }
+
+  unobserve() {
+    return null;
+  }
+
+  disconnect() {
+    return null;
+  }
+};
+
+// Mock ResizeObserver (not available in JSDOM)
+global.ResizeObserver = class ResizeObserver {
+  constructor(callback) {
+    this.callback = callback;
+  }
+
+  observe() {
+    return null;
+  }
+
+  unobserve() {
+    return null;
+  }
+
+  disconnect() {
+    return null;
+  }
+};
+
+// Mock matchMedia (not available in JSDOM)
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 // Mock the api services module
 jest.mock('./services/api', () => ({
   ordersAPI: {
