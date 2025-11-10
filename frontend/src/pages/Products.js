@@ -91,7 +91,7 @@ const Products = () => {
 
   const addToCart = async (product) => {
     if (!isAuthenticated) {
-      handleApiError({ message: 'Please login to add items to cart' });
+      handleApiError({ message: 'Please sign in to continue' });
       return;
     }
 
@@ -107,7 +107,7 @@ const Products = () => {
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      handleApiError(error, 'Failed to add product to cart');
+      handleApiError(error, 'Unable to add product. Please try again.');
     }
   };
 
@@ -384,7 +384,8 @@ const Products = () => {
                     color: currentPage === pageNum ? 'white' : 'var(--gray-700)',
                     cursor: 'pointer',
                     fontWeight: currentPage === pageNum ? '600' : '400',
-                    minWidth: '40px'
+                    minWidth: '44px',
+                    minHeight: '44px'
                   }}
                 >
                   {pageNum}

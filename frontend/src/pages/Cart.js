@@ -154,7 +154,7 @@ const Cart = () => {
         const errorMsg = error.response?.data?.error || 'Invalid checkout data';
         toast.error(errorMsg, { duration: 4000 });
       } else if (error.response?.status === 401) {
-        toast.error('Please log in to continue', { duration: 4000 });
+        toast.error('Please sign in to continue', { duration: 4000 });
         setTimeout(() => navigate('/login'), 2000);
       } else if (error.response?.status === 500) {
         toast.error('Server error. Please try again later', { duration: 4000 });
