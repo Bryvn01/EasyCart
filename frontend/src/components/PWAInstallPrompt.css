@@ -1,0 +1,308 @@
+/* PWA Install Prompt - 2025 Best Practices */
+
+.pwa-install-prompt {
+  position: fixed;
+  bottom: max(80px, env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  z-index: 999;
+  padding: 0 16px 16px;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pwa-prompt-content {
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border-radius: 16px 16px 0 0;
+  box-shadow:
+    0 -4px 12px rgba(0, 0, 0, 0.1),
+    0 -1px 3px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  position: relative;
+  pointer-events: auto;
+  border-top: 3px solid #10b981;
+}
+
+.pwa-prompt-icon {
+  flex-shrink: 0;
+}
+
+.pwa-prompt-icon img {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pwa-prompt-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-prompt-text h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.pwa-prompt-text p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* iOS Instructions */
+.pwa-ios-instructions {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.pwa-ios-instructions ol {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #0c4a6e;
+  line-height: 1.6;
+}
+
+.pwa-ios-instructions li {
+  margin-bottom: 6px;
+}
+
+.pwa-ios-instructions li:last-child {
+  margin-bottom: 0;
+}
+
+.pwa-ios-instructions strong {
+  font-weight: 600;
+  color: #075985;
+}
+
+.pwa-ios-instructions svg {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 2px;
+  color: #0ea5e9;
+}
+
+/* Action Buttons */
+.pwa-prompt-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.pwa-install-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  touch-action: manipulation;
+}
+
+.pwa-install-btn:hover,
+.pwa-install-btn:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.pwa-install-btn:active {
+  transform: translateY(0);
+}
+
+.pwa-dismiss-btn {
+  padding: 12px 20px;
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  touch-action: manipulation;
+}
+
+.pwa-dismiss-btn:hover,
+.pwa-dismiss-btn:focus {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+/* Close Button */
+.pwa-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  touch-action: manipulation;
+}
+
+.pwa-close-btn:hover,
+.pwa-close-btn:focus {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+  .pwa-install-prompt {
+    bottom: max(70px, env(safe-area-inset-bottom));
+  }
+
+  .pwa-prompt-content {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .pwa-prompt-icon img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .pwa-prompt-text h3 {
+    font-size: 16px;
+  }
+
+  .pwa-prompt-text p {
+    font-size: 13px;
+  }
+
+  .pwa-prompt-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .pwa-install-btn,
+  .pwa-dismiss-btn {
+    width: 100%;
+  }
+}
+
+/* Desktop - Center and constrain width */
+@media (min-width: 768px) {
+  .pwa-install-prompt {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: 420px;
+    bottom: 24px;
+    padding: 0;
+  }
+
+  .pwa-prompt-content {
+    border-radius: 16px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .pwa-prompt-content {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    border-top-color: #10b981;
+  }
+
+  .pwa-prompt-text h3 {
+    color: #f9fafb;
+  }
+
+  .pwa-prompt-text p {
+    color: #d1d5db;
+  }
+
+  .pwa-ios-instructions {
+    background: #1e3a4c;
+    border-color: #0e7490;
+  }
+
+  .pwa-ios-instructions ol {
+    color: #bae6fd;
+  }
+
+  .pwa-ios-instructions strong {
+    color: #7dd3fc;
+  }
+
+  .pwa-dismiss-btn {
+    color: #d1d5db;
+    border-color: #4b5563;
+  }
+
+  .pwa-dismiss-btn:hover,
+  .pwa-dismiss-btn:focus {
+    background: #374151;
+    border-color: #6b7280;
+    color: #f9fafb;
+  }
+
+  .pwa-close-btn {
+    color: #9ca3af;
+  }
+
+  .pwa-close-btn:hover,
+  .pwa-close-btn:focus {
+    background: #374151;
+    color: #f3f4f6;
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pwa-install-prompt {
+    animation: none;
+  }
+
+  .pwa-install-btn,
+  .pwa-dismiss-btn,
+  .pwa-close-btn {
+    transition: none;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.pwa-install-btn:focus-visible,
+.pwa-dismiss-btn:focus-visible,
+.pwa-close-btn:focus-visible {
+  outline: 3px solid #10b981;
+  outline-offset: 2px;
+}
