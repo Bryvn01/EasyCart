@@ -537,7 +537,7 @@ const Cart = () => {
                           onMouseEnter={(e) => e.target.style.opacity = '0.8'}
                           onMouseLeave={(e) => e.target.style.opacity = '1'}
                         >
-                          Save for Later
+                          Move to Wishlist
                         </button>
                       </div>
                     </div>
