@@ -12,6 +12,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  /* Ensure consistent card sizing */
+  min-height: 280px;
+  max-height: 380px;
 }
 
 /* Hover effect - subtle on desktop */
@@ -40,9 +43,10 @@
 .compact-product-image-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 100%; /* 1:1 aspect ratio */
+  padding-top: 100%; /* 1:1 Square aspect ratio - best for products */
   background: var(--gray-100, #f3f4f6);
   overflow: hidden;
+  border-radius: 8px 8px 0 0;
 }
 
 .compact-product-image {
@@ -118,15 +122,16 @@
 }
 
 /* ===================================================================
-   Product Info Section - Compact layout
+   Product Info Section - Compact and consistent height
    =================================================================== */
 
 .compact-product-info {
-  padding: 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   flex: 1;
+  min-height: 0; /* Allow flex to control height */
 }
 
 /* Product Name */
@@ -142,12 +147,15 @@
   color: var(--text-primary, #1f2937);
   margin: 0;
 
-  /* Limit to 2 lines */
+  /* Limit to 2 lines with ellipsis */
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 2.6em; /* Reserve space for 2 lines */
+  text-overflow: ellipsis;
+  min-height: 2.4em; /* Reserve space for 2 lines (1.3 line-height * 2) */
+  max-height: 2.4em;
 
   transition: color 0.2s ease;
 }
@@ -273,30 +281,32 @@
 @media (max-width: 640px) {
   /* Tighter spacing on small screens */
   .compact-product-info {
-    padding: 8px;
-    gap: 4px;
+    padding: 10px;
+    gap: 5px;
   }
 
   /* Slightly smaller text */
   .compact-product-name {
     font-size: 0.8125rem; /* 13px */
+    min-height: 2.2em;
+    max-height: 2.2em;
   }
 
   .compact-price {
     font-size: 0.9375rem; /* 15px */
   }
 
-  /* Smaller cart button on very small screens */
+  /* Maintain touch target size */
   .compact-cart-btn {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
   }
 
   .compact-cart-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
 }
 
