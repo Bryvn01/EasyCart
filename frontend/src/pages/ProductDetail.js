@@ -1,21 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatPriceLocale } from '../utils/formatPrice';
+import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
+import AuthModal from '../components/AuthModal';
+import useGuestCart from '../hooks/useGuestCart';
+import { toast } from 'react-hot-toast';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [, setError] = useState(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingCartProduct, setPendingCartProduct] = useState(null);
 
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
+
+  // Guest cart hook for non-authenticated users
+  const { addToGuestCart, guestCartCount, migrateGuestCartToServer } = useGuestCart(isAuthenticated);
+
+  // INDUSTRY BEST PRACTICE: Auto-migrate guest cart to server on login
+  useEffect(() => {
+    if (isAuthenticated && guestCartCount > 0) {
+      const migrate = async () => {
+        const result = await migrateGuestCartToServer();
+        if (result.success && result.itemsMigrated > 0) {
+          toast.success(
+            `Welcome back! ${result.itemsMigrated} item(s) from your guest cart have been added to your account.`,
+            { duration: 5000 }
+          );
+          fetchCartCount(); // Refresh cart count
+        }
+      };
+      migrate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -36,19 +64,50 @@ const ProductDetail = () => {
 
 
   const addToCart = async () => {
+    // INDUSTRY BEST PRACTICE: Allow guest cart, show auth modal with guest option
     if (!isAuthenticated) {
-      alert('Please login to add items to cart');
+      // Add to guest cart immediately (localStorage)
+      addToGuestCart(product, quantity);
+
+      // Haptic feedback
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+
+      // Show professional auth modal (non-blocking)
+      setPendingCartProduct(product);
+      setTimeout(() => {
+        setShowAuthModal(true);
+      }, 1500); // Show after a brief delay
+
+      // Toast notification
+      toast.success(
+        <div>
+          <strong>{product.name}</strong> ({quantity}x) added to cart!
+          <br />
+          <small>Sign in to save your cart across devices</small>
+        </div>,
+        { duration: 4000 }
+      );
+
+      setIsAddingToCart(false);
       return;
     }
 
+    // Authenticated: Add to server cart
     setIsAddingToCart(true);
     try {
       await ordersAPI.addToCart({ product_id: product.id, quantity });
       fetchCartCount();
-      alert('Product added to cart! 🛒');
+      handleApiSuccess('Added to cart successfully');
+
+      // Haptic feedback on mobile
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Failed to add product to cart');
+      handleApiError(error, 'Unable to add product. Please try again.');
     } finally {
       setIsAddingToCart(false);
     }
@@ -351,7 +410,7 @@ const ProductDetail = () => {
               .button-container {
                 flex-direction: column;
               }
-              
+
               .button-container button {
                 width: 100% !important;
                 flex: none !important;
@@ -373,6 +432,24 @@ const ProductDetail = () => {
           `}</style>
         </div>
       </div>
+
+      {/* Professional Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false);
+          setPendingCartProduct(null);
+        }}
+        mode="login"
+        message={`Sign in to save your cart and ${
+          pendingCartProduct
+            ? `continue shopping for ${pendingCartProduct.name}`
+            : 'access exclusive features'
+        }`}
+        feature="add items to cart"
+        allowGuest={false}
+        returnUrl={location.pathname + location.search}
+      />
     </div>
   );
 };

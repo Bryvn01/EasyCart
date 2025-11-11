@@ -42,15 +42,15 @@ const ProductCard = ({ product, onAddToCart, onQuickView, onToggleWishlist, isIn
         {/* Badge stack: vertical, spaced, no overlap */}
         <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
           {product.is_flash_sale && (
-            <span className="bg-gradient-to-r from-red-500 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg animate-pulse whitespace-nowrap">🔥 Flash Sale</span>
+            <span className="bg-gradient-to-r from-red-500 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg animate-pulse whitespace-nowrap">Flash Sale</span>
           )}
           {product.is_top_seller && !product.is_flash_sale && (
-            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap">⭐ Bestseller</span>
+            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap">Bestseller</span>
           )}
         </div>
         <div className="absolute top-2 right-2 flex flex-col gap-1 z-10">
           {product.is_new && (
-            <span className="bg-gradient-to-r from-green-500 to-teal-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap">✨ New</span>
+            <span className="bg-gradient-to-r from-green-500 to-teal-400 text-white text-xs font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap">New</span>
           )}
         </div>
         {product.old_price && product.price < product.old_price && (

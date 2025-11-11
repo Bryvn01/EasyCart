@@ -5,6 +5,7 @@ import PaymentModal from '../components/PaymentModal';
 import { ordersAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../utils/formatPrice';
+import OptimizedImage from '../components/OptimizedImage';
 
 const Cart = () => {
   // Handler to update item quantity
@@ -153,8 +154,15 @@ const Cart = () => {
         const errorMsg = error.response?.data?.error || 'Invalid checkout data';
         toast.error(errorMsg, { duration: 4000 });
       } else if (error.response?.status === 401) {
-        toast.error('Please log in to continue', { duration: 4000 });
-        setTimeout(() => navigate('/login'), 2000);
+        toast.error(
+          <div>
+            <strong>Authentication required</strong>
+            <br />
+            <small>Please sign in to complete your purchase</small>
+          </div>,
+          { duration: 5000 }
+        );
+        setTimeout(() => navigate('/login', { state: { from: '/cart' } }), 2500);
       } else if (error.response?.status === 500) {
         toast.error('Server error. Please try again later', { duration: 4000 });
       } else if (!error.response) {
@@ -348,41 +356,41 @@ const Cart = () => {
                       position: 'relative'
                     }}>
                       {(item.product?.image || item.product?.image_url) ? (
-                        <img
+                        <OptimizedImage
                           src={item.product.image || item.product.image_url}
                           alt={item.product?.name || 'Product'}
+                          width={200}
+                          height={200}
+                          priority={true}
+                          sizes="100px"
                           style={{
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',
                             borderRadius: 'var(--radius-md)'
                           }}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.style.display = 'none';
-                            e.target.parentElement.querySelector('.fallback-icon').style.display = 'flex';
-                          }}
                         />
-                      ) : null}
-                      <div
-                        className="fallback-icon"
-                        style={{
-                          display: (item.product?.image || item.product?.image_url) ? 'none' : 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'var(--gray-400)',
-                          fontSize: '2rem',
-                          width: '100%',
-                          height: '100%'
-                        }}
-                      >
-                        {/* SVG Image Icon */}
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                          <circle cx="8.5" cy="8.5" r="1.5"/>
-                          <polyline points="21 15 16 10 5 21"/>
-                        </svg>
-                      </div>
+                      ) : (
+                        <div
+                          className="fallback-icon"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'var(--gray-400)',
+                            fontSize: '2rem',
+                            width: '100%',
+                            height: '100%'
+                          }}
+                        >
+                          {/* SVG Image Icon */}
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                          </svg>
+                        </div>
+                      )}
                     </div>
 
                     {/* Product Details */}
@@ -529,7 +537,7 @@ const Cart = () => {
                           onMouseEnter={(e) => e.target.style.opacity = '0.8'}
                           onMouseLeave={(e) => e.target.style.opacity = '1'}
                         >
-                          Save for Later
+                          Move to Wishlist
                         </button>
                       </div>
                     </div>
