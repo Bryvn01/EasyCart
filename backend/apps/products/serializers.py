@@ -4,18 +4,64 @@ from .models import Product, Category
 
 class CategorySerializer(serializers.ModelSerializer):
     products_count = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ["id", "name", "slug", "description", "image", "is_active", "created_at", "products_count"]
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "description",
+            "image",
+            "image_url",
+            "is_active",
+            "created_at",
+            "products_count",
+        ]
         read_only_fields = ["slug", "created_at"]
 
     def get_products_count(self, obj):
+        # PERFORMANCE: Use cached count if available
+        if hasattr(obj, "_products_count"):
+            return obj._products_count
         return obj.products.filter(is_active=True).count()
+
+    def get_image(self, obj):
+        """Return clean image URL without /media/ prefix for external URLs"""
+        # Priority: image_url field > image field
+        if obj.image_url:
+            return obj.image_url
+        if obj.image:
+            image_url = str(obj.image)
+            # If it's a Cloudinary URL, return it directly
+            if image_url.startswith("http://") or image_url.startswith("https://"):
+                return image_url
+            # Otherwise, return the full URL with media prefix
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
 
 
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.name", read_only=True)
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        """Return clean image URL without /media/ prefix for external URLs"""
+        if obj.image:
+            image_url = str(obj.image)
+            # If it's a Cloudinary URL, return it directly
+            if image_url.startswith("http://") or image_url.startswith("https://"):
+                return image_url
+            # Otherwise, return the full URL with media prefix
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
 
     class Meta:
         model = Product

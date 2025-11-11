@@ -19,7 +19,9 @@ django.setup()
 def optimize_image(image_url, max_width=600, quality=90):
     """Download and optimize image for e-commerce display"""
     try:
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        }
         response = requests.get(image_url, headers=headers, timeout=15)
         if response.status_code == 200:
             img = Image.open(BytesIO(response.content))
@@ -100,8 +102,12 @@ def update_product_images():
 
             optimized_image = optimize_image(image_url)
             if optimized_image:
-                safe_name = "".join(c for c in product_name if c.isalnum() or c in " -_").strip()
-                file_name = get_valid_filename(f"{safe_name.replace(' ', '_').lower()}.jpg")
+                safe_name = "".join(
+                    c for c in product_name if c.isalnum() or c in " -_"
+                ).strip()
+                file_name = get_valid_filename(
+                    f"{safe_name.replace(' ', '_').lower()}.jpg"
+                )
 
                 # Delete old image if exists
                 if product.image:
@@ -116,8 +122,12 @@ def update_product_images():
                 if alt_url:
                     alt_image = optimize_image(alt_url)
                     if alt_image:
-                        safe_name = "".join(c for c in product_name if c.isalnum() or c in " -_").strip()
-                        file_name = get_valid_filename(f"{safe_name.replace(' ', '_').lower()}.jpg")
+                        safe_name = "".join(
+                            c for c in product_name if c.isalnum() or c in " -_"
+                        ).strip()
+                        file_name = get_valid_filename(
+                            f"{safe_name.replace(' ', '_').lower()}.jpg"
+                        )
                         product.image.save(file_name, File(alt_image), save=True)
                         print(f"[OK] Updated with alternative image for {product_name}")
                         updated_count += 1

@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
  */
 export const detectErrorType = (error) => {
   if (!error) return 'UNKNOWN';
-  
+
   // CORS errors typically have no response and specific message patterns
   if (error.request && !error.response) {
     const errorMsg = error.message?.toLowerCase() || '';
@@ -17,7 +17,7 @@ export const detectErrorType = (error) => {
     }
     return 'NO_RESPONSE';
   }
-  
+
   // Server responded with error
   if (error.response) {
     const { status } = error.response;
@@ -28,7 +28,7 @@ export const detectErrorType = (error) => {
     if (status === 400 || status === 422) return 'VALIDATION';
     return 'CLIENT';
   }
-  
+
   return 'UNKNOWN';
 };
 
@@ -38,7 +38,7 @@ export const detectErrorType = (error) => {
 export const getDetailedErrorMessage = (error, context = '') => {
   const errorType = detectErrorType(error);
   const contextPrefix = context ? `${context}: ` : '';
-  
+
   switch (errorType) {
     case 'CORS':
       return {
@@ -48,7 +48,7 @@ export const getDetailedErrorMessage = (error, context = '') => {
         technical: 'Check backend CORS settings and ensure frontend URL is whitelisted.',
         canRetry: false
       };
-      
+
     case 'NETWORK':
       return {
         type: 'NETWORK',
@@ -57,7 +57,7 @@ export const getDetailedErrorMessage = (error, context = '') => {
         technical: 'Check if backend server is running and accessible.',
         canRetry: true
       };
-      
+
     case 'NO_RESPONSE':
       return {
         type: 'NO_RESPONSE',
@@ -66,7 +66,7 @@ export const getDetailedErrorMessage = (error, context = '') => {
         technical: 'Verify backend service status and network connectivity.',
         canRetry: true
       };
-      
+
     case 'SERVER':
       return {
         type: 'SERVER',
@@ -75,7 +75,7 @@ export const getDetailedErrorMessage = (error, context = '') => {
         technical: `HTTP ${error.response?.status}: ${error.response?.data?.message || 'Internal server error'}`,
         canRetry: true
       };
-      
+
     case 'NOT_FOUND':
       return {
         type: 'NOT_FOUND',
@@ -84,7 +84,7 @@ export const getDetailedErrorMessage = (error, context = '') => {
         technical: 'Check API endpoint URLs and ensure backend routes are configured correctly.',
         canRetry: false
       };
-      
+
     case 'FORBIDDEN':
       return {
         type: 'FORBIDDEN',
@@ -93,7 +93,7 @@ export const getDetailedErrorMessage = (error, context = '') => {
         technical: 'Check authentication and authorization settings.',
         canRetry: false
       };
-      
+
     case 'UNAUTHORIZED':
       return {
         type: 'UNAUTHORIZED',
@@ -102,10 +102,10 @@ export const getDetailedErrorMessage = (error, context = '') => {
         technical: 'Authentication required or token expired.',
         canRetry: false
       };
-      
+
     case 'VALIDATION':
-      const validationMsg = error.response?.data?.message || 
-                           error.response?.data?.error || 
+      const validationMsg = error.response?.data?.message ||
+                           error.response?.data?.error ||
                            'Validation error';
       return {
         type: 'VALIDATION',
@@ -114,7 +114,7 @@ export const getDetailedErrorMessage = (error, context = '') => {
         technical: JSON.stringify(error.response?.data?.errors || {}),
         canRetry: false
       };
-      
+
     default:
       return {
         type: 'UNKNOWN',
@@ -132,7 +132,7 @@ export const getDetailedErrorMessage = (error, context = '') => {
 export const handleApiError = (error, defaultMessage = 'An error occurred') => {
   const errorDetails = getDetailedErrorMessage(error, '');
   const message = errorDetails.userMessage || defaultMessage;
-  
+
   // Log technical details for debugging (only in development)
   if (process.env.NODE_ENV === 'development') {
     console.error('API Error Details:', {
@@ -143,14 +143,14 @@ export const handleApiError = (error, defaultMessage = 'An error occurred') => {
       originalError: error
     });
   }
-  
+
   toast.error(message, {
     duration: errorDetails.canRetry ? 5000 : 6000,
-    icon: errorDetails.type === 'NETWORK' ? '📡' : 
-          errorDetails.type === 'CORS' ? '🚫' : 
+    icon: errorDetails.type === 'NETWORK' ? '📡' :
+          errorDetails.type === 'CORS' ? '🚫' :
           errorDetails.type === 'SERVER' ? '🔧' : '❌'
   });
-  
+
   return {
     message,
     ...errorDetails
@@ -204,38 +204,38 @@ export const retryWithBackoff = async (
   shouldRetry = null
 ) => {
   let lastError;
-  
+
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn();
     } catch (error) {
       lastError = error;
-      
+
       // Check if we should retry
       if (attempt === maxRetries) {
         throw error;
       }
-      
+
       // Determine if error is retryable
       const errorDetails = getDetailedErrorMessage(error);
       const isRetryable = shouldRetry ? shouldRetry(error) : errorDetails.canRetry;
-      
+
       if (!isRetryable) {
         throw error;
       }
-      
+
       // Calculate delay with exponential backoff
       const delay = initialDelay * Math.pow(2, attempt);
-      
+
       if (process.env.NODE_ENV === 'development') {
         console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms`);
       }
-      
+
       // Wait before retrying
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
-  
+
   throw lastError;
 };
 
@@ -251,7 +251,7 @@ export const checkApiHealth = async (baseUrl) => {
       `${baseUrl}/health`,
       baseUrl
     ];
-    
+
     for (const endpoint of healthEndpoints) {
       try {
         const response = await fetch(endpoint, {
@@ -262,7 +262,7 @@ export const checkApiHealth = async (baseUrl) => {
             'Accept': 'application/json',
           },
         });
-        
+
         if (response.ok || response.status === 404) {
           // 404 means server is reachable even if health endpoint doesn't exist
           return true;
@@ -272,7 +272,7 @@ export const checkApiHealth = async (baseUrl) => {
         continue;
       }
     }
-    
+
     return false;
   } catch (error) {
     return false;

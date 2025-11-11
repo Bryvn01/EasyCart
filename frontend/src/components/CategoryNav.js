@@ -50,8 +50,8 @@ const CategoryNav = ({ onSelectCategory, selectedCategory }) => {
           <li key={cat.id || cat.name}>
             <button
               className={`px-4 py-2 rounded-full font-medium transition text-sm ${
-                selectedCategory === cat.name 
-                  ? 'bg-primary text-white shadow-md' 
+                selectedCategory === cat.name
+                  ? 'bg-primary text-white shadow-md'
                   : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary'
               }`}
               onClick={() => onSelectCategory(cat.name)}

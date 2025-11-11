@@ -2,7 +2,7 @@
 
 /**
  * EasyCart Setup Validator
- * 
+ *
  * This script validates that your EasyCart setup is correct for products to display.
  */
 
@@ -20,9 +20,9 @@ console.log('1️⃣  Checking Backend Configuration...');
 const backendEnvPath = path.join(__dirname, 'backend', '.env');
 if (fs.existsSync(backendEnvPath)) {
   console.log('   ✅ backend/.env exists');
-  
+
   const envContent = fs.readFileSync(backendEnvPath, 'utf8');
-  
+
   // Check MONGO_URI
   if (envContent.includes('MONGO_URI=')) {
     const mongoUriMatch = envContent.match(/MONGO_URI=(.+)/);
@@ -53,9 +53,9 @@ console.log('2️⃣  Checking Frontend Configuration...');
 const frontendEnvPath = path.join(__dirname, 'frontend', '.env');
 if (fs.existsSync(frontendEnvPath)) {
   console.log('   ✅ frontend/.env exists');
-  
+
   const envContent = fs.readFileSync(frontendEnvPath, 'utf8');
-  
+
   // Check REACT_APP_API_URL
   if (envContent.includes('REACT_APP_API_URL=')) {
     const apiUrlMatch = envContent.match(/REACT_APP_API_URL=(.+)/);
@@ -112,7 +112,7 @@ console.log('4️⃣  Checking Seeding Script...');
 const seedScriptPath = path.join(__dirname, 'backend', 'scripts', 'seedProducts.js');
 if (fs.existsSync(seedScriptPath)) {
   console.log('   ✅ Seeding script exists');
-  
+
   // Check if script has idempotent support
   const scriptContent = fs.readFileSync(seedScriptPath, 'utf8');
   if (scriptContent.includes('--idempotent')) {

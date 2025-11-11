@@ -175,7 +175,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 ### Frontend: api.js
 ```javascript
-const API_BASE_URL = process.env.REACT_APP_API_URL || 
+const API_BASE_URL = process.env.REACT_APP_API_URL ||
                      'https://easycart-backend.onrender.com/api';
 
 const api = axios.create({

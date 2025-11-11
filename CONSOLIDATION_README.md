@@ -354,7 +354,7 @@ Admin:    https://easycart-admin.onrender.com
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** Current  
-**Status:** Ready for use  
+**Document Version:** 1.0
+**Last Updated:** Current
+**Status:** Ready for use
 **Estimated Time:** 30-45 minutes

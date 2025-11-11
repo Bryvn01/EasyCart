@@ -10,7 +10,7 @@ const NetworkStatus = () => {
     const initialStatus = addNetworkListener((online) => {
       setIsOnline(online);
       setShowStatus(true);
-      
+
       // Hide the notification after 3 seconds
       setTimeout(() => {
         setShowStatus(false);
@@ -96,7 +96,7 @@ const NetworkStatus = () => {
             opacity: 1;
           }
         }
-        
+
         @media (max-width: 768px) {
           .network-status {
             top: 60px;

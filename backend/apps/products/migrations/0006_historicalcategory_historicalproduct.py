@@ -17,7 +17,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="HistoricalCategory",
             fields=[
-                ("id", models.BigIntegerField(auto_created=True, blank=True, db_index=True, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigIntegerField(
+                        auto_created=True, blank=True, db_index=True, verbose_name="ID"
+                    ),
+                ),
                 ("name", models.CharField(max_length=100)),
                 ("slug", models.SlugField(blank=True)),
                 ("description", models.TextField(blank=True)),
@@ -29,7 +34,10 @@ class Migration(migrations.Migration):
                 ("history_change_reason", models.CharField(max_length=100, null=True)),
                 (
                     "history_type",
-                    models.CharField(choices=[("+", "Created"), ("~", "Changed"), ("-", "Deleted")], max_length=1),
+                    models.CharField(
+                        choices=[("+", "Created"), ("~", "Changed"), ("-", "Deleted")],
+                        max_length=1,
+                    ),
                 ),
                 (
                     "history_user",
@@ -52,17 +60,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="HistoricalProduct",
             fields=[
-                ("id", models.BigIntegerField(auto_created=True, blank=True, db_index=True, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigIntegerField(
+                        auto_created=True, blank=True, db_index=True, verbose_name="ID"
+                    ),
+                ),
                 ("name", models.CharField(db_index=True, max_length=200)),
                 ("slug", models.SlugField(blank=True)),
                 ("description", models.TextField()),
                 ("short_description", models.CharField(blank=True, max_length=300)),
-                ("price", models.DecimalField(db_index=True, decimal_places=2, max_digits=10)),
-                ("compare_price", models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)),
+                (
+                    "price",
+                    models.DecimalField(db_index=True, decimal_places=2, max_digits=10),
+                ),
+                (
+                    "compare_price",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=10, null=True
+                    ),
+                ),
                 ("image", models.TextField(blank=True, max_length=100)),
                 ("stock", models.IntegerField(default=0)),
                 ("sku", models.CharField(blank=True, db_index=True, max_length=100)),
-                ("weight", models.DecimalField(blank=True, decimal_places=2, max_digits=6, null=True)),
+                (
+                    "weight",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=6, null=True
+                    ),
+                ),
                 ("dimensions", models.CharField(blank=True, max_length=100)),
                 ("brand", models.CharField(blank=True, max_length=100)),
                 ("image_url", models.CharField(blank=True, max_length=500)),
@@ -78,7 +104,10 @@ class Migration(migrations.Migration):
                 ("history_change_reason", models.CharField(max_length=100, null=True)),
                 (
                     "history_type",
-                    models.CharField(choices=[("+", "Created"), ("~", "Changed"), ("-", "Deleted")], max_length=1),
+                    models.CharField(
+                        choices=[("+", "Created"), ("~", "Changed"), ("-", "Deleted")],
+                        max_length=1,
+                    ),
                 ),
                 (
                     "category",

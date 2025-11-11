@@ -1,5 +1,6 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -7,14 +8,19 @@ import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
+import BottomNav from './components/BottomNav';
+import BackToTop from './components/BackToTop';
+import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
+import StickyMiniCart from './components/StickyMiniCart';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import OfflineIndicator from './components/OfflineIndicator';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
 import NetworkStatus from './components/NetworkStatus';
 import InstallPWA from './components/InstallPWA';
 import { usePerformance } from './hooks/usePerformance';
-import { analytics } from './services/analytics';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -30,20 +36,33 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProductManager from './components/Admin/ProductManager';
 import NotFound from './pages/NotFound';
 
+// Create a client for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
+
 function App() {
   usePerformance();
-  
+
   useEffect(() => {
   // analytics.page('App Loaded');
   }, []);
-  
+
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <ThemeProvider>
-              <Router>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <ThemeProvider>
+              <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                <ScrollToTop />
                 <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
                   <Navbar />
                   <main className="flex-1">
@@ -100,10 +119,15 @@ function App() {
                     </Suspense>
                   </main>
                   <Footer />
+                  <BottomNav />
+                  <StickyMiniCart />
+                  <BackToTop />
                   <SupportChat />
                   <NetworkStatus />
                   <InstallPWA />
-                  <Toaster 
+                  <PWAInstallPrompt />
+                  <OfflineIndicator />
+                  <Toaster
                     position="top-right"
                     toastOptions={{
                       duration: 4000,
@@ -143,6 +167,7 @@ function App() {
           </WishlistProvider>
         </CartProvider>
       </AuthProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 }

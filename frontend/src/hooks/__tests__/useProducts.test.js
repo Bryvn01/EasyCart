@@ -1,4 +1,4 @@
-import { renderHook, waitFor, act } from '@testing-library/react';
+import { renderHook, waitFor, createWrapper } from '../../test-utils';
 import { useProducts } from '../useProducts';
 import { productsAPI } from '../../services/api';
 
@@ -69,45 +69,43 @@ describe('useProducts hook', () => {
 
     productsAPI.getProducts.mockResolvedValue(mockResponse);
 
-    let result;
-    await act(async () => {
-      result = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
+    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }), {
+      wrapper: createWrapper(),
     });
 
     // Initially loading
-    expect(result.result.current.loading).toBe(true);
-    expect(result.result.current.products).toEqual([]);
+    expect(result.current.loading).toBe(true);
+    expect(result.current.products).toEqual([]);
 
     // Wait for data to load
     await waitFor(() => {
-      expect(result.result.current.loading).toBe(false);
+      expect(result.current.loading).toBe(false);
     });
 
     // Verify products are loaded
-    expect(result.result.current.products).toHaveLength(2);
-    expect(result.result.current.products[0].name).toBe('iPhone 14 Pro');
-    expect(result.result.current.products[1].name).toBe('Samsung Galaxy S23');
+    expect(result.current.products).toHaveLength(2);
+    expect(result.current.products[0].name).toBe('iPhone 14 Pro');
+    expect(result.current.products[1].name).toBe('Samsung Galaxy S23');
 
     // Verify pagination
-    expect(result.result.current.pagination.totalCount).toBe(2);
-    expect(result.result.current.pagination.currentPage).toBe(1);
-    expect(result.result.current.pagination.hasNext).toBe(false);
+    expect(result.current.pagination.totalCount).toBe(2);
+    expect(result.current.pagination.currentPage).toBe(1);
+    expect(result.current.pagination.hasNext).toBe(false);
   });
 
   it('should handle API errors gracefully', async () => {
     const mockError = new Error('Network error');
     productsAPI.getProducts.mockRejectedValue(mockError);
 
-    let result;
-    await act(async () => {
-      result = renderHook(() => useProducts({ page: 1, pageSize: 12 }));
+    const { result } = renderHook(() => useProducts({ page: 1, pageSize: 12 }), {
+      wrapper: createWrapper(),
     });
 
     await waitFor(() => {
-      expect(result.result.current.loading).toBe(false);
+      expect(result.current.loading).toBe(false);
     });
 
-    expect(result.result.current.error).toBeTruthy();
-    expect(result.result.current.products).toEqual([]);
+    expect(result.current.error).toBeTruthy();
+    expect(result.current.products).toEqual([]);
   });
 });

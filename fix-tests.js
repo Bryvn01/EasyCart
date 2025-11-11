@@ -22,7 +22,7 @@ if (fs.existsSync(jestConfigFile)) {
   console.log('   ✅ Jest configuration found (jest.config.js)');
 } else if (fs.existsSync(frontendPackageJson)) {
   const pkg = JSON.parse(fs.readFileSync(frontendPackageJson, 'utf8'));
-  
+
   if (pkg.jest) {
     console.log('   ✅ Jest configuration found (package.json)');
   } else {
@@ -35,7 +35,7 @@ if (fs.existsSync(jestConfigFile)) {
 
 if (fs.existsSync(frontendPackageJson)) {
   const pkg = JSON.parse(fs.readFileSync(frontendPackageJson, 'utf8'));
-  
+
   // Check for required dependencies
   const requiredDeps = [
     'jest',
@@ -44,7 +44,7 @@ if (fs.existsSync(frontendPackageJson)) {
     '@testing-library/jest-dom',
     'jest-environment-jsdom'
   ];
-  
+
   const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
   requiredDeps.forEach(dep => {
     if (!allDeps[dep]) {
@@ -78,10 +78,10 @@ const testDir = path.join(__dirname, 'frontend', 'src', '__tests__');
 if (fs.existsSync(testDir)) {
   const testFiles = fs.readdirSync(testDir).filter(f => f.endsWith('.test.js'));
   console.log(`   Found ${testFiles.length} test files`);
-  
+
   testFiles.forEach(file => {
     const content = fs.readFileSync(path.join(testDir, file), 'utf8');
-    
+
     // Check for common issues
     if (content.includes('import') && !content.includes('React')) {
       if (content.includes('render') || content.includes('screen')) {
@@ -116,7 +116,7 @@ if (issues.length === 0) {
 } else {
   console.log(`\n❌ Found ${issues.length} issue(s):\n`);
   issues.forEach((issue, i) => console.log(`${i + 1}. ${issue}`));
-  
+
   console.log('\n🔧 SUGGESTED FIXES:\n');
   fixes.forEach((fix, i) => console.log(`${i + 1}. ${fix}`));
 }

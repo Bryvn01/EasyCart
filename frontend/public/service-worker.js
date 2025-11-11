@@ -39,8 +39,8 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames
           .filter((cacheName) => {
-            return cacheName !== CACHE_NAME && 
-                   cacheName !== RUNTIME_CACHE && 
+            return cacheName !== CACHE_NAME &&
+                   cacheName !== RUNTIME_CACHE &&
                    cacheName !== IMAGE_CACHE;
           })
           .map((cacheName) => {
@@ -78,8 +78,8 @@ self.addEventListener('fetch', (event) => {
           return caches.match(request).then((cachedResponse) => {
             return cachedResponse || new Response(
               JSON.stringify({ error: 'Offline', message: 'You are currently offline' }),
-              { 
-                status: 503, 
+              {
+                status: 503,
                 statusText: 'Service Unavailable',
                 headers: new Headers({ 'Content-Type': 'application/json' })
               }
@@ -136,7 +136,7 @@ self.addEventListener('fetch', (event) => {
               return caches.match('/offline.html').then((offlineResponse) => {
                 return offlineResponse || new Response(
                   '<html><body><h1>Offline</h1><p>You are currently offline. Please check your internet connection.</p></body></html>',
-                  { 
+                  {
                     headers: { 'Content-Type': 'text/html' }
                   }
                 );
@@ -153,7 +153,7 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data && event.data.type === 'CACHE_URLS') {
     const urlsToCache = event.data.payload;
     caches.open(RUNTIME_CACHE).then((cache) => {

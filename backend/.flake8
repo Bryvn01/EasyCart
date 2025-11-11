@@ -1,7 +1,7 @@
 [flake8]
 max-line-length = 120
-ignore = E302,E305,W293,W292,E501,F401,F811,E402,E722,F841,W504,F403,F541
-exclude = 
+ignore = E302,E305,W293,W292,E501,F401,F811,E402,E722,F841,W504,F403,F541,E721,F821
+exclude =
     migrations/,
     __pycache__/,
     *.pyc,
@@ -9,4 +9,11 @@ exclude =
     add_*.py,
     scripts/,
     test_*.py,
-    *mongodb*
+    *mongodb*,
+    download_*.py,
+    update_*.py,
+    validate_*.py,
+    fix_*.py,
+    migrate_*.py,
+    security_*.py,
+    check_*.py

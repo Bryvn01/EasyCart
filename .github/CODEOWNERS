@@ -1,0 +1,30 @@
+# Code Owners for EasyCart
+# These owners will be automatically requested for review when someone opens a pull request
+
+# Default owners for everything
+* @Bryvn01
+
+# Backend code
+/backend/ @Bryvn01
+/backend/apps/ @Bryvn01
+
+# Frontend code
+/frontend/ @Bryvn01
+/frontend/src/ @Bryvn01
+
+# Admin dashboard
+/admin-dashboard/ @Bryvn01
+
+# CI/CD and workflows
+/.github/ @Bryvn01
+/.github/workflows/ @Bryvn01
+
+# Documentation
+*.md @Bryvn01
+/docs/ @Bryvn01
+
+# Configuration files
+*.yml @Bryvn01
+*.yaml @Bryvn01
+*.json @Bryvn01
+.env.example @Bryvn01

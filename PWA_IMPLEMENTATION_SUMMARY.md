@@ -74,7 +74,7 @@
 - Proper integration with existing features
 
 ### 5. Icons
-- **Files**: 
+- **Files**:
   - `frontend/public/images/icons/icon-192.svg`
   - `frontend/public/images/icons/icon-512.svg`
 - Custom SVG icons for PWA
@@ -119,7 +119,7 @@
 1. **Install the App**:
    - Desktop: Click install icon in browser address bar
    - Mobile: Tap "Add to Home Screen" or use the in-app prompt
-   
+
 2. **Offline Mode**:
    - Browse previously viewed products offline
    - Network status indicator shows when you're offline
@@ -143,7 +143,7 @@
    ```bash
    # Run tests
    npm test serviceWorkerRegistration.test.js
-   
+
    # Check manifest
    # Navigate to: chrome://inspect/#service-workers
    ```

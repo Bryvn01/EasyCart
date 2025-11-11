@@ -51,7 +51,7 @@ export const useProducts = ({
       if (priceRange.max) params.price_max = priceRange.max;
 
       const response = await productsAPI.getProducts(params);
-      
+
       // Handle Django REST Framework paginated response
       let productsData = response.data.results || response.data;
       const totalCount = response.data.count || (Array.isArray(productsData) ? productsData.length : 0);

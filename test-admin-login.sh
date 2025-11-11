@@ -34,11 +34,11 @@ HEALTH_CODE=$(echo "$HEALTH_RESPONSE" | tail -n 1)
 
 if [ "$HEALTH_CODE" = "200" ]; then
     echo -e "   ${GREEN}✓${NC} Backend is healthy (HTTP $HEALTH_CODE)"
-    
+
     # Parse response
     STATUS=$(echo "$HEALTH_BODY" | grep -o '"status":"[^"]*"' | cut -d'"' -f4 || echo "unknown")
     DB_STATUS=$(echo "$HEALTH_BODY" | grep -o '"database":{"status":"[^"]*"' | cut -d'"' -f6 || echo "unknown")
-    
+
     echo "   ├─ Status: $STATUS"
     echo "   └─ Database: $DB_STATUS"
 else
@@ -88,11 +88,11 @@ AUTH_CODE=$(echo "$AUTH_RESPONSE" | tail -n 1)
 
 if [ "$AUTH_CODE" = "200" ]; then
     echo -e "   ${GREEN}✓${NC} Login endpoint works (HTTP $AUTH_CODE)"
-    
+
     # Parse response
     HAS_ACCESS=$(echo "$AUTH_BODY" | grep -o '"access"' || echo "")
     HAS_USER=$(echo "$AUTH_BODY" | grep -o '"user"' || echo "")
-    
+
     if [ -n "$HAS_ACCESS" ] && [ -n "$HAS_USER" ]; then
         echo "   ├─ Response contains access token: ✓"
         echo "   └─ Response contains user data: ✓"

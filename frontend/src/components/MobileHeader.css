@@ -1,0 +1,221 @@
+/**
+ * MobileHeader - Instagram-inspired mobile header styles
+ * Design principles:
+ * - Clean, minimal interface
+ * - High-contrast branding
+ * - Touch-optimized interactions
+ * - Safe area support for notched devices
+ */
+
+.mobile-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sticky, 20);
+  background: var(--header-bg, #fff);
+  border-bottom: 1px solid var(--header-border, #dbdbdb);
+  padding-top: env(safe-area-inset-top, 0px);
+  /* Performance optimization */
+  will-change: transform;
+  contain: layout style paint;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.mobile-header__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--mobile-header-height, 56px);
+  padding: 0 16px;
+  max-width: 100%;
+}
+
+/* Brand Section - Instagram-inspired */
+.mobile-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.2s;
+}
+
+.mobile-header__brand:active {
+  opacity: 0.7;
+}
+
+.mobile-header__brand-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--brand-color, #2563eb);
+  flex-shrink: 0;
+}
+
+.mobile-header__brand-text {
+  font-size: 1.375rem;
+  font-weight: 700;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--brand-text-color, #000);
+  letter-spacing: -0.5px;
+  /* Instagram-style handwritten/script feel */
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Action Icons */
+.mobile-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mobile-header__action-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-target-min, 44px);
+  min-height: var(--touch-target-min, 44px);
+  padding: 8px;
+  border-radius: 50%;
+  text-decoration: none;
+  color: var(--icon-color, #262626);
+  transition: background-color 0.2s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-header__action-btn:active {
+  background-color: var(--action-bg-active, rgba(0, 0, 0, 0.05));
+  transform: scale(0.95);
+}
+
+.mobile-header__icon {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+}
+
+/* Cart button with badge */
+.mobile-header__cart-btn {
+  position: relative;
+}
+
+.mobile-header__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  pointer-events: none;
+  transform: scale(0.85);
+}
+
+/* Hide on desktop, show only on mobile */
+@media (min-width: 768px) {
+  .mobile-header {
+    display: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mobile-header {
+    --header-bg: #000;
+    --header-border: #262626;
+    --brand-text-color: #fff;
+    --icon-color: #fafafa;
+    --action-bg-active: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.95);
+  }
+
+  .mobile-header__brand-text {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .mobile-header__container {
+    padding: 0 12px;
+  }
+
+  .mobile-header__actions {
+    gap: 12px;
+  }
+
+  .mobile-header__brand-text {
+    font-size: 1.25rem;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .mobile-header__container {
+    height: 48px;
+  }
+
+  .mobile-header__brand-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .mobile-header__brand-text {
+    font-size: 1.25rem;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .mobile-header {
+    border-bottom-width: 2px;
+  }
+
+  .mobile-header__action-btn {
+    border: 1px solid transparent;
+  }
+
+  .mobile-header__action-btn:focus-visible {
+    border-color: currentColor;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-header__action-btn {
+    transition: none;
+  }
+
+  .mobile-header__brand {
+    transition: none;
+  }
+}
+
+/* Focus styles for accessibility */
+.mobile-header__brand:focus-visible,
+.mobile-header__action-btn:focus-visible {
+  outline: 3px solid var(--primary-500, #3b82f6);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Loading state */
+.mobile-header--loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Scroll behavior (hide on scroll down, show on scroll up) */
+.mobile-header--hidden {
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.mobile-header--visible {
+  transform: translateY(0);
+  transition: transform 0.3s ease-in-out;
+}

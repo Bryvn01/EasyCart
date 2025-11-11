@@ -181,7 +181,7 @@ Ensure backend allows admin dashboard origin:
 
 ### Issue 3: CORS Error
 
-**Diagnosis:** 
+**Diagnosis:**
 ```
 Access to XMLHttpRequest at 'https://...' from origin 'https://easycart-admin.onrender.com' has been blocked by CORS policy
 ```
@@ -348,7 +348,7 @@ After successful deployment:
 
 ---
 
-**Deployment Date:** [To be filled after deployment]  
-**Deployed By:** [Your name]  
-**Status:** [Success / Partial / Failed]  
+**Deployment Date:** [To be filled after deployment]
+**Deployed By:** [Your name]
+**Status:** [Success / Partial / Failed]
 **Notes:** [Any issues or observations]

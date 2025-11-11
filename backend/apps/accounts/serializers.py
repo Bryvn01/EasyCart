@@ -6,11 +6,21 @@ from .models import User
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password_confirm = serializers.CharField(write_only=True)
-    role = serializers.ChoiceField(choices=User.ROLE_CHOICES, default="viewer", required=False)
+    role = serializers.ChoiceField(
+        choices=User.ROLE_CHOICES, default="viewer", required=False
+    )
 
     class Meta:
         model = User
-        fields = ("username", "email", "password", "password_confirm", "phone", "address", "role")
+        fields = (
+            "username",
+            "email",
+            "password",
+            "password_confirm",
+            "phone",
+            "address",
+            "role",
+        )
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password_confirm"]:
@@ -52,4 +62,14 @@ class UserLoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "phone", "address", "role", "is_admin", "is_staff", "is_superuser")
+        fields = (
+            "id",
+            "username",
+            "email",
+            "phone",
+            "address",
+            "role",
+            "is_admin",
+            "is_staff",
+            "is_superuser",
+        )

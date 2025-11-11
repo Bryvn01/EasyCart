@@ -21,10 +21,10 @@ This PR upgrades the EasyCart backend from Django 3.2.25 to Django 4.2.11 LTS an
 
 ### Testing Results
 
-✅ **All tests passing**: 5/5 security tests pass with Django 4.2.11  
-✅ **Migrations working**: All database migrations run successfully  
-✅ **System check**: No critical Django system check issues  
-✅ **CI compatible**: Requirements work with GitHub Actions pip install  
+✅ **All tests passing**: 5/5 security tests pass with Django 4.2.11
+✅ **Migrations working**: All database migrations run successfully
+✅ **System check**: No critical Django system check issues
+✅ **CI compatible**: Requirements work with GitHub Actions pip install
 
 ### Database Configuration
 
@@ -60,7 +60,7 @@ MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/db?retryWrites=true&w=majo
 
 **Problem**: Djongo 1.3.6 is incompatible with Django 4.x and is no longer maintained.
 
-**Solution**: 
+**Solution**:
 - Use standard Django ORM with SQLite/PostgreSQL/MySQL (proven, stable, well-supported)
 - Optional MongoDB via direct PyMongo for specific use cases
 - Better long-term maintainability and Django ecosystem compatibility

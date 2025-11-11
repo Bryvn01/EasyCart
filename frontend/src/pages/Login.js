@@ -11,7 +11,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
   const [loginBtnRef, loginBtnHidden, triggerLoginFadeOut] = useFadeOutOnSuccess();
@@ -50,7 +50,7 @@ const Login = () => {
   };
 
   return (
-    <div style={{ 
+    <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, var(--primary-50) 0%, var(--gray-50) 100%)',
       display: 'flex',
@@ -58,8 +58,8 @@ const Login = () => {
       justifyContent: 'center',
       padding: 'var(--space-4)'
     }}>
-      <div className="card" style={{ 
-        width: '100%', 
+      <div className="card" style={{
+        width: '100%',
         maxWidth: '400px',
         padding: 'var(--space-8)'
       }}>
@@ -71,7 +71,7 @@ const Login = () => {
             Sign in to your Easycart account
           </p>
         </div>
-        
+
         {/* Error Message */}
         {error && (
           <div style={{
@@ -85,7 +85,7 @@ const Login = () => {
             {error}
           </div>
         )}
-        
+
         {/* Form */}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -108,7 +108,7 @@ const Login = () => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label style={{
               display: 'block',
@@ -129,14 +129,14 @@ const Login = () => {
               required
             />
           </div>
-          
+
           {/* Forgot Password Link */}
           {showForgotPassword && (
             <div style={{ textAlign: 'right', marginBottom: 'var(--space-4)' }}>
-              <Link 
-                to="/forgot-password" 
-                style={{ 
-                  color: 'var(--primary-600)', 
+              <Link
+                to="/forgot-password"
+                style={{
+                  color: 'var(--primary-600)',
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   fontWeight: '500'
@@ -146,12 +146,12 @@ const Login = () => {
               </Link>
             </div>
           )}
-          
+
           <button
             ref={loginBtnRef}
             type="submit"
             className="btn btn-primary"
-            style={{ 
+            style={{
               width: '100%',
               padding: 'var(--space-3)',
               fontSize: '1rem',
@@ -183,15 +183,15 @@ const Login = () => {
             </div>
           )}
         </form>
-        
+
         {/* Footer */}
         <div className="text-center" style={{ marginTop: 'var(--space-6)' }}>
           <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem' }}>
             Don't have an account?{' '}
-            <Link 
-              to="/register" 
-              style={{ 
-                color: 'var(--primary-600)', 
+            <Link
+              to="/register"
+              style={{
+                color: 'var(--primary-600)',
                 textDecoration: 'none',
                 fontWeight: '500'
               }}

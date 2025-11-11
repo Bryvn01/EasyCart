@@ -99,7 +99,7 @@ Created comprehensive guide including:
 ## How Render Works
 
 ```
-User Browser (HTTPS) 
+User Browser (HTTPS)
     ↓
 Render Edge/Load Balancer (handles SSL termination)
     ↓

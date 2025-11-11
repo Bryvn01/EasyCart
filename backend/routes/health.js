@@ -8,21 +8,21 @@ const router = express.Router();
  */
 router.get('/', async (req, res) => {
   const startTime = Date.now();
-  
+
   try {
     // Check MongoDB connection status
     const dbHealth = await checkDatabaseHealth();
-    
+
     // Get memory usage
     const memoryUsage = process.memoryUsage();
-    
+
     // Calculate uptime
     const uptime = process.uptime();
-    
+
     // Overall status determination
     const isHealthy = dbHealth.status === 'UP';
     const httpStatus = isHealthy ? 200 : 503;
-    
+
     const healthResponse = {
       status: isHealthy ? 'UP' : 'DOWN',
       service: 'easycart-nodejs-backend',
@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
       },
       responseTime: `${Date.now() - startTime}ms`
     };
-    
+
     res.status(httpStatus).json(healthResponse);
   } catch (error) {
     // If health check itself fails, return error status
@@ -73,14 +73,14 @@ async function checkDatabaseHealth() {
       2: 'connecting',
       3: 'disconnecting'
     };
-    
+
     if (state === 1) {
       // Connection is active, perform a ping
       await mongoose.connection.db.admin().ping();
-      
+
       // Get database stats
       const stats = await mongoose.connection.db.stats();
-      
+
       return {
         status: 'UP',
         details: {
@@ -117,13 +117,13 @@ function formatUptime(seconds) {
   const hours = Math.floor((seconds % 86400) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = Math.floor(seconds % 60);
-  
+
   const parts = [];
   if (days > 0) parts.push(`${days}d`);
   if (hours > 0) parts.push(`${hours}h`);
   if (minutes > 0) parts.push(`${minutes}m`);
   parts.push(`${secs}s`);
-  
+
   return parts.join(' ');
 }
 

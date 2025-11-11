@@ -1,16 +1,3 @@
-// --- Customer Management API ---
-export const customersAPI = {
-  // Admin: list all customers
-  list: (params) => api.get('/auth/customers/', { params }),
-  // Admin or self: get customer by id
-  retrieve: (id) => api.get(`/auth/customers/${id}/`),
-  // Admin or self: update customer
-  update: (id, data) => api.put(`/auth/customers/${id}/`, data),
-  // Admin or self: partial update
-  partialUpdate: (id, data) => api.patch(`/auth/customers/${id}/`, data),
-  // Admin or self: delete customer
-  delete: (id) => api.delete(`/auth/customers/${id}/`),
-};
 import axios from 'axios';
 
 
@@ -234,9 +221,9 @@ export const wishlistAPI = {
 export const reviewsAPI = {
   getProductReviews: (productId) => api.get(`/products/reviews/${productId}/`),
   createReview: (data) => api.post('/products/reviews/create/', data),
-  markReviewHelpful: (reviewId, isHelpful = true) => api.post('/products/reviews/helpful/', { 
-    review_id: reviewId, 
-    is_helpful: isHelpful 
+  markReviewHelpful: (reviewId, isHelpful = true) => api.post('/products/reviews/helpful/', {
+    review_id: reviewId,
+    is_helpful: isHelpful
   }),
 };
 
@@ -244,6 +231,20 @@ export const adminAPI = {
   getDashboardStats: (days = 30) => api.get(`/admin/dashboard/?days=${days}`),
   getOrdersAdmin: (params) => api.get('/admin/orders/', { params }),
   updateOrderStatus: (id, status) => api.patch(`/admin/orders/${id}/`, { status }),
+};
+
+// --- Customer Management API ---
+export const customersAPI = {
+  // Admin: list all customers
+  list: (params) => api.get('/auth/customers/', { params }),
+  // Admin or self: get customer by id
+  retrieve: (id) => api.get(`/auth/customers/${id}/`),
+  // Admin or self: update customer
+  update: (id, data) => api.put(`/auth/customers/${id}/`, data),
+  // Admin or self: partial update
+  partialUpdate: (id, data) => api.patch(`/auth/customers/${id}/`, data),
+  // Admin or self: delete customer
+  delete: (id) => api.delete(`/auth/customers/${id}/`),
 };
 
 export default api;

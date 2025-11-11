@@ -203,5 +203,5 @@ If issues arise:
 
 ---
 
-**Last Updated:** $(date)  
+**Last Updated:** $(date)
 **Production Backend:** https://easycart-backend-0u8r.onrender.com/

@@ -1,34 +1,12 @@
 import React from 'react';
-import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from '../context/AuthContext';
-import { CartProvider } from '../context/CartContext';
 
-const createTestQueryClient = () => new QueryClient({
-  defaultOptions: {
-    queries: { retry: false },
-    mutations: { retry: false },
-  },
-});
+const testQueryClient = new QueryClient();
 
-export function AllTheProviders({ children }) {
-  const testQueryClient = createTestQueryClient();
+export function withQueryClientProvider(ui) {
   return (
     <QueryClientProvider client={testQueryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
-        </AuthProvider>
-      </BrowserRouter>
+      {ui}
     </QueryClientProvider>
   );
 }
-
-export function renderWithProviders(ui, options) {
-  return render(ui, { wrapper: AllTheProviders, ...options });
-}
-
-export * from '@testing-library/react';

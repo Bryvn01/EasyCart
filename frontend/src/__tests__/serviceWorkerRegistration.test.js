@@ -12,7 +12,7 @@ describe('Service Worker Registration', () => {
       register: jest.fn(),
       ready: Promise.resolve()
     };
-    
+
     // Reset modules to get fresh import
     jest.resetModules();
     serviceWorkerRegistration = require('../serviceWorkerRegistration');
@@ -24,12 +24,8 @@ describe('Service Worker Registration', () => {
 
   describe('register', () => {
     it('should register service worker when available', () => {
-      // Mock window.location
-      delete window.location;
-      window.location = { 
-        href: 'http://localhost:3000',
-        origin: 'http://localhost:3000'
-      };
+      // Set the URL to a relative path to avoid jsdom SecurityError
+      window.history.pushState({}, '', '/');
 
       // Mock addEventListener
       const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
@@ -41,9 +37,9 @@ describe('Service Worker Registration', () => {
 
     it('should not register if service worker is not supported', () => {
       delete global.navigator.serviceWorker;
-      
+
       const result = serviceWorkerRegistration.register();
-      
+
       expect(result).toBeUndefined();
     });
   });
@@ -132,7 +128,7 @@ describe('PWA Manifest', () => {
 
     expect(manifest.shortcuts).toBeDefined();
     expect(manifest.shortcuts.length).toBeGreaterThan(0);
-    
+
     // Check first shortcut structure
     const firstShortcut = manifest.shortcuts[0];
     expect(firstShortcut).toHaveProperty('name');

@@ -49,13 +49,13 @@ Admin Dashboard              Node.js Backend
 // Products.js - Lines 88-116 (BEFORE)
 catch (error) {
   console.warn('API connection failed, using demo data:', error.message);
-  
+
   const mockData = [
     { id: 1, name: 'Sample Product 1', ... },
     { id: 2, name: 'Sample Product 2', ... },
     { id: 3, name: 'Sample Product 3', ... }
   ];
-  
+
   setProducts(mockData); // ❌ Shows fake data
   toast.error('Could not connect to API. Showing demo data.');
 }
@@ -182,7 +182,7 @@ catch (error) {
 def post(self, request):
     if not request.user.is_admin:  # ✅ Security check
         return Response({'error': 'Admin required'}, 403)
-    
+
     product_id = create_product_in_mongodb(request.data)
     return Response(
         {'id': product_id, 'message': 'Product created successfully'},

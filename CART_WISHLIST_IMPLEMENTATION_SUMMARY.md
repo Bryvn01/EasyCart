@@ -9,7 +9,7 @@
 ## What Was Already Working
 
 ✅ Shopping cart stored in database per user
-✅ Wishlist stored in database per user  
+✅ Wishlist stored in database per user
 ✅ Cross-session/device persistence
 ✅ Basic add/remove operations
 ✅ User authentication and authorization
@@ -20,7 +20,7 @@
 
 **Problem:** Users could only add items incrementally (cart_item.quantity += 1), but couldn't adjust quantities directly.
 
-**Solution:** 
+**Solution:**
 - Added `update_cart_item` endpoint (PATCH /api/orders/cart/update/{item_id}/)
 - Implemented +/- quantity controls in Cart UI
 - Added stock validation (1-100 range, cannot exceed available stock)

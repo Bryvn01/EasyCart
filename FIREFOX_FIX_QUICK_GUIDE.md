@@ -83,9 +83,9 @@
 
 After these 3 steps:
 
-✅ **Outdated content:** GONE  
-✅ **Fresh updates:** INSTANT  
-✅ **Future caching issues:** PREVENTED  
+✅ **Outdated content:** GONE
+✅ **Fresh updates:** INSTANT
+✅ **Future caching issues:** PREVENTED
 
 ---
 
@@ -168,7 +168,7 @@ You see NEW content 😊
 
 1. **frontend/src/index.js**
    - Service worker: `register()` → `unregister()`
-   
+
 2. **frontend/public/index.html**
    - Added: `<meta http-equiv="Cache-Control" content="no-cache">`
 

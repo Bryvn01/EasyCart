@@ -8,23 +8,25 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <App />
-    </HelmetProvider>
-  </React.StrictMode>
+  <HelmetProvider>
+    <App />
+  </HelmetProvider>
 );
 
-// DISABLED: Service worker causes caching issues during development
-// Uncomment for production PWA functionality
-// serviceWorkerRegistration.register({
-//   onSuccess: () => {
-//     console.log('Service worker registered successfully. App is ready for offline use.');
-//   },
-//   onUpdate: (registration) => {
-//     console.log('New version available! Please refresh the page.');
-//   }
-// });
-
-// Unregister any existing service workers to clear cache
-serviceWorkerRegistration.unregister();
+// PRODUCTION: Enable service worker for PWA functionality
+// 2025 Best Practice: Progressive enhancement with offline support
+if (process.env.NODE_ENV === 'production') {
+  serviceWorkerRegistration.register({
+    onSuccess: () => {
+      console.log('✅ Service worker registered. App is ready for offline use.');
+    },
+    onUpdate: (registration) => {
+      console.log('🔄 New version available! App will update on next reload.');
+      // Show update notification (handled in serviceWorkerRegistration.js)
+    }
+  });
+} else {
+  // DEVELOPMENT: Unregister to prevent caching issues
+  serviceWorkerRegistration.unregister();
+  console.log('🔧 Development mode: Service worker disabled');
+}

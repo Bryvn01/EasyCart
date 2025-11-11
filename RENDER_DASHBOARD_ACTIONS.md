@@ -445,6 +445,6 @@ https://easycart-backend-0u8r.onrender.com/
 
 ---
 
-**Document Version:** 1.0  
-**Estimated Completion Time:** 30-45 minutes  
+**Document Version:** 1.0
+**Estimated Completion Time:** 30-45 minutes
 **Last Updated:** Now ready for use

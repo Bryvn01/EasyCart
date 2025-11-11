@@ -1,0 +1,318 @@
+/* Mobile-First Optimizations for EasyCart */
+
+/* ===== Safe Area Support ===== */
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+/* ===== Smooth Scrolling ===== */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Hide Scrollbar (while maintaining functionality) ===== */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== Touch Optimization ===== */
+.touch-optimized {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* ===== Category Scroll Enhancements ===== */
+.category-scroll-container {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding: 0 16px;
+  overscroll-behavior-x: contain;
+}
+
+.category-card {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  will-change: transform;
+  contain: layout style paint;
+}
+
+/* ===== Performance Optimizations ===== */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* ===== Mobile Navigation Spacing ===== */
+@media (max-width: 768px) {
+  .mobile-nav-spacing {
+    padding-bottom: calc(80px + var(--safe-area-bottom));
+  }
+
+  .mobile-content-padding {
+    padding-bottom: calc(100px + var(--safe-area-bottom));
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+}
+
+/* ===== Z-Index Management ===== */
+.z-navbar {
+  z-index: 50;
+}
+
+.z-mobile-menu-overlay {
+  z-index: 60;
+}
+
+.z-mobile-menu {
+  z-index: 70;
+}
+
+.z-chat {
+  z-index: 45;
+}
+
+.z-modal {
+  z-index: 80;
+}
+
+.z-dropdown {
+  z-index: 55;
+}
+
+/* ===== Image Loading States ===== */
+.image-loading {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ===== Touch Feedback ===== */
+.touch-feedback {
+  position: relative;
+  overflow: hidden;
+}
+
+.touch-feedback::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.touch-feedback:active::after {
+  width: 200px;
+  height: 200px;
+}
+
+/* ===== Category Card Hover States (Desktop) ===== */
+@media (min-width: 769px) {
+  .category-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* ===== Responsive Typography ===== */
+@media (max-width: 640px) {
+  .responsive-heading {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+
+  .responsive-text {
+    font-size: clamp(0.875rem, 3vw, 1rem);
+  }
+}
+
+/* ===== Button Touch Targets (Minimum 44x44px) ===== */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== Prevent Text Selection on Interactive Elements ===== */
+button,
+.category-card,
+.touch-optimized {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* ===== Focus Visible (Accessibility) ===== */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ===== Reduced Motion Support ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== Dark Mode Support ===== */
+@media (prefers-color-scheme: dark) {
+  .image-loading {
+    background: linear-gradient(
+      90deg,
+      #2a2a2a 25%,
+      #1a1a1a 50%,
+      #2a2a2a 75%
+    );
+  }
+}
+
+/* ===== Landscape Mobile Adjustments ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+  .category-scroll-container {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .category-card {
+    min-width: 72px;
+    width: 72px;
+    min-height: 72px;
+  }
+}
+
+/* ===== iOS Specific Fixes ===== */
+@supports (-webkit-touch-callout: none) {
+  .ios-fix {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Prevents zoom on focus */
+  }
+}
+
+/* ===== Android Specific Fixes ===== */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  select,
+  textarea,
+  input {
+    font-size: 16px;
+  }
+}
+
+/* ===== Sticky Elements with Safe Area ===== */
+.sticky-top-safe {
+  position: sticky;
+  top: var(--safe-area-top);
+}
+
+.fixed-bottom-safe {
+  position: fixed;
+  bottom: var(--safe-area-bottom);
+}
+
+/* ===== Loading Spinner ===== */
+.spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3b82f6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Skeleton Loading ===== */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #e0e0e0 50%,
+    #f0f0f0 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ===== Smooth Image Fade In ===== */
+.fade-in-image {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+.fade-in-image.loaded {
+  opacity: 1;
+}
+
+/* ===== Container Queries Support (Progressive Enhancement) ===== */
+@supports (container-type: inline-size) {
+  .category-container {
+    container-type: inline-size;
+  }
+
+  @container (min-width: 400px) {
+    .category-card {
+      min-width: 100px;
+      width: 100px;
+    }
+  }
+}

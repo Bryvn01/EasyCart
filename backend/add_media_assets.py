@@ -117,7 +117,9 @@ def add_product_images():
             optimized_image = optimize_image(image_url)
             if optimized_image:
                 safe_name = re.sub(r"[^\w\s-]", "", product_name).strip()
-                file_name = get_valid_filename(f"{safe_name.replace(' ', '_').lower()}.jpg")
+                file_name = get_valid_filename(
+                    f"{safe_name.replace(' ', '_').lower()}.jpg"
+                )
                 product.image.save(file_name, File(optimized_image), save=True)
                 print(f"Added optimized image for {product_name}")
             else:
@@ -143,7 +145,9 @@ def add_category_images():
             optimized_image = optimize_image(image_url, max_width=600)
             if optimized_image:
                 safe_name = re.sub(r"[^\w\s-]", "", category_name).strip()
-                file_name = get_valid_filename(f"{safe_name.replace(' ', '_').lower()}.jpg")
+                file_name = get_valid_filename(
+                    f"{safe_name.replace(' ', '_').lower()}.jpg"
+                )
                 category.image.save(file_name, File(optimized_image), save=True)
                 print(f"Added optimized image for {category_name}")
             else:

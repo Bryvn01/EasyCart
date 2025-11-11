@@ -39,7 +39,7 @@ services:
         value: ecommerce.settings
       - key: WEB_CONCURRENCY
         value: 2
-  
+
   # React Frontend Static Site
   - type: web
     name: easycart-frontend

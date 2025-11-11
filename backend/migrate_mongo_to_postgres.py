@@ -9,7 +9,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
 django.setup()
 
 
-MONGO_URI = "mongodb+srv://easycart:easycartadmin123@cluster0.p7rcwl5.mongodb.net/easycart"
+MONGO_URI = (
+    "mongodb+srv://easycart:easycartadmin123@cluster0.p7rcwl5.mongodb.net/easycart"
+)
 MONGO_DB = "easycart"
 client = MongoClient(MONGO_URI)
 mongo_db = client[MONGO_DB]
@@ -22,7 +24,8 @@ for doc in mongo_db["products"].find():
     category_name = doc.pop("category", None)
     if category_name:
         category_obj, _ = Category.objects.get_or_create(
-            name=category_name, defaults={"slug": category_name.lower().replace(" ", "-")}
+            name=category_name,
+            defaults={"slug": category_name.lower().replace(" ", "-")},
         )
         doc["category"] = category_obj
     # Only use fields that exist in Product model

@@ -4,7 +4,7 @@
 
 ### 🖼️ Product Images (19/20 successful)
 - **Groceries**: Flour, maize flour, rice, cooking oil
-- **Beverages**: Coca Cola, Tusker beer, orange juice, milk  
+- **Beverages**: Coca Cola, Tusker beer, orange juice, milk
 - **Personal Care**: Toothpaste, body lotion, soap
 - **Household**: Washing powder, dish soap, toilet paper
 - **Dairy & Eggs**: Fresh eggs, cheese, yogurt
@@ -25,7 +25,7 @@
 ```
 backend/media/
 ├── products/          # Product images (optimized JPEGs)
-├── categories/        # Category images  
+├── categories/        # Category images
 ├── banners/          # Banner images
 └── icons/            # Icon assets
 
@@ -64,7 +64,7 @@ frontend/public/images/
 - **Hero banner**: Create branded banner with Easycart logo and messaging
 - **Category images**: Use category-specific photography
 
-### Medium Priority  
+### Medium Priority
 - **Promotional banners**: Design seasonal/sale-specific banners
 - **Icons**: Create custom icons matching brand style
 - **Background patterns**: Add subtle brand elements

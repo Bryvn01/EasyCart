@@ -51,7 +51,9 @@ class MongoDBConnection:
             # Get database from URI
             self._db = self._client.get_database()
 
-            logger.info(f"✅ MongoDB connected successfully to database: {self._db.name}")
+            logger.info(
+                f"✅ MongoDB connected successfully to database: {self._db.name}"
+            )
 
         except errors.ConfigurationError as e:
             logger.error(f"❌ MongoDB configuration error: {str(e)}")
@@ -104,7 +106,10 @@ def serialize_mongodb_doc(doc: Dict) -> Dict:
         elif isinstance(value, ObjectId):
             serialized[key] = str(value)
         elif isinstance(value, list):
-            serialized[key] = [serialize_mongodb_doc(item) if isinstance(item, dict) else item for item in value]
+            serialized[key] = [
+                serialize_mongodb_doc(item) if isinstance(item, dict) else item
+                for item in value
+            ]
         elif isinstance(value, dict):
             serialized[key] = serialize_mongodb_doc(value)
         else:
@@ -144,15 +149,22 @@ def get_products_from_mongodb(
         # Build query filter
         query = {}
 
-        # Category filter
+        # Category filter - sanitize input
         if category:
-            query["category"] = category
+            # Validate and sanitize category to prevent injection
+            safe_category = str(category)[:100].strip()
+            if safe_category:
+                query["category"] = safe_category
 
-        # Search filter
+        # Search filter - sanitize regex input to prevent injection
         if search:
+            import re as regex_module
+
+            # Escape special regex characters to prevent injection
+            safe_search = regex_module.escape(str(search)[:100])
             query["$or"] = [
-                {"name": {"$regex": search, "$options": "i"}},
-                {"description": {"$regex": search, "$options": "i"}},
+                {"name": {"$regex": safe_search, "$options": "i"}},
+                {"description": {"$regex": safe_search, "$options": "i"}},
             ]
 
         # Price range filter
@@ -163,9 +175,21 @@ def get_products_from_mongodb(
             if price_max is not None:
                 query["price"]["$lte"] = price_max
 
-        # Determine sort direction and field
-        sort_field = ordering.lstrip("-")
-        sort_direction = -1 if ordering.startswith("-") else 1
+        # Determine sort direction and field - whitelist allowed fields
+        allowed_sort_fields = {
+            "name",
+            "price",
+            "created_at",
+            "updated_at",
+            "view_count",
+            "createdAt",
+            "updatedAt",
+            "viewCount",
+            "stock",
+        }
+
+        sort_field = str(ordering).lstrip("-")
+        sort_direction = -1 if str(ordering).startswith("-") else 1
 
         # Map Django-style field names to MongoDB field names
         field_mapping = {
@@ -175,8 +199,17 @@ def get_products_from_mongodb(
         }
         sort_field = field_mapping.get(sort_field, sort_field)
 
+        # Validate sort field against whitelist
+        if sort_field not in allowed_sort_fields:
+            sort_field = "createdAt"  # Default to safe field
+
         # Execute query with pagination
-        cursor = products_collection.find(query).sort(sort_field, sort_direction).skip(skip).limit(limit)
+        cursor = (
+            products_collection.find(query)
+            .sort(sort_field, sort_direction)
+            .skip(skip)
+            .limit(limit)
+        )
         products = list(cursor)
 
         # Get total count for pagination
@@ -185,7 +218,9 @@ def get_products_from_mongodb(
         # Serialize products
         serialized_products = [serialize_mongodb_doc(product) for product in products]
 
-        logger.info(f"✅ Fetched {len(serialized_products)} products from MongoDB (total: {total_count})")
+        logger.info(
+            f"✅ Fetched {len(serialized_products)} products from MongoDB (total: {total_count})"
+        )
 
         return serialized_products, total_count
 
@@ -208,12 +243,17 @@ def get_product_by_id_from_mongodb(product_id: str) -> Optional[Dict]:
         mongo_conn = get_mongodb_connection()
         products_collection = mongo_conn.get_collection("products")
 
+        # Sanitize product_id input
+        safe_product_id = str(product_id)[:50].strip()
+        if not safe_product_id:
+            return None
+
         # Try to convert to ObjectId if it's a valid ObjectId string
         try:
-            query = {"_id": ObjectId(product_id)}
-        except:
-            # If not a valid ObjectId, search by string id field
-            query = {"id": product_id}
+            query = {"_id": ObjectId(safe_product_id)}
+        except Exception:
+            # If not a valid ObjectId, search by string id field (sanitized)
+            query = {"id": safe_product_id}
 
         product = products_collection.find_one(query)
 
@@ -244,7 +284,9 @@ def get_categories_from_mongodb() -> List[Dict]:
         categories = list(cursor)
 
         # Serialize categories
-        serialized_categories = [serialize_mongodb_doc(category) for category in categories]
+        serialized_categories = [
+            serialize_mongodb_doc(category) for category in categories
+        ]
 
         logger.info(f"✅ Fetched {len(serialized_categories)} categories from MongoDB")
 

@@ -5,7 +5,9 @@ Usage: python check_mongo_collections.py
 
 from pymongo import MongoClient
 
-MONGO_URI = "mongodb+srv://easycart:easycartadmin123@cluster0.p7rcwl5.mongodb.net/easycart"
+MONGO_URI = (
+    "mongodb+srv://easycart:easycartadmin123@cluster0.p7rcwl5.mongodb.net/easycart"
+)
 DB_NAME = "easycart"
 
 client = MongoClient(MONGO_URI)

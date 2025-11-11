@@ -5,9 +5,17 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
-import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
+import { handleApiError } from '../utils/errorHandler';
 import { useProducts } from '../hooks/useProducts';
 import { getProductImageUrl } from '../utils/imageUtils';
+import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
+import ImageLightbox from '../components/ImageLightbox';
+import SuccessAnimation from '../components/SuccessAnimation';
+import EmptyState from '../components/EmptyState';
+import CompactProductCard from '../components/CompactProductCard';
+import AuthModal from '../components/AuthModal';
+import useGuestCart from '../hooks/useGuestCart';
+import { toast } from 'react-hot-toast';
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
@@ -17,10 +25,18 @@ const Products = () => {
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [currentPage, setCurrentPage] = useState(1);
-  
+  const [lightboxImage, setLightboxImage] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successProduct, setSuccessProduct] = useState('');
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingCartProduct, setPendingCartProduct] = useState(null);
+
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
   const location = useLocation();
+
+  // Guest cart hook for non-authenticated users
+  const { addToGuestCart, guestCartCount, migrateGuestCartToServer } = useGuestCart(isAuthenticated);
 
   // Use the products hook
   const { products, loading, pagination } = useProducts({
@@ -32,14 +48,42 @@ const Products = () => {
     priceRange
   });
 
+  // INDUSTRY BEST PRACTICE: Auto-migrate guest cart to server on login
   useEffect(() => {
-    // Get search term from URL parameters
+    if (isAuthenticated && guestCartCount > 0) {
+      const migrate = async () => {
+        const result = await migrateGuestCartToServer();
+        if (result.success && result.itemsMigrated > 0) {
+          toast.success(
+            `Welcome back! ${result.itemsMigrated} item(s) from your guest cart have been added to your account.`,
+            { duration: 5000 }
+          );
+          fetchCartCount(); // Refresh cart count
+        }
+      };
+      migrate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    // Get search term and category from URL parameters
     const urlParams = new URLSearchParams(location.search);
     const urlSearch = urlParams.get('search');
-    if (urlSearch && urlSearch !== searchTerm) {
+    const urlCategory = urlParams.get('category');
+
+    if (urlSearch) {
       setSearchTerm(urlSearch);
     }
-  }, [location.search, searchTerm]);
+
+    if (urlCategory) {
+      setSelectedCategory(urlCategory);
+    } else if (!urlCategory && selectedCategory) {
+      // Clear category if not in URL
+      setSelectedCategory('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   // Debounce search term
   useEffect(() => {
@@ -71,23 +115,71 @@ const Products = () => {
     }
   };
 
-  const addToCart = async (productId) => {
+  const addToCart = async (product) => {
+    // INDUSTRY BEST PRACTICE: Allow guest cart, show auth modal with guest option
     if (!isAuthenticated) {
-      handleApiError({ message: 'Please login to add items to cart' });
+      // Add to guest cart immediately (localStorage)
+      addToGuestCart(product, 1);
+
+      // Show success feedback
+      setSuccessProduct(product.name);
+      setShowSuccess(true);
+
+      // Haptic feedback
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+
+      // Show professional auth modal (non-blocking)
+      setPendingCartProduct(product);
+      setTimeout(() => {
+        setShowAuthModal(true);
+      }, 1500); // Show after success animation
+
+      // Toast notification
+      toast.success(
+        <div>
+          <strong>{product.name}</strong> added to cart!
+          <br />
+          <small>Sign in to save your cart across devices</small>
+        </div>,
+        { duration: 4000 }
+      );
+
       return;
     }
 
+    // Authenticated: Add to server cart
     try {
-      await ordersAPI.addToCart({ product_id: productId, quantity: 1 });
+      await ordersAPI.addToCart({ product_id: product.id, quantity: 1 });
       fetchCartCount();
-      handleApiSuccess('Product added to cart! 🛒');
+      setSuccessProduct(product.name);
+      setShowSuccess(true);
+
+      // Haptic feedback
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+
+      toast.success(`${product.name} added to cart!`);
     } catch (error) {
       console.error('Error adding to cart:', error);
-      handleApiError(error, 'Failed to add product to cart');
+      handleApiError(error, 'Unable to add product. Please try again.');
     }
   };
 
-  if (loading) {
+  // Handle pagination with smooth scroll to top
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    // Scroll to top of product grid smoothly
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  // PERFORMANCE: Loading skeleton optimized
+  if (loading && products.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -101,28 +193,50 @@ const Products = () => {
 
   return (
     <div className="container py-8">
+      {/* Breadcrumb */}
+      <nav className="mb-6" aria-label="Breadcrumb">
+        <ol className="flex items-center gap-2 text-sm text-gray-600">
+          <li><Link to="/" className="hover:text-primary-600">Home</Link></li>
+          <li>›</li>
+          <li className="text-gray-900 font-medium">Products</li>
+          {selectedCategory && (
+            <>
+              <li>›</li>
+              <li className="text-gray-900 font-medium">
+                {selectedCategory}
+              </li>
+            </>
+          )}
+        </ol>
+      </nav>
+
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">
-          {selectedCategory ? 
-            `${categories.find(cat => cat.id === selectedCategory)?.name || 'Category'} Products` : 
+          {selectedCategory ?
+            `${selectedCategory} Products` :
             'Our Products'
           }
         </h1>
         <p style={{ color: 'var(--gray-600)' }}>
-          {debouncedSearchTerm ? 
+          {debouncedSearchTerm ?
             `Search results for "${debouncedSearchTerm}"` :
             'Discover quality Kenyan products at great prices'
           }
         </p>
+        {pagination.totalCount > 0 && (
+          <p className="text-sm text-gray-500 mt-2">
+            Showing {((currentPage - 1) * 12) + 1}-{Math.min(currentPage * 12, pagination.totalCount)} of {pagination.totalCount} products
+          </p>
+        )}
       </div>
-      
+
       {/* Active Filters Summary */}
       {(selectedCategory || debouncedSearchTerm || sortBy || priceRange.min || priceRange.max) && (
-        <div style={{ 
-          background: 'var(--primary-50)', 
-          padding: 'var(--space-3)', 
-          borderRadius: 'var(--radius-md)', 
+        <div style={{
+          background: 'var(--primary-50)',
+          padding: 'var(--space-3)',
+          borderRadius: 'var(--radius-md)',
           marginBottom: 'var(--space-4)',
           display: 'flex',
           alignItems: 'center',
@@ -130,7 +244,7 @@ const Products = () => {
         }}>
           <div style={{ fontSize: '0.875rem', color: 'var(--primary-700)' }}>
             <strong>Active Filters:</strong>
-            {selectedCategory && <span> Category: {categories.find(cat => cat.id === selectedCategory)?.name}</span>}
+            {selectedCategory && <span> Category: {selectedCategory}</span>}
             {debouncedSearchTerm && <span> Search: "{debouncedSearchTerm}"</span>}
             {sortBy && <span> Sort: {sortBy.replace('-', '').replace('_', ' ')}</span>}
             {(priceRange.min || priceRange.max) && <span> Price: KES {priceRange.min || '0'} - {priceRange.max || '∞'}</span>}
@@ -157,9 +271,16 @@ const Products = () => {
           </button>
         </div>
       )}
-      
+
+      {/* Mobile Category Scroll */}
+      <HorizontalCategoryScroll
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+      />
+
       {/* Filters */}
-      <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
+      <div className="card hidden md:block" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
         <div className="grid grid-cols-5 gap-4">
           <div>
             <SearchInput
@@ -175,7 +296,7 @@ const Products = () => {
             >
               <option value="">All Categories</option>
               {Array.isArray(categories) && categories.map(category => (
-                <option key={category.id} value={category.id}>
+                <option key={category.id} value={category.name}>
                   {category.name}
                 </option>
               ))}
@@ -196,11 +317,12 @@ const Products = () => {
               <option value="-view_count">Most Popular</option>
             </select>
           </div>
-          <div>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">KSh</span>
             <input
               type="number"
-              className="form-control"
-              placeholder="Min Price (KES)"
+              className="form-control pl-12"
+              placeholder="Min Price"
               min="0"
               value={priceRange.min}
               onChange={(e) => {
@@ -211,11 +333,12 @@ const Products = () => {
               }}
             />
           </div>
-          <div>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">KSh</span>
             <input
               type="number"
-              className="form-control"
-              placeholder="Max Price (KES)"
+              className="form-control pl-12"
+              placeholder="Max Price"
               min="0"
               value={priceRange.max}
               onChange={(e) => {
@@ -228,159 +351,60 @@ const Products = () => {
           </div>
         </div>
       </div>
-      
-      {/* Products Grid */}
-      <div className="grid grid-cols-4 gap-6">
-        {products.map(product => (
-          <div key={product.id} className="card">
-            {/* Product Image */}
-            <div style={{
-              height: '200px',
-              background: 'var(--gray-100)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative'
-            }}>
-              {product.image ? (
-                <img
-                  src={getProductImageUrl(product, '/placeholder.png')}
-                  alt={product.name}
-                  crossOrigin="anonymous"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
-                  }}
-                  onError={(e) => {
-                    // Fallback to placeholder if image fails to load
-                    e.target.onerror = null; // Prevent infinite loop
-                    e.target.style.display = 'none';
-                    if (e.target.nextSibling) {
-                      e.target.nextSibling.style.display = 'flex';
-                    }
-                  }}
-                />
-              ) : null}
-              <div style={{
-                display: product.image ? 'none' : 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--gray-500)',
-                fontSize: '2rem'
-              }}>
-                📦
-              </div>
-              
-              {/* Stock Badge */}
-              {product.stock === 0 && (
-                <div style={{
-                  position: 'absolute',
-                  top: 'var(--space-2)',
-                  right: 'var(--space-2)',
-                  background: 'var(--error)',
-                  color: 'white',
-                  padding: 'var(--space-1) var(--space-2)',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: '0.75rem',
-                  fontWeight: '500'
-                }}>
-                  Out of Stock
-                </div>
-              )}
-            </div>
-            
-            {/* Product Info */}
-            <div className="p-4">
-              <div style={{
-                fontSize: '0.75rem',
-                color: 'var(--primary-600)',
-                fontWeight: '500',
-                marginBottom: 'var(--space-1)'
-              }}>
-                {product.category?.name || product.category_name || 'Uncategorized'}
-              </div>
-              
-              <h3 style={{
-                fontSize: '1rem',
-                fontWeight: '600',
-                marginBottom: 'var(--space-2)',
-                lineHeight: '1.4'
-              }}>
-                {product.name}
-              </h3>
-              
-              <p style={{
-                color: 'var(--gray-600)',
-                fontSize: '0.875rem',
-                marginBottom: 'var(--space-4)',
-                lineHeight: '1.4'
-              }}>
-                {product.description ? product.description.substring(0, 80) + '...' : 'No description available'}
-              </p>
-              
-              <div className="flex justify-between items-center">
-                <span style={{
-                  fontSize: '1.25rem',
-                  fontWeight: '700',
-                  color: 'var(--gray-900)'
-                }}>
-                  KES {product.price}
-                </span>
-                
-                <div className="flex gap-2">
-                  <Link
-                    to={`/products/${product.id}`}
-                    className="btn btn-secondary"
-                    style={{ padding: 'var(--space-2) var(--space-3)', fontSize: '0.75rem' }}
-                  >
-                    View
-                  </Link>
-                  <button
-                    onClick={() => addToCart(product.id)}
-                    className="btn btn-primary"
-                    disabled={product.stock === 0}
-                    style={{
-                      padding: 'var(--space-2) var(--space-3)',
-                      fontSize: '0.75rem',
-                      opacity: product.stock === 0 ? 0.5 : 1
-                    }}
-                  >
-                    {product.stock === 0 ? 'Sold Out' : 'Add to Cart'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+
+      {/* Products Grid - Optimized for mobile and desktop */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 pb-20 md:pb-8">
+        {products.map((product, index) => (
+          <CompactProductCard
+            key={product.id}
+            product={product}
+            onAddToCart={addToCart}
+            priority={index < 10}
+            getProductImageUrl={getProductImageUrl}
+          />
         ))}
       </div>
-      
+
       {products.length === 0 && !loading && (
-        <div className="text-center py-16">
-          <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>🔍</div>
-          <h3 className="text-xl font-semibold mb-2">
-            {debouncedSearchTerm ? `No products found for "${debouncedSearchTerm}"` : 'No products found'}
-          </h3>
-          <p style={{ color: 'var(--gray-600)' }}>
-            {debouncedSearchTerm 
-              ? 'Try searching with different keywords or check your spelling'
-              : 'Try adjusting your search or filter criteria'
-            }
-          </p>
-          {debouncedSearchTerm && (
-            <button
-              onClick={() => {
-                setSearchTerm('');
-                setDebouncedSearchTerm('');
-              }}
-              className="btn btn-secondary"
-              style={{ marginTop: 'var(--space-4)' }}
-            >
-              Clear Search
-            </button>
-          )}
-        </div>
+        <EmptyState
+          type={debouncedSearchTerm ? 'search' : 'products'}
+          onAction={debouncedSearchTerm ? () => {
+            setSearchTerm('');
+            setDebouncedSearchTerm('');
+          } : null}
+        />
       )}
+
+      {/* Image Lightbox */}
+      {lightboxImage && (
+        <ImageLightbox
+          imageUrl={lightboxImage.url}
+          productName={lightboxImage.name}
+          onClose={() => setLightboxImage(null)}
+        />
+      )}
+
+      {/* Success Animation */}
+      {showSuccess && (
+        <SuccessAnimation
+          message={`${successProduct} added to cart!`}
+          onComplete={() => setShowSuccess(false)}
+        />
+      )}
+
+      {/* Professional Auth Modal - Industry Best Practice */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false);
+          setPendingCartProduct(null);
+        }}
+        mode="login"
+        message={`Sign in to save your cart and ${pendingCartProduct ? `continue shopping for ${pendingCartProduct.name}` : 'access exclusive features'}`}
+        feature="add items to cart"
+        allowGuest={false} // Already added to guest cart
+        returnUrl={location.pathname + location.search}
+      />
 
       {/* Pagination Controls */}
       {products.length > 0 && pagination.totalPages > 1 && (
@@ -393,7 +417,7 @@ const Products = () => {
           padding: 'var(--space-4)'
         }}>
           <button
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
             disabled={!pagination.hasPrevious}
             className="btn btn-secondary"
             style={{
@@ -422,7 +446,7 @@ const Products = () => {
               return (
                 <button
                   key={pageNum}
-                  onClick={() => setCurrentPage(pageNum)}
+                  onClick={() => handlePageChange(pageNum)}
                   style={{
                     padding: 'var(--space-2) var(--space-3)',
                     border: '1px solid var(--gray-300)',
@@ -431,7 +455,8 @@ const Products = () => {
                     color: currentPage === pageNum ? 'white' : 'var(--gray-700)',
                     cursor: 'pointer',
                     fontWeight: currentPage === pageNum ? '600' : '400',
-                    minWidth: '40px'
+                    minWidth: '44px',
+                    minHeight: '44px'
                   }}
                 >
                   {pageNum}
@@ -441,7 +466,7 @@ const Products = () => {
           </div>
 
           <button
-            onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+            onClick={() => handlePageChange(Math.min(pagination.totalPages, currentPage + 1))}
             disabled={!pagination.hasNext}
             className="btn btn-secondary"
             style={{

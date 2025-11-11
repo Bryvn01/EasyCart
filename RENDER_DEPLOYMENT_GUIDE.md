@@ -63,7 +63,7 @@ Complete guide for deploying EasyCart full-stack application on Render with Mong
    mongodb+srv://easycart_user:<password>@easycart-cluster.xxxxx.mongodb.net/?retryWrites=true&w=majority
    ```
 6. Replace `<password>` with the password you saved earlier
-7. Add database name before the `?`: 
+7. Add database name before the `?`:
    ```
    mongodb+srv://easycart_user:YOUR_PASSWORD@easycart-cluster.xxxxx.mongodb.net/easycart?retryWrites=true&w=majority
    ```
@@ -91,7 +91,7 @@ Complete guide for deploying EasyCart full-stack application on Render with Mong
 
 3. **Set Environment Variables**
    - After services are created, go to each service:
-   
+
    **Backend Service:**
    - Navigate to "easycart-backend" service
    - Go to "Environment" tab
@@ -123,11 +123,11 @@ If you prefer manual setup or render.yaml doesn't work:
    - **Branch**: main
    - **Root Directory**: backend
    - **Environment**: Python 3
-   - **Build Command**: 
+   - **Build Command**:
      ```bash
      pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate --no-input
      ```
-   - **Start Command**: 
+   - **Start Command**:
      ```bash
      gunicorn ecommerce.wsgi:application --bind 0.0.0.0:$PORT
      ```

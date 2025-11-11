@@ -41,10 +41,10 @@ const products = [
 async function seedDatabase() {
   try {
   await mongoose.connect(process.env.MONGO_URI);
-    
+
     await Category.insertMany(categories);
     await Product.insertMany(products);
-    
+
     const adminExists = await User.findOne({ email: 'admin@easycart.com' });
     if (!adminExists) {
       const admin = new User({
@@ -56,7 +56,7 @@ async function seedDatabase() {
       await admin.save();
       console.log('Admin created: admin@easycart.com / admin123');
     }
-    
+
     console.log('Database seeded successfully');
     process.exit(0);
   } catch (error) {

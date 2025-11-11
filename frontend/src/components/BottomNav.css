@@ -1,0 +1,160 @@
+/**
+ * Professional BottomNav Styles
+ * Touch-optimized with safe areas
+ */
+
+/* BottomNav best-practice mobile styles */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-bottom-nav, 100);
+  background: var(--nav-bg, #fff);
+  border-top: 1px solid var(--nav-border, #e5e7eb);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: var(--nav-height, 64px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: contain;
+  /* Performance optimization */
+  will-change: transform;
+  contain: layout style paint;
+}
+
+.bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  /* WCAG 2.5.5: Touch target minimum 44x44px */
+  min-height: var(--touch-target-min, 48px);
+  padding: 0 8px;
+  text-align: center;
+  outline: none;
+  transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  color: var(--nav-item-color, #6b7280);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* Focus visible */
+.bottom-nav__item:focus-visible {
+  outline: 3px solid var(--primary-600, #2563eb);
+  outline-offset: 2px;
+}
+
+/* Hover (for hybrid devices) */
+@media (hover: hover) and (pointer: fine) {
+  .bottom-nav__item:hover {
+    color: var(--primary-600, #2563eb);
+    background: var(--primary-50, #eff6ff);
+  }
+}
+
+/* Active/pressed state */
+.bottom-nav__item:active {
+  transform: scale(0.95);
+  background: var(--nav-item-active-bg, rgba(37, 99, 235, 0.05));
+}
+
+/* Current page indicator */
+.bottom-nav__item--active {
+  color: var(--nav-item-active-color, #2563eb);
+  font-weight: 600;
+}
+
+.bottom-nav__item--active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  background: var(--nav-indicator-color, #2563eb);
+  border-radius: 0 0 4px 4px;
+}
+
+.bottom-nav__icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Ensure adequate touch target */
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 1.5rem;
+}
+
+.bottom-nav__icon {
+  flex-shrink: 0;
+}
+
+.bottom-nav__badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  z-index: 2;
+  /* Ensure badge doesn't block touch */
+  pointer-events: none;
+}
+
+.bottom-nav__label {
+  font-size: 0.75rem;
+  line-height: 1;
+  white-space: nowrap;
+  margin-top: 4px;
+  color: inherit;
+}
+
+/* Hide on desktop */
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none;
+  }
+}
+
+/* Dark mode support for mobile and PWA */
+@media (prefers-color-scheme: dark) {
+  .bottom-nav {
+    --nav-bg: #18181b;
+    --nav-border: #27272a;
+    --nav-item-color: #d1d5db;
+    --nav-item-active-color: #38bdf8;
+    --nav-item-active-bg: rgba(56, 189, 248, 0.1);
+    --nav-indicator-color: #38bdf8;
+    background: var(--nav-bg);
+    border-top-color: var(--nav-border);
+    color-scheme: dark;
+  }
+
+  .bottom-nav__item {
+    color: var(--nav-item-color);
+  }
+
+  .bottom-nav__item--active {
+    color: var(--nav-item-active-color);
+  }
+
+  .bottom-nav__item--active::before {
+    background: var(--nav-indicator-color);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .bottom-nav__item:hover {
+      color: var(--nav-item-active-color);
+      background: rgba(39, 39, 42, 0.5);
+    }
+  }
+}

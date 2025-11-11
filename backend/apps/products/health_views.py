@@ -42,7 +42,10 @@ def health_check(request):
                 "database": {"status": "UP", "details": None},
                 "python": {
                     "status": "UP",
-                    "details": {"version": sys.version.split()[0], "implementation": sys.implementation.name},
+                    "details": {
+                        "version": sys.version.split()[0],
+                        "implementation": sys.implementation.name,
+                    },
                 },
             },
             "responseTime": f"{int((time.time() - start_time) * 1000)}ms",
@@ -95,10 +98,17 @@ def readiness_probe(request):
         is_ready = True
 
         if is_ready:
-            return JsonResponse({"status": "UP", "check": "readiness", "database": "connected"})
+            return JsonResponse(
+                {"status": "UP", "check": "readiness", "database": "connected"}
+            )
         else:
-            return JsonResponse({"status": "DOWN", "check": "readiness", "database": "disconnected"}, status=503)
+            return JsonResponse(
+                {"status": "DOWN", "check": "readiness", "database": "disconnected"},
+                status=503,
+            )
 
     except Exception as e:
         logger.error(f"Readiness check failed: {str(e)}")
-        return JsonResponse({"status": "DOWN", "check": "readiness", "error": str(e)}, status=503)
+        return JsonResponse(
+            {"status": "DOWN", "check": "readiness", "error": str(e)}, status=503
+        )

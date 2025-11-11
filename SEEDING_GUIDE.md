@@ -14,7 +14,7 @@ This guide explains how to seed the EasyCart database with sample products.
    MONGO_URI=mongodb://localhost:27017/easycart
    # Or for MongoDB Atlas:
    # MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/easycart?retryWrites=true&w=majority
-   
+
    # Optional: Cloudinary for image uploads
    CLOUDINARY_CLOUD_NAME=your_cloud_name
    CLOUDINARY_API_KEY=your_api_key

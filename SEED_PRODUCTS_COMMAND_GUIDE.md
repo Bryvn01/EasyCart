@@ -210,7 +210,7 @@ export MONGO_URI="mongodb+srv://user:pass@cluster.mongodb.net/easycart"
 2. Network connectivity issues
 3. MongoDB Atlas IP whitelist restrictions
 
-**Solution:** 
+**Solution:**
 1. Verify connection string is correct
 2. Check MongoDB Atlas dashboard for connection issues
 3. Add your IP address to MongoDB Atlas IP whitelist

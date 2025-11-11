@@ -11,13 +11,13 @@ $backendEnv = "C:\EasyCart\backend\.env"
 if (Test-Path $backendEnv) {
     $content = Get-Content $backendEnv -Raw
     Write-Host "  [OK] File exists" -ForegroundColor Green
-    
+
     if ($content -match "SECRET_KEY=d1zhmVrTN_cNkzely2HFLrD1") {
         Write-Host "  [OK] SECRET_KEY configured" -ForegroundColor Green
     } else {
         Write-Host "  [!!] SECRET_KEY NOT configured" -ForegroundColor Red
     }
-    
+
     if ($content -match "CLOUDINARY_URL=cloudinary://763992198364853") {
         Write-Host "  [OK] CLOUDINARY_URL configured" -ForegroundColor Green
     } else {
@@ -34,13 +34,13 @@ $frontendEnv = "C:\EasyCart\frontend\.env"
 if (Test-Path $frontendEnv) {
     $content = Get-Content $frontendEnv -Raw
     Write-Host "  [OK] File exists" -ForegroundColor Green
-    
+
     if ($content -match "REACT_APP_CLOUDINARY_CLOUD_NAME=dvpr5bcrp") {
         Write-Host "  [OK] CLOUDINARY_CLOUD_NAME configured" -ForegroundColor Green
     } else {
         Write-Host "  [!!] CLOUDINARY_CLOUD_NAME NOT configured" -ForegroundColor Red
     }
-    
+
     if ($content -match "REACT_APP_API_URL=http://localhost:8000") {
         Write-Host "  [OK] API_URL configured" -ForegroundColor Green
     } else {
@@ -57,7 +57,7 @@ $adminEnv = "C:\EasyCart\admin-dashboard\.env"
 if (Test-Path $adminEnv) {
     $content = Get-Content $adminEnv -Raw
     Write-Host "  [OK] File exists" -ForegroundColor Green
-    
+
     if ($content -match "REACT_APP_CLOUDINARY_CLOUD_NAME=dvpr5bcrp") {
         Write-Host "  [OK] CLOUDINARY_CLOUD_NAME configured" -ForegroundColor Green
     } else {

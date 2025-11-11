@@ -17,7 +17,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Review",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 (
                     "rating",
                     models.IntegerField(
@@ -40,7 +48,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="ReviewHelpful",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("is_helpful", models.BooleanField()),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
@@ -48,14 +64,30 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Wishlist",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
             name="WishlistItem",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("added_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
@@ -74,7 +106,9 @@ class Migration(migrations.Migration):
             model_name="product",
             name="category",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="products", to="products.category"
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="products",
+                to="products.category",
             ),
         ),
         migrations.AlterField(
@@ -99,11 +133,16 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="product",
-            index=models.Index(fields=["category", "is_active"], name="products_pr_categor_50f5f1_idx"),
+            index=models.Index(
+                fields=["category", "is_active"], name="products_pr_categor_50f5f1_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="product",
-            index=models.Index(fields=["is_featured", "is_active"], name="products_pr_is_feat_a1ecf6_idx"),
+            index=models.Index(
+                fields=["is_featured", "is_active"],
+                name="products_pr_is_feat_a1ecf6_idx",
+            ),
         ),
         migrations.AddIndex(
             model_name="product",
@@ -113,43 +152,57 @@ class Migration(migrations.Migration):
             model_name="review",
             name="product",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="reviews", to="products.product"
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="reviews",
+                to="products.product",
             ),
         ),
         migrations.AddField(
             model_name="review",
             name="user",
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AddField(
             model_name="reviewhelpful",
             name="review",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="helpful_votes", to="products.review"
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="helpful_votes",
+                to="products.review",
             ),
         ),
         migrations.AddField(
             model_name="reviewhelpful",
             name="user",
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AddField(
             model_name="wishlist",
             name="user",
             field=models.OneToOneField(
-                on_delete=django.db.models.deletion.CASCADE, related_name="wishlist", to=settings.AUTH_USER_MODEL
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="wishlist",
+                to=settings.AUTH_USER_MODEL,
             ),
         ),
         migrations.AddField(
             model_name="wishlistitem",
             name="product",
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="products.product"),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="products.product"
+            ),
         ),
         migrations.AddField(
             model_name="wishlistitem",
             name="wishlist",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="items", to="products.wishlist"
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="items",
+                to="products.wishlist",
             ),
         ),
         migrations.AlterUniqueTogether(

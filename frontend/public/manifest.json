@@ -1,47 +1,74 @@
 {
   "short_name": "EasyCart",
-  "name": "EasyCart - Your Online Supermarket",
-  "description": "Shop groceries online with EasyCart. Fast delivery, fresh products, and great prices.",
+  "name": "EasyCart - Kenya's #1 Online Shopping",
+  "description": "Shop 10,000+ genuine products. Free delivery in Nairobi. Groceries, electronics, fashion & more. Trusted by 50,000+ Kenyans.",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#2563eb",
+  "theme_color": "#10b981",
   "background_color": "#ffffff",
   "orientation": "portrait-primary",
-  "categories": ["shopping", "lifestyle"],
+  "categories": ["shopping", "lifestyle", "food", "retail"],
+  "lang": "en-KE",
+  "dir": "ltr",
+  "scope": "/",
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "shortcuts": [
     {
       "name": "Browse Products",
       "short_name": "Products",
       "description": "Browse all available products",
       "url": "/products",
-      "icons": [{ "src": "images/icons/cart-icon.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "View Cart",
       "short_name": "Cart",
       "description": "View your shopping cart",
       "url": "/cart",
-      "icons": [{ "src": "images/icons/cart-icon.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "My Orders",
       "short_name": "Orders",
       "description": "View your order history",
       "url": "/orders",
-      "icons": [{ "src": "images/icons/user-icon.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 }

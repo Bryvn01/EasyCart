@@ -10,7 +10,7 @@
 ### 2. **Deploy Backend API**
 1. Click "New Project" → "Deploy from GitHub repo"
 2. Select `EasyCart` repository
-3. Choose "Deploy from monorepo" 
+3. Choose "Deploy from monorepo"
 4. Set **Root Directory**: `backend`
 5. **Environment Variables**:
    ```
@@ -23,7 +23,7 @@
 
 ### 3. **Deploy Frontend**
 1. Add new service to same project
-2. Choose "Deploy from GitHub repo" 
+2. Choose "Deploy from GitHub repo"
 3. Set **Root Directory**: `frontend`
 4. **Environment Variables**:
    ```

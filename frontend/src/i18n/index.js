@@ -25,7 +25,7 @@ const resources = {
       'confirm': 'Confirm',
       'yes': 'Yes',
       'no': 'No',
-      
+
       // Navigation
       'home': 'Home',
       'products': 'Products',
@@ -36,7 +36,7 @@ const resources = {
       'login': 'Login',
       'logout': 'Logout',
       'register': 'Register',
-      
+
       // Products
       'addToCart': 'Add to Cart',
       'outOfStock': 'Out of Stock',
@@ -47,7 +47,7 @@ const resources = {
       'description': 'Description',
       'reviews': 'Reviews',
       'rating': 'Rating',
-      
+
       // Cart & Orders
       'total': 'Total',
       'subtotal': 'Subtotal',
@@ -56,7 +56,7 @@ const resources = {
       'checkout': 'Checkout',
       'orderHistory': 'Order History',
       'orderStatus': 'Order Status',
-      
+
       // User
       'username': 'Username',
       'email': 'Email',
@@ -66,7 +66,7 @@ const resources = {
       'lastName': 'Last Name',
       'phone': 'Phone',
       'address': 'Address',
-      
+
       // Admin
       'dashboard': 'Dashboard',
       'totalOrders': 'Total Orders',
