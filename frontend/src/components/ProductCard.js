@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Button, Card } from './ui';
 import PropTypes from 'prop-types';
 import OptimizedImage from './OptimizedImage';
-import { formatPriceLocale } from '../utils/formatPrice';
 
-const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => {
+const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, priority = false }) => {
   const { t } = useTranslation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -45,6 +44,8 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
             alt={product.name}
             width={400}
             height={400}
+            priority={priority}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             style={{ objectFit: 'cover' }}
             className="w-full h-full"
           />
@@ -54,18 +55,18 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
             <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
               {productImages.map((_, index) => (
                 <button
-                    key={index}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setCurrentImageIndex(index);
-                    }}
-                    className={`mobile-button w-2 h-2 rounded-full transition-all ${
-                      currentImageIndex === index
-                        ? 'bg-white scale-125'
-                        : 'bg-white bg-opacity-50'
-                    }`}
-                    aria-label={`View image ${index + 1}`}
+                  key={index}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setCurrentImageIndex(index);
+                  }}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    currentImageIndex === index
+                      ? 'bg-white scale-125'
+                      : 'bg-white bg-opacity-50'
+                  }`}
+                  aria-label={`View image ${index + 1}`}
                 />
               ))}
             </div>
@@ -131,11 +132,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
           <div className="flex flex-col">
             <div className="flex items-center space-x-2">
               <span className="text-2xl font-bold text-primary-600 dark:text-primary-400">
-                KSh {formatPriceLocale(product.price)}
+                KSh {product.price?.toLocaleString()}
               </span>
               {product.original_price > product.price && (
                 <span className="text-sm text-gray-500 line-through">
-                  KSh {formatPriceLocale(product.original_price)}
+                  KSh {product.original_price?.toLocaleString()}
                 </span>
               )}
             </div>
@@ -154,12 +155,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false }) => 
           </div>
 
           <Button
-          onClick={() => onAddToCart(product)}
-          disabled={product.stock === 0 || loading}
-          loading={loading}
-          size="sm"
-          className="mobile-button shrink-0 transition-all hover:scale-105 bg-primary-600 hover:bg-primary-700 border-primary-600 min-h-[44px] min-w-[44px]"
-          aria-label={product.stock === 0 ? `${product.name} is out of stock` : `Add ${product.name} to cart`}
+            onClick={() => onAddToCart(product)}
+            disabled={product.stock === 0 || loading}
+            loading={loading}
+            size="sm"
+            className="shrink-0 transition-all hover:scale-105 bg-primary-600 hover:bg-primary-700 border-primary-600"
           >
             {product.stock === 0 ? t('outOfStock', 'Out of Stock') : t('addToCart', 'Add to Cart')}
           </Button>
@@ -206,6 +206,7 @@ ProductCard.propTypes = {
   onAddToCart: PropTypes.func.isRequired,
   onQuickView: PropTypes.func,
   loading: PropTypes.bool,
+  priority: PropTypes.bool,
 };
 
 export default ProductCard;

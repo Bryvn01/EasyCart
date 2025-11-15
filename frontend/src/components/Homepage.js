@@ -9,6 +9,10 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { handleApiError, handleApiSuccess } from '../utils/errorHandler';
 import { imageFallback } from '../utils/images';
+import AuthModal from './AuthModal';
+import useGuestCart from '../hooks/useGuestCart';
+import { toast } from 'react-hot-toast';
+import { useLocation } from 'react-router-dom';
 
 import { Helmet } from 'react-helmet-async';
 const BannerCarousel = dynamic(() => import('./BannerCarousel'), { ssr: false, loading: () => <div className="h-40 bg-gray-100 animate-pulse rounded-lg mb-8" /> });
@@ -24,11 +28,22 @@ const sectionMap = [
 
 const Homepage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingCartProduct, setPendingCartProduct] = useState(null);
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
+  const location = useLocation();
+
+  // Guest cart hook for non-authenticated users
+  const { addToGuestCart, guestCartCount, migrateGuestCartToServer } = useGuestCart(isAuthenticated);
 
   const fetchProducts = async () => {
-    const res = await productsAPI.getProducts();
+    // Limit homepage to first 80 products for performance
+    // (Modern e-commerce sites load 60-100 products max on homepage)
+    const res = await productsAPI.getProducts({
+      page: 1,
+      page_size: 80
+    });
     const data = res?.data?.results ?? res?.data;
     return Array.isArray(data) ? data : [];
   };
@@ -49,6 +64,24 @@ const Homepage = () => {
 
   const productsArray = Array.isArray(products) ? products : [];
 
+  // INDUSTRY BEST PRACTICE: Auto-migrate guest cart to server on login
+  useEffect(() => {
+    if (isAuthenticated && guestCartCount > 0) {
+      const migrate = async () => {
+        const result = await migrateGuestCartToServer();
+        if (result.success && result.itemsMigrated > 0) {
+          toast.success(
+            `Welcome back! ${result.itemsMigrated} item(s) from your guest cart have been added to your account.`,
+            { duration: 5000 }
+          );
+          fetchCartCount(); // Refresh cart count
+        }
+      };
+      migrate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
+
   // Refetch products after admin CRUD (optional: use context/event for real-time)
   useEffect(() => {
     const handleProductsUpdated = () => refetch();
@@ -58,16 +91,47 @@ const Homepage = () => {
 
 
   const handleAddToCart = async (product) => {
+    // INDUSTRY BEST PRACTICE: Allow guest cart, show auth modal with guest option
     if (!isAuthenticated) {
-      handleApiError({ message: 'Please login to add items to cart' });
+      // Add to guest cart immediately (localStorage)
+      addToGuestCart(product, 1);
+
+      // Haptic feedback
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+
+      // Show professional auth modal (non-blocking)
+      setPendingCartProduct(product);
+      setTimeout(() => {
+        setShowAuthModal(true);
+      }, 1500); // Show after a brief delay
+
+      // Toast notification
+      toast.success(
+        <div>
+          <strong>{product.name}</strong> added to cart!
+          <br />
+          <small>Sign in to save your cart across devices</small>
+        </div>,
+        { duration: 4000 }
+      );
+
       return;
     }
+
+    // Authenticated: Add to server cart
     try {
       await ordersAPI.addToCart({ product_id: product.id, quantity: 1 });
       fetchCartCount();
-      handleApiSuccess(`${product.name} added to cart! 🛒`);
+      handleApiSuccess(`${product.name} added to cart!`);
+
+      // Haptic feedback
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
     } catch (error) {
-      handleApiError(error, 'Failed to add product to cart');
+      handleApiError(error, 'Unable to add product. Please try again.');
     }
   };
 
@@ -119,7 +183,9 @@ const Homepage = () => {
     return (
       <main className="max-w-7xl mx-auto px-2 sm:px-4 md:px-8" role="main">
         <div className="bg-white rounded-lg shadow-sm p-8 text-center mt-12">
-          <div className="text-red-500 text-5xl mb-4">⚠️</div>
+          <svg className="w-16 h-16 mx-auto text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
           <h3 className="text-xl font-semibold text-red-600 mb-2">Failed to load products</h3>
           <p className="text-gray-600 mb-4">{error?.message || 'An unknown error occurred.'}</p>
           <button
@@ -151,10 +217,10 @@ const Homepage = () => {
           </p>
           <div className="flex flex-wrap gap-3 mb-6">
             <a href="/products" className="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg transition text-base">
-              Shop Now 🛒
+              Shop Now
             </a>
             <a href="/products" className="inline-block bg-white hover:bg-gray-50 text-primary-600 font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg transition border-2 border-primary-600 text-base">
-              Download App 📱
+              Download App
             </a>
           </div>
           <div className="flex flex-wrap gap-3 md:gap-4">
@@ -195,25 +261,30 @@ const Homepage = () => {
 
       {/* Deals Carousel/Section */}
       <section className="my-8">
-        <h2 className="text-2xl font-bold mb-4">Today's Deals</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">Today's Deals</h2>
+          <a href="/products?category=flash-sale" className="text-primary text-sm hover:underline">See All →</a>
+        </div>
         <ProductGrid products={productsArray.filter(p => p.is_flash_sale).slice(0, 10)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
-      {/* Full Product Grid */}
-      <section className="my-8">
-        <h2 className="text-2xl font-bold mb-4">All Products</h2>
-        <ProductGrid products={selectedCategory ? productsArray.filter(categorySections[selectedCategory]?.filter || (() => true)) : productsArray} onAddToCart={handleAddToCart} loading={isLoading} />
-      </section>
+      {/* REMOVED: "All Products" section - moved to /products page only */}
 
       {/* Top Picks Section */}
       <section className="my-8">
-        <h2 className="text-xl font-semibold mb-4">Top Picks</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Top Picks</h2>
+          <a href="/products" className="text-primary text-sm hover:underline">View More →</a>
+        </div>
         <ProductGrid products={productsArray.filter(p => p.is_top_seller).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
       {/* Essentials Section */}
       <section className="my-8">
-        <h2 className="text-xl font-semibold mb-4">Essentials</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Essentials</h2>
+          <a href="/products?category=essentials" className="text-primary text-sm hover:underline">Shop All →</a>
+        </div>
         <ProductGrid products={productsArray.filter(p => p.category_name && ['Groceries', 'Baby & Kids', 'Beauty & Personal Care', 'Essentials'].some(cat => p.category_name.includes(cat))).slice(0, 8)} onAddToCart={handleAddToCart} loading={isLoading} />
       </section>
 
@@ -283,6 +354,20 @@ const Homepage = () => {
 
       {/* WhatsApp Support Button */}
       <WhatsAppButton />
+
+      {/* Professional Auth Modal - Industry Best Practice */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false);
+          setPendingCartProduct(null);
+        }}
+        mode="login"
+        message={`Sign in to save your cart and ${pendingCartProduct ? `continue shopping for ${pendingCartProduct.name}` : 'access exclusive features'}`}
+        feature="add items to cart"
+        allowGuest={false} // Already added to guest cart
+        returnUrl={location.pathname + location.search}
+      />
     </main>
   );
 };

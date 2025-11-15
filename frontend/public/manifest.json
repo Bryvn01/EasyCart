@@ -6,17 +6,19 @@
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#2563eb",
+  "theme_color": "#10b981",
   "background_color": "#ffffff",
   "orientation": "portrait-primary",
   "categories": ["shopping", "lifestyle", "food", "retail"],
@@ -30,22 +32,43 @@
       "short_name": "Products",
       "description": "Browse all available products",
       "url": "/products",
-      "icons": [{ "src": "images/icons/cart-icon.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "View Cart",
       "short_name": "Cart",
       "description": "View your shopping cart",
       "url": "/cart",
-      "icons": [{ "src": "images/icons/cart-icon.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "My Orders",
       "short_name": "Orders",
       "description": "View your order history",
       "url": "/orders",
-      "icons": [{ "src": "images/icons/user-icon.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 }

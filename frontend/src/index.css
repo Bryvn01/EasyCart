@@ -733,10 +733,12 @@ img {
     padding: 0 var(--space-4);
   }
 
+  /* REMOVED: Old override that forced single column
   .grid-cols-2 {
     grid-template-columns: 1fr;
     gap: var(--space-4);
   }
+  */
 
   .grid-cols-3 {
     grid-template-columns: repeat(2, 1fr);
@@ -1137,6 +1139,44 @@ input:focus:not(:focus-visible) {
 
 .animate-shimmer {
   animation: shimmer 2s infinite;
+}
+
+/* Spinner Animation for Infinite Scroll */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Image optimization animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.optimized-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.optimized-image.loaded {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Connection-aware image loading - removed unsupported media feature */

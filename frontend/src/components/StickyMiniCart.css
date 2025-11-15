@@ -13,20 +13,32 @@
 
 .sticky-mini-cart {
   position: fixed;
-  bottom: 80px;
-  left: 16px;
-  right: 16px;
+  /* Safe area support for iOS notch and Android gesture navigation (2025 best practice) */
+  bottom: max(80px, calc(env(safe-area-inset-bottom) + 80px));
+  left: max(16px, env(safe-area-inset-left));
+  right: max(16px, env(safe-area-inset-right));
   z-index: 998;
   opacity: 0;
+  /* Use transform for GPU-accelerated animations (60fps) */
   transform: translateY(100px);
   transition: opacity 0.3s ease-out, transform 0.3s ease-out;
   pointer-events: none;
+  /* Optimize animation performance */
+  will-change: transform, opacity;
 }
 
 .sticky-mini-cart.visible {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
+}
+
+/* Scroll-aware behavior: Hide when scrolling down (2025 pattern) */
+.sticky-mini-cart.scrolling-down {
+  opacity: 0;
+  transform: translateY(150%);
+  pointer-events: none;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 /* Error notification bar */
@@ -208,11 +220,11 @@
     transition: none;
     animation: none;
   }
-  
+
   .mini-cart-error {
     animation: none;
   }
-  
+
   .spinner {
     animation: none;
   }

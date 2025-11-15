@@ -8,19 +8,26 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
 
-    <!-- Viewport Configuration -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
+    <!-- Viewport Configuration (2025 Best Practice) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover, interactive-widget=resizes-content" />
 
     <!-- PWA Configuration -->
-    <meta name="theme-color" content="#2563eb" />
+    <meta name="theme-color" content="#10b981" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#059669" media="(prefers-color-scheme: dark)" />
     <meta name="description" content="Shop groceries online with EasyCart. Fast delivery, fresh products, and great prices." />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" crossorigin="use-credentials" />
 
-    <!-- iOS PWA Support -->
+    <!-- iOS PWA Support (Enhanced for 2025) -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="EasyCart" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/images/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/icons/icon-192x192.png" />
+    <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/icons/icon-512x512.png" />
+
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileColor" content="#10b981" />
+    <meta name="msapplication-TileImage" content="%PUBLIC_URL%/icons/icon-192x192.png" />
+    <meta name="msapplication-config" content="%PUBLIC_URL%/browserconfig.xml" />
 
     <!-- Favicon -->
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />

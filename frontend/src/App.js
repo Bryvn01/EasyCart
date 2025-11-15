@@ -10,8 +10,11 @@ import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
 import BottomNav from './components/BottomNav';
 import BackToTop from './components/BackToTop';
+import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import StickyMiniCart from './components/StickyMiniCart';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import OfflineIndicator from './components/OfflineIndicator';
 import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
@@ -59,6 +62,7 @@ function App() {
             <WishlistProvider>
               <ThemeProvider>
               <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                <ScrollToTop />
                 <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
                   <Navbar />
                   <main className="flex-1">
@@ -121,6 +125,8 @@ function App() {
                   <SupportChat />
                   <NetworkStatus />
                   <InstallPWA />
+                  <PWAInstallPrompt />
+                  <OfflineIndicator />
                   <Toaster
                     position="top-right"
                     toastOptions={{
