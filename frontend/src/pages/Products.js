@@ -12,7 +12,7 @@ import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import ImageLightbox from '../components/ImageLightbox';
 import SuccessAnimation from '../components/SuccessAnimation';
 import EmptyState from '../components/EmptyState';
-import CompactProductCard from '../components/CompactProductCard';
+import ProductCard from '../components/ProductCard';
 import AuthModal from '../components/AuthModal';
 import useGuestCart from '../hooks/useGuestCart';
 import { toast } from 'react-hot-toast';
@@ -352,15 +352,15 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Products Grid - Optimized for mobile and desktop */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 pb-20 md:pb-8">
+      {/* Products Grid - Professional look (matches homepage) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {products.map((product, index) => (
-          <CompactProductCard
+          <ProductCard
             key={product.id}
             product={product}
             onAddToCart={addToCart}
+            loading={false}
             priority={index < 10}
-            getProductImageUrl={getProductImageUrl}
           />
         ))}
       </div>

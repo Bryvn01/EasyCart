@@ -144,6 +144,15 @@ const useGuestCart = (isAuthenticated) => {
     });
   }, [removeFromGuestCart]);
 
+
+  /**
+   * Clear guest cart
+   */
+  const clearGuestCart = useCallback(() => {
+    setGuestCart([]);
+    localStorage.removeItem(GUEST_CART_KEY);
+  }, [setGuestCart]);
+
   /**
    * Migrate guest cart to server cart after login
    * @returns {Promise<Object>} Result with success flag and merged cart
@@ -207,15 +216,7 @@ const useGuestCart = (isAuthenticated) => {
 
       return { success: false, error: error.message };
     }
-  }, [isAuthenticated, guestCart]);
-
-  /**
-   * Clear guest cart
-   */
-  const clearGuestCart = useCallback(() => {
-    setGuestCart([]);
-    localStorage.removeItem(GUEST_CART_KEY);
-  }, []);
+  }, [isAuthenticated, guestCart, clearGuestCart]);
 
   /**
    * Get guest cart count (for badge)
