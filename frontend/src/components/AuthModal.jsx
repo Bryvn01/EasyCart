@@ -38,6 +38,14 @@ const AuthModal = ({
   const location = useLocation();
   const [isClosing, setIsClosing] = useState(false);
 
+  const handleClose = React.useCallback(() => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+      setIsClosing(false);
+    }, 200); // Match animation duration
+  }, [onClose]);
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -61,15 +69,7 @@ const AuthModal = ({
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [isOpen]);
-
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-      setIsClosing(false);
-    }, 200); // Match animation duration
-  };
+  }, [isOpen, handleClose]);
 
   const handleLogin = () => {
     const currentPath = returnUrl || location.pathname + location.search;
