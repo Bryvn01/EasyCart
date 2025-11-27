@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Card } from './ui';
 import PropTypes from 'prop-types';
 import OptimizedImage from './OptimizedImage';
+import './ProductCard.css';
 
 const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, priority = false }) => {
   const { t } = useTranslation();
@@ -34,11 +35,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
   return (
     <Card
       hover
-      className="group overflow-hidden transition-all duration-300 hover:shadow-card-hover animate-fade-in relative"
+      className="product-card group overflow-hidden transition-all duration-300 hover:shadow-card-hover animate-fade-in relative"
     >
       {/* Product Image Section */}
-      <div className="relative aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
-        <Link to={`/products/${product.id}`} className="block relative h-48">
+      <div className="product-card-image-container">
+        <Link to={`/products/${product.id}`} className="block w-full h-full">
           <OptimizedImage
             src={currentImage}
             alt={product.name}
@@ -46,10 +47,8 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
             height={400}
             priority={priority}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            style={{ objectFit: 'cover' }}
-            className="w-full h-full"
+            className="product-card-image"
           />
-
           {/* Image Navigation Dots for Multiple Images */}
           {hasMultipleImages && (
             <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
@@ -113,7 +112,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
       </div>
 
       {/* Product Info Section */}
-      <div className="p-4 space-y-3">
+      <div className="product-card-content p-4 space-y-3">
         <Link to={`/products/${product.id}`}>
           <h3
             className="text-lg font-semibold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors line-clamp-2 min-h-[3.5rem]"
