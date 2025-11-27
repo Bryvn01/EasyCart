@@ -42,7 +42,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
         <Link to={`/products/${product.id}`} className="block w-full h-full">
           <OptimizedImage
             src={currentImage}
-            alt={product.name}
+            alt={product.name ? `${product.name} product image` : 'Product image'}
             width={400}
             height={400}
             priority={priority}
@@ -159,6 +159,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
             loading={loading}
             size="sm"
             className="shrink-0 transition-all hover:scale-105 bg-primary-600 hover:bg-primary-700 border-primary-600"
+            aria-label={product.stock === 0 ? t('outOfStock', 'Out of Stock') : `${t('addToCart', 'Add to Cart')} - ${product.name}`}
           >
             {product.stock === 0 ? t('outOfStock', 'Out of Stock') : t('addToCart', 'Add to Cart')}
           </Button>
