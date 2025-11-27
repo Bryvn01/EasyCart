@@ -106,12 +106,13 @@ const PaymentModal = (props) => {
     setIsProcessing(true);
 
     const cleanPhone = phoneNumber.trim().replace(/[\s-()]/g, '');
-
-    initiatePayment({
+    const payload = {
       order_id: order.id,
       payment_method: paymentMethod,
       phone_number: cleanPhone
-    });
+    };
+    console.log('Payment initiation payload:', payload);
+    initiatePayment(payload);
   };
 
   if (!isOpen) return null;
