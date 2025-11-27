@@ -54,11 +54,13 @@ const STKPushModal = ({ isOpen, onClose, order, onSuccess }) => {
     }
 
     try {
-      const response = await ordersAPI.initiatePayment({
+      const payload = {
         order_id: order.id,
         payment_method: 'mpesa',
         phone_number: phoneNumber.trim()
-      });
+      };
+      console.log('STK Push payment initiation payload:', payload);
+      const response = await ordersAPI.initiatePayment(payload);
 
       if (response.data.success) {
         setStatus('waiting');
