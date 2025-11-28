@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '../../test-utils';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import Register from '../Register';
 
 // Mock AuthContext
@@ -29,7 +29,6 @@ describe('Register fade-out/auto-hide', () => {
     fireEvent.change(screen.getByPlaceholderText(/create password/i), { target: { value: 'password' } });
     fireEvent.change(screen.getByPlaceholderText(/confirm password/i), { target: { value: 'password' } });
     fireEvent.click(screen.getByRole('button', { name: /create account/i }));
-
     await waitFor(() => expect(screen.queryByRole('button', { name: /create account/i })).not.toBeInTheDocument(), { timeout: 1000 });
     const msg = await screen.findByText(/registration successful/i);
     expect(msg).toBeInTheDocument();
@@ -45,7 +44,6 @@ describe('Register fade-out/auto-hide', () => {
     fireEvent.change(screen.getByPlaceholderText(/create password/i), { target: { value: 'password' } });
     fireEvent.change(screen.getByPlaceholderText(/confirm password/i), { target: { value: 'password' } });
     fireEvent.click(screen.getByRole('button', { name: /create account/i }));
-
     expect(await screen.findByRole('button', { name: /create account/i })).toBeInTheDocument();
     expect(await screen.findByText(/registration failed/i)).toBeInTheDocument();
   });
