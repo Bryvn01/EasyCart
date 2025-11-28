@@ -3,12 +3,18 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button, Card } from './ui';
 import PropTypes from 'prop-types';
-import OptimizedImage from './OptimizedImage';
+// import OptimizedImage from './OptimizedImage';
 import './ProductCard.css';
 
 const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, priority = false }) => {
   const { t } = useTranslation();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // Removed unused currentImageIndex state
+
+
+  // --- Harmonize with LandingPage: aspect ratio, fallback, loading, error ---
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+  const productImage = product && (product.image || product.image_url || (product.images && product.images[0])) || '/images/placeholder-product.jpg';
 
   if (!product) {
     return (
@@ -17,14 +23,6 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
       </Card>
     );
   }
-
-  // Get product images - support multiple images
-  const productImages = product.images && product.images.length > 0
-    ? product.images.map(img => typeof img === 'object' ? img.url : img)
-    : [product.image || '/images/placeholder-product.jpg'];
-
-  const currentImage = productImages[currentImageIndex];
-  const hasMultipleImages = productImages.length > 1;
 
   const handleQuickView = (e) => {
     e.preventDefault();
@@ -39,37 +37,36 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
     >
       {/* Product Image Section */}
       <div className="product-card-image-container">
-        <Link to={`/products/${product.id}`} className="block w-full h-full">
-          <OptimizedImage
-            src={currentImage}
-            alt={product.name ? `${product.name} product image` : 'Product image'}
-            width={400}
-            height={400}
-            priority={priority}
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="product-card-image"
-          />
-          {/* Image Navigation Dots for Multiple Images */}
-          {hasMultipleImages && (
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
-              {productImages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setCurrentImageIndex(index);
+        <Link to={`/products/${product.id}`} className="block w-full h-full" aria-label={`View ${product.name} details`}>
+          <div className="relative aspect-square overflow-hidden bg-gray-50">
+            {productImage && !imageError ? (
+              <>
+                <img
+                  src={productImage}
+                  alt={product.name ? `${product.name} product image` : 'Product image'}
+                  className={`w-full h-full object-cover transition-transform duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-105'}`}
+                  loading="lazy"
+                  width="300"
+                  height="300"
+                  onLoad={() => setImageLoading(false)}
+                  onError={() => {
+                    setImageError(true);
+                    setImageLoading(false);
                   }}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    currentImageIndex === index
-                      ? 'bg-white scale-125'
-                      : 'bg-white bg-opacity-50'
-                  }`}
-                  aria-label={`View image ${index + 1}`}
                 />
-              ))}
-            </div>
-          )}
+                {imageLoading && (
+                  <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+                )}
+              </>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-400" role="img" aria-label="Product placeholder">
+                <svg className="w-20 h-20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <path d="M3 17l6-6 4 4 8-8" />
+                </svg>
+              </div>
+            )}
+          </div>
         </Link>
 
         {/* Stock Status Overlays */}

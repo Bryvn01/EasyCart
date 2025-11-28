@@ -19,7 +19,6 @@ import { Loading } from './components/ui';
 import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
 import NetworkStatus from './components/NetworkStatus';
-import InstallPWA from './components/InstallPWA';
 import { usePerformance } from './hooks/usePerformance';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -124,7 +123,6 @@ function App() {
                   <BackToTop />
                   <SupportChat />
                   <NetworkStatus />
-                  <InstallPWA />
                   <PWAInstallPrompt />
                   <OfflineIndicator />
                   <Toaster

@@ -3,7 +3,8 @@ import ProductListErrorUI from './ProductListErrorUI';
 import ProductFilterBar from './ProductFilterBar';
 import { productsAPI, getApiBaseUrl } from '../services/api';
 import { handleApiError, retryWithBackoff, checkApiHealth } from '../utils/errorHandler';
-import { ProductGridSkeleton } from './ui';
+import { ProductGridSkeleton } from './ui/LoadingSkeleton';
+import EmptyState from './EmptyState';
 import ProductCard from './ProductCard';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -120,11 +121,13 @@ const ProductList = (props) => {
       ) : isError ? (
         <ProductListErrorUI error={error} onRetry={refetch} t={t} />
       ) : !products || products.length === 0 ? (
-        <div className="text-center py-8">
-          <div className="text-gray-400 text-5xl mb-4">📦</div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">{t('noProductsAvailable', 'No products available')}</h3>
-          <p className="text-gray-600">{t('checkBackLater', 'Check back later for new products!')}</p>
-        </div>
+        <EmptyState
+          type="products"
+          title={t('noProductsAvailable', 'No products available')}
+          message={t('checkBackLater', 'Check back later for new products!')}
+          actionText={t('browseAllProducts', 'Browse All Products')}
+          actionLink="/products"
+        />
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {products.map((product) => (
