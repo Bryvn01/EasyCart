@@ -1,4 +1,5 @@
-import { renderHook, waitFor, createWrapper, act } from '../test-utils';
+import { renderHook, waitFor, createWrapper } from '../test-utils';
+import { act } from '@testing-library/react';
 import { useProducts } from '../hooks/useProducts';
 import * as api from '../services/api';
 
@@ -42,11 +43,9 @@ describe('useProducts hook', () => {
       wrapper: createWrapper(),
     });
 
-    // Initially loading
     expect(result.current.loading).toBe(true);
     expect(result.current.products).toEqual([]);
 
-    // Wait for products to load
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
@@ -79,7 +78,6 @@ describe('useProducts hook', () => {
     renderHook(() => useProducts({ search: 'laptop' }), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -93,7 +91,6 @@ describe('useProducts hook', () => {
     renderHook(() => useProducts({ category: '1' }), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -107,7 +104,6 @@ describe('useProducts hook', () => {
     renderHook(() => useProducts({ ordering: '-price' }), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -121,7 +117,6 @@ describe('useProducts hook', () => {
     renderHook(() => useProducts({ priceRange: { min: '100', max: '500' } }), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -136,14 +131,11 @@ describe('useProducts hook', () => {
     const { result } = renderHook(() => useProducts(), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
-
     // First product has full Cloudinary URL (should stay as is)
     expect(result.current.products[0].image).toBe('https://res.cloudinary.com/test/image1.jpg');
-
     // Second product has relative URL (should be normalized)
     expect(result.current.products[1].image).toContain('/media/products/image2.jpg');
   });
@@ -151,15 +143,12 @@ describe('useProducts hook', () => {
   test('handles API errors gracefully', async () => {
     const testError = new Error('API Error');
     api.productsAPI.getProducts.mockRejectedValue(testError);
-
     const { result } = renderHook(() => useProducts(), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
-
     expect(result.current.error).toBe(testError);
     expect(result.current.products).toEqual([]);
   });
@@ -168,20 +157,14 @@ describe('useProducts hook', () => {
     const { result } = renderHook(() => useProducts(), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
-
     // Clear the mock calls
     api.productsAPI.getProducts.mockClear();
-
-    // Call refresh
     act(() => {
       result.current.refresh();
     });
-
-    // Should trigger a new API call
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalled();
     });
@@ -191,7 +174,6 @@ describe('useProducts hook', () => {
     renderHook(() => useProducts({ page: 2, pageSize: 10 }), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -209,15 +191,12 @@ describe('useProducts hook', () => {
         { id: 1, name: 'Product 1', price: 100, image: null }
       ]
     });
-
     const { result } = renderHook(() => useProducts(), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
-
     expect(result.current.products).toHaveLength(1);
     expect(result.current.pagination.totalCount).toBe(1);
   });
@@ -228,15 +207,12 @@ describe('useProducts hook', () => {
         results: [{ id: 1, name: 'Product', price: 100, image: null }]
       }
     });
-
     const { result } = renderHook(() => useProducts(), {
       wrapper: createWrapper(),
     });
-
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
-
     expect(result.current.products[0].image).toBeNull();
   });
 
