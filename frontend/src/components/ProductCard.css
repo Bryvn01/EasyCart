@@ -68,3 +68,28 @@
   flex-direction: column;
   justify-content: flex-end;
 }
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .product-card {
+    min-height: 340px;
+    max-height: 380px;
+  }
+  .product-card-image-container {
+    height: 160px;
+  }
+}
+
+@media (max-width: 640px) {
+  .product-card {
+    min-height: 280px;
+    max-height: 320px;
+    font-size: 0.97rem;
+  }
+  .product-card-image-container {
+    height: 110px;
+  }
+  .product-card-content {
+    padding: 0.75rem !important;
+  }
+}
