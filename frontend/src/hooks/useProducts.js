@@ -64,7 +64,9 @@ export const useProducts = ({
           // Keep category object as is, and add category_name for backwards compatibility
           category_name: p.category?.name || p.category_name || 'Uncategorized',
           // Normalize image URL for Cloudinary
-          image: normalizeImageUrl(p.image || p.image_url)
+          image: normalizeImageUrl(p.image || p.image_url),
+          // Ensure price is a number for type safety
+          price: typeof p.price === 'string' ? parseFloat(p.price) : p.price
         }));
       }
 

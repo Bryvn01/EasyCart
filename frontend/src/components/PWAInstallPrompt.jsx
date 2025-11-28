@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FiShoppingCart } from 'react-icons/fi';
 import './PWAInstallPrompt.css';
 
 /**
@@ -163,8 +164,8 @@ const PWAInstallPrompt = () => {
     <div className="pwa-install-banner" role="dialog" aria-labelledby="pwa-prompt-title" aria-live="polite">
       <div className="pwa-banner-content">
         {/* Icon */}
-        <div className="pwa-banner-icon">
-          <img src="/icons/icon-192x192.png" alt="" width="40" height="40" />
+        <div className="pwa-banner-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, background: '#2563eb', borderRadius: 8 }}>
+          <FiShoppingCart size={28} color="white" aria-label="Cart icon" />
         </div>
 
         {/* Text */}
