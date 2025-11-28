@@ -23,6 +23,36 @@
   transform: scale(1.04);
 }
 
+/* Card hover/focus effect */
+.product-card {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.product-card:focus-within,
+.product-card:hover {
+  box-shadow: 0 4px 24px 0 rgba(16, 185, 129, 0.15), 0 1.5px 6px 0 rgba(0,0,0,0.08);
+  transform: translateY(-2px) scale(1.01);
+  outline: 2px solid var(--primary-600, #10b981);
+  outline-offset: 2px;
+}
+
+/* Button hover/focus effect */
+.product-card button,
+.product-card .btn {
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.product-card button:focus,
+.product-card .btn:focus {
+  outline: 2px solid var(--primary-600, #10b981);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--primary-200, #a7f3d0);
+}
+.product-card button:hover,
+.product-card .btn:hover {
+  background: var(--primary-700, #059669);
+  color: #fff;
+  transform: scale(1.04);
+}
+
 .product-card {
   display: flex;
   flex-direction: column;
