@@ -520,6 +520,7 @@ const LandingPage = () => {
 
   // Structured data for SEO (JSON-LD)
   // Note: Update these values with real URLs and contact info before production deployment
+  // Set REACT_APP_SITE_URL in environment for different deployments (dev/staging/prod)
   const siteUrl = process.env.REACT_APP_SITE_URL || 'https://easycart.co.ke';
   
   const structuredData = {

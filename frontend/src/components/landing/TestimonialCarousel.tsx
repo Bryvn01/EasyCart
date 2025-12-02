@@ -44,7 +44,7 @@ const TestimonialCarousel: React.FC = () => {
       >
         {testimonials.map((t, i) => (
           <div
-            key={i}
+            key={`${t.name}-${t.date}`}
             className={`flex flex-col items-center justify-center p-6 transition-all duration-700 ease-in-out absolute inset-0 ${
               i === active 
                 ? 'opacity-100 translate-x-0' 
