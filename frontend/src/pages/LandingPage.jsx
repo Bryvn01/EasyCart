@@ -202,11 +202,12 @@ const ProductCard = React.memo(({ product, onAddToCart }) => {
           </h3>
         </Link>
 
-        {/* Star Rating */}
-        <div className="flex items-center gap-1 mb-3">
+        {/* Star Rating - Accessible */}
+        <div className="flex items-center gap-1 mb-3" role="img" aria-label={`Rating: ${rating} out of 5 stars`}>
           {[...Array(5)].map((_, i) => (
             <FiStar
               key={i}
+              aria-hidden="true"
               className={`w-4 h-4 ${
                 i < fullStars
                   ? 'fill-yellow-400 text-yellow-400'
@@ -216,7 +217,7 @@ const ProductCard = React.memo(({ product, onAddToCart }) => {
               }`}
             />
           ))}
-          <span className="text-sm text-gray-600 ml-1">({rating})</span>
+          <span className="text-sm text-gray-600 ml-1" aria-hidden="true">({rating})</span>
         </div>
 
         <div className="flex items-baseline justify-between mb-3">
@@ -517,6 +518,40 @@ const LandingPage = () => {
     );
   }
 
+  // Structured data for SEO (JSON-LD)
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "EasyCart",
+    "url": "https://easycart.co.ke",
+    "logo": "https://easycart.co.ke/logo.png",
+    "description": "Kenya's Leading Online Shopping Platform",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+254-700-000-000",
+      "contactType": "customer service",
+      "areaServed": "KE",
+      "availableLanguage": ["English", "Swahili"]
+    },
+    "sameAs": [
+      "https://facebook.com/easycart",
+      "https://twitter.com/easycart",
+      "https://instagram.com/easycart"
+    ]
+  };
+
+  const webSiteStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "EasyCart",
+    "url": "https://easycart.co.ke",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://easycart.co.ke/products?search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -526,9 +561,42 @@ const LandingPage = () => {
           content="Shop the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi. Secure payments with M-Pesa, Visa, and Mastercard."
         />
         <meta name="keywords" content="online shopping Kenya, groceries Nairobi, electronics, fashion, M-Pesa payments" />
+        
+        {/* Preconnect hints for performance */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        
+        {/* Open Graph / Social Media */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="EasyCart - Kenya's Leading Online Shopping Platform" />
+        <meta property="og:description" content="Shop the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi." />
+        <meta property="og:url" content="https://easycart.co.ke" />
+        <meta property="og:site_name" content="EasyCart" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="EasyCart - Kenya's Leading Online Shopping Platform" />
+        <meta name="twitter:description" content="Shop the best deals on groceries, electronics, fashion, and more." />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(webSiteStructuredData)}
+        </script>
       </Helmet>
 
-      <main className="min-h-screen bg-gray-50">
+      {/* Skip to main content link for accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-primary-600 focus:font-semibold focus:ring-2 focus:ring-primary-500"
+      >
+        Skip to main content
+      </a>
+
+      <main id="main-content" className="min-h-screen bg-gray-50">
         {/* Mobile Search Bar - Sticky */}
         <MobileSearchBar />
         {/* Hero Section - Minimal & Professional */}
