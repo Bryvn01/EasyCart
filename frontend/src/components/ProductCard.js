@@ -14,7 +14,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
   // --- Harmonize with LandingPage: aspect ratio, fallback, loading, error ---
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
-  const productImage = product && (product.image || product.image_url || (product.images && product.images[0])) || '/images/placeholder-product.jpg';
+  const productImage = (product && (product.image || product.image_url || (product.images && product.images[0]))) || '/images/placeholder-product.jpg';
 
   if (!product) {
     return (

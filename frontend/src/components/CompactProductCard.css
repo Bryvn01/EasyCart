@@ -11,11 +11,8 @@
   border: 1px solid var(--border-color, #e5e7eb);
   display: flex;
   flex-direction: column;
-  height: auto;
-  /* Let content determine height naturally */
-  min-height: 370px;
-  max-height: 370px;
-  height: 370px;
+  height: 100%;
+  min-height: 340px;
 }
 
 /* Hover effect - subtle on desktop */
@@ -126,36 +123,12 @@
    Product Info Section - Compact and consistent height
    =================================================================== */
 
-
-.compact-product-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-color, #222);
-  margin: 0 0 4px 0;
-  line-height: 1.2;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-height: 2.4em;
-  /* Enforce minimum height for name */
-  min-height: 2.6rem;
-}
-
-.compact-product-description {
-  font-size: 0.92rem;
-  color: var(--text-secondary, #666);
-  margin-bottom: 4px;
-  line-height: 1.3;
-  min-height: 2.2rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.compact-product-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 12px;
+  gap: 6px;
 }
 
 .compact-product-name {
@@ -163,25 +136,34 @@
   font-weight: 600;
   line-height: 1.3;
   color: var(--text-primary, #1f2937);
-  margin: 0;
+  margin: 0 0 4px 0;
 
   /* Limit to 2 lines with ellipsis */
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* Modern standard property */
-  /* stylelint-disable-next-line property-no-unknown */
-  line-clamp: 2;
-  min-height: 2.4em; /* Reserve space for 2 lines (1.3 line-height * 2) */
-  max-height: 2.4em;
-
+  min-height: 2.4em;
   transition: color 0.2s ease;
 }
 
 .compact-product-name:hover {
   color: var(--primary-600, #2563eb);
+}
+
+.compact-product-description {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #666);
+  margin-bottom: 4px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ===================================================================
@@ -299,6 +281,10 @@
    =================================================================== */
 
 @media (max-width: 640px) {
+  .compact-product-card {
+    min-height: 300px;
+  }
+
   /* Tighter spacing on small screens */
   .compact-product-info {
     padding: 10px;
@@ -309,7 +295,6 @@
   .compact-product-name {
     font-size: 0.8125rem; /* 13px */
     min-height: 2.2em;
-    max-height: 2.2em;
   }
 
   .compact-price {
@@ -327,6 +312,13 @@
   .compact-cart-btn svg {
     width: 20px;
     height: 20px;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .compact-product-card {
+    min-height: 320px;
   }
 }
 
