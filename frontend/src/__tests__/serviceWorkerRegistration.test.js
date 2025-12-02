@@ -112,7 +112,7 @@ describe('PWA Manifest', () => {
     expect(manifest).toHaveProperty('start_url');
     expect(manifest).toHaveProperty('display');
     expect(manifest.display).toBe('standalone');
-    expect(manifest.theme_color).toBe('#2563eb');
+    expect(manifest.theme_color).toBe('#10b981');
   });
 
   it('should have required icon sizes', () => {
