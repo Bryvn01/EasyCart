@@ -35,7 +35,7 @@ const TestimonialCarousel: React.FC = () => {
     <section aria-labelledby="testimonial-heading" className="bg-white py-12 px-4 rounded-lg shadow-md max-w-4xl mx-auto mb-12">
       <h2 id="testimonial-heading" className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 text-center">What Our Customers Say</h2>
       <div 
-        className="relative overflow-hidden" 
+        className="relative overflow-hidden min-h-[280px]" 
         onMouseEnter={() => setIsPaused(true)} 
         onMouseLeave={() => setIsPaused(false)}
         role="region"
@@ -45,7 +45,11 @@ const TestimonialCarousel: React.FC = () => {
         {testimonials.map((t, i) => (
           <div
             key={i}
-            className={`flex flex-col items-center justify-center p-6 transition-opacity duration-700 ${i === active ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}
+            className={`flex flex-col items-center justify-center p-6 transition-all duration-700 ease-in-out absolute inset-0 ${
+              i === active 
+                ? 'opacity-100 translate-x-0' 
+                : 'opacity-0 translate-x-full pointer-events-none'
+            }`}
             tabIndex={i === active ? 0 : -1}
             role="group"
             aria-label={`Testimonial ${i + 1} of ${testimonials.length}`}

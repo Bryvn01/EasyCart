@@ -519,35 +519,29 @@ const LandingPage = () => {
   }
 
   // Structured data for SEO (JSON-LD)
+  // Note: Update these values with real URLs and contact info before production deployment
+  const siteUrl = process.env.REACT_APP_SITE_URL || 'https://easycart.co.ke';
+  
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "EasyCart",
-    "url": "https://easycart.co.ke",
-    "logo": "https://easycart.co.ke/logo.png",
-    "description": "Kenya's Leading Online Shopping Platform",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+254-700-000-000",
-      "contactType": "customer service",
-      "areaServed": "KE",
-      "availableLanguage": ["English", "Swahili"]
-    },
-    "sameAs": [
-      "https://facebook.com/easycart",
-      "https://twitter.com/easycart",
-      "https://instagram.com/easycart"
-    ]
+    "url": siteUrl,
+    "description": "Kenya's Leading Online Shopping Platform"
+    // TODO: Add logo, contactPoint, and sameAs when real values are available
+    // "logo": `${siteUrl}/logo.png`,
+    // "contactPoint": { ... },
+    // "sameAs": ["https://facebook.com/...", ...]
   };
 
   const webSiteStructuredData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "EasyCart",
-    "url": "https://easycart.co.ke",
+    "url": siteUrl,
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://easycart.co.ke/products?search={search_term_string}",
+      "target": `${siteUrl}/products?search={search_term_string}`,
       "query-input": "required name=search_term_string"
     }
   };
