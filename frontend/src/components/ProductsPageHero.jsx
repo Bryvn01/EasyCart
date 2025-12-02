@@ -12,10 +12,12 @@ import { Link } from 'react-router-dom';
  */
 const ProductsPageHero = ({ selectedCategory, onCategorySelect }) => {
   // Featured promotions/offers
+  // Promotion cards with category mapping for backend compatibility
   const promotions = [
     {
       id: 1,
       title: 'Fresh Groceries',
+      category: 'Groceries', // Backend category name
       subtitle: 'Farm-fresh produce delivered to your door',
       badge: 'Same Day Delivery',
       gradient: 'from-green-500 to-emerald-600',
@@ -28,6 +30,7 @@ const ProductsPageHero = ({ selectedCategory, onCategorySelect }) => {
     {
       id: 2,
       title: 'Electronics',
+      category: 'Electronics', // Backend category name
       subtitle: 'Latest gadgets at the best prices',
       badge: 'Up to 40% Off',
       gradient: 'from-blue-500 to-indigo-600',
@@ -40,6 +43,7 @@ const ProductsPageHero = ({ selectedCategory, onCategorySelect }) => {
     {
       id: 3,
       title: 'Beauty & Care',
+      category: 'Personal Care', // Backend category name
       subtitle: 'Premium beauty essentials',
       badge: 'New Arrivals',
       gradient: 'from-pink-500 to-rose-600',
@@ -100,13 +104,12 @@ const ProductsPageHero = ({ selectedCategory, onCategorySelect }) => {
         {promotions.map((promo) => (
           <button
             key={promo.id}
-            onClick={() => onCategorySelect && onCategorySelect(promo.title)}
+            onClick={() => onCategorySelect && onCategorySelect(promo.category)}
             className={`group relative overflow-hidden rounded-xl bg-gradient-to-r ${promo.gradient} p-4 md:p-5 text-white text-left transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500`}
             aria-label={`Shop ${promo.title}`}
           >
-            <div className="absolute top-0 right-0 opacity-20 transform translate-x-4 -translate-y-4 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform">
+            <div className="absolute top-0 right-0 opacity-20 transform translate-x-4 -translate-y-4 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform w-16 h-16">
               {promo.icon}
-              <div className="w-16 h-16">{promo.icon}</div>
             </div>
             
             <div className="relative z-10">

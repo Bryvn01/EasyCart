@@ -538,12 +538,26 @@ const Products = () => {
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl font-bold mb-3">Stay Updated!</h2>
           <p className="text-white/90 mb-6">Get exclusive deals, new arrivals, and special offers delivered to your inbox.</p>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+          <form 
+            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" 
+            onSubmit={(e) => {
+              e.preventDefault();
+              const email = e.target.email?.value;
+              if (email) {
+                toast.success('Thank you for subscribing! Check your email for confirmation.');
+                e.target.reset();
+              } else {
+                toast.error('Please enter a valid email address.');
+              }
+            }}
+          >
             <input
               type="email"
+              name="email"
               placeholder="Enter your email"
               className="flex-1 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
               aria-label="Email address for newsletter"
+              required
             />
             <button
               type="submit"

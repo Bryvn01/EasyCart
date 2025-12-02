@@ -5,6 +5,10 @@ import { Button, Card } from './ui';
 import PropTypes from 'prop-types';
 import './ProductCard.css';
 
+// Configuration constants
+const NEW_PRODUCT_THRESHOLD_DAYS = 14;
+const BEST_SELLER_VIEW_THRESHOLD = 100;
+
 /**
  * ProductCard - Enterprise-grade product display component
  * 
@@ -23,12 +27,15 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
   const [imageLoading, setImageLoading] = useState(true);
   const productImage = (product && (product.image || product.image_url || (product.images && product.images[0]))) || '/images/placeholder-product.jpg';
 
-  // Calculate if product is "new" (created within last 14 days)
+  // Calculate if product is "new" (created within threshold days)
   const isNewProduct = product?.created_at && 
-    (new Date() - new Date(product.created_at)) < 14 * 24 * 60 * 60 * 1000;
+    (new Date() - new Date(product.created_at)) < NEW_PRODUCT_THRESHOLD_DAYS * 24 * 60 * 60 * 1000;
   
-  // Best seller logic (high view count or sales)
-  const isBestSeller = product?.view_count > 100 || product?.is_featured;
+  // Best seller logic (high view count or featured)
+  const isBestSeller = product?.view_count > BEST_SELLER_VIEW_THRESHOLD || product?.is_featured;
+  
+  // Check if quick view button should be hidden (when discount badge is present)
+  const hasDiscountBadge = product?.discount_percentage > 0;
 
   if (!product) {
     return (
@@ -131,15 +138,14 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
           </div>
         )}
 
-        {/* Quick View Button */}
-        {product.stock > 0 && (
+        {/* Quick View Button - hidden when discount badge is shown */}
+        {product.stock > 0 && !hasDiscountBadge && (
           <button
             onClick={handleQuickView}
-            className="absolute top-2 right-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="absolute top-2 right-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center justify-center"
             title={t('quickView', 'Quick View')}
             tabIndex={0}
             aria-label={t('quickView', 'Quick View')}
-            style={{ display: product.discount_percentage > 0 ? 'none' : 'flex' }}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
