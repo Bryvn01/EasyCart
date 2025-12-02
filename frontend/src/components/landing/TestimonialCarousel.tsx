@@ -11,9 +11,9 @@ export interface Testimonial {
 }
 
 const testimonials: Testimonial[] = [
-  { name: 'Jane Doe', text: 'Amazing service and fast delivery!', date: '2025-10-01', avatar: '', rating: 5, isVerified: true },
-  { name: 'John Smith', text: 'Great selection and prices. Will shop again!', date: '2025-09-15', avatar: '', rating: 5, isVerified: true },
-  { name: 'Mary W.', text: 'Customer support was very helpful.', date: '2025-08-20', avatar: '', rating: 5, isVerified: true },
+  { name: 'Jane Doe', text: 'Amazing service and fast delivery!', date: '2024-10-01', avatar: '', rating: 5, isVerified: true },
+  { name: 'John Smith', text: 'Great selection and prices. Will shop again!', date: '2024-09-15', avatar: '', rating: 5, isVerified: true },
+  { name: 'Mary W.', text: 'Customer support was very helpful.', date: '2024-08-20', avatar: '', rating: 5, isVerified: true },
 ];
 
 const TestimonialCarousel: React.FC = () => {

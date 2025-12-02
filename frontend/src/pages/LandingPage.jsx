@@ -565,7 +565,7 @@ const LandingPage = () => {
         <meta property="og:type" content="website" />
         <meta property="og:title" content="EasyCart - Kenya's Leading Online Shopping Platform" />
         <meta property="og:description" content="Shop the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi." />
-        <meta property="og:url" content="https://easycart.co.ke" />
+        <meta property="og:url" content={siteUrl} />
         <meta property="og:site_name" content="EasyCart" />
         
         {/* Twitter Card */}
