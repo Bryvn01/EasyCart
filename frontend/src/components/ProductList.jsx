@@ -129,15 +129,17 @@ const ProductList = (props) => {
           actionLink="/products"
         />
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
-              loading={!!addingToCart[product.id]}
-            />
-          ))}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+          {products
+            .filter(product => product && product.id && product.name)
+            .map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                loading={!!addingToCart[product.id]}
+              />
+            ))}
         </div>
       )}
     </>
