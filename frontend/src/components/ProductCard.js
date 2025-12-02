@@ -3,18 +3,32 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button, Card } from './ui';
 import PropTypes from 'prop-types';
-// import OptimizedImage from './OptimizedImage';
 import './ProductCard.css';
 
+/**
+ * ProductCard - Enterprise-grade product display component
+ * 
+ * Features:
+ * - Product badges (New, Best Seller, Sale)
+ * - Stock status with delivery info
+ * - Ratings and reviews
+ * - Quick view hover effect
+ * - Lazy loading images
+ * - WCAG AA accessibility
+ */
 const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, priority = false }) => {
   const { t } = useTranslation();
-  // Removed unused currentImageIndex state
 
-
-  // --- Harmonize with LandingPage: aspect ratio, fallback, loading, error ---
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
-  const productImage = product && (product.image || product.image_url || (product.images && product.images[0])) || '/images/placeholder-product.jpg';
+  const productImage = (product && (product.image || product.image_url || (product.images && product.images[0]))) || '/images/placeholder-product.jpg';
+
+  // Calculate if product is "new" (created within last 14 days)
+  const isNewProduct = product?.created_at && 
+    (new Date() - new Date(product.created_at)) < 14 * 24 * 60 * 60 * 1000;
+  
+  // Best seller logic (high view count or sales)
+  const isBestSeller = product?.view_count > 100 || product?.is_featured;
 
   if (!product) {
     return (
@@ -45,7 +59,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
                   src={productImage}
                   alt={product.name ? `${product.name} product image` : 'Product image'}
                   className={`w-full h-full object-cover transition-transform duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-105'}`}
-                  loading="lazy"
+                  loading={priority ? 'eager' : 'lazy'}
                   width="300"
                   height="300"
                   onLoad={() => setImageLoading(false)}
@@ -69,24 +83,46 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
           </div>
         </Link>
 
-        {/* Stock Status Overlays */}
-        {/* Badges: Out of Stock, Low Stock, Discount */}
-        {product.stock === 0 && (
-          <div className="absolute top-2 left-2 z-20" aria-label="Out of Stock">
+        {/* Product Badges - Top Left */}
+        <div className="absolute top-2 left-2 z-20 flex flex-col gap-1.5">
+          {/* New Badge */}
+          {isNewProduct && product.stock > 0 && (
+            <span className="inline-flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-full font-bold text-xs shadow-lg" role="status">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+              </svg>
+              {t('new', 'New')}
+            </span>
+          )}
+          
+          {/* Best Seller Badge */}
+          {isBestSeller && product.stock > 0 && !isNewProduct && (
+            <span className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded-full font-bold text-xs shadow-lg" role="status">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              {t('bestSeller', 'Best Seller')}
+            </span>
+          )}
+
+          {/* Out of Stock Badge */}
+          {product.stock === 0 && (
             <span className="bg-red-700 text-white px-3 py-1 rounded-full font-bold text-xs shadow-lg" role="status">
               {t('outOfStock', 'Out of Stock')}
             </span>
-          </div>
-        )}
+          )}
+        </div>
 
+        {/* Discount Badge - Top Right */}
         {product.discount_percentage > 0 && (
           <div className="absolute top-2 right-2 z-20" aria-label="Discount">
             <span className="bg-green-600 text-white px-2 py-1 rounded-full font-bold text-xs shadow-lg" role="status">
-              {t('discountPercent', { percent: product.discount_percentage, defaultValue: '-{{percent}}%' })}
+              -{product.discount_percentage}%
             </span>
           </div>
         )}
 
+        {/* Low Stock Warning - Bottom Left */}
         {product.stock > 0 && product.stock < 10 && (
           <div className="absolute bottom-2 left-2 z-20" aria-label="Low Stock">
             <span className="bg-orange-500 text-white px-2 py-1 rounded-full font-semibold text-xs shadow-lg" role="status">
@@ -99,10 +135,11 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
         {product.stock > 0 && (
           <button
             onClick={handleQuickView}
-            className="absolute top-2 left-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
+            className="absolute top-2 right-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary-500"
             title={t('quickView', 'Quick View')}
             tabIndex={0}
             aria-label={t('quickView', 'Quick View')}
+            style={{ display: product.discount_percentage > 0 ? 'none' : 'flex' }}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -127,11 +164,32 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
           {product.description || t('defaultProductDescription', 'Quality product with guaranteed satisfaction')}
         </p>
 
+        {/* Rating Section */}
+        {(product.rating > 0 || product.review_count > 0) && (
+          <div className="flex items-center space-x-1">
+            <div className="flex text-yellow-400" aria-label={`Rating: ${product.rating || 0} out of 5 stars`}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <svg
+                  key={star}
+                  className={`w-4 h-4 ${star <= Math.floor(product.rating || 0) ? 'fill-current' : 'text-gray-300'}`}
+                  viewBox="0 0 20 20"
+                  aria-hidden="true"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              ({product.review_count || 0})
+            </span>
+          </div>
+        )}
+
         {/* Price Section */}
         <div className="flex items-center justify-between pt-2">
           <div className="flex flex-col">
             <div className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+              <span className="text-xl font-bold text-primary-600 dark:text-primary-400">
                 KSh {product.price?.toLocaleString()}
               </span>
               {product.original_price > product.price && (
@@ -140,15 +198,25 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
                 </span>
               )}
             </div>
+            
+            {/* Stock and Delivery Info */}
             {product.stock > 0 ? (
-              <span className="text-xs text-green-600 dark:text-green-400 font-medium flex items-center">
-                <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                {t('inStock', 'In stock')}
-              </span>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs text-green-600 dark:text-green-400 font-medium flex items-center">
+                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  {t('inStock', 'In stock')}
+                </span>
+                <span className="text-xs text-gray-500 flex items-center">
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                  Fast delivery
+                </span>
+              </div>
             ) : (
-              <span className="text-xs text-red-600 dark:text-red-400 font-medium">
+              <span className="text-xs text-red-600 dark:text-red-400 font-medium mt-1">
                 {t('outOfStock', 'Out of stock')}
               </span>
             )}
@@ -162,29 +230,9 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
             className="shrink-0 transition-all hover:scale-105 bg-primary-600 hover:bg-primary-700 border-primary-600"
             aria-label={product.stock === 0 ? t('outOfStock', 'Out of Stock') : `${t('addToCart', 'Add to Cart')} - ${product.name}`}
           >
-            {product.stock === 0 ? t('outOfStock', 'Out of Stock') : t('addToCart', 'Add to Cart')}
+            {product.stock === 0 ? t('soldOut', 'Sold Out') : t('addToCart', 'Add')}
           </Button>
         </div>
-
-        {/* Rating Section */}
-        {product.rating > 0 && (
-          <div className="flex items-center space-x-1 pt-1">
-            <div className="flex text-yellow-400">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <svg
-                  key={star}
-                  className={`w-4 h-4 ${star <= Math.floor(product.rating) ? 'fill-current' : 'text-gray-300'}`}
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              ({product.review_count || 0})
-            </span>
-          </div>
-        )}
       </div>
     </Card>
   );
@@ -202,7 +250,10 @@ ProductCard.propTypes = {
     stock: PropTypes.number,
     discount_percentage: PropTypes.number,
     rating: PropTypes.number,
-    review_count: PropTypes.number
+    review_count: PropTypes.number,
+    created_at: PropTypes.string,
+    view_count: PropTypes.number,
+    is_featured: PropTypes.bool,
   }),
   onAddToCart: PropTypes.func.isRequired,
   onQuickView: PropTypes.func,

@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import SearchInput from '../components/ui/SearchInput';
-import { ProductGridSkeleton } from '../components/ui';
+import { ProductGridSkeleton, TrustBadges } from '../components/ui';
 import { handleApiError } from '../utils/errorHandler';
 import { useProducts } from '../hooks/useProducts';
-import { getProductImageUrl } from '../utils/imageUtils';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import ImageLightbox from '../components/ImageLightbox';
 import SuccessAnimation from '../components/SuccessAnimation';
 import EmptyState from '../components/EmptyState';
 import ProductCard from '../components/ProductCard';
+import ProductsPageHero from '../components/ProductsPageHero';
 import AuthModal from '../components/AuthModal';
 import useGuestCart from '../hooks/useGuestCart';
 import { toast } from 'react-hot-toast';
@@ -193,22 +194,57 @@ const Products = () => {
 
   return (
     <div className="container py-8">
-      {/* Breadcrumb */}
-      <nav className="mb-6" aria-label="Breadcrumb">
+      {/* SEO Meta Tags */}
+      <Helmet>
+        <title>{selectedCategory ? `${selectedCategory} - Shop EasyCart` : 'Shop All Products - EasyCart Kenya'}</title>
+        <meta name="description" content={`${selectedCategory ? `Shop ${selectedCategory} products` : 'Discover quality Kenyan products'} at EasyCart. Fast delivery in Nairobi, secure payments, and easy returns.`} />
+        <meta name="keywords" content={`${selectedCategory || 'products'}, online shopping, Kenya, Nairobi, EasyCart`} />
+        <link rel="canonical" href={`https://easycart.co.ke/products${selectedCategory ? `?category=${selectedCategory}` : ''}`} />
+      </Helmet>
+
+      {/* Breadcrumb - Enhanced with schema markup */}
+      <nav className="mb-6" aria-label="Breadcrumb" itemScope itemType="https://schema.org/BreadcrumbList">
         <ol className="flex items-center gap-2 text-sm text-gray-600">
-          <li><Link to="/" className="hover:text-primary-600">Home</Link></li>
-          <li>›</li>
-          <li className="text-gray-900 font-medium">Products</li>
+          <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+            <Link to="/" className="hover:text-primary-600" itemProp="item">
+              <span itemProp="name">Home</span>
+            </Link>
+            <meta itemProp="position" content="1" />
+          </li>
+          <li aria-hidden="true">
+            <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+          </li>
+          <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+            <span className="text-gray-900 font-medium" itemProp="name">Products</span>
+            <meta itemProp="position" content="2" />
+          </li>
           {selectedCategory && (
             <>
-              <li>›</li>
-              <li className="text-gray-900 font-medium">
-                {selectedCategory}
+              <li aria-hidden="true">
+                <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
+              </li>
+              <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                <span className="text-primary-600 font-medium" itemProp="name">
+                  {selectedCategory}
+                </span>
+                <meta itemProp="position" content="3" />
               </li>
             </>
           )}
         </ol>
       </nav>
+
+      {/* Hero Banner - Show only when no search/filters active */}
+      {!debouncedSearchTerm && !selectedCategory && (
+        <ProductsPageHero
+          selectedCategory={selectedCategory}
+          onCategorySelect={setSelectedCategory}
+        />
+      )}
 
       {/* Header */}
       <div className="mb-8">
@@ -218,7 +254,7 @@ const Products = () => {
             'Our Products'
           }
         </h1>
-        <p style={{ color: 'var(--gray-600)' }}>
+        <p className="text-gray-600">
           {debouncedSearchTerm ?
             `Search results for "${debouncedSearchTerm}"` :
             'Discover quality Kenyan products at great prices'
@@ -487,6 +523,38 @@ const Products = () => {
           </div>
         </div>
       )}
+
+      {/* Trust & Engagement Section */}
+      <section className="mt-12 pt-8 border-t border-gray-200" aria-label="Trust and security features">
+        <div className="text-center mb-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Why Shop With EasyCart?</h2>
+          <p className="text-gray-600">Trusted by thousands of customers across Kenya</p>
+        </div>
+        <TrustBadges />
+      </section>
+
+      {/* Newsletter Signup CTA */}
+      <section className="mt-12 bg-gradient-to-r from-primary-600 to-indigo-600 rounded-2xl p-8 text-white" aria-label="Newsletter signup">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl font-bold mb-3">Stay Updated!</h2>
+          <p className="text-white/90 mb-6">Get exclusive deals, new arrivals, and special offers delivered to your inbox.</p>
+          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
+              aria-label="Email address for newsletter"
+            />
+            <button
+              type="submit"
+              className="bg-white text-primary-600 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+            >
+              Subscribe
+            </button>
+          </form>
+          <p className="text-white/70 text-sm mt-4">No spam, unsubscribe anytime.</p>
+        </div>
+      </section>
     </div>
   );
 };
