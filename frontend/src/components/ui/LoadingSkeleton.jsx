@@ -43,7 +43,7 @@ export const HeroSkeleton = () => (
 );
 
 export const ProductGridSkeleton = ({ count = 12 }) => (
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
     {Array.from({ length: count }).map((_, i) => (
       <ProductCardSkeleton key={i} />
     ))}
@@ -51,7 +51,7 @@ export const ProductGridSkeleton = ({ count = 12 }) => (
 );
 
 export const CategoryGridSkeleton = ({ count = 6 }) => (
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
     {Array.from({ length: count }).map((_, i) => (
       <CategoryCardSkeleton key={i} />
     ))}

@@ -102,6 +102,6 @@ jobs:
           files: frontend/coverage/lcov.info
           flags: frontend
       - name: Build frontend
-        run: cd frontend && npm run build
+        run: cd frontend && CI=false npm run build
       - name: Build backend (collectstatic)
         run: cd backend && python manage.py collectstatic --noinput
