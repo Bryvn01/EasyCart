@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useFadeOutOnSuccess } from '../hooks/useFadeOutOnSuccess';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { sanitizeInput, validateEmail, validatePassword, validatePhone } from '../utils/validation';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -34,20 +35,41 @@ const Register = () => {
     setError('');
 
     // Client-side validation
+    if (!validateEmail(formData.email)) {
+      setError('Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+
+    if (!validatePassword(formData.password)) {
+      setError('Password must be at least 8 characters long');
+      setLoading(false);
+      return;
+    }
+
     if (formData.password !== formData.password_confirm) {
       setError('Passwords do not match');
       setLoading(false);
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (formData.phone && !validatePhone(formData.phone)) {
+      setError('Please enter a valid phone number');
       setLoading(false);
       return;
     }
 
+    // Sanitize inputs
+    const sanitizedData = {
+      username: sanitizeInput(formData.username),
+      email: sanitizeInput(formData.email),
+      password: formData.password, // Don't sanitize password
+      phone: sanitizeInput(formData.phone),
+      address: sanitizeInput(formData.address),
+    };
+
     try {
-      await register(formData);
+      await register(sanitizedData);
       triggerRegisterFadeOut(() => {
         setRegisterSuccess(true);
         setTimeout(() => {

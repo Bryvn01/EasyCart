@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { render } from '../../test-utils';
 import Register from '../Register';
 
 // Mock AuthContext
@@ -19,13 +19,7 @@ jest.mock('../../context/AuthContext', () => ({
 }));
 
 describe('Register fade-out/auto-hide', () => {
-  function setup() {
-    return render(
-      <MemoryRouter>
-        <Register />
-      </MemoryRouter>
-    );
-  }
+  const setup = () => render(<Register />);
 
   it('fades out and hides button, shows success message on success', async () => {
     setup();

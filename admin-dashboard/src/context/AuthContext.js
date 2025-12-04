@@ -21,14 +21,18 @@ export const AuthProvider = ({ children }) => {
       authAPI.getProfile()
         .then(response => {
           const userData = response.data.user || response.data;
-          if (userData.role === 'admin' || userData.is_admin) {
+          if (userData.role === 'admin' || userData.is_admin || userData.is_superuser) {
             setUser(userData);
           } else {
+            console.warn('[Auth] User lacks admin privileges');
             localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_refresh_token');
           }
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error('[Auth] Profile fetch failed:', error.message);
           localStorage.removeItem('admin_token');
+          localStorage.removeItem('admin_refresh_token');
         })
         .finally(() => {
           setLoading(false);
@@ -43,20 +47,24 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await authAPI.login(credentials);
-      const { user, access } = response.data;
+      const { user, access, refresh } = response.data;
 
       console.log('[AuthContext] Login response received', {
         hasUser: !!user,
         hasAccess: !!access,
         role: user?.role,
-        is_admin: user?.is_admin
+        is_admin: user?.is_admin,
+        is_superuser: user?.is_superuser
       });
 
-      if (user.role !== 'admin' && !user.is_admin) {
+      if (user.role !== 'admin' && !user.is_admin && !user.is_superuser) {
         throw new Error('Access denied. Admin privileges required.');
       }
 
       localStorage.setItem('admin_token', access);
+      if (refresh) {
+        localStorage.setItem('admin_refresh_token', refresh);
+      }
       setUser(user);
       console.log('[AuthContext] Login successful, user set');
       return response;
@@ -67,27 +75,13 @@ export const AuthProvider = ({ children }) => {
         hasResponse: !!error.response,
         status: error.response?.status
       });
-
-      // Enhanced fallback for demo - allow admin@easycart.com with any password
-      if (credentials.email === 'admin@easycart.com') {
-        console.log('[AuthContext] Activating demo mode for admin@easycart.com');
-        const mockAdmin = {
-          id: 1,
-          email: 'admin@easycart.com',
-          name: 'Admin User',
-          role: 'admin',
-          is_admin: true
-        };
-        localStorage.setItem('admin_token', 'mock-admin-token');
-        setUser(mockAdmin);
-        return { data: { user: mockAdmin, access: 'mock-admin-token' } };
-      }
       throw error;
     }
   };
 
   const logout = () => {
     localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_refresh_token');
     setUser(null);
   };
 
@@ -97,7 +91,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     loading,
     isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin' || user?.is_admin
+    isAdmin: user?.role === 'admin' || user?.is_admin || user?.is_superuser
   };
 
   return (

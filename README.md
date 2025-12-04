@@ -22,6 +22,8 @@ A complete e-commerce solution with React frontend and Django REST Framework bac
 - 🛍️ **Full E-commerce Functionality** - Product catalog, cart, checkout, orders
 - 👨‍💼 **Superadmin CRUD** - Complete product/category management with real-time sync
 - 🔐 **JWT Authentication** - Secure user authentication with role-based permissions
+- 📱 **OTP Login** - Passwordless authentication via SMS, WhatsApp, and Email
+- 🔒 **Two-Factor Authentication** - TOTP-based 2FA for admin users
 - 📱 **Responsive Design** - Mobile-first React frontend with TailwindCSS
 - 🖼️ **Image Management** - Cloudinary integration for optimized image delivery
 - 💳 **Payment Integration** - M-Pesa payment gateway for Kenyan market
@@ -717,14 +719,17 @@ If you're experiencing issues with product/category loading or other errors:
 
 ## 🆕 Recent Enhancements (2025)
 
+### Version 2.0.0 - December 2025
+- 🔐 **OTP Authentication** - Passwordless login via SMS, WhatsApp, and Email (Twilio)
+- 🔒 **Two-Factor Authentication** - TOTP-based 2FA for admin users
+- 👤 **Profile Personalization** - Progressive profiling for new users
+- 🛠️ **Admin Dashboard Fixes** - Fixed product updates, category handling, orders display
+- 🔧 **Security Enhancements** - Input validation, XSS protection, auto-logout on 401
 - ⬆️ **Django 5.2.7 Upgrade** - Latest Django with improved performance and security
 - 🐍 **Python 3.12** - Updated to latest Python version
 - 🧪 **CI/CD Improvements** - Fixed GitHub Actions workflows with proper test coverage
-- 🖼️ **Image URL Fixes** - Resolved Cloudinary image loading issues
-- 🔑 **Admin Password Reset** - Added `resetadmin` management command
 - 📦 **Dependency Updates** - All packages updated to latest secure versions
 - ✅ **Test Suite** - Comprehensive test coverage with React Query v5 compatibility
-- 🔧 **Code Quality** - Auto-formatted with Black and autopep8, zero flake8 errors
 
 ---
 

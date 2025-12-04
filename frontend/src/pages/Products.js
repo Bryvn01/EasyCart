@@ -7,6 +7,7 @@ import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
 import { handleApiError } from '../utils/errorHandler';
 import { useProducts } from '../hooks/useProducts';
+import { getProductImageUrl } from '../utils/imageUtils';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import ImageLightbox from '../components/ImageLightbox';
 import SuccessAnimation from '../components/SuccessAnimation';
@@ -271,6 +272,14 @@ const Products = () => {
         </div>
       )}
 
+      {/* Mobile Search Bar */}
+      <div className="md:hidden mb-4 px-4">
+        <SearchInput
+          onSearch={setSearchTerm}
+          placeholder="Search products..."
+        />
+      </div>
+
       {/* Mobile Category Scroll */}
       <HorizontalCategoryScroll
         categories={categories}
@@ -351,23 +360,20 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Products Grid - Enhanced responsive layout */}
-      {/* 4 cols desktop, 3 cols tablet, 2 cols mobile - filters out invalid products */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
-        {products
-          .filter(product => product && product.id && product.name)
-          .map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={addToCart}
-              loading={false}
-              priority={index < 8}
-            />
-          ))}
+      {/* Products Grid - Mobile-optimized responsive layout */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {products.map((product, index) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onAddToCart={addToCart}
+            loading={false}
+            priority={index < 10}
+          />
+        ))}
       </div>
 
-      {products.filter(p => p && p.id && p.name).length === 0 && !loading && (
+      {products.length === 0 && !loading && (
         <EmptyState
           type={debouncedSearchTerm ? 'search' : 'products'}
           onAction={debouncedSearchTerm ? () => {

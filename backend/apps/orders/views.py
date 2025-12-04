@@ -1,5 +1,6 @@
 from rest_framework import generics, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.utils.text import get_valid_filename
@@ -19,10 +20,12 @@ from .payment_service import (
     CardPaymentService,
     PayPalPaymentService,
 )
+from .whatsapp_service import WhatsAppService
 
 
 class OrderListView(generics.ListCreateAPIView):
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
@@ -30,6 +33,7 @@ class OrderListView(generics.ListCreateAPIView):
 
 class OrderDetailView(generics.RetrieveAPIView):
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
@@ -37,12 +41,15 @@ class OrderDetailView(generics.RetrieveAPIView):
 
 @api_view(["GET"])
 def get_cart(request):
+    if not request.user.is_authenticated:
+        return Response({"items": [], "total": 0, "count": 0})
     cart, created = Cart.objects.get_or_create(user=request.user)
     serializer = CartSerializer(cart)
     return Response(serializer.data)
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def add_to_cart(request):
     from .idempotency import idempotent_operation
 
@@ -100,6 +107,7 @@ def add_to_cart(request):
 
 
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def remove_from_cart(request, item_id):
     cart = get_object_or_404(Cart, user=request.user)
     # Sanitize item_id to prevent path traversal
@@ -110,6 +118,7 @@ def remove_from_cart(request, item_id):
 
 
 @api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
 def update_cart_item(request, item_id):
     cart = get_object_or_404(Cart, user=request.user)
     # Sanitize item_id to prevent path traversal
@@ -154,6 +163,7 @@ def update_cart_item(request, item_id):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def move_to_wishlist(request, item_id):
     """Move an item from cart to wishlist"""
     from apps.products.wishlist_models import Wishlist, WishlistItem
@@ -195,6 +205,7 @@ def move_to_wishlist(request, item_id):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def checkout(request):
     cart = get_object_or_404(Cart, user=request.user)
     if not cart.items.exists():
@@ -261,16 +272,65 @@ def checkout(request):
 
     cart.items.all().delete()
 
+    # Send WhatsApp notifications
+    try:
+        whatsapp = WhatsAppService()
+        whatsapp.send_order_confirmation(order)
+        whatsapp.send_admin_notification(order)
+    except Exception as e:
+        print(f"WhatsApp notification failed: {e}")
+
     return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def initiate_payment(request):
     order_id = request.data.get("order_id")
     payment_method = request.data.get("payment_method")
     phone_number = request.data.get("phone_number")
 
-    order = get_object_or_404(Order, id=order_id, user=request.user)
+    # Validate required fields
+    if not order_id:
+        return Response(
+            {"success": False, "message": "order_id is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if not payment_method:
+        return Response(
+            {"success": False, "message": "payment_method is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Phone number only required for mobile payments
+    if payment_method in ["mpesa", "airtel"]:
+        if not phone_number:
+            return Response(
+                {
+                    "success": False,
+                    "message": "phone_number is required for mobile payments",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Validate phone number format
+        if not re.match(r"^\+?[1-9]\d{8,14}$", phone_number):
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid phone number format. Use format: 254712345678",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    try:
+        order = Order.objects.get(id=order_id, user=request.user)
+    except Order.DoesNotExist:
+        return Response(
+            {"success": False, "message": "Order not found or access denied"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     if payment_method == "mpesa":
         mpesa_service = MpesaPaymentService()
@@ -278,6 +338,18 @@ def initiate_payment(request):
             result = mpesa_service.initiate_stk_push(
                 phone_number, order.total_amount, order_id
             )
+            # Check if M-Pesa returned an error
+            if result.get("success") is False:
+                return Response(
+                    {
+                        "success": False,
+                        "message": result.get(
+                            "message", "M-Pesa service not configured or unavailable"
+                        ),
+                    },
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                )
+
             if result.get("ResponseCode") == "0":
                 order.payment_status = "processing"
                 order.transaction_id = result.get("CheckoutRequestID")
@@ -289,7 +361,10 @@ def initiate_payment(request):
                 return Response(
                     {
                         "success": False,
-                        "message": result.get("errorMessage", "Payment failed"),
+                        "message": result.get(
+                            "errorMessage",
+                            result.get("ResponseDescription", "Payment failed"),
+                        ),
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -376,6 +451,17 @@ def initiate_payment(request):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    # Handle other payment methods (cash, bank, airtel)
+    if payment_method in ["cash", "bank", "airtel"]:
+        order.payment_status = "pending"
+        order.save()
+        return Response(
+            {
+                "success": True,
+                "message": f"Order confirmed. Payment method: {payment_method}",
+            }
+        )
+
     return Response(
         {"success": False, "message": "Invalid payment method"},
         status=status.HTTP_400_BAD_REQUEST,
@@ -403,6 +489,13 @@ def mpesa_callback(request):
                 if result_code == 0:
                     order.payment_status = "completed"
                     order.status = "processing"
+
+                    # Send payment success notification
+                    try:
+                        whatsapp = WhatsAppService()
+                        whatsapp.send_payment_success(order)
+                    except Exception as e:
+                        print(f"WhatsApp notification failed: {e}")
                     # Extract M-Pesa receipt number
                     callback_metadata = (
                         callback_data.get("Body", {})
@@ -428,6 +521,7 @@ def mpesa_callback(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def payment_status(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return Response(

@@ -71,6 +71,8 @@ const PaymentModal = (props) => {
     },
     onError: (error) => {
       setIsProcessing(false);
+      console.error('Payment error:', error);
+      console.error('Error response:', error.response?.data);
       const errorMsg = error.response?.data?.message || 'Payment failed. Please try again.';
       toast.error(errorMsg, { duration: 4000 });
     }
