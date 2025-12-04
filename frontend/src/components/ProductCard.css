@@ -1,24 +1,9 @@
 .product-card-image-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  background: var(--gray-100, #f3f4f6);
   position: relative;
-  overflow: hidden;
-}
-
-.product-card-image {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 12px;
-  transition: transform 0.2s;
-}
-
-.product-card-image-container:hover .product-card-image {
-  transform: scale(1.04);
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: white;
 }
 
 /* Card hover/focus effect */
