@@ -20,9 +20,12 @@ const AdminCustomers = () => {
     setError('');
     try {
       const res = await customersAPI.list();
-      setCustomers(res.data);
+      const customersData = Array.isArray(res.data) ? res.data : (res.data?.results || res.data?.customers || []);
+      setCustomers(customersData);
     } catch (err) {
-      setError('Failed to load customers.');
+      console.error('Failed to load customers:', err);
+      setError('Failed to load customers. Please check your connection.');
+      setCustomers([]);
     } finally {
       setLoading(false);
     }
@@ -102,7 +105,11 @@ const AdminCustomers = () => {
       {loading ? (
         <div className="flex justify-center py-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>
       ) : error ? (
-        <div className="text-red-600 mb-4">{error}</div>
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">{error}</div>
+      ) : filtered.length === 0 ? (
+        <div className="bg-white shadow rounded-lg p-8 text-center">
+          <p className="text-gray-500">No customers found</p>
+        </div>
       ) : (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">

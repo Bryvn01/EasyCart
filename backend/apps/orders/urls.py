@@ -1,5 +1,10 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from . import views
+from .admin_views import AdminOrderViewSet
+
+admin_router = DefaultRouter()
+admin_router.register(r"admin/orders", AdminOrderViewSet, basename="admin-order")
 
 urlpatterns = [
     path("", views.OrderListView.as_view(), name="order-list"),
@@ -17,4 +22,4 @@ urlpatterns = [
     path("payment/initiate/", views.initiate_payment, name="initiate-payment"),
     path("payment/mpesa/callback/", views.mpesa_callback, name="mpesa-callback"),
     path("payment/status/<int:order_id>/", views.payment_status, name="payment-status"),
-]
+] + admin_router.urls

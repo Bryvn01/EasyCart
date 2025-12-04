@@ -322,3 +322,69 @@ class ProductDetailView(APIView):
         except Exception as e:
             logger.error(f"ERROR: Failed to delete product {pk}: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ImageUploadView(APIView):
+    """
+    Upload product image to Cloudinary.
+    POST: Upload image (admin only)
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Upload image to Cloudinary and return URL."""
+        try:
+            if not request.user.is_admin and not request.user.is_superuser:
+                return Response(
+                    {"error": "Admin privileges required"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            if "image" not in request.FILES:
+                return Response(
+                    {"error": "No image file provided"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            image_file = request.FILES["image"]
+
+            # Validate file size (max 5MB)
+            if image_file.size > 5 * 1024 * 1024:
+                return Response(
+                    {"error": "Image size must be less than 5MB"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Validate file type
+            allowed_types = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+            if image_file.content_type not in allowed_types:
+                return Response(
+                    {"error": "Only JPEG, PNG, and WebP images are allowed"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Upload to Cloudinary
+            import cloudinary.uploader
+
+            result = cloudinary.uploader.upload(
+                image_file,
+                folder="products",
+                transformation=[
+                    {"width": 800, "height": 800, "crop": "limit"},
+                    {"quality": "auto:good"},
+                ],
+            )
+
+            logger.info(f"Image uploaded successfully: {result['secure_url']}")
+            return Response(
+                {"url": result["secure_url"], "public_id": result["public_id"]},
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            logger.error(f"Image upload failed: {str(e)}")
+            return Response(
+                {"error": "Image upload failed", "detail": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

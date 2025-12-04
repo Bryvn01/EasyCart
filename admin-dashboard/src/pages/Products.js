@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { adminAPI } from '../services/api';
 import { Plus, Edit, Trash2, X, Upload, Search, Filter, ChevronLeft, ChevronRight, Package, Download, CheckSquare, Square } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { validateProduct, sanitizeInput } from '../utils/validation';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -48,9 +49,10 @@ const Products = () => {
   const fetchCategories = async () => {
     try {
       const response = await adminAPI.getCategories();
-      setCategories(response.data || []);
+      const categoriesData = Array.isArray(response.data) ? response.data : (response.data?.results || response.data?.categories || []);
+      setCategories(categoriesData);
     } catch (error) {
-      // Fallback categories if API fails
+      console.error('Failed to fetch categories:', error);
       setCategories([
         { id: 1, name: 'Electronics' },
         { id: 2, name: 'Fashion' },
@@ -151,8 +153,11 @@ const Products = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.price || !formData.category) {
-      toast.error('Please fill in all required fields');
+    // Validate form data
+    const validation = validateProduct(formData);
+    if (!validation.isValid) {
+      const errorMessages = Object.values(validation.errors).join(', ');
+      toast.error(errorMessages);
       return;
     }
 
@@ -165,7 +170,19 @@ const Products = () => {
         imageUrl = await uploadImageToServer(imageFile);
       }
 
-      const productData = { ...formData, image: imageUrl };
+      // Sanitize inputs - only send fields that backend accepts
+      const productData = {
+        name: sanitizeInput(formData.name),
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock),
+        category: parseInt(formData.category), // Send category ID as integer
+        description: sanitizeInput(formData.description || ''),
+      };
+
+      // Only include image if it's a valid URL or base64
+      if (imageUrl && imageUrl.trim()) {
+        productData.image_url = imageUrl;
+      }
 
       if (editingProduct) {
         await adminAPI.updateProduct(editingProduct.id, productData);
@@ -190,11 +207,16 @@ const Products = () => {
   const openModal = (product = null) => {
     if (product) {
       setEditingProduct(product);
+      // Find category ID from category name or use category ID directly
+      const categoryId = typeof product.category === 'number'
+        ? product.category
+        : categories.find(c => c.name === product.category)?.id || '';
+
       setFormData({
         name: product.name || '',
         price: product.price || '',
         stock: product.stock || '',
-        category: product.category || '',
+        category: categoryId,
         description: product.description || '',
         image: product.image || ''
       });
@@ -701,7 +723,7 @@ const Products = () => {
                 >
                   <option value="">Select Category</option>
                   {categories.map((category) => (
-                    <option key={category.id} value={category.name}>
+                    <option key={category.id} value={category.id}>
                       {category.name}
                     </option>
                   ))}

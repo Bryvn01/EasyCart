@@ -4,16 +4,18 @@ from datetime import datetime
 from django.conf import settings
 from django.utils.text import get_valid_filename
 import os
+from decouple import config
 
 
 class MpesaPaymentService:
     def __init__(self):
-        self.consumer_key = os.environ.get("MPESA_CONSUMER_KEY", "")
-        self.consumer_secret = os.environ.get("MPESA_CONSUMER_SECRET", "")
-        self.business_shortcode = os.environ.get("MPESA_SHORTCODE", "174379")
-        self.passkey = os.environ.get("MPESA_PASSKEY", "")
-        self.callback_url = os.environ.get(
-            "MPESA_CALLBACK_URL", "https://yourdomain.com/api/payments/mpesa/callback/"
+        self.consumer_key = config("MPESA_CONSUMER_KEY", default="")
+        self.consumer_secret = config("MPESA_CONSUMER_SECRET", default="")
+        self.business_shortcode = config("MPESA_SHORTCODE", default="174379")
+        self.passkey = config("MPESA_PASSKEY", default="")
+        self.callback_url = config(
+            "MPESA_CALLBACK_URL",
+            default="https://yourdomain.com/api/payments/mpesa/callback/",
         )
         self.base_url = (
             "https://sandbox.safaricom.co.ke"
@@ -24,10 +26,15 @@ class MpesaPaymentService:
     def get_access_token(self):
         url = f"{self.base_url}/oauth/v1/generate?grant_type=client_credentials"
         if not self.consumer_key or not self.consumer_secret:
+            print("❌ M-Pesa credentials missing")
             return None
 
+        # Strip whitespace from credentials
+        consumer_key = self.consumer_key.strip()
+        consumer_secret = self.consumer_secret.strip()
+
         credentials = base64.b64encode(
-            f"{self.consumer_key}:{self.consumer_secret}".encode()
+            f"{consumer_key}:{consumer_secret}".encode()
         ).decode()
 
         headers = {
@@ -35,11 +42,19 @@ class MpesaPaymentService:
             "Content-Type": "application/json",
         }
 
+        print(f"🔑 M-Pesa Auth Request:")
+        print(f"   URL: {url}")
+        print(f"   Consumer Key: {consumer_key[:10]}...")
+        print(f"   Encoded: {credentials[:20]}...")
+
         try:
             response = requests.get(url, headers=headers, timeout=30, verify=True)
+            print(f"📡 M-Pesa Response: {response.status_code}")
+            print(f"   Body: {response.text[:200]}")
             response.raise_for_status()
             return response.json().get("access_token")
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
+            print(f"❌ M-Pesa Auth Failed: {e}")
             return None
 
     def initiate_stk_push(self, phone_number, amount, order_id):
@@ -77,13 +92,21 @@ class MpesaPaymentService:
             "TransactionDesc": f"Payment for Order {order_id}",
         }
 
+        print(f"📤 STK Push Request:")
+        print(f"   Payload: {payload}")
+
         try:
             response = requests.post(
                 url, json=payload, headers=headers, timeout=30, verify=True
             )
+            print(f"📥 STK Push Response: {response.status_code}")
+            print(f"   Body: {response.text}")
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
+            print(f"❌ STK Push Failed: {e}")
+            if hasattr(e, "response") and e.response is not None:
+                print(f"   Error Body: {e.response.text}")
             return {"success": False, "message": "Payment request failed"}
 
 
