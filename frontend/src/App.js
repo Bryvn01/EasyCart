@@ -36,6 +36,7 @@ import AdminProducts from './pages/AdminProducts';
 import AdminDashboard from './pages/AdminDashboard';
 import ProductManager from './components/Admin/ProductManager';
 import NotFound from './pages/NotFound';
+import { About, Contact, Help, Returns, Shipping, Privacy, Terms, Cookies } from './pages/InfoPages';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -117,6 +118,14 @@ function App() {
                             <AdminDashboard />
                           </ProtectedRoute>
                         } />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/help" element={<Help />} />
+                        <Route path="/returns" element={<Returns />} />
+                        <Route path="/shipping" element={<Shipping />} />
+                        <Route path="/privacy" element={<Privacy />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/cookies" element={<Cookies />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Suspense>
