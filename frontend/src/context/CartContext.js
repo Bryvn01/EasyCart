@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext';
 
 /**
  * CartContext - Enterprise-grade cart state management
- * 
+ *
  * Features:
  * - Single source of truth for cart data
  * - Optimistic UI updates
@@ -42,7 +42,7 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { isAuthenticated } = useAuth();
-  
+
   // Refs for managing concurrent operations and cleanup
   const pendingRequestsRef = useRef(new Set());
   const abortControllersRef = useRef(new Map());
@@ -94,7 +94,7 @@ export const CartProvider = ({ children }) => {
     while (attempt <= retries) {
       try {
         const response = await ordersAPI.getCart();
-        
+
         if (isMountedRef.current) {
           const cartData = response.data;
           setCart(cartData);
@@ -103,16 +103,16 @@ export const CartProvider = ({ children }) => {
           setError(null);
           setLoading(false);
         }
-        
+
         pendingRequestsRef.current.delete(requestKey);
         return response.data;
       } catch (err) {
         attempt++;
-        
+
         // If this was the last attempt, handle the error
         if (attempt > retries) {
           console.error('Error fetching cart:', err);
-          
+
           if (isMountedRef.current) {
             setError({
               message: err.response?.data?.message || 'Failed to load cart',
@@ -120,17 +120,17 @@ export const CartProvider = ({ children }) => {
             });
             setLoading(false);
           }
-          
+
           pendingRequestsRef.current.delete(requestKey);
           return null;
         }
-        
+
         // Wait before retrying (exponential backoff)
         const delay = Math.pow(2, attempt) * 500;
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
-    
+
     pendingRequestsRef.current.delete(requestKey);
     return null;
   }, [isAuthenticated]);
@@ -165,7 +165,7 @@ export const CartProvider = ({ children }) => {
     // Optimistic update: immediately update cart count
     const previousCart = cart;
     const previousCount = cartCount;
-    
+
     if (isMountedRef.current) {
       setCartCount(prevCount => prevCount + quantity);
       setError(null);
@@ -173,12 +173,12 @@ export const CartProvider = ({ children }) => {
 
     try {
       await ordersAPI.addToCart({ product_id: productId, quantity });
-      
+
       // Fetch updated cart data in background
       await fetchCart({ silent: true });
     } catch (err) {
       console.error('Error adding to cart:', err);
-      
+
       // Rollback optimistic update on error
       if (isMountedRef.current) {
         setCart(previousCart);
@@ -188,7 +188,7 @@ export const CartProvider = ({ children }) => {
           code: err.response?.status || 'ADD_ERROR'
         });
       }
-      
+
       throw err;
     } finally {
       pendingRequestsRef.current.delete(requestKey);
@@ -217,9 +217,9 @@ export const CartProvider = ({ children }) => {
     // Optimistic update
     const previousCart = cart;
     const previousCount = cartCount;
-    
+
     if (cart?.items && isMountedRef.current) {
-      const updatedItems = cart.items.map(item => 
+      const updatedItems = cart.items.map(item =>
         item.id === itemId ? { ...item, quantity } : item
       );
       const updatedCart = { ...cart, items: updatedItems };
@@ -233,7 +233,7 @@ export const CartProvider = ({ children }) => {
       await fetchCart({ silent: true });
     } catch (err) {
       console.error('Error updating cart item:', err);
-      
+
       // Rollback
       if (isMountedRef.current) {
         setCart(previousCart);
@@ -243,7 +243,7 @@ export const CartProvider = ({ children }) => {
           code: err.response?.status || 'UPDATE_ERROR'
         });
       }
-      
+
       throw err;
     } finally {
       pendingRequestsRef.current.delete(requestKey);
@@ -271,7 +271,7 @@ export const CartProvider = ({ children }) => {
     // Optimistic update
     const previousCart = cart;
     const previousCount = cartCount;
-    
+
     if (cart?.items && isMountedRef.current) {
       const updatedItems = cart.items.filter(item => item.id !== itemId);
       const updatedCart = { ...cart, items: updatedItems };
@@ -285,7 +285,7 @@ export const CartProvider = ({ children }) => {
       await fetchCart({ silent: true });
     } catch (err) {
       console.error('Error removing from cart:', err);
-      
+
       // Rollback
       if (isMountedRef.current) {
         setCart(previousCart);
@@ -295,7 +295,7 @@ export const CartProvider = ({ children }) => {
           code: err.response?.status || 'REMOVE_ERROR'
         });
       }
-      
+
       throw err;
     } finally {
       pendingRequestsRef.current.delete(requestKey);
@@ -323,7 +323,7 @@ export const CartProvider = ({ children }) => {
     // Optimistic update (remove from cart)
     const previousCart = cart;
     const previousCount = cartCount;
-    
+
     if (cart?.items && isMountedRef.current) {
       const updatedItems = cart.items.filter(item => item.id !== itemId);
       const updatedCart = { ...cart, items: updatedItems };
@@ -337,7 +337,7 @@ export const CartProvider = ({ children }) => {
       await fetchCart({ silent: true });
     } catch (err) {
       console.error('Error moving to wishlist:', err);
-      
+
       // Rollback
       if (isMountedRef.current) {
         setCart(previousCart);
@@ -347,7 +347,7 @@ export const CartProvider = ({ children }) => {
           code: err.response?.status || 'MOVE_ERROR'
         });
       }
-      
+
       throw err;
     } finally {
       pendingRequestsRef.current.delete(requestKey);
@@ -385,7 +385,8 @@ export const CartProvider = ({ children }) => {
         setError(null);
       }
     }
-  }, [isAuthenticated, fetchCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   return (
     <CartContext.Provider value={{
@@ -394,7 +395,7 @@ export const CartProvider = ({ children }) => {
       cart,
       loading,
       error,
-      
+
       // Actions
       fetchCart,
       fetchCartCount, // Deprecated but kept for backwards compatibility
