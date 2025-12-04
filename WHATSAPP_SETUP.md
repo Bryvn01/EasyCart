@@ -17,11 +17,11 @@ Perfect for development and testing. No approval needed.
 
 2. **Configure Environment Variables**
 
-   Your `.env` already has:
+   Your `.env` should have:
    ```env
    TWILIO_ACCOUNT_SID=<your_twilio_account_sid>
    TWILIO_AUTH_TOKEN=<your_twilio_auth_token>
-   TWILIO_PHONE_NUMBER=+14059634083
+   TWILIO_PHONE_NUMBER=your_phone_number_here
    TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
    ```
 
