@@ -179,11 +179,10 @@ describe('Products Page', () => {
       expect(screen.getByText('Another Product')).toBeInTheDocument();
     });
 
-    // Check that out of stock indicator is displayed for second product
-    // The react-i18next mock returns the translation key, so we look for 'outOfStock'
-    // Use getAllByText since the text may appear multiple times (badge + button)
-    const outOfStockElements = screen.getAllByText('outOfStock');
-    expect(outOfStockElements.length).toBeGreaterThan(0);
+    // Check that sold out badge is displayed for second product (CompactProductCard shows "Sold Out")
+    await waitFor(() => {
+      expect(screen.getByText('Sold Out')).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
   test('shows clear filters button when filters are active', async () => {

@@ -1,37 +1,36 @@
-// Input validation utilities
-export const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-export const validatePassword = (password) => {
-  return password.length >= 8;
-};
-
-export const validatePhone = (phone) => {
-  const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-  return phoneRegex.test(phone);
-};
+/**
+ * Input validation and sanitization utilities for frontend
+ */
 
 export const sanitizeInput = (input) => {
   if (typeof input !== 'string') return input;
+  return input.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+};
 
-  return input
-    .replace(/[<>]/g, '') // Remove potential HTML tags
-    .replace(/javascript:/gi, '') // Remove javascript: protocol
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .trim();
+export const validateEmail = (email) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+};
+
+export const validatePassword = (password) => {
+  return password && password.length >= 8;
+};
+
+export const validatePhone = (phone) => {
+  const re = /^[0-9]{10,15}$/;
+  return re.test(phone.replace(/[\s\-\(\)]/g, ''));
 };
 
 export const validateRequired = (value) => {
-  return value !== null && value !== undefined && value.toString().trim() !== '';
+  return value && value.toString().trim().length > 0;
 };
 
-export const validateNumeric = (value) => {
-  return !isNaN(value) && isFinite(value);
+export const validateLength = (value, min, max) => {
+  const length = value ? value.toString().length : 0;
+  return length >= min && length <= max;
 };
 
-export const validatePrice = (price) => {
-  const numPrice = parseFloat(price);
-  return validateNumeric(numPrice) && numPrice >= 0;
+export const validateNumber = (value, min = 0, max = Infinity) => {
+  const num = parseFloat(value);
+  return !isNaN(num) && num >= min && num <= max;
 };

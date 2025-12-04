@@ -13,12 +13,23 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       const response = await adminAPI.getOrders();
-      setOrders(response.data.results || response.data || []);
+      const ordersData = Array.isArray(response.data) ? response.data : (response.data?.results || response.data?.orders || []);
+
+      // Transform backend data to match frontend format
+      const transformedOrders = ordersData.map(order => ({
+        id: order.id,
+        customer: order.phone_number || 'N/A',
+        email: order.shipping_address || 'N/A',
+        total: order.total_amount || order.total || 0,
+        status: order.status || 'pending',
+        date: order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A'
+      }));
+
+      setOrders(transformedOrders);
     } catch (error) {
-      setOrders([
-        { id: 1, customer: 'John Doe', email: 'john@example.com', total: 299.99, status: 'pending', date: '2024-01-15' },
-        { id: 2, customer: 'Jane Smith', email: 'jane@example.com', total: 149.50, status: 'completed', date: '2024-01-14' }
-      ]);
+      console.error('Failed to fetch orders:', error);
+      toast.error('Failed to load orders');
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -52,7 +63,7 @@ const Orders = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone / Address</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>

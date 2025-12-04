@@ -75,17 +75,7 @@ const Cart = () => {
     loadCart();
   }, [fetchCart]);
 
-  // Debug: Log cart data
-  useEffect(() => {
-    if (cart) {
-      console.log('Cart data:', cart);
-      console.log('Cart items:', cart.items);
-      if (cart.items && cart.items.length > 0) {
-        console.log('First cart item:', cart.items[0]);
-        console.log('First product:', cart.items[0].product);
-      }
-    }
-  });
+
 
   // Validate checkout form
   const validateCheckoutForm = () => {
