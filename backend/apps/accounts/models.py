@@ -29,6 +29,16 @@ class User(AbstractUser):
         help_text="Designates that this user has all permissions without explicitly assigning them.",
     )
 
+    # 2FA fields
+    two_factor_secret = models.CharField(max_length=32, blank=True, null=True)
+    two_factor_enabled = models.BooleanField(default=False)
+
+    # OTP fields for customer login/registration
+    otp_code = models.CharField(max_length=6, blank=True, null=True)
+    otp_created_at = models.DateTimeField(blank=True, null=True)
+    otp_verified = models.BooleanField(default=False)
+    phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
+
     history = HistoricalRecords()
 
     USERNAME_FIELD = "email"

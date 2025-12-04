@@ -24,6 +24,8 @@ import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import OTPLogin from './pages/OTPLogin';
+import CompleteProfile from './pages/CompleteProfile';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
@@ -69,6 +71,8 @@ function App() {
                       <Routes>
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/login/otp" element={<OTPLogin />} />
+                        <Route path="/complete-profile" element={<CompleteProfile />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
                         <Route path="/products" element={<Products />} />

@@ -14,6 +14,8 @@ admin_router.register(
 urlpatterns = [
     # Categories must come before <str:pk> to avoid conflict
     path("categories/", views.CategoryListView.as_view(), name="category-list"),
+    # Admin image upload
+    path("admin/upload-image/", views.ImageUploadView.as_view(), name="upload-image"),
     # Wishlist endpoints - must come before <str:pk> to avoid conflict
     path("wishlist/", wishlist_views.WishlistView.as_view(), name="wishlist-detail"),
     path("wishlist/add/", wishlist_views.add_to_wishlist, name="wishlist-add"),

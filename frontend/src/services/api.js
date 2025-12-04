@@ -87,7 +87,7 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem('refresh_token');
       if (refreshToken) {
         try {
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh/`, {
+          const response = await axios.post(`${API_BASE_URL}/auth/token/refresh/`, {
             refresh: refreshToken
           });
           const { access } = response.data;
@@ -98,12 +98,21 @@ api.interceptors.response.use(
           // Refresh failed, logout user
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user');
 
           // Only redirect if we're not already on login page
-          if (!window.location.pathname.includes('/login')) {
+          if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
             window.location.href = '/login';
           }
           return Promise.reject(refreshError);
+        }
+      } else {
+        // No refresh token, logout
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+        if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+          window.location.href = '/login';
         }
       }
     }
@@ -133,6 +142,9 @@ export const authAPI = {
   updateProfile: (data) => api.put('/auth/profile/', data),
   forgotPassword: (data) => api.post('/auth/forgot-password/', data),
   resetPassword: (data) => api.post('/auth/reset-password/', data),
+  requestOTP: (identifier, method) => api.post('/auth/otp/request/', { identifier, method }),
+  verifyOTP: (identifier, otp_code) => api.post('/auth/otp/verify/', { identifier, otp_code }),
+  resendOTP: (identifier, method) => api.post('/auth/otp/resend/', { identifier, method }),
 };
 
 export const productsAPI = {
