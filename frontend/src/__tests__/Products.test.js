@@ -179,11 +179,8 @@ describe('Products Page', () => {
       expect(screen.getByText('Another Product')).toBeInTheDocument();
     });
 
-    // Check that out of stock indicator is displayed for second product
-    // The react-i18next mock returns the translation key, so we look for 'outOfStock'
-    // Use getAllByText since the text may appear multiple times (badge + button)
-    const outOfStockElements = screen.getAllByText('outOfStock');
-    expect(outOfStockElements.length).toBeGreaterThan(0);
+    // Check that out of stock badge is displayed for second product
+    expect(screen.getByText('Out of Stock')).toBeInTheDocument();
   });
 
   test('shows clear filters button when filters are active', async () => {
@@ -307,13 +304,8 @@ describe('Products Page', () => {
     // Simulate image error
     fireEvent.error(firstImage);
 
-    // After error, the OptimizedImage component should render an error fallback
-    // The image itself won't be visible, but a fallback SVG icon is shown instead
-    await waitFor(() => {
-      // Check that error fallback is rendered (it has role="img" from the fallback div)
-      const errorFallbacks = screen.getAllByRole('img');
-      expect(errorFallbacks.length).toBeGreaterThan(0);
-    });
+    // Check that image is hidden (display: none)
+    expect(firstImage.style.display).toBe('none');
   });
 
   test('resets to first page when search term changes', async () => {
