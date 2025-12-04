@@ -29,6 +29,7 @@ const PWAInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
 
   useEffect(() => {
     // Check if already installed
@@ -118,25 +119,42 @@ const PWAInstallPrompt = () => {
   const handleInstall = async () => {
     if (deferredPrompt) {
       // Android/Chrome - use native prompt
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
+      try {
+        setIsInstalling(true);
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
 
-      // Analytics event
-      if (window.gtag) {
-        window.gtag('event', 'pwa_install_prompt', {
-          outcome: outcome,
-          platform: 'android'
-        });
+        // Analytics event
+        if (window.gtag) {
+          window.gtag('event', 'pwa_install_prompt', {
+            outcome: outcome,
+            platform: 'android'
+          });
+        }
+
+        if (outcome === 'accepted') {
+          // BEST PRACTICE: Never show again after successful install
+          localStorage.setItem('pwa-install-dismissed-permanent', 'true');
+          setShowPrompt(false);
+
+          // Show success feedback
+          if (window.toast) {
+            window.toast.success('App installed! Look for EasyCart on your home screen.');
+          }
+        } else {
+          // User declined - hide for 3 days
+          handleDismiss(false);
+        }
+
+        setDeferredPrompt(null);
+      } catch (error) {
+        console.error('Install prompt error:', error);
+      } finally {
+        setIsInstalling(false);
       }
-
-      if (outcome === 'accepted') {
-        setShowPrompt(false);
-      }
-
-      setDeferredPrompt(null);
     } else if (isIOS) {
       // iOS - show manual instructions
-      // Keep prompt open to show instructions
+      document.getElementById('pwa-ios-instructions')?.classList.add('show');
     }
   };
 
@@ -187,9 +205,11 @@ const PWAInstallPrompt = () => {
             <button
               className="pwa-install-btn"
               onClick={handleInstall}
+              disabled={isInstalling}
               aria-label="Install app"
+              style={{ opacity: isInstalling ? 0.7 : 1 }}
             >
-              Install
+              {isInstalling ? 'Installing...' : 'Install'}
             </button>
           )}
           {isIOS && (
