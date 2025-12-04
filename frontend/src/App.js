@@ -37,6 +37,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProductManager from './components/Admin/ProductManager';
 import NotFound from './pages/NotFound';
 import { About, Contact, Help, Returns, Shipping, Privacy, Terms, Cookies } from './pages/InfoPages';
+import OrderDetail from './pages/OrderDetail';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -86,6 +87,11 @@ function App() {
                         <Route path="/orders" element={
                           <ProtectedRoute>
                             <Orders />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/orders/:id" element={
+                          <ProtectedRoute>
+                            <OrderDetail />
                           </ProtectedRoute>
                         } />
                         <Route path="/profile" element={
