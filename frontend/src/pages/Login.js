@@ -186,7 +186,7 @@ const Login = () => {
 
         {/* Footer */}
         <div className="text-center" style={{ marginTop: 'var(--space-6)' }}>
-          <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem' }}>
+          <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', marginBottom: 'var(--space-3)' }}>
             Don't have an account?{' '}
             <Link
               to="/register"
@@ -197,6 +197,19 @@ const Login = () => {
               }}
             >
               Sign up here
+            </Link>
+          </p>
+          <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem' }}>
+            Or{' '}
+            <Link
+              to="/login/otp"
+              style={{
+                color: 'var(--primary-600)',
+                textDecoration: 'none',
+                fontWeight: '500'
+              }}
+            >
+              Login with OTP (SMS/WhatsApp/Email)
             </Link>
           </p>
         </div>

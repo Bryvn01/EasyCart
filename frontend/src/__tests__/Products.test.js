@@ -180,7 +180,9 @@ describe('Products Page', () => {
     });
 
     // Check that sold out badge is displayed for second product (CompactProductCard shows "Sold Out")
-    expect(screen.getByText('Sold Out')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Sold Out')).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
   test('shows clear filters button when filters are active', async () => {

@@ -105,6 +105,20 @@ def login(request):
     serializer = UserLoginSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.validated_data["user"]
+
+        # Check if 2FA is enabled
+        if user.two_factor_enabled:
+            # Return special response indicating 2FA required
+            return Response(
+                {
+                    "requires_2fa": True,
+                    "email": user.email,
+                    "message": "Please enter your 2FA code",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        # Normal login without 2FA
         refresh = RefreshToken.for_user(user)
         return Response(
             {
@@ -117,6 +131,7 @@ def login(request):
 
 
 @api_view(["GET", "PUT"])
+@permission_classes([permissions.IsAuthenticated])
 def profile(request):
     if request.method == "GET":
         return Response(UserSerializer(request.user).data)

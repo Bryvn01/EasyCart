@@ -19,11 +19,45 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await adminAPI.getDashboardStats();
-      setStats(response.data);
+      // Fetch data from multiple endpoints
+      const [productsRes, ordersRes, usersRes] = await Promise.all([
+        adminAPI.getProducts({ page: 1, limit: 1 }),
+        adminAPI.getOrders({ page: 1, limit: 5 }),
+        adminAPI.getCustomers ? adminAPI.getCustomers() : Promise.resolve({ data: [] })
+      ]);
+
+      const productsData = Array.isArray(productsRes.data) ? productsRes.data : (productsRes.data?.results || []);
+      const ordersData = Array.isArray(ordersRes.data) ? ordersRes.data : (ordersRes.data?.results || []);
+      const usersData = Array.isArray(usersRes.data) ? usersRes.data : (usersRes.data?.results || usersRes.data?.customers || []);
+
+      const totalProducts = productsRes.data?.count || productsData.length;
+      const totalOrders = ordersRes.data?.count || ordersData.length;
+      const totalUsers = usersRes.data?.count || usersData.length;
+
+      // Calculate revenue from orders
+      const totalRevenue = ordersData.reduce((sum, order) => {
+        const amount = parseFloat(order.total_amount || 0);
+        return sum + amount;
+      }, 0);
+
+      // Transform recent orders
+      const recentOrders = ordersData.slice(0, 5).map(order => ({
+        id: order.id,
+        customer: order.user?.username || order.user?.email || 'Unknown',
+        total: order.total_amount || 0,
+        status: order.status || 'pending'
+      }));
+
+      setStats({
+        totalProducts,
+        totalOrders,
+        totalUsers,
+        totalRevenue,
+        recentOrders
+      });
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error);
-      toast.error('Unable to load dashboard data. Please try again.');
+      toast.error('Unable to load dashboard data');
       setStats({
         totalProducts: 0,
         totalOrders: 0,
@@ -40,7 +74,7 @@ const Dashboard = () => {
     { name: 'Total Products', value: stats.totalProducts, icon: Package, color: 'bg-blue-500' },
     { name: 'Total Orders', value: stats.totalOrders, icon: ShoppingCart, color: 'bg-green-500' },
     { name: 'Total Users', value: stats.totalUsers, icon: Users, color: 'bg-purple-500' },
-    { name: 'Revenue', value: `KES ${stats.totalRevenue?.toLocaleString()}`, icon: DollarSign, color: 'bg-yellow-500' },
+    { name: 'Revenue', value: `KES ${(stats.totalRevenue || 0).toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, color: 'bg-yellow-500' },
   ];
 
   if (loading) {

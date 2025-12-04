@@ -272,6 +272,14 @@ const Products = () => {
         </div>
       )}
 
+      {/* Mobile Search Bar */}
+      <div className="md:hidden mb-4 px-4">
+        <SearchInput
+          onSearch={setSearchTerm}
+          placeholder="Search products..."
+        />
+      </div>
+
       {/* Mobile Category Scroll */}
       <HorizontalCategoryScroll
         categories={categories}
@@ -352,8 +360,8 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Products Grid - Professional look (matches homepage) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {/* Products Grid - Mobile-optimized responsive layout */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {products.map((product, index) => (
           <ProductCard
             key={product.id}
