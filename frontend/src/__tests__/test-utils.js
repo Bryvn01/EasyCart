@@ -1,12 +1,47 @@
 import React from 'react';
+import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '../context/AuthContext';
+import { CartProvider } from '../context/CartContext';
 
-const testQueryClient = new QueryClient();
+const createTestQueryClient = () => new QueryClient({
+  defaultOptions: {
+    queries: { retry: false },
+    mutations: { retry: false },
+  },
+});
 
-export function withQueryClientProvider(ui) {
+export function AllTheProviders({ children }) {
+  const testQueryClient = createTestQueryClient();
   return (
     <QueryClientProvider client={testQueryClient}>
-      {ui}
+      <BrowserRouter>
+        <AuthProvider>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }
+
+export function renderWithProviders(ui, options) {
+  const { HelmetProvider } = require('react-helmet-async');
+  const Wrapper = ({ children }) => (
+    <HelmetProvider>
+      <AllTheProviders>{children}</AllTheProviders>
+    </HelmetProvider>
+  );
+  return render(ui, { wrapper: Wrapper, ...options });
+}
+
+export * from '@testing-library/react';
+
+// Simple test to prevent Jest "no tests" error
+describe('test-utils', () => {
+  it('exports renderWithProviders', () => {
+    expect(renderWithProviders).toBeDefined();
+  });
+});
