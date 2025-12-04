@@ -113,17 +113,17 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
       </div>
 
       {/* Product Info Section */}
-      <div className="product-card-content p-4 space-y-3">
+      <div className="product-card-content p-4 space-y-2">
         <Link to={`/products/${product.id}`}>
           <h3
-            className="text-lg font-semibold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors line-clamp-2 min-h-[3.5rem]"
+            className="text-base font-semibold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors line-clamp-2"
             title={product.name && product.name.length > 30 ? product.name : undefined}
           >
             {product.name}
           </h3>
         </Link>
 
-        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 min-h-[2.5rem]">
+        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
           {product.description || t('defaultProductDescription', 'Quality product with guaranteed satisfaction')}
         </p>
 
