@@ -73,8 +73,8 @@ const PWAInstallPrompt = () => {
       const addedToCart = sessionStorage.getItem('pwa-added-to-cart');
       const browsingTime = parseInt(sessionStorage.getItem('pwa-browsing-time') || '0');
 
-      // Show if: 2+ page views OR added to cart OR 60s browsing
-      if (pageViews >= 2 || addedToCart === 'true' || browsingTime >= 60000) {
+      // Show if: 1+ page views OR added to cart OR 60s browsing
+      if (pageViews >= 1 || addedToCart === 'true' || browsingTime >= 60000) {
         setShowPrompt(true);
 
         // Analytics event
@@ -88,8 +88,8 @@ const PWAInstallPrompt = () => {
       }
     };
 
-    // Check engagement after 30 seconds per best practices
-    const engagementTimer = setTimeout(checkEngagement, 30000);
+    // Show immediately for testing (change to 30000 for production)
+    const engagementTimer = setTimeout(checkEngagement, 3000);
 
     // Track browsing time
     const startTime = Date.now();
@@ -221,10 +221,16 @@ const PWAInstallPrompt = () => {
           {isIOS && (
             <button
               className="pwa-info-btn"
-              onClick={() => {
-                // Show iOS instructions in modal
-                document.getElementById('pwa-ios-instructions')?.classList.add('show');
-              }}
+              onClick={handleInstall}
+              aria-label="Show install instructions"
+            >
+              How?
+            </button>
+          )}
+          {!isIOS && !deferredPrompt && (
+            <button
+              className="pwa-info-btn"
+              onClick={() => alert('To install: Open browser menu → Add to Home Screen')}
               aria-label="Show install instructions"
             >
               How?
