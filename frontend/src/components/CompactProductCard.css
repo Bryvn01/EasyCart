@@ -5,14 +5,14 @@
 .compact-product-card {
   position: relative;
   background: var(--card-background, #ffffff);
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   transition: all 0.2s ease-in-out;
   border: 1px solid var(--border-color, #e5e7eb);
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 340px;
+  min-height: 320px;
 }
 
 /* Hover effect - subtle on desktop */
@@ -42,12 +42,12 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #ffffff;
+  background: #fafafa;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 12px;
 }
 
 .compact-product-image {
@@ -285,41 +285,47 @@
 
 @media (max-width: 640px) {
   .compact-product-card {
-    min-height: 280px;
-    border-radius: 8px;
+    min-height: 260px;
+    border-radius: 6px;
   }
 
   .compact-product-image-wrapper {
-    padding: 4px;
+    padding: 8px;
   }
 
   /* Tighter spacing on small screens */
   .compact-product-info {
     padding: 8px;
-    gap: 4px;
+    gap: 3px;
   }
 
   /* Slightly smaller text */
   .compact-product-name {
-    font-size: 0.8125rem; /* 13px */
-    min-height: 2.2em;
+    font-size: 0.75rem; /* 12px */
+    min-height: 2em;
+    line-height: 1.2;
   }
 
   .compact-price {
-    font-size: 0.9375rem; /* 15px */
+    font-size: 0.875rem; /* 14px */
   }
 
-  /* Maintain touch target size */
+  /* Smaller cart button on mobile */
   .compact-cart-btn {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
   }
 
   .compact-cart-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .compact-badge {
+    font-size: 0.5rem;
+    padding: 2px 6px;
   }
 }
 
