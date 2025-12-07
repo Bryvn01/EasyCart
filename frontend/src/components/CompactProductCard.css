@@ -41,10 +41,9 @@
 .compact-product-image-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 75%; /* 4:3 aspect ratio - more compact than square */
+  aspect-ratio: 1 / 1;
   background: var(--gray-100, #f3f4f6);
   overflow: hidden;
-  aspect-ratio: 1 / 1;
 }
 
 .compact-product-image {
@@ -53,7 +52,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 0.3s ease-in-out;
 }
 

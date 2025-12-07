@@ -63,7 +63,14 @@ jobs:
         run: cd backend && python manage.py test
 
       - name: Run frontend tests
-        run: cd frontend && npm test -- --coverage --watchAll=false --passWithNoTests
+        run: cd frontend && npm test -- --coverage --watchAll=false --passWithNoTests --maxWorkers=2
+        env:
+          CI: true
+          NODE_ENV: test
 
       - name: Build frontend
-        run: cd frontend && CI=false npm run build
+        run: cd frontend && npm run build
+        env:
+          CI: false
+          NODE_ENV: production
+          GENERATE_SOURCEMAP: false

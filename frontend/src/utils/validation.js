@@ -18,6 +18,7 @@ export const validatePassword = (password) => {
 
 export const validatePhone = (phone) => {
   const re = /^[0-9]{10,15}$/;
+  // eslint-disable-next-line no-useless-escape
   return re.test(phone.replace(/[\s\-\(\)]/g, ''));
 };
 

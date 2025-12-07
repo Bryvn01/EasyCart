@@ -1,18 +1,18 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v4.5.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-      - id: check-json
       - id: check-added-large-files
         args: ['--maxkb=1000']
+      - id: check-json
       - id: check-merge-conflict
       - id: detect-private-key
 
   - repo: https://github.com/psf/black
-    rev: 24.1.0
+    rev: 24.1.1
     hooks:
       - id: black
         language_version: python3.12
@@ -22,15 +22,15 @@ repos:
     rev: 7.0.0
     hooks:
       - id: flake8
-        files: ^backend/(apps|ecommerce)/.*\.py$
-        args: ['--max-line-length=120', '--extend-ignore=E203,W503,F401,F841,F811,E501,F541,E722,F403']
+        files: ^backend/
+        args: ['--max-line-length=120', '--ignore=E203,W503']
 
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.0.0
+    rev: v8.56.0
     hooks:
       - id: eslint
         files: ^frontend/src/.*\.[jt]sx?$
         types: [file]
         additional_dependencies:
           - eslint@8.57.0
-          - eslint-config-react-app@7.0.1
+          - eslint-plugin-react@7.34.0
