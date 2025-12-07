@@ -83,8 +83,6 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  /* stylelint-disable-next-line property-no-unknown */
-  line-clamp: 2;
 }
 
 /* Actions */
