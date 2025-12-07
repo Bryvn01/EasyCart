@@ -125,12 +125,11 @@ const OptimizedImage = ({
       ref={imgRef}
       className={`optimized-image-wrapper ${className}`}
       style={{
-        position: 'relative',
+        position: 'absolute',
+        top: 0,
+        left: 0,
         width: '100%',
         height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         overflow: 'hidden',
         backgroundColor: '#ffffff',
         ...style
@@ -170,10 +169,9 @@ const OptimizedImage = ({
           onError={handleError}
           className={`optimized-image ${isLoaded ? 'loaded' : ''}`}
           style={{
-            maxWidth: '100%',
-            maxHeight: '100%',
-            width: 'auto',
-            height: 'auto',
+            width: '100%',
+            height: '100%',
+            padding: '10%',
             objectFit: 'contain',
             objectPosition: 'center',
             opacity: isLoaded ? 1 : 0,
