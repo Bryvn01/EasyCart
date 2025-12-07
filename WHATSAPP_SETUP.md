@@ -19,9 +19,9 @@ Perfect for development and testing. No approval needed.
 
    Your `.env` should have:
    ```env
-   TWILIO_ACCOUNT_SID=your_account_sid_here
-   TWILIO_AUTH_TOKEN=your_auth_token_here
-   TWILIO_PHONE_NUMBER=your_phone_number_here
+   TWILIO_ACCOUNT_SID=<your_account_sid>
+   TWILIO_AUTH_TOKEN=<your_auth_token>
+   TWILIO_PHONE_NUMBER=<your_phone_number>
    TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
    ```
 
