@@ -32,17 +32,24 @@ const PWAInstallPrompt = () => {
   const [isInstalling, setIsInstalling] = useState(false);
 
   useEffect(() => {
+    console.log('PWA: Component mounted');
+
     // Check if already installed
     const standalone = window.matchMedia('(display-mode: standalone)').matches ||
                       window.navigator.standalone === true;
     setIsStandalone(standalone);
+    console.log('PWA: Standalone mode:', standalone);
 
     // Detect iOS
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     setIsIOS(iOS);
+    console.log('PWA: Is iOS:', iOS);
 
     // Don't show if already installed
-    if (standalone) return;
+    if (standalone) {
+      console.log('PWA: Already installed, not showing prompt');
+      return;
+    }
 
     // Check if user dismissed permanently (not showing again)
     const dismissedPermanently = localStorage.getItem('pwa-install-dismissed-permanent');
@@ -74,7 +81,9 @@ const PWAInstallPrompt = () => {
       const browsingTime = parseInt(sessionStorage.getItem('pwa-browsing-time') || '0');
 
       // Show if: 1+ page views OR added to cart OR 60s browsing
+      console.log('PWA: Checking engagement - pageViews:', pageViews);
       if (pageViews >= 1 || addedToCart === 'true' || browsingTime >= 60000) {
+        console.log('PWA: Showing prompt!');
         setShowPrompt(true);
 
         // Analytics event
@@ -88,8 +97,12 @@ const PWAInstallPrompt = () => {
       }
     };
 
-    // Show immediately for testing (change to 30000 for production)
-    const engagementTimer = setTimeout(checkEngagement, 3000);
+    // Show immediately for testing
+    console.log('PWA: Setting timer to show prompt');
+    const engagementTimer = setTimeout(() => {
+      console.log('PWA: Timer fired, checking engagement');
+      checkEngagement();
+    }, 2000);
 
     // Track browsing time
     const startTime = Date.now();
@@ -117,6 +130,10 @@ const PWAInstallPrompt = () => {
   }, []);
 
   const handleInstall = async () => {
+    console.log('PWA: Install button clicked');
+    console.log('PWA: deferredPrompt:', deferredPrompt);
+    console.log('PWA: isIOS:', isIOS);
+
     if (deferredPrompt) {
       // Android/Chrome - use native prompt
       try {
@@ -160,7 +177,12 @@ const PWAInstallPrompt = () => {
       }
     } else if (isIOS) {
       // iOS - show manual instructions
-      document.getElementById('pwa-ios-instructions')?.classList.add('show');
+      console.log('PWA: Showing iOS instructions');
+      const modal = document.getElementById('pwa-ios-instructions');
+      console.log('PWA: Modal element:', modal);
+      modal?.classList.add('show');
+    } else {
+      console.log('PWA: No deferred prompt available');
     }
   };
 
