@@ -21,7 +21,7 @@ Perfect for development and testing. No approval needed.
    ```env
    TWILIO_ACCOUNT_SID=<your_twilio_account_sid>
    TWILIO_AUTH_TOKEN=<your_twilio_auth_token>
-   TWILIO_PHONE_NUMBER=your_phone_number_here
+   TWILIO_PHONE_NUMBER=<your_phone_number>
    TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
    ```
 

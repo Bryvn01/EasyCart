@@ -145,7 +145,6 @@ const PWAInstallPrompt = () => {
           // User declined - hide for 7 days
           handleDismiss(false);
         }
-        setIsInstalling(false);
 
         setDeferredPrompt(null);
       } catch (error) {
@@ -156,6 +155,7 @@ const PWAInstallPrompt = () => {
             platform: 'android'
           });
         }
+      } finally {
         setIsInstalling(false);
       }
     } else if (isIOS) {
