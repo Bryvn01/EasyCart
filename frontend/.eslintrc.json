@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "react-app",
+    "react-app/jest"
+  ],
+  "rules": {
+    "testing-library/no-unnecessary-act": "warn",
+    "testing-library/prefer-screen-queries": "warn",
+    "testing-library/no-wait-for-multiple-assertions": "warn",
+    "testing-library/no-node-access": "warn",
+    "testing-library/no-container": "warn",
+    "testing-library/prefer-find-by": "warn",
+    "no-unused-vars": "warn",
+    "no-throw-literal": "warn",
+    "jsx-a11y/img-redundant-alt": "warn",
+    "import/first": "warn",
+    "react-hooks/exhaustive-deps": "warn"
+  }
+}

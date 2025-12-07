@@ -1,8 +1,6 @@
 # Contributing to EasyCart
 
-Thank you for your interest in contributing to EasyCart! This document provides guidelines and instructions for contributing.
-
-## 🚀 Quick Start
+## Development Setup
 
 ### Prerequisites
 - Python 3.12+
@@ -10,214 +8,112 @@ Thank you for your interest in contributing to EasyCart! This document provides 
 - PostgreSQL 14+
 - Git
 
-### Local Setup
+### Initial Setup
 
 1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Bryvn01/EasyCart.git
-   cd EasyCart
-   ```
-
-2. **Backend setup**
-   ```bash
-   cd backend
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   pip install -r requirements.txt
-   python manage.py migrate
-   python manage.py seed_products
-   python manage.py runserver
-   ```
-
-3. **Frontend setup**
-   ```bash
-   cd frontend
-   npm install
-   npm start
-   ```
-
-## 🧪 Running Tests
-
-### Backend Tests
 ```bash
-cd backend
-python manage.py test
+git clone https://github.com/Bryvn01/EasyCart.git
+cd EasyCart
 ```
 
-### Frontend Tests
+2. **Backend Setup**
 ```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+```
+
+3. **Frontend Setup**
+```bash
+cd frontend
+npm install
+```
+
+4. **Environment Variables**
+Create `.env` files in backend and frontend directories (see `.env.example`)
+
+## Development Workflow
+
+### 1. Create a Branch
+```bash
+git checkout -b feature/your-feature-name
+```
+
+### 2. Make Changes
+- Write clean, documented code
+- Follow existing code style
+- Add tests for new features
+
+### 3. Run Tests Locally
+```bash
+# Backend
+cd backend
+python manage.py test
+
+# Frontend
 cd frontend
 npm test
 ```
 
-### Run All Tests
+### 4. Commit Changes
 ```bash
-# Backend
-cd backend && python manage.py test
-
-# Frontend
-cd frontend && npm test -- --watchAll=false
+git add .
+git commit -m "feat: add new feature"
 ```
 
-## 🔍 Code Quality
+**Commit Message Format:**
+- `feat:` New feature
+- `fix:` Bug fix
+- `docs:` Documentation
+- `style:` Formatting
+- `refactor:` Code restructuring
+- `test:` Adding tests
+- `chore:` Maintenance
 
-### Pre-commit Hooks
-
-Install pre-commit hooks to catch issues before committing:
-
+### 5. Push and Create PR
 ```bash
-pip install pre-commit
-pre-commit install
+git push origin feature/your-feature-name
 ```
 
-This will automatically run:
-- Trailing whitespace removal
-- End-of-file fixer
-- YAML/JSON validation
-- Black (Python formatter)
-- Flake8 (Python linter)
-- ESLint (JavaScript linter)
+Then create a Pull Request on GitHub.
 
-### Manual Linting
+## Code Standards
 
-**Backend:**
-```bash
-cd backend
-flake8 .
-black . --check
-```
+### Python (Backend)
+- Follow PEP 8
+- Use type hints
+- Write docstrings
+- Max line length: 120
 
-**Frontend:**
-```bash
-cd frontend
-npm run lint
-```
+### JavaScript (Frontend)
+- Use ES6+ features
+- Follow Airbnb style guide
+- Use functional components
+- PropTypes for all components
 
-## 📝 Commit Guidelines
+## Testing Requirements
 
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
+### Backend Tests
+- Unit tests for models
+- Integration tests for APIs
+- Minimum 80% coverage
 
-```
-<type>(<scope>): <subject>
+### Frontend Tests
+- Component tests
+- Integration tests
+- Accessibility tests
 
-<body>
+## Pull Request Process
 
-<footer>
-```
+1. ✅ All tests pass
+2. ✅ Code is linted
+3. ✅ Documentation updated
+4. ✅ No merge conflicts
+5. ✅ Approved by 1 reviewer
 
-**Types:**
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes (formatting)
-- `refactor`: Code refactoring
-- `test`: Adding or updating tests
-- `chore`: Maintenance tasks
+## Questions?
 
-**Examples:**
-```bash
-git commit -m "feat(cart): add debounced add-to-cart button"
-git commit -m "fix(api): resolve products.filter TypeError"
-git commit -m "docs: update README with deployment instructions"
-```
-
-## 🌿 Branch Strategy
-
-- `main` - Production-ready code
-- `develop` - Development branch
-- `feat/*` - New features
-- `fix/*` - Bug fixes
-- `docs/*` - Documentation updates
-
-**Workflow:**
-1. Create a branch from `develop`
-2. Make your changes
-3. Run tests locally
-4. Push and create a Pull Request
-5. Wait for CI checks to pass
-6. Request review
-
-## 🔄 Pull Request Process
-
-1. **Create a descriptive PR title**
-   ```
-   feat: Add mobile-optimized product cards
-   ```
-
-2. **Fill out the PR template**
-   - Describe what changed
-   - Link related issues
-   - Add screenshots if UI changes
-   - List breaking changes
-
-3. **Ensure CI passes**
-   - All tests must pass
-   - No linting errors
-   - Build succeeds
-
-4. **Request review**
-   - Tag relevant reviewers
-   - Respond to feedback
-   - Make requested changes
-
-5. **Merge**
-   - Squash and merge (preferred)
-   - Delete branch after merge
-
-## ✅ CI/CD Checks
-
-All PRs must pass these checks:
-
-- ✅ Backend tests
-- ✅ Frontend tests
-- ✅ Linting (backend & frontend)
-- ✅ Build succeeds
-- ✅ No security vulnerabilities
-
-## 🐛 Reporting Bugs
-
-Use the [GitHub Issues](https://github.com/Bryvn01/EasyCart/issues) page.
-
-**Include:**
-- Clear description
-- Steps to reproduce
-- Expected vs actual behavior
-- Screenshots/logs
-- Environment details
-
-## 💡 Suggesting Features
-
-Open a [Feature Request](https://github.com/Bryvn01/EasyCart/issues/new) with:
-- Use case description
-- Proposed solution
-- Alternative solutions considered
-- Additional context
-
-## 📚 Documentation
-
-- Update README.md for user-facing changes
-- Add docstrings to new functions/classes
-- Update API documentation
-- Add comments for complex logic
-
-## 🔒 Security
-
-- Never commit secrets or credentials
-- Use environment variables
-- Report security issues privately to the maintainers
-- Follow OWASP guidelines
-
-## 📞 Getting Help
-
-- Check existing issues
-- Read the documentation
-- Ask in discussions
-- Contact maintainers
-
-## 📄 License
-
-By contributing, you agree that your contributions will be licensed under the MIT License.
-
----
-
-Thank you for contributing to EasyCart! 🎉
+Open an issue or contact the maintainers.

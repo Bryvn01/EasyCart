@@ -1,2 +1,2 @@
-// jest.setup.js
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+// Jest setup file - runs before tests
+process.env.REACT_APP_API_URL = 'http://localhost:8000/api';

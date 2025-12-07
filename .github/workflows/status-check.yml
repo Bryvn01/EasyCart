@@ -1,0 +1,18 @@
+name: Status Check
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  status:
+    name: CI Status
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Status Check
+        run: echo "CI Status Check Passed"

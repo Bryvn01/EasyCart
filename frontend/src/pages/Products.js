@@ -7,7 +7,6 @@ import SearchInput from '../components/ui/SearchInput';
 import { ProductGridSkeleton } from '../components/ui';
 import { handleApiError } from '../utils/errorHandler';
 import { useProducts } from '../hooks/useProducts';
-import { getProductImageUrl } from '../utils/imageUtils';
 import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import ImageLightbox from '../components/ImageLightbox';
 import SuccessAnimation from '../components/SuccessAnimation';

@@ -59,7 +59,7 @@ const OTPLogin = () => {
     setMessage('');
 
     try {
-      const response = await authAPI.requestOTP(identifier, method);
+      await authAPI.requestOTP(identifier, method);
       setMessage('OTP resent successfully');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to resend OTP');

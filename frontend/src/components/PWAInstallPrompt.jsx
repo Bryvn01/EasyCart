@@ -48,11 +48,11 @@ const PWAInstallPrompt = () => {
     const dismissedPermanently = localStorage.getItem('pwa-install-dismissed-permanent');
     if (dismissedPermanently === 'true') return;
 
-    // Check if user dismissed recently (3-day cooldown)
+    // Check if user dismissed recently (7-day cooldown per best practices)
     const dismissedTime = localStorage.getItem('pwa-install-dismissed');
     if (dismissedTime) {
       const daysSinceDismissed = (Date.now() - parseInt(dismissedTime)) / (1000 * 60 * 60 * 24);
-      if (daysSinceDismissed < 3) return; // Reduced from 7 to 3 days
+      if (daysSinceDismissed < 7) return;
     }
 
     // Track engagement
@@ -88,8 +88,8 @@ const PWAInstallPrompt = () => {
       }
     };
 
-    // Check engagement after 5 seconds (reduced from 30s)
-    const engagementTimer = setTimeout(checkEngagement, 5000);
+    // Check engagement after 30 seconds per best practices
+    const engagementTimer = setTimeout(checkEngagement, 30000);
 
     // Track browsing time
     const startTime = Date.now();
@@ -142,14 +142,20 @@ const PWAInstallPrompt = () => {
             window.toast.success('App installed! Look for EasyCart on your home screen.');
           }
         } else {
-          // User declined - hide for 3 days
+          // User declined - hide for 7 days
           handleDismiss(false);
         }
+        setIsInstalling(false);
 
         setDeferredPrompt(null);
       } catch (error) {
         console.error('Install prompt error:', error);
-      } finally {
+        if (window.gtag) {
+          window.gtag('event', 'pwa_install_error', {
+            error: error.message,
+            platform: 'android'
+          });
+        }
         setIsInstalling(false);
       }
     } else if (isIOS) {

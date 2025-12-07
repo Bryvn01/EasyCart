@@ -125,7 +125,11 @@ const OptimizedImage = ({
       ref={imgRef}
       className={`optimized-image-wrapper ${className}`}
       style={{
-        position: 'relative',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         overflow: 'hidden',
         backgroundColor: '#f3f4f6',
         ...style
