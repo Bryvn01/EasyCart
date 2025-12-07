@@ -191,9 +191,9 @@ const Products = () => {
   }
 
   return (
-    <div className="container py-8">
+    <div className="container py-4 px-2 sm:px-4">
       {/* Breadcrumb */}
-      <nav className="mb-6" aria-label="Breadcrumb">
+      <nav className="mb-3 px-2" aria-label="Breadcrumb">
         <ol className="flex items-center gap-2 text-sm text-gray-600">
           <li><Link to="/" className="hover:text-primary-600">Home</Link></li>
           <li>›</li>
@@ -210,7 +210,7 @@ const Products = () => {
       </nav>
 
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-4 px-2">
         <h1 className="text-3xl font-bold mb-2">
           {selectedCategory ?
             `${selectedCategory} Products` :
@@ -272,7 +272,7 @@ const Products = () => {
       )}
 
       {/* Mobile Search Bar */}
-      <div className="md:hidden mb-4 px-4">
+      <div className="md:hidden mb-3 px-2">
         <SearchInput
           onSearch={setSearchTerm}
           placeholder="Search products..."
@@ -360,7 +360,7 @@ const Products = () => {
       </div>
 
       {/* Products Grid - Mobile-optimized responsive layout */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
         {products.map((product, index) => (
           <ProductCard
             key={product.id}
