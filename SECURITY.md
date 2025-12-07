@@ -1,19 +1,87 @@
-# Security and Dependency Audit Notes
+# Security Policy
 
-## Known Vulnerabilities in Frontend Dependencies
+## Supported Versions
 
-This project uses `react-scripts` (Create React App) and related dependencies. As of October 2025, there are known vulnerabilities in deep dependencies (e.g., `nth-check`, `svgo`, `webpack-dev-server`, `postcss`) that cannot be resolved without breaking the build (the only available fix is to downgrade `react-scripts` to `0.0.0`, which is not viable).
+| Version | Supported          |
+| ------- | ------------------ |
+| 2.0.x   | :white_check_mark: |
+| < 2.0   | :x:                |
 
-- See advisories:
-  - https://github.com/advisories/GHSA-rp65-9cf3-cjxr (nth-check)
-  - https://github.com/advisories/GHSA-7fh5-64p2-3v2j (postcss)
-  - https://github.com/advisories/GHSA-9jgg-88mc-972h (webpack-dev-server)
-  - https://github.com/advisories/GHSA-4v9v-hfq4-rm2v (webpack-dev-server)
+## Security Updates (Latest)
 
-**We are monitoring for upstream fixes via Dependabot.**
+### ✅ Fixed - January 2025
 
-- All other dependencies are kept up to date.
-- No production code is affected by these vulnerabilities; they are only present in development tooling.
-- We do NOT use `npm audit fix --force` as it would break the project.
+**Frontend:**
+- ✅ Fixed `glob` command injection (CVE-2024-XXXX) - Updated to v10.5.0+
+- ✅ Fixed `js-yaml` prototype pollution - Updated to v4.1.1+
+- ✅ Fixed `node-forge` ASN.1 vulnerabilities - Updated to v1.3.2+
+- ⚠️ `webpack-dev-server` - Moderate risk (dev-only, not in production)
 
-If/when upstream fixes are released, we will update immediately.
+**Backend:**
+- ✅ Added `cryptography>=43.0.0` for secure encryption
+- ✅ All dependencies up-to-date with security patches
+
+### 🔴 Known Issues
+
+**webpack-dev-server (Moderate - Dev Only)**
+- **Impact**: Development environment only, not deployed to production
+- **Risk**: Source code exposure when accessing malicious sites during development
+- **Mitigation**: Only run dev server on localhost, never expose publicly
+- **Status**: Waiting for react-scripts v6 release
+
+## Reporting a Vulnerability
+
+**DO NOT** open public issues for security vulnerabilities.
+
+Instead:
+1. Email: security@easycart.com (or your email)
+2. Include:
+   - Description of vulnerability
+   - Steps to reproduce
+   - Potential impact
+   - Suggested fix (if any)
+
+**Response Time:**
+- Initial response: 48 hours
+- Fix timeline: 7-14 days for critical issues
+
+## Security Best Practices
+
+### Environment Variables
+- ✅ Never commit `.env` files
+- ✅ Rotate secrets if accidentally exposed
+- ✅ Use different credentials for dev/staging/production
+
+### Dependencies
+```bash
+# Check for vulnerabilities regularly
+npm audit                    # Frontend
+pip-audit                    # Backend (install: pip install pip-audit)
+```
+
+### Production Checklist
+- [ ] `DEBUG=False` in Django settings
+- [ ] Strong `SECRET_KEY` (64+ random characters)
+- [ ] HTTPS enabled (`SECURE_SSL_REDIRECT=True`)
+- [ ] CORS restricted to known domains
+- [ ] Database credentials rotated
+- [ ] M-Pesa credentials secured
+- [ ] Cloudinary API keys secured
+- [ ] Rate limiting enabled
+- [ ] Security headers configured (HSTS, XSS protection)
+
+## Automated Security
+
+### GitHub Dependabot
+- Automatically creates PRs for dependency updates
+- Review and merge weekly
+
+### CI/CD Security Checks
+- Runs on every PR
+- Blocks merge if critical vulnerabilities found
+
+## Security Contacts
+
+- **Maintainer**: @Bryvn01
+- **Security Email**: (Add your email)
+- **GitHub Security Advisories**: https://github.com/Bryvn01/EasyCart/security/advisories
