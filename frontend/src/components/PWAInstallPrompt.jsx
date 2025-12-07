@@ -203,7 +203,16 @@ const PWAInstallPrompt = () => {
     }
   };
 
-  if (!showPrompt || isStandalone) return null;
+  // Always show for testing
+  // if (!showPrompt || isStandalone) return null;
+
+  // Force show for debugging
+  if (!showPrompt && !isStandalone) {
+    // Show after 2 seconds regardless
+    setTimeout(() => setShowPrompt(true), 2000);
+  }
+
+  if (isStandalone) return null;
 
   // INDUSTRY BEST PRACTICE: Compact banner at bottom, not modal
   return (
