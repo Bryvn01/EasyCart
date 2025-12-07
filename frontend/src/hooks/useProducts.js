@@ -45,7 +45,7 @@ export const useProducts = ({
 
       // Add optional filters
       if (search) params.search = search;
-      if (category) params.category = category;
+      if (category) params.category__name = category; // Django filter by category name
       if (ordering) params.ordering = ordering;
       if (priceRange.min) params.price_min = priceRange.min;
       if (priceRange.max) params.price_max = priceRange.max;
