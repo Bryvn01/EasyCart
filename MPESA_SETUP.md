@@ -1,77 +1,85 @@
-# M-Pesa Payment Setup Guide
+# M-Pesa Integration Setup Guide
 
 ## Current Issue
-Payment initiation is failing because M-Pesa credentials are not configured in your environment.
+❌ **M-Pesa authentication failing with 400 Bad Request**
 
-## Quick Fix for Development
+Your M-Pesa credentials are invalid or expired.
 
-Add these to your `backend/.env` file:
+## Fix Steps
 
+### 1. Get New M-Pesa Credentials
+
+**For Sandbox (Testing):**
+1. Go to: https://developer.safaricom.co.ke/
+2. Login or create account
+3. Navigate to **My Apps** → Create new app
+4. Select **Lipa Na M-Pesa Online** API
+5. Copy credentials:
+   - Consumer Key
+   - Consumer Secret
+   - Passkey (from test credentials)
+
+**For Production:**
+1. Contact Safaricom Business Support
+2. Apply for M-Pesa Paybill/Till Number
+3. Request API credentials
+4. Complete KYC verification
+
+### 2. Update Environment Variables
+
+Edit `backend/.env`:
 ```env
-# M-Pesa Sandbox Credentials (for testing)
+# M-Pesa Sandbox (Testing)
 MPESA_CONSUMER_KEY=<your_mpesa_consumer_key>
 MPESA_CONSUMER_SECRET=<your_mpesa_consumer_secret>
 MPESA_SHORTCODE=174379
 MPESA_PASSKEY=<your_mpesa_passkey>
-MPESA_CALLBACK_URL=http://localhost:8000/api/orders/mpesa/callback/
+MPESA_CALLBACK_URL=https://easycart-backend-2k8l.onrender.com/api/orders/mpesa/callback/
+
+# For Production, use:
+# MPESA_SHORTCODE=your_paybill_number
+# And production credentials
 ```
 
-## Getting M-Pesa Sandbox Credentials
+### 3. Test Credentials
 
-1. **Register on Safaricom Daraja**
-   - Visit: https://developer.safaricom.co.ke/
-   - Create an account
-   - Login to your account
-
-2. **Create a Sandbox App**
-   - Go to "My Apps" → "Create New App"
-   - Select "Lipa Na M-Pesa Sandbox"
-   - Fill in app details
-   - Submit
-
-3. **Get Credentials**
-   - Consumer Key: Found in your app details
-   - Consumer Secret: Found in your app details
-   - Shortcode: Use `174379` (default sandbox shortcode)
-   - Passkey: Found in "Test Credentials" section
-
-4. **Update .env**
-   - Copy credentials to `backend/.env`
-   - Restart Django server
-
-## Alternative: Use Mock Payment for Development
-
-If you don't want to set up M-Pesa right now, you can:
-
-1. **Use "Cash on Delivery"** payment method instead
-2. **Or add a mock payment mode** for development
-
-### Option: Add Mock Payment Mode
-
-Add this to `backend/.env`:
-```env
-PAYMENT_MOCK_MODE=True
+```bash
+cd backend
+python -c "
+from apps.orders.payment_service import MpesaPaymentService
+mpesa = MpesaPaymentService()
+token = mpesa.get_access_token()
+print('✅ M-Pesa configured' if token else '❌ Invalid credentials')
+"
 ```
 
-Then the system will simulate successful payments without calling M-Pesa API.
+### 4. Alternative Payment Methods
 
-## Testing M-Pesa
+If M-Pesa is not available, users can still use:
+- ✅ Cash on Delivery
+- ✅ Bank Transfer
+- ✅ Airtel Money
+- ✅ Card Payment (Flutterwave)
+- ✅ PayPal
 
-Once configured, use these test phone numbers in sandbox:
-- `254708374149` - Success
-- `254708374150` - Insufficient funds
-- `254708374151` - Invalid account
+## Temporary Workaround
 
-## Production Setup
+To allow orders without M-Pesa, the system now:
+1. Shows user-friendly error message
+2. Suggests alternative payment methods
+3. Allows Cash on Delivery as fallback
 
-For production:
-1. Apply for M-Pesa Go Live
-2. Get production credentials
-3. Update `.env` with production values
-4. Set `DEBUG=False` in Django settings
+## Production Checklist
 
-## Error Messages
+- [ ] Valid M-Pesa credentials obtained
+- [ ] Credentials added to Render environment variables
+- [ ] Callback URL whitelisted in M-Pesa portal
+- [ ] Test transaction completed successfully
+- [ ] Production shortcode configured
+- [ ] SSL certificate valid (required for callbacks)
 
-- **"M-Pesa service not configured"** → Add credentials to .env
-- **"Failed to get access token"** → Check consumer key/secret
-- **"Payment request failed"** → Check network/API availability
+## Support
+
+- **Safaricom Developer Portal**: https://developer.safaricom.co.ke/
+- **Support Email**: apisupport@safaricom.co.ke
+- **Documentation**: https://developer.safaricom.co.ke/Documentation
