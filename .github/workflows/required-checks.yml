@@ -60,7 +60,11 @@ jobs:
         run: cd frontend && npm ci
 
       - name: Run backend tests
-        run: cd backend && python manage.py test
+        run: cd backend && python manage.py test --exclude-tag=manual
+        env:
+          TWILIO_ACCOUNT_SID: ''
+          TWILIO_AUTH_TOKEN: ''
+          TWILIO_PHONE_NUMBER: ''
 
       - name: Run frontend tests
         run: cd frontend && npm test -- --watchAll=false --passWithNoTests --maxWorkers=2 || echo "Frontend tests completed"

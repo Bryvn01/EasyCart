@@ -111,7 +111,9 @@ export const CartProvider = ({ children }) => {
 
         // If this was the last attempt, handle the error
         if (attempt > retries) {
-          console.error('Error fetching cart:', err);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Error fetching cart:', err);
+          }
 
           if (isMountedRef.current) {
             setError({
@@ -177,7 +179,9 @@ export const CartProvider = ({ children }) => {
       // Fetch updated cart data in background
       await fetchCart({ silent: true });
     } catch (err) {
-      console.error('Error adding to cart:', err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error adding to cart:', err);
+      }
 
       // Rollback optimistic update on error
       if (isMountedRef.current) {
@@ -232,7 +236,9 @@ export const CartProvider = ({ children }) => {
       await ordersAPI.updateCartItem(itemId, quantity);
       await fetchCart({ silent: true });
     } catch (err) {
-      console.error('Error updating cart item:', err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error updating cart item:', err);
+      }
 
       // Rollback
       if (isMountedRef.current) {
@@ -284,7 +290,9 @@ export const CartProvider = ({ children }) => {
       await ordersAPI.removeFromCart(itemId);
       await fetchCart({ silent: true });
     } catch (err) {
-      console.error('Error removing from cart:', err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error removing from cart:', err);
+      }
 
       // Rollback
       if (isMountedRef.current) {
@@ -336,7 +344,9 @@ export const CartProvider = ({ children }) => {
       await ordersAPI.moveToWishlist(itemId);
       await fetchCart({ silent: true });
     } catch (err) {
-      console.error('Error moving to wishlist:', err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error moving to wishlist:', err);
+      }
 
       // Rollback
       if (isMountedRef.current) {

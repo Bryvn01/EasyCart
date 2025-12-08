@@ -635,7 +635,15 @@ See deployment guides for detailed instructions.
 
 ## 📄 License
 
+Copyright (c) 2025 Bryvn01. All rights reserved.
+
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### Attribution Required
+If you use this project or any part of it, you must:
+- Keep the copyright notice and license
+- Credit the original author (Bryvn01)
+- Link back to this repository: https://github.com/Bryvn01/EasyCart
 
 ## 🔒 Security & Compliance
 
