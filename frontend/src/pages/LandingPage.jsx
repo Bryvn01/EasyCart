@@ -48,9 +48,9 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => (
   </div>
 );
 
-// Skeleton Loaders - Dimensions match actual content to prevent CLS
+// Skeleton Loaders - Match actual content structure exactly
 const CategorySkeleton = () => (
-  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden animate-pulse" style={{ minHeight: '180px' }}>
+  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden animate-pulse">
     <div className="aspect-square bg-gray-200"></div>
     <div className="p-3 text-center">
       <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
@@ -59,7 +59,7 @@ const CategorySkeleton = () => (
 );
 
 const ProductCardSkeleton = () => (
-  <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse" style={{ minHeight: '380px' }}>
+  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden animate-pulse">
     <div className="aspect-square bg-gray-200"></div>
     <div className="p-4">
       <div className="h-4 bg-gray-200 rounded mb-2"></div>
@@ -692,11 +692,10 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Categories Section - CSS containment for CLS prevention */}
+        {/* Categories Section */}
         <section
           className="max-w-7xl mx-auto py-4 md:py-16"
           aria-labelledby="categories-heading"
-          style={{ contain: 'layout', minHeight: '250px' }}
         >
           <div className="hidden md:block text-center mb-10 px-4 sm:px-6 lg:px-8">
             <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
@@ -745,11 +744,10 @@ const LandingPage = () => {
           )}
         </section>
 
-        {/* Featured Products Section - CSS containment for CLS prevention */}
+        {/* Featured Products Section */}
         <section
           className="bg-white py-12 md:py-16"
           aria-labelledby="trending-heading"
-          style={{ contain: 'layout', minHeight: '900px' }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
@@ -774,7 +772,7 @@ const LandingPage = () => {
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6" style={{ minHeight: '800px' }}>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                 {[...Array(8)].map((_, i) => (
                   <ProductCardSkeleton key={i} />
                 ))}
