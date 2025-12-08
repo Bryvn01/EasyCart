@@ -50,80 +50,50 @@ const Login = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, var(--primary-50) 0%, var(--gray-50) 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 'var(--space-4)'
-    }}>
-      <div className="card" style={{
-        width: '100%',
-        maxWidth: '400px',
-        padding: 'var(--space-8)'
-      }}>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary-50 to-gray-50">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div style={{ fontSize: '3rem', marginBottom: 'var(--space-4)' }}>🔐</div>
+          <div className="text-5xl mb-4">🔐</div>
           <h1 className="text-2xl font-bold mb-2">Welcome Back</h1>
-          <p style={{ color: 'var(--gray-600)' }}>
+          <p className="text-gray-600">
             Sign in to your Easycart account
           </p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div style={{
-            background: 'var(--error)',
-            color: 'white',
-            padding: 'var(--space-3)',
-            borderRadius: 'var(--radius-md)',
-            marginBottom: 'var(--space-6)',
-            fontSize: '0.875rem'
-          }}>
+          <div className="bg-red-500 text-white p-3 rounded-md mb-6 text-sm">
             {error}
           </div>
         )}
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              fontWeight: '500',
-              marginBottom: 'var(--space-2)',
-              color: 'var(--gray-700)'
-            }}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Email Address
             </label>
             <input
               type="email"
               name="email"
               placeholder="Enter your email"
-              className="form-control"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
               value={formData.email}
               onChange={handleChange}
               required
             />
           </div>
 
-          <div className="form-group">
-            <label style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              fontWeight: '500',
-              marginBottom: 'var(--space-2)',
-              color: 'var(--gray-700)'
-            }}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Password
             </label>
             <input
               type="password"
               name="password"
               placeholder="Enter your password"
-              className="form-control"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
               value={formData.password}
               onChange={handleChange}
               required
@@ -132,15 +102,10 @@ const Login = () => {
 
           {/* Forgot Password Link */}
           {showForgotPassword && (
-            <div style={{ textAlign: 'right', marginBottom: 'var(--space-4)' }}>
+            <div className="text-right mb-4">
               <Link
                 to="/forgot-password"
-                style={{
-                  color: 'var(--primary-600)',
-                  textDecoration: 'none',
-                  fontSize: '0.875rem',
-                  fontWeight: '500'
-                }}
+                className="text-sm font-medium text-primary-600 hover:text-primary-700 no-underline"
               >
                 Forgot Password?
               </Link>
@@ -150,34 +115,18 @@ const Login = () => {
           <button
             ref={loginBtnRef}
             type="submit"
-            className="btn btn-primary"
-            style={{
-              width: '100%',
-              padding: 'var(--space-3)',
-              fontSize: '1rem',
-              fontWeight: '600',
-              transition: 'opacity 0.4s',
-              opacity: loginBtnHidden ? 0 : 1,
-              display: loginBtnHidden ? 'none' : undefined
-            }}
+            className={`w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg ${loginBtnHidden ? 'opacity-0 invisible' : 'opacity-100 visible'}`}
             disabled={loading}
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+
           {loginSuccess && (
             <div
               ref={successMsgRef}
               tabIndex={-1}
               aria-live="polite"
-              style={{
-                marginTop: '1rem',
-                background: 'var(--success, #22c55e)',
-                color: 'white',
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                fontWeight: 600,
-                outline: 'none',
-              }}
+              className="mt-4 bg-green-500 text-white p-3 rounded-md font-semibold text-center outline-none"
             >
               Login successful! Redirecting...
             </div>
@@ -185,29 +134,21 @@ const Login = () => {
         </form>
 
         {/* Footer */}
-        <div className="text-center" style={{ marginTop: 'var(--space-6)' }}>
-          <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', marginBottom: 'var(--space-3)' }}>
+        <div className="text-center mt-6">
+          <p className="text-sm text-gray-600 mb-3">
             Don't have an account?{' '}
             <Link
               to="/register"
-              style={{
-                color: 'var(--primary-600)',
-                textDecoration: 'none',
-                fontWeight: '500'
-              }}
+              className="text-primary-600 font-medium hover:text-primary-700 no-underline"
             >
               Sign up here
             </Link>
           </p>
-          <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem' }}>
+          <p className="text-sm text-gray-600">
             Or{' '}
             <Link
               to="/login/otp"
-              style={{
-                color: 'var(--primary-600)',
-                textDecoration: 'none',
-                fontWeight: '500'
-              }}
+              className="text-primary-600 font-medium hover:text-primary-700 no-underline"
             >
               Login with OTP (SMS/WhatsApp/Email)
             </Link>
