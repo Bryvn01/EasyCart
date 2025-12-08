@@ -51,7 +51,7 @@ def setup_2fa(request):
 def enable_2fa(request):
     """Enable 2FA after verifying token"""
     user = request.user
-    token = request.data.get("token")
+    token = str(request.data.get("token", "")).strip()
 
     if not token:
         return Response(
@@ -70,6 +70,7 @@ def enable_2fa(request):
         logger.info(f"2FA enabled for user {user.email}")
         return Response({"message": "2FA enabled successfully"})
     else:
+        logger.warning(f"Invalid 2FA token attempt for {user.email}: token={token}")
         return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
 
 

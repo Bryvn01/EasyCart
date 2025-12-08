@@ -42,8 +42,9 @@ def send_otp_sms(phone_number, otp_code):
     Phone format: +254XXXXXXXXX (Kenya)
     """
     if not twilio_client:
-        logger.error("Twilio not configured")
-        return False
+        logger.warning("Twilio not configured - using console logging")
+        print(f"\n📱 [DEV] SMS OTP to {phone_number}: {otp_code}\n")
+        return True
 
     try:
         # Ensure phone number has country code

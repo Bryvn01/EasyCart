@@ -8,12 +8,12 @@ if (!API_BASE_URL) {
   throw new Error('REACT_APP_API_URL is not set! Please check your .env file.');
 }
 
-// Log API configuration for debugging
-console.log('Admin Dashboard API Configuration:', {
-  baseURL: API_BASE_URL,
-  env: process.env.REACT_APP_API_URL || '(using default)',
-  timestamp: new Date().toISOString()
-});
+if (process.env.NODE_ENV === 'development') {
+  console.log('Admin Dashboard API Configuration:', {
+    baseURL: API_BASE_URL,
+    timestamp: new Date().toISOString()
+  });
+}
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -23,89 +23,30 @@ const api = axios.create({
   },
 });
 
-// Request interceptor - add auth token and logging
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('admin_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
-  // Log request for debugging
-  console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, {
-    baseURL: config.baseURL,
-    timeout: config.timeout,
-    hasAuth: !!token
-  });
-
   return config;
-}, (error) => {
-  console.error('[API Request Error]', error);
-  return Promise.reject(error);
-});
+}, (error) => Promise.reject(error));
 
-// Response interceptor - add logging and error handling
 api.interceptors.response.use(
-  (response) => {
-    console.log(`[API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`, {
-      status: response.status,
-      statusText: response.statusText
-    });
-    return response;
-  },
+  (response) => response,
   (error) => {
-    console.error('[API Response Error]', {
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      message: error.message,
-      data: error.response?.data
-    });
-
-    // Auto-logout on 401 Unauthorized
     if (error.response?.status === 401) {
       localStorage.removeItem('admin_token');
       localStorage.removeItem('admin_refresh_token');
       window.location.href = '/admin/login';
     }
-
     return Promise.reject(error);
   }
 );
 
 export const authAPI = {
-  login: async (credentials) => {
-    try {
-      console.log('[Auth] Attempting login...', { email: credentials.email });
-      const response = await api.post('/auth/login/', credentials);
-      console.log('[Auth] Login successful:', response.data);
-      return response;
-    } catch (error) {
-      console.error('[Auth] Login failed:', {
-        status: error.response?.status,
-        message: error.response?.data?.message || error.message,
-        isNetworkError: !error.response,
-        error
-      });
-      throw error;
-    }
-  },
+  login: (credentials) => api.post('/auth/login/', credentials),
   loginWith2FA: (email, token) => api.post('/auth/login/2fa/', { email, token }),
-  getProfile: async () => {
-    try {
-      console.log('[Auth] Fetching profile...');
-      const response = await api.get('/auth/profile/');
-      console.log('[Auth] Profile fetched:', response.data);
-      return response;
-    } catch (error) {
-      console.error('[Auth] Profile fetch failed:', {
-        status: error.response?.status,
-        message: error.message,
-        isNetworkError: !error.response
-      });
-      throw error;
-    }
-  },
+  getProfile: () => api.get('/auth/profile/'),
   setup2FA: () => api.post('/auth/2fa/setup/'),
   enable2FA: (token) => api.post('/auth/2fa/enable/', { token }),
   disable2FA: (token) => api.post('/auth/2fa/disable/', { token }),

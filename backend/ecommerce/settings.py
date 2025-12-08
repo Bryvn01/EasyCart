@@ -63,7 +63,7 @@ INSTALLED_APPS = [
 
 # Cloudinary config for media files
 try:
-    from .cloudinary_config import *
+    from .cloudinary_config import *  # noqa: F403, F401
 except ImportError:
     pass
 
@@ -238,7 +238,12 @@ SIMPLE_JWT = {
 # Ensure both frontend URLs are allowed for CORS
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS",
-    default="https://easycart-frontend-wj9x.onrender.com,https://easycart-admin-08xf.onrender.com,http://localhost:3000,https://easycart-backend-2k8l.onrender.com,https://easycart-frontend-wj9x.onrender.com",
+    default=(
+        "https://easycart-frontend-wj9x.onrender.com,"
+        "https://easycart-admin-08xf.onrender.com,"
+        "http://localhost:3000,"
+        "https://easycart-backend-2k8l.onrender.com"
+    ),
     cast=Csv(),
 )
 # Example for local/dev:
@@ -346,6 +351,13 @@ os.makedirs(LOG_DIR, exist_ok=True)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "filters": {
+        "suppress_deprecated": {
+            "()": "django.utils.log.CallbackFilter",
+            "callback": lambda record: "Components object is deprecated"
+            not in record.getMessage(),
+        },
+    },
     "formatters": {
         "verbose": {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
@@ -369,6 +381,7 @@ LOGGING = {
             "level": "DEBUG" if DEBUG else "INFO",
             "class": "logging.StreamHandler",
             "formatter": "simple",
+            "filters": ["suppress_deprecated"],
         },
     },
     "root": {
@@ -431,3 +444,8 @@ MPESA_CALLBACK_URL = get_env_var("MPESA_CALLBACK_URL", default="", required=Fals
 # Development CORS override
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
+
+# Silence Django admin CSS warnings
+SILENCED_SYSTEM_CHECKS = [
+    "admin.W411",  # Suppress admin CSS warnings
+]

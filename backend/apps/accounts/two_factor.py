@@ -32,5 +32,8 @@ def generate_qr_code(uri):
 
 def verify_totp(secret, token):
     """Verify TOTP token"""
+    if not secret or not token:
+        return False
+    token = str(token).strip().replace(" ", "")
     totp = pyotp.TOTP(secret)
-    return totp.verify(token, valid_window=1)  # Allow 30s window
+    return totp.verify(token, valid_window=2)  # Allow 60s window

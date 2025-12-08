@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Bryvn01"
+    given-names: ""
+title: "EasyCart - E-Commerce Web Application"
+version: 2.0.0
+date-released: 2025-01-01
+url: "https://github.com/Bryvn01/EasyCart"
+repository-code: "https://github.com/Bryvn01/EasyCart"
+license: MIT
+keywords:
+  - ecommerce
+  - django
+  - react
+  - postgresql
+  - jwt-authentication
+  - mpesa
+  - twilio

@@ -24,12 +24,10 @@ class MpesaPaymentService:
         )
 
     def get_access_token(self):
-        url = f"{self.base_url}/oauth/v1/generate?grant_type=client_credentials"
         if not self.consumer_key or not self.consumer_secret:
-            print("❌ M-Pesa credentials missing")
             return None
 
-        # Strip whitespace from credentials
+        url = f"{self.base_url}/oauth/v1/generate?grant_type=client_credentials"
         consumer_key = self.consumer_key.strip()
         consumer_secret = self.consumer_secret.strip()
 
@@ -37,30 +35,22 @@ class MpesaPaymentService:
             f"{consumer_key}:{consumer_secret}".encode()
         ).decode()
 
-        headers = {
-            "Authorization": f"Basic {credentials}",
-            "Content-Type": "application/json",
-        }
-
-        print(f"🔑 M-Pesa Auth Request:")
-        print(f"   URL: {url}")
-        print(f"   Consumer Key: {consumer_key[:10]}...")
-        print(f"   Encoded: {credentials[:20]}...")
+        headers = {"Authorization": f"Basic {credentials}"}
 
         try:
-            response = requests.get(url, headers=headers, timeout=30, verify=True)
-            print(f"📡 M-Pesa Response: {response.status_code}")
-            print(f"   Body: {response.text[:200]}")
+            response = requests.get(url, headers=headers, timeout=30)
             response.raise_for_status()
             return response.json().get("access_token")
-        except requests.exceptions.RequestException as e:
-            print(f"❌ M-Pesa Auth Failed: {e}")
+        except requests.exceptions.RequestException:
             return None
 
     def initiate_stk_push(self, phone_number, amount, order_id):
         access_token = self.get_access_token()
         if not access_token:
-            return {"success": False, "message": "Failed to get access token"}
+            return {
+                "success": False,
+                "message": "M-Pesa service unavailable. Please try another payment method.",
+            }
 
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         password = base64.b64encode(
@@ -92,22 +82,15 @@ class MpesaPaymentService:
             "TransactionDesc": f"Payment for Order {order_id}",
         }
 
-        print(f"📤 STK Push Request:")
-        print(f"   Payload: {payload}")
-
         try:
-            response = requests.post(
-                url, json=payload, headers=headers, timeout=30, verify=True
-            )
-            print(f"📥 STK Push Response: {response.status_code}")
-            print(f"   Body: {response.text}")
+            response = requests.post(url, json=payload, headers=headers, timeout=30)
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"❌ STK Push Failed: {e}")
-            if hasattr(e, "response") and e.response is not None:
-                print(f"   Error Body: {e.response.text}")
-            return {"success": False, "message": "Payment request failed"}
+        except requests.exceptions.RequestException:
+            return {
+                "success": False,
+                "message": "M-Pesa payment request failed. Please try again.",
+            }
 
 
 class CardPaymentService:
@@ -208,8 +191,14 @@ class PayPalPaymentService:
                 }
             ],
             "application_context": {
-                "return_url": f'{os.environ.get("FRONTEND_URL", "http://localhost:3000")}/payment/success?order_id={order_id}',
-                "cancel_url": f'{os.environ.get("FRONTEND_URL", "http://localhost:3000")}/payment/cancel?order_id={order_id}',
+                "return_url": (
+                    f'{os.environ.get("FRONTEND_URL", "http://localhost:3000")}'
+                    f"/payment/success?order_id={order_id}"
+                ),
+                "cancel_url": (
+                    f'{os.environ.get("FRONTEND_URL", "http://localhost:3000")}'
+                    f"/payment/cancel?order_id={order_id}"
+                ),
                 "brand_name": "EasyCart",
                 "user_action": "PAY_NOW",
             },
