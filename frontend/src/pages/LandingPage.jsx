@@ -57,12 +57,14 @@ const CategorySkeleton = () => (
 );
 
 const ProductCardSkeleton = () => (
-  <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
+  <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse" style={{ minHeight: '380px' }}>
     <div className="aspect-square bg-gray-200"></div>
     <div className="p-4">
       <div className="h-4 bg-gray-200 rounded mb-2"></div>
-      <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
-      <div className="h-8 bg-gray-200 rounded"></div>
+      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+      <div className="h-6 bg-gray-200 rounded w-1/3 mb-3"></div>
+      <div className="h-10 bg-gray-200 rounded"></div>
     </div>
   </div>
 );
@@ -768,7 +770,7 @@ const LandingPage = () => {
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6" style={{ minHeight: '800px' }}>
                 {[...Array(8)].map((_, i) => (
                   <ProductCardSkeleton key={i} />
                 ))}
