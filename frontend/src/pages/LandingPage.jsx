@@ -111,9 +111,15 @@ const CategoryCard = React.memo(({ category, getCategoryIcon }) => {
 CategoryCard.displayName = 'CategoryCard';
 
 // Professional Product Card Component with Star Ratings
-const ProductCard = React.memo(({ product, onAddToCart }) => {
+// index prop used to prioritize loading for above-the-fold images (LCP optimization)
+const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
+
+  // Prioritize loading for first 2 products (above-the-fold)
+  const isAboveFold = index < 2;
+  const loadingStrategy = isAboveFold ? 'eager' : 'lazy';
+  const fetchPriorityValue = index === 0 ? 'high' : 'auto';
 
   const handleAddToCartClick = useCallback((e) => {
     e.preventDefault();
@@ -141,7 +147,8 @@ const ProductCard = React.memo(({ product, onAddToCart }) => {
                 className={`w-full h-full object-cover transition-transform duration-300 ${
                   imageLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-105'
                 }`}
-                loading="lazy"
+                loading={loadingStrategy}
+                fetchPriority={fetchPriorityValue}
                 width="300"
                 height="300"
                 onLoad={() => setImageLoading(false)}
@@ -184,7 +191,7 @@ const ProductCard = React.memo(({ product, onAddToCart }) => {
 
           {isLowStock && !isOutOfStock && (
             <div className="absolute top-3 right-3">
-              <span className="bg-orange-500 text-white px-3 py-1 rounded-md font-medium text-xs shadow-lg">
+              <span className="bg-orange-700 text-white px-3 py-1 rounded-md font-medium text-xs shadow-lg">
                 Only {product.stock} left
               </span>
             </div>
@@ -522,7 +529,7 @@ const LandingPage = () => {
   // Note: Update these values with real URLs and contact info before production deployment
   // Set REACT_APP_SITE_URL in environment for different deployments (dev/staging/prod)
   const siteUrl = process.env.REACT_APP_SITE_URL || 'https://easycart.co.ke';
-  
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -556,24 +563,24 @@ const LandingPage = () => {
           content="Shop the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi. Secure payments with M-Pesa, Visa, and Mastercard."
         />
         <meta name="keywords" content="online shopping Kenya, groceries Nairobi, electronics, fashion, M-Pesa payments" />
-        
+
         {/* Preconnect hints for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-        
+
         {/* Open Graph / Social Media */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="EasyCart - Kenya's Leading Online Shopping Platform" />
         <meta property="og:description" content="Shop the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi." />
         <meta property="og:url" content={siteUrl} />
         <meta property="og:site_name" content="EasyCart" />
-        
+
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="EasyCart - Kenya's Leading Online Shopping Platform" />
         <meta name="twitter:description" content="Shop the best deals on groceries, electronics, fashion, and more." />
-        
+
         {/* Structured Data */}
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
@@ -768,11 +775,12 @@ const LandingPage = () => {
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-                {featuredProducts.map((product) => (
+                {featuredProducts.map((product, index) => (
                   <ProductCard
                     key={product.id}
                     product={product}
                     onAddToCart={handleAddToCart}
+                    index={index}
                   />
                 ))}
               </div>
