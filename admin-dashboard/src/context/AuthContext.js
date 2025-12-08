@@ -24,40 +24,30 @@ export const AuthProvider = ({ children }) => {
           if (userData.role === 'admin' || userData.is_admin || userData.is_superuser) {
             setUser(userData);
           } else {
-            console.warn('[Auth] User lacks admin privileges');
             localStorage.removeItem('admin_token');
             localStorage.removeItem('admin_refresh_token');
           }
         })
-        .catch((error) => {
-          console.error('[Auth] Profile fetch failed:', error.message);
+        .catch(() => {
           localStorage.removeItem('admin_token');
           localStorage.removeItem('admin_refresh_token');
         })
-        .finally(() => {
-          setLoading(false);
-        });
+        .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
   }, []);
 
   const login = async (credentials) => {
-    console.log('[AuthContext] Login attempt', { email: credentials.email });
-
     try {
       const response = await authAPI.login(credentials);
-      const { user, access, refresh } = response.data;
+      const { user, access, refresh, requires_2fa } = response.data;
 
-      console.log('[AuthContext] Login response received', {
-        hasUser: !!user,
-        hasAccess: !!access,
-        role: user?.role,
-        is_admin: user?.is_admin,
-        is_superuser: user?.is_superuser
-      });
+      if (requires_2fa) {
+        return response;
+      }
 
-      if (user.role !== 'admin' && !user.is_admin && !user.is_superuser) {
+      if (!user || (user.role !== 'admin' && !user.is_admin && !user.is_superuser)) {
         throw new Error('Access denied. Admin privileges required.');
       }
 
@@ -66,15 +56,28 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('admin_refresh_token', refresh);
       }
       setUser(user);
-      console.log('[AuthContext] Login successful, user set');
       return response;
     } catch (error) {
-      console.error('[AuthContext] Login error', {
-        email: credentials.email,
-        error: error.message,
-        hasResponse: !!error.response,
-        status: error.response?.status
-      });
+      throw error;
+    }
+  };
+
+  const loginWith2FA = async (email, token) => {
+    try {
+      const response = await authAPI.loginWith2FA(email, token);
+      const { user, access, refresh } = response.data;
+
+      if (!user || (user.role !== 'admin' && !user.is_admin && !user.is_superuser)) {
+        throw new Error('Access denied. Admin privileges required.');
+      }
+
+      localStorage.setItem('admin_token', access);
+      if (refresh) {
+        localStorage.setItem('admin_refresh_token', refresh);
+      }
+      setUser(user);
+      return response;
+    } catch (error) {
       throw error;
     }
   };
@@ -88,6 +91,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     login,
+    loginWith2FA,
     logout,
     loading,
     isAuthenticated: !!user,

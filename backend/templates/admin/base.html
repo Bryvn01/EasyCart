@@ -1,10 +1,7 @@
 {% extends "admin/base.html" %}
+{% load static %}
 
 {% block extrahead %}
 {{ block.super }}
 <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
-<style>
-  /* Suppress deprecated Components warning by overriding */
-  .Components { display: none; }
-</style>
 {% endblock %}

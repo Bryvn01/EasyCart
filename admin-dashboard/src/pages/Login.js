@@ -6,61 +6,109 @@ import toast from 'react-hot-toast';
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [requires2FA, setRequires2FA] = useState(false);
+  const [twoFACode, setTwoFACode] = useState('');
+  const { login, loginWith2FA } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    console.log('[Login] Form submitted', { email: credentials.email });
-
-    // Set a timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      console.warn('[Login] Request timeout - forcing demo mode');
-      if (credentials.email === 'admin@easycart.com') {
-        toast.success('Demo login successful! (Backend timeout)');
-        setLoading(false);
-        navigate('/admin/dashboard');
-      } else {
-        toast.error('Login timeout. Please try again or use demo credentials.');
-        setLoading(false);
-      }
-    }, 15000); // 15 second timeout
-
     try {
-      console.log('[Login] Calling login function...');
-      await login(credentials);
-      clearTimeout(timeoutId);
-      toast.success('Login successful!');
-      navigate('/admin/dashboard');
-    } catch (error) {
-      clearTimeout(timeoutId);
-      console.error('[Login] Login error:', error);
+      const response = await login(credentials);
 
-      // Enhanced error message
-      let errorMessage = 'Login failed';
-      if (!error.response) {
-        errorMessage = 'Cannot connect to server. Using demo mode.';
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      // Always allow admin@easycart.com to login as fallback
-      if (credentials.email === 'admin@easycart.com') {
-        console.log('[Login] Using demo mode fallback');
-        toast.success('Demo login successful! (Offline mode)');
-        navigate('/admin/dashboard');
+      if (response?.data?.requires_2fa) {
+        setRequires2FA(true);
+        toast.info('Please enter your 2FA code');
         return;
       }
 
+      toast.success('Login successful!');
+      navigate('/admin/dashboard');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
       toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+
+  const handle2FASubmit = async (e) => {
+    e.preventDefault();
+    if (twoFACode.length !== 6) {
+      toast.error('Please enter a valid 6-digit code');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await loginWith2FA(credentials.email, twoFACode);
+      toast.success('Login successful!');
+      navigate('/admin/dashboard');
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || error.message || 'Invalid 2FA code';
+      toast.error(errorMessage);
+      if (errorMessage.includes('Admin privileges')) {
+        handleBack();
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    setRequires2FA(false);
+    setTwoFACode('');
+    setCredentials({ email: '', password: '' });
+  };
+
+  if (requires2FA) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+              Two-Factor Authentication
+            </h2>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              Enter the 6-digit code from your authenticator app
+            </p>
+          </div>
+          <form className="mt-8 space-y-6" onSubmit={handle2FASubmit}>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength="6"
+              required
+              autoFocus
+              autoComplete="one-time-code"
+              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-center text-2xl tracking-widest"
+              placeholder="000000"
+              value={twoFACode}
+              onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, ''))}
+            />
+            <button
+              type="submit"
+              disabled={loading || twoFACode.length !== 6}
+              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Verifying...' : 'Verify'}
+            </button>
+            <button
+              type="button"
+              onClick={handleBack}
+              disabled={loading}
+              className="w-full text-center text-sm text-blue-600 hover:text-blue-500 disabled:opacity-50"
+            >
+              Back to login
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -107,11 +155,13 @@ const Login = () => {
             </button>
           </div>
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Demo: admin@easycart.com / admin123
-            </p>
-          </div>
+          {process.env.NODE_ENV === 'development' && (
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Demo: admin@easycart.com / admin123
+              </p>
+            </div>
+          )}
         </form>
       </div>
     </div>
