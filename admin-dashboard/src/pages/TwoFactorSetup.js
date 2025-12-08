@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
-import { Shield, Key, CheckCircle } from 'lucide-react';
+import { Shield, CheckCircle } from 'lucide-react';
 
 const TwoFactorSetup = () => {
   const [status, setStatus] = useState({ enabled: false, is_admin: false });
