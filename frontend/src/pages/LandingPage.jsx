@@ -48,11 +48,13 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => (
   </div>
 );
 
-// Skeleton Loaders
+// Skeleton Loaders - Dimensions match actual content to prevent CLS
 const CategorySkeleton = () => (
-  <div className="bg-white rounded-xl p-6 shadow-sm animate-pulse">
-    <div className="aspect-square bg-gray-200 rounded-lg mx-auto mb-3"></div>
-    <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden animate-pulse" style={{ minHeight: '180px' }}>
+    <div className="aspect-square bg-gray-200"></div>
+    <div className="p-3 text-center">
+      <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+    </div>
   </div>
 );
 
@@ -690,10 +692,11 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Categories Section */}
+        {/* Categories Section - CSS containment for CLS prevention */}
         <section
           className="max-w-7xl mx-auto py-4 md:py-16"
           aria-labelledby="categories-heading"
+          style={{ contain: 'layout', minHeight: '250px' }}
         >
           <div className="hidden md:block text-center mb-10 px-4 sm:px-6 lg:px-8">
             <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
@@ -742,10 +745,11 @@ const LandingPage = () => {
           )}
         </section>
 
-        {/* Featured Products Section */}
+        {/* Featured Products Section - CSS containment for CLS prevention */}
         <section
           className="bg-white py-12 md:py-16"
           aria-labelledby="trending-heading"
+          style={{ contain: 'layout', minHeight: '900px' }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
