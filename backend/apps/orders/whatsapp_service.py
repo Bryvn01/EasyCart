@@ -16,7 +16,8 @@ class WhatsAppService:
     def send_order_confirmation(self, order):
         """Send order confirmation to customer"""
         if not self.account_sid or not self.auth_token:
-            print("⚠️ Twilio not configured")
+            print("⚠️ Twilio not configured - skipping WhatsApp notification")
+            print(f"   Order #{order.id} for {order.user.email}")
             return False
 
         customer_name = f"{order.user.first_name} {order.user.last_name}".strip()
@@ -137,4 +138,7 @@ EasyCart Team
 
         except Exception as e:
             print(f"❌ WhatsApp error: {e}")
+            print(f"   To: {to}")
+            print(f"   From: {self.whatsapp_from}")
+            print(f"   Account SID: {self.account_sid[:10]}...")
             return False
