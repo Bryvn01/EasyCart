@@ -100,25 +100,31 @@ const ProductFilterBar = ({ onChange, initial }) => {
       </div>
       <div className="flex-1 flex gap-2 items-end">
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Price Min</label>
+          <label htmlFor="price-min" className="block text-sm font-medium text-gray-700 mb-1">Price Min</label>
           <input
+            id="price-min"
             type="number"
+            inputMode="numeric"
             min="0"
             value={price[0]}
             onChange={e => setPrice([+e.target.value, price[1]])}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[color:var(--primary,#2563eb)] focus:border-transparent"
             placeholder="Min"
+            aria-label="Minimum price filter"
           />
         </div>
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Price Max</label>
+          <label htmlFor="price-max" className="block text-sm font-medium text-gray-700 mb-1">Price Max</label>
           <input
+            id="price-max"
             type="number"
+            inputMode="numeric"
             min="0"
             value={price[1]}
             onChange={e => setPrice([price[0], +e.target.value])}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[color:var(--primary,#2563eb)] focus:border-transparent"
             placeholder="Max"
+            aria-label="Maximum price filter"
           />
         </div>
       </div>
