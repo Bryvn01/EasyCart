@@ -58,6 +58,34 @@ const CategorySkeleton = () => (
   </div>
 );
 
+// Mobile skeleton matches HorizontalCategoryScroll layout exactly
+const MobileCategorySkeleton = () => (
+  <div className="mb-4" style={{ minHeight: '160px' }}>
+    <div className="px-4 mb-3">
+      <div className="h-5 bg-gray-200 rounded w-32 mb-1 animate-pulse"></div>
+      <div className="h-4 bg-gray-200 rounded w-40 animate-pulse"></div>
+    </div>
+    <div className="overflow-hidden py-3">
+      <div className="flex gap-3 px-4">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="flex-shrink-0 w-22 h-22 bg-gray-200 rounded-2xl animate-pulse"
+            style={{ width: '88px', height: '88px' }}
+          ></div>
+        ))}
+      </div>
+    </div>
+    <div className="flex justify-center mt-2">
+      <div className="flex space-x-1.5">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse"></div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
 const ProductCardSkeleton = () => (
   <div className="bg-white rounded-lg border border-gray-200 overflow-hidden animate-pulse">
     <div className="aspect-square bg-gray-200"></div>
@@ -710,13 +738,20 @@ const LandingPage = () => {
           </div>
 
           {loading ? (
-            <div className="px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                {[...Array(6)].map((_, i) => (
-                  <CategorySkeleton key={i} />
-                ))}
+            <>
+              {/* Mobile skeleton - matches HorizontalCategoryScroll layout */}
+              <div className="md:hidden">
+                <MobileCategorySkeleton />
               </div>
-            </div>
+              {/* Desktop skeleton - matches grid layout */}
+              <div className="hidden md:block px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                  {[...Array(6)].map((_, i) => (
+                    <CategorySkeleton key={i} />
+                  ))}
+                </div>
+              </div>
+            </>
           ) : (
             <>
               {/* Mobile: Horizontal Scroll */}

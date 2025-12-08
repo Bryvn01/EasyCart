@@ -19,7 +19,7 @@ const HorizontalCategoryScroll = ({ categories, selectedCategory, onSelectCatego
   }, [selectedCategory]);
 
   return (
-    <div className="md:hidden mb-4">
+    <div className="md:hidden mb-4" style={{ minHeight: '160px' }}>
       <div className="px-4 mb-3">
         <h2 className="text-lg font-bold text-gray-900 mb-1">Shop by Category</h2>
         <p className="text-sm text-gray-600">Find what you're looking for</p>
