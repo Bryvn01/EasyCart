@@ -32,9 +32,7 @@ const InstallPWA = () => {
     if (!installPrompt) return;
 
     installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-
-    console.log(`User response to install prompt: ${outcome}`);
+    await installPrompt.userChoice;
 
     setInstallPrompt(null);
     setShowPrompt(false);
