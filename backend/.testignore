@@ -1,0 +1,5 @@
+# Files to exclude from Django test discovery
+check_twilio.py
+manage.py
+wsgi.py
+asgi.py
