@@ -68,7 +68,7 @@ function App() {
                 <ScrollToTop />
                 <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
                   <Navbar />
-                  <main className="flex-1">
+                  <main className="flex-1 mobile-safe-content">
                     <Suspense fallback={<Loading size="lg" className="py-20" />}>
                       <Routes>
                         <Route path="/" element={<LandingPage />} />

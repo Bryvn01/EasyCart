@@ -3,6 +3,7 @@
 @import './styles/instagram-mobile.css';
 @import './styles/mobile-product-enhancements.css';
 @import './styles/mobile-compact-layout.css';
+@import './styles/mobile-ux-best-practices.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -48,8 +49,9 @@
   --safe-area-right: env(safe-area-inset-right, 0px);
   --nav-height: 64px;
   --mobile-header-height: 56px;
+  --bottom-nav-height: 64px;
   --fab-offset: calc(var(--nav-height) + 16px);
-  --content-bottom-padding: calc(var(--nav-height) + var(--safe-area-bottom) + 16px);
+  --content-bottom-padding: calc(var(--bottom-nav-height) + var(--safe-area-bottom) + 24px);
   --content-top-padding: calc(var(--mobile-header-height) + var(--safe-area-top));
 
   /* Touch Target Standards (WCAG 2.5.5) */
