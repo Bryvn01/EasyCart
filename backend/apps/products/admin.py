@@ -1,7 +1,40 @@
 from django.contrib import admin
 from django import forms
+from django.utils import timezone
+import pytz
 from simple_history.admin import SimpleHistoryAdmin
 from .models import Category, Product
+
+
+class TimezoneAwareAdmin(admin.ModelAdmin):
+    """Base admin class that displays times in East Africa Time (UTC+3)"""
+
+    def get_display_timezone(self):
+        """Get the timezone for display (East Africa Time)"""
+        return pytz.timezone("Africa/Nairobi")  # UTC+3
+
+    def display_local_time(self, obj, field_name):
+        """Convert UTC time to local timezone for display"""
+        utc_time = getattr(obj, field_name)
+        if utc_time and timezone.is_aware(utc_time):
+            local_tz = self.get_display_timezone()
+            local_time = utc_time.astimezone(local_tz)
+            return local_time.strftime("%Y-%m-%d %I:%M:%S %p %Z")
+        return utc_time
+
+    def created_at_local(self, obj):
+        """Display created_at in local timezone"""
+        return self.display_local_time(obj, "created_at")
+
+    created_at_local.short_description = "Created At (Local)"
+    created_at_local.admin_order_field = "created_at"
+
+    def updated_at_local(self, obj):
+        """Display updated_at in local timezone"""
+        return self.display_local_time(obj, "updated_at")
+
+    updated_at_local.short_description = "Updated At (Local)"
+    updated_at_local.admin_order_field = "updated_at"
 
 
 class CategoryAdminForm(forms.ModelForm):
@@ -17,16 +50,17 @@ class CategoryAdminForm(forms.ModelForm):
 
 
 @admin.register(Category)
-class CategoryAdmin(SimpleHistoryAdmin):
+class CategoryAdmin(TimezoneAwareAdmin, SimpleHistoryAdmin):
     form = CategoryAdminForm
-    list_display = ["name", "description", "image_preview", "created_at"]
+    list_display = ["name", "description", "image_preview", "created_at_local"]
     search_fields = ["name"]
     list_filter = ["created_at"]
-    readonly_fields = ["image_preview"]
+    readonly_fields = ["image_preview", "created_at_local", "created_at"]
 
     fieldsets = (
         ("Basic Information", {"fields": ("name", "slug", "description", "is_active")}),
         ("Media", {"fields": ("image_url", "image", "image_preview")}),
+        ("Timestamps", {"fields": ("created_at_local", "created_at")}),
     )
 
     def image_preview(self, obj):
@@ -39,7 +73,7 @@ class CategoryAdmin(SimpleHistoryAdmin):
 
 
 @admin.register(Product)
-class ProductAdmin(SimpleHistoryAdmin):
+class ProductAdmin(TimezoneAwareAdmin, SimpleHistoryAdmin):
     list_display = [
         "name",
         "category",
@@ -47,13 +81,19 @@ class ProductAdmin(SimpleHistoryAdmin):
         "stock",
         "is_active",
         "is_featured",
-        "created_at",
+        "created_at_local",
         "image_preview",
     ]
     list_filter = ["category", "is_active", "is_featured", "created_at"]
     search_fields = ["name", "description"]
     list_editable = ["price", "stock", "is_active", "is_featured"]
-    readonly_fields = ["created_at", "updated_at", "image_preview"]
+    readonly_fields = [
+        "created_at_local",
+        "updated_at_local",
+        "created_at",
+        "updated_at",
+        "image_preview",
+    ]
 
     actions = ["make_active", "make_featured"]
 
