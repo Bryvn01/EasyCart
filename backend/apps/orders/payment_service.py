@@ -1,7 +1,6 @@
 import requests
 import base64
 from datetime import datetime
-from django.conf import settings
 from django.utils.text import get_valid_filename
 import os
 from decouple import config
@@ -20,11 +19,15 @@ class MpesaPaymentService:
             "MPESA_CALLBACK_URL",
             default="https://yourdomain.com/api/payments/mpesa/callback/",
         )
+        # Allow explicit control of M-Pesa environment (sandbox vs live)
+        # Use MPESA_ENVIRONMENT=sandbox for testing, live for production
+        mpesa_env = config("MPESA_ENVIRONMENT", default="sandbox").lower()
         self.base_url = (
             "https://sandbox.safaricom.co.ke"
-            if settings.DEBUG
+            if mpesa_env == "sandbox"
             else "https://api.safaricom.co.ke"
         )
+        logger.info(f"M-Pesa initialized in {mpesa_env} mode: {self.base_url}")
 
     def get_access_token(self):
         if not self.consumer_key or not self.consumer_secret:
