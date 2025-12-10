@@ -2,13 +2,10 @@ from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
-from django.utils.text import get_valid_filename
-from django.views.decorators.csrf import csrf_protect
-from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 from django.utils.html import escape
-from django.core.exceptions import ValidationError
 import json
 import re
 import requests
@@ -22,13 +19,24 @@ from .payment_service import (
 )
 from .whatsapp_service import WhatsAppService
 
+# Idempotency import is used locally in add_to_cart function
+
+
+class OrderPagination(PageNumberPagination):
+    """Custom pagination for orders with configurable page size."""
+
+    page_size = 20
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
 
 class OrderListView(generics.ListCreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = OrderPagination
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        return Order.objects.filter(user=self.request.user).order_by("-created_at")
 
 
 class OrderDetailView(generics.RetrieveAPIView):
@@ -51,7 +59,7 @@ def get_cart(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def add_to_cart(request):
-    from .idempotency import idempotent_operation
+    from .idempotency import idempotent_operation  # noqa: F401
 
     cart, created = Cart.objects.get_or_create(user=request.user)
     product_id = request.data.get("product_id")

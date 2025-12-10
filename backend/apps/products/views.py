@@ -4,14 +4,12 @@ from .serializers import (
     CategorySerializer,
     ProductCreateUpdateSerializer,
 )
-from rest_framework import generics, filters, permissions, status
+from rest_framework import permissions, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django_filters.rest_framework import DjangoFilterBackend
 from django.db import models
 from .models import Product, Category
-from .serializers import ProductSerializer, CategorySerializer
 from .cache import ProductCache
 import logging
 
@@ -172,10 +170,35 @@ class ProductListView(APIView):
                 products, many=True, context={"request": request}
             )
             total_pages = (total_count + page_size - 1) // page_size
+
+            # Build pagination URLs following REST best practices
+            base_url = request.build_absolute_uri(request.path)
+            next_url = None
+            previous_url = None
+
+            if page < total_pages:
+                # Build next URL with current query params
+                from urllib.parse import urlencode
+
+                next_params = request.query_params.copy()
+                next_params["page"] = page + 1
+                next_url = f"{base_url}?{urlencode(next_params)}"
+
+            if page > 1:
+                # Build previous URL with current query params
+                from urllib.parse import urlencode
+
+                prev_params = request.query_params.copy()
+                prev_params["page"] = page - 1
+                previous_url = f"{base_url}?{urlencode(prev_params)}"
+
             response_data = {
                 "count": total_count,
-                "next": page < total_pages,
-                "previous": page > 1,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": total_pages,
+                "next": next_url,
+                "previous": previous_url,
                 "results": serializer.data,
             }
 
