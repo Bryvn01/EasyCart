@@ -81,9 +81,12 @@ const PWAInstallPrompt = () => {
       const browsingTime = parseInt(sessionStorage.getItem('pwa-browsing-time') || '0');
 
       // Show if: 1+ page views OR added to cart OR 60s browsing
-      console.log('PWA: Checking engagement - pageViews:', pageViews);
-      if (pageViews >= 1 || addedToCart === 'true' || browsingTime >= 60000) {
-        console.log('PWA: Showing prompt!');
+      console.log('PWA: Checking engagement - pageViews:', pageViews, 'addedToCart:', addedToCart, 'browsingTime:', browsingTime);
+
+      const shouldShow = pageViews >= 1 || addedToCart === 'true' || browsingTime >= 60000;
+
+      if (shouldShow) {
+        console.log('PWA: Engagement criteria met, showing prompt');
         setShowPrompt(true);
 
         // Analytics event
@@ -94,15 +97,17 @@ const PWAInstallPrompt = () => {
             browsing_time_seconds: Math.floor(browsingTime / 1000)
           });
         }
+      } else {
+        console.log('PWA: Engagement criteria not met yet');
       }
     };
 
-    // Show immediately for testing
-    console.log('PWA: Setting timer to show prompt');
+    // Check engagement after a short delay
+    console.log('PWA: Setting timer to check engagement');
     const engagementTimer = setTimeout(() => {
       console.log('PWA: Timer fired, checking engagement');
       checkEngagement();
-    }, 2000);
+    }, 3000); // Show after 3 seconds for better UX
 
     // Track browsing time
     const startTime = Date.now();
@@ -138,8 +143,11 @@ const PWAInstallPrompt = () => {
       // Android/Chrome - use native prompt
       try {
         setIsInstalling(true);
-        deferredPrompt.prompt();
+        const promptResult = await deferredPrompt.prompt();
+        console.log('PWA: Prompt result:', promptResult);
+
         const { outcome } = await deferredPrompt.userChoice;
+        console.log('PWA: User choice:', outcome);
 
         // Analytics event
         if (window.gtag) {
@@ -154,10 +162,12 @@ const PWAInstallPrompt = () => {
           localStorage.setItem('pwa-install-dismissed-permanent', 'true');
           setShowPrompt(false);
 
-          // Show success feedback
-          if (window.toast) {
-            window.toast.success('App installed! Look for EasyCart on your home screen.');
-          }
+          // Show success feedback using react-hot-toast
+          const toast = (await import('react-hot-toast')).default;
+          toast.success('App installed! Look for EasyCart on your home screen.', {
+            duration: 5000,
+            icon: '✅'
+          });
         } else {
           // User declined - hide for 7 days
           handleDismiss(false);
@@ -180,18 +190,30 @@ const PWAInstallPrompt = () => {
       console.log('PWA: Showing iOS instructions');
       const modal = document.getElementById('pwa-ios-instructions');
       console.log('PWA: Modal element:', modal);
-      modal?.classList.add('show');
+      if (modal) {
+        modal.classList.add('show');
+      }
     } else {
       console.log('PWA: No deferred prompt available');
+      // Show generic instructions
+      const toast = (await import('react-hot-toast')).default;
+      toast('To install: Open browser menu → Add to Home Screen', {
+        duration: 5000,
+        icon: 'ℹ️'
+      });
     }
   };
 
   const handleDismiss = (permanent = false) => {
+    console.log('PWA: Dismiss clicked, permanent:', permanent);
+
     if (permanent) {
       localStorage.setItem('pwa-install-dismissed-permanent', 'true');
     } else {
       localStorage.setItem('pwa-install-dismissed', Date.now().toString());
     }
+
+    // Immediately hide the prompt
     setShowPrompt(false);
 
     // Analytics event
@@ -203,16 +225,8 @@ const PWAInstallPrompt = () => {
     }
   };
 
-  // Always show for testing
-  // if (!showPrompt || isStandalone) return null;
-
-  // Force show for debugging
-  if (!showPrompt && !isStandalone) {
-    // Show after 2 seconds regardless
-    setTimeout(() => setShowPrompt(true), 2000);
-  }
-
-  if (isStandalone) return null;
+  // Don't render if already installed or not showing
+  if (isStandalone || !showPrompt) return null;
 
   // INDUSTRY BEST PRACTICE: Compact banner at bottom, not modal
   return (
@@ -244,7 +258,6 @@ const PWAInstallPrompt = () => {
               onClick={handleInstall}
               disabled={isInstalling}
               aria-label="Install app"
-              style={{ opacity: isInstalling ? 0.7 : 1 }}
             >
               {isInstalling ? 'Installing...' : 'Install'}
             </button>
@@ -261,7 +274,7 @@ const PWAInstallPrompt = () => {
           {!isIOS && !deferredPrompt && (
             <button
               className="pwa-info-btn"
-              onClick={() => alert('To install: Open browser menu → Add to Home Screen')}
+              onClick={handleInstall}
               aria-label="Show install instructions"
             >
               How?
@@ -271,6 +284,7 @@ const PWAInstallPrompt = () => {
             className="pwa-dismiss-btn"
             onClick={() => handleDismiss(false)}
             aria-label="Dismiss for now"
+            type="button"
           >
             ✕
           </button>
@@ -279,15 +293,29 @@ const PWAInstallPrompt = () => {
 
       {/* iOS Instructions Modal (only shown when user clicks "How?") */}
       {isIOS && (
-        <div id="pwa-ios-instructions" className="pwa-ios-modal">
-          <div className="pwa-ios-modal-content">
+        <div
+          id="pwa-ios-instructions"
+          className="pwa-ios-modal"
+          onClick={(e) => {
+            // Close if clicking on backdrop
+            if (e.target.id === 'pwa-ios-instructions') {
+              e.currentTarget.classList.remove('show');
+              handleDismiss(true);
+            }
+          }}
+        >
+          <div className="pwa-ios-modal-content" onClick={(e) => e.stopPropagation()}>
             <button
               className="pwa-ios-close"
               onClick={() => {
-                document.getElementById('pwa-ios-instructions')?.classList.remove('show');
+                const modal = document.getElementById('pwa-ios-instructions');
+                if (modal) {
+                  modal.classList.remove('show');
+                }
                 handleDismiss(true); // Permanently dismiss after viewing instructions
               }}
               aria-label="Close"
+              type="button"
             >
               ✕
             </button>
