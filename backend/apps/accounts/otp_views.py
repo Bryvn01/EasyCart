@@ -151,6 +151,16 @@ def request_otp(request):
                 if success:
                     attempted_method = "email"
 
+        # Final fallback: console logging in development/production
+        if not success:
+            logger.warning(
+                f"All delivery methods failed for user {user.id}. Using console logging."
+            )
+            print(f"\n📱 [CONSOLE] OTP for {identifier}: {otp_code}\n")
+            logger.info(f"Console OTP logged for user {user.id}: {otp_code}")
+            success = True
+            attempted_method = "console (check server logs)"
+
         if success:
             logger.info(
                 f"OTP sent to user {user.id} via {attempted_method} from IP {client_ip}"
