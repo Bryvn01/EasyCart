@@ -7,28 +7,87 @@ from apps.products.health_views import health_check, liveness_probe, readiness_p
 
 
 def api_root(request):
-    # Don't expose admin URL in production
+    """
+    API root endpoint following REST best practices.
+
+    Returns:
+    - Service metadata (name, version, description)
+    - Available API endpoints with descriptions
+    - API documentation link
+    - Health check endpoints
+
+    HTTP Status: 200 OK
+    """
     endpoints = {
-        "products": "/api/products/",
-        "categories": "/api/products/categories/",
-        "auth": "/api/auth/",
-        "orders": "/api/orders/",
-        "payments": "/api/payments/",
-        "health": "/api/health/",
-        "liveness": "/api/health/live/",
-        "readiness": "/api/health/ready/",
+        "products": {
+            "url": "/api/products/",
+            "description": "Product catalog and inventory management",
+            "methods": ["GET", "POST", "PUT", "DELETE"],
+        },
+        "categories": {
+            "url": "/api/products/categories/",
+            "description": "Product category management",
+            "methods": ["GET", "POST", "PUT", "DELETE"],
+        },
+        "auth": {
+            "url": "/api/auth/",
+            "description": "Authentication and user management",
+            "methods": ["POST"],
+            "endpoints": {
+                "login": "/api/auth/login/",
+                "register": "/api/auth/register/",
+                "otp_request": "/api/auth/otp/request/",
+                "otp_verify": "/api/auth/otp/verify/",
+                "profile": "/api/auth/profile/",
+            },
+        },
+        "orders": {
+            "url": "/api/orders/",
+            "description": "Order processing and management",
+            "methods": ["GET", "POST", "PUT", "DELETE"],
+        },
+        "payments": {
+            "url": "/api/payments/",
+            "description": "Payment processing and transactions",
+            "methods": ["GET", "POST"],
+        },
+        "health": {
+            "url": "/api/health/",
+            "description": "Comprehensive health check with component status",
+            "methods": ["GET"],
+        },
+        "liveness": {
+            "url": "/api/health/live/",
+            "description": "Kubernetes liveness probe (service running)",
+            "methods": ["GET"],
+        },
+        "readiness": {
+            "url": "/api/health/ready/",
+            "description": "Kubernetes readiness probe (service ready)",
+            "methods": ["GET"],
+        },
     }
 
     response_data = {
-        "message": "E-Commerce API",
+        "name": "EasyCart E-Commerce API",
+        "version": "1.0.0",
+        "description": "RESTful API for EasyCart online shopping platform",
+        "status": "operational",
+        "api_version": "v1",
         "endpoints": endpoints,
+        "documentation": "/api/docs/",  # Future: API documentation
+        "support": {"email": "support@easycart.com", "website": "https://easycart.com"},
     }
 
-    # Only expose admin URL in debug mode
+    # Only expose admin URL in debug mode (security best practice)
     if settings.DEBUG:
-        response_data["admin"] = "/admin/"
+        response_data["admin"] = {
+            "url": "/admin/",
+            "description": "Django admin interface (development only)",
+            "methods": ["GET", "POST"],
+        }
 
-    return JsonResponse(response_data)
+    return JsonResponse(response_data, json_dumps_params={"indent": 2})
 
 
 urlpatterns = [
