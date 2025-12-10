@@ -131,6 +131,7 @@ DATABASES = {
         "HOST": config("DB_HOST"),
         "PORT": config("DB_PORT"),
         "CONN_MAX_AGE": 600,
+        "CONN_HEALTH_CHECKS": True,  # Enable connection health checks
         # Only add OPTIONS for MySQL
         "OPTIONS": (
             {
@@ -138,7 +139,15 @@ DATABASES = {
                 "charset": "utf8mb4",
             }
             if config("DB_ENGINE").endswith("mysql")
-            else {}
+            else (
+                {
+                    # PostgreSQL-specific connection options
+                    "connect_timeout": 10,  # Connection timeout in seconds
+                    "options": "-c statement_timeout=30000",  # 30 second query timeout
+                }
+                if config("DB_ENGINE").endswith("postgresql")
+                else {}
+            )
         ),
     }
 }
