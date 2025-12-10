@@ -35,8 +35,13 @@
     <!-- Preconnect to API domains for better performance -->
     <!-- Removed PostHog preconnect links for security and CORS best practices -->
 
-  <!-- Content Security Policy for enhanced security and Google Fonts compatibility -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:8000 https://easycart-backend-2k8l.onrender.com https://res.cloudinary.com;">
+  <!-- Security Headers -->
+  <!-- Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:8000 https://easycart-backend-2k8l.onrender.com https://res.cloudinary.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+  <!-- X-Frame-Options for clickjacking protection -->
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <!-- Permissions Policy -->
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
   <!-- Title -->
     <title>EasyCart - Your Online Supermarket</title>
 
@@ -54,12 +59,14 @@
     <!-- Performance: Preconnect to critical third-party origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://res.cloudinary.com" />
-    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://easycart-backend-2k8l.onrender.com" />
 
-    <!-- Google Fonts: Inter with display=swap for non-blocking load -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+    <!-- Google Fonts: Preload critical font + defer full stylesheet -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" /></noscript>
   </head>
   <body>
     <noscript>
