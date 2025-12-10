@@ -9,6 +9,7 @@ from django.utils.html import escape
 import json
 import re
 import requests
+import logging
 from .models import Order, Cart, CartItem
 from apps.products.models import Product
 from .serializers import OrderSerializer, CartSerializer, CartItemSerializer
@@ -18,6 +19,8 @@ from .payment_service import (
     PayPalPaymentService,
 )
 from .whatsapp_service import WhatsAppService
+
+logger = logging.getLogger(__name__)
 
 # Idempotency import is used locally in add_to_cart function
 
@@ -348,6 +351,9 @@ def initiate_payment(request):
             )
             # Check if M-Pesa returned an error
             if result.get("success") is False:
+                logger.warning(
+                    f"M-Pesa payment failed for order {order_id}: {result.get('message')}"
+                )
                 return Response(
                     {
                         "success": False,
@@ -378,7 +384,9 @@ def initiate_payment(request):
                 )
         except requests.exceptions.RequestException as e:
             # Handle network-related errors
-            print(f"Network error processing M-Pesa payment: {e}")
+            logger.error(
+                f"Network error processing M-Pesa payment for order {order_id}: {str(e)}"
+            )
             return Response(
                 {
                     "success": False,
@@ -388,7 +396,9 @@ def initiate_payment(request):
             )
         except Exception as e:
             # Handle other unexpected errors
-            print(f"Unexpected error processing M-Pesa payment: {e}")
+            logger.error(
+                f"Unexpected error processing M-Pesa payment for order {order_id}: {str(e)}"
+            )
             return Response(
                 {"success": False, "message": "Payment processing failed"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -407,13 +417,23 @@ def initiate_payment(request):
                     {"success": True, "payment_url": result.get("data", {}).get("link")}
                 )
             else:
+                logger.warning(
+                    f"Card payment failed for order {order_id}: {result.get('message')}"
+                )
                 return Response(
-                    {"success": False, "message": "Payment initialization failed"},
+                    {
+                        "success": False,
+                        "message": result.get(
+                            "message", "Payment initialization failed"
+                        ),
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
             # Handle network-related errors
-            print(f"Network error processing card payment: {e}")
+            logger.error(
+                f"Network error processing card payment for order {order_id}: {str(e)}"
+            )
             return Response(
                 {
                     "success": False,
@@ -423,7 +443,9 @@ def initiate_payment(request):
             )
         except Exception as e:
             # Handle other unexpected errors
-            print(f"Unexpected error processing card payment: {e}")
+            logger.error(
+                f"Unexpected error processing card payment for order {order_id}: {str(e)}"
+            )
             return Response(
                 {"success": False, "message": "Payment processing failed"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

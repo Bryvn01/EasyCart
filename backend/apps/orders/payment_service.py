@@ -5,6 +5,9 @@ from django.conf import settings
 from django.utils.text import get_valid_filename
 import os
 from decouple import config
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class MpesaPaymentService:
@@ -25,6 +28,9 @@ class MpesaPaymentService:
 
     def get_access_token(self):
         if not self.consumer_key or not self.consumer_secret:
+            logger.warning(
+                "M-Pesa credentials not configured (MPESA_CONSUMER_KEY or MPESA_CONSUMER_SECRET missing)"
+            )
             return None
 
         url = f"{self.base_url}/oauth/v1/generate?grant_type=client_credentials"
@@ -41,15 +47,19 @@ class MpesaPaymentService:
             response = requests.get(url, headers=headers, timeout=30)
             response.raise_for_status()
             return response.json().get("access_token")
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to get M-Pesa access token: {str(e)}")
             return None
 
     def initiate_stk_push(self, phone_number, amount, order_id):
         access_token = self.get_access_token()
         if not access_token:
+            logger.warning(
+                f"M-Pesa STK push failed for order {order_id}: Unable to get access token"
+            )
             return {
                 "success": False,
-                "message": "M-Pesa service unavailable. Please try another payment method.",
+                "message": "M-Pesa service unavailable. Please try another payment method or contact support.",
             }
 
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -86,10 +96,13 @@ class MpesaPaymentService:
             response = requests.post(url, json=payload, headers=headers, timeout=30)
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
+            logger.error(
+                f"M-Pesa STK push request failed for order {order_id}: {str(e)}"
+            )
             return {
                 "success": False,
-                "message": "M-Pesa payment request failed. Please try again.",
+                "message": "M-Pesa payment request failed. Please try again or use another payment method.",
             }
 
 
@@ -99,6 +112,15 @@ class CardPaymentService:
         self.base_url = "https://api.flutterwave.com/v3"
 
     def initiate_payment(self, amount, email, phone, order_id):
+        if not self.api_key:
+            logger.warning(
+                f"Card payment failed for order {order_id}: Flutterwave API key not configured"
+            )
+            return {
+                "status": "error",
+                "message": "Card payment service not configured. Please use another payment method or contact support.",
+            }
+
         url = f"{self.base_url}/payments"
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -123,8 +145,12 @@ class CardPaymentService:
             )
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.RequestException:
-            return {"status": "error", "message": "Payment initialization failed"}
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Card payment request failed for order {order_id}: {str(e)}")
+            return {
+                "status": "error",
+                "message": "Card payment initialization failed. Please try again or use another payment method.",
+            }
 
 
 class PayPalPaymentService:
