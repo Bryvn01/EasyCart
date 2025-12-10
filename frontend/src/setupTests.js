@@ -32,3 +32,6 @@ const localStorageMock = {
   clear: jest.fn(),
 };
 global.localStorage = localStorageMock;
+
+// Mock scrollIntoView
+Element.prototype.scrollIntoView = jest.fn();
