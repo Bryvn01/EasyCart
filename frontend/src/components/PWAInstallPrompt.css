@@ -108,10 +108,20 @@
   white-space: nowrap;
 }
 
-.pwa-install-btn:hover,
-.pwa-info-btn:hover {
+.pwa-install-btn:hover:not(:disabled),
+.pwa-info-btn:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.pwa-install-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pwa-install-btn:active:not(:disabled),
+.pwa-info-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .pwa-info-btn {
