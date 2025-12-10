@@ -197,9 +197,8 @@ const PWAInstallPrompt = () => {
       console.log('PWA: No deferred prompt available');
       // Show generic instructions
       const toast = (await import('react-hot-toast')).default;
-      toast('To install: Open browser menu → Add to Home Screen', {
-        duration: 5000,
-        icon: 'ℹ️'
+      toast.success('To install: Open browser menu → Add to Home Screen', {
+        duration: 5000
       });
     }
   };
