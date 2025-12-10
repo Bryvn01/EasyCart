@@ -1,6 +1,6 @@
 import requests
 import base64
-from datetime import datetime
+from django.utils import timezone
 from django.utils.text import get_valid_filename
 import os
 from decouple import config
@@ -65,7 +65,7 @@ class MpesaPaymentService:
                 "message": "M-Pesa service unavailable. Please try another payment method or contact support.",
             }
 
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
         password = base64.b64encode(
             f"{self.business_shortcode}{self.passkey}{timestamp}".encode()
         ).decode()
@@ -131,7 +131,7 @@ class CardPaymentService:
         }
 
         payload = {
-            "tx_ref": f"order-{order_id}-{datetime.now().timestamp()}",
+            "tx_ref": f"order-{order_id}-{timezone.now().timestamp()}",
             "amount": str(amount),
             "currency": "KES",
             "redirect_url": f'{os.environ.get("FRONTEND_URL", "http://localhost:3000")}/payment/success',

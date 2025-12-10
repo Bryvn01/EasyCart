@@ -1,6 +1,6 @@
 import requests
 import base64
-import datetime
+from django.utils import timezone
 from django.conf import settings
 from ..models import Payment, PaymentLog
 
@@ -48,7 +48,7 @@ class MPesaGateway:
             raise ValueError("Invalid phone number format")
 
         access_token = MPesaGateway.get_access_token()
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
         shortcode = settings.MPESA_SHORTCODE
         passkey = settings.MPESA_PASSKEY
 
@@ -135,7 +135,7 @@ class MPesaGateway:
             # Store sanitized callback data
             payment.raw_response = {
                 "result_code": result_code,
-                "timestamp": datetime.datetime.now().isoformat(),
+                "timestamp": timezone.now().isoformat(),
             }
             payment.save()
             PaymentLog.objects.create(
