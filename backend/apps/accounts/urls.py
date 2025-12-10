@@ -31,4 +31,5 @@ urlpatterns = [
     path("otp/request/", otp_views.request_otp, name="otp-request"),
     path("otp/verify/", otp_views.verify_otp_login, name="otp-verify"),
     path("otp/resend/", otp_views.resend_otp, name="otp-resend"),
+    path("otp/analytics/", otp_views.otp_delivery_analytics, name="otp-analytics"),
 ]
