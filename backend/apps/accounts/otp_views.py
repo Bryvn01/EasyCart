@@ -105,9 +105,24 @@ def request_otp(request):
             )
 
     except Exception as e:
-        logger.error(f"OTP request error: {str(e)}")
+        logger.error(f"OTP request error: {str(e)}", exc_info=True)
+
+        # Check if it's a database connection error
+        error_msg = str(e).lower()
+        if any(
+            keyword in error_msg for keyword in ["connection", "database", "postgres"]
+        ):
+            return Response(
+                {
+                    "error": "Database temporarily unavailable",
+                    "message": "Please try again in a moment",
+                    "retry": True,
+                },
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
         return Response(
-            {"error": "Failed to process OTP request"},
+            {"error": "Failed to process OTP request", "detail": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
