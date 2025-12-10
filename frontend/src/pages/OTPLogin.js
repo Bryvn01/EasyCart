@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const OTPLogin = () => {
+  const { setUser } = useAuth();
   const [step, setStep] = useState('request'); // 'request' or 'verify'
   const [identifier, setIdentifier] = useState('');
   const [method, setMethod] = useState('email');
@@ -95,9 +97,14 @@ const OTPLogin = () => {
 
     try {
       const response = await authAPI.verifyOTP(identifier, otpCode);
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      const { access, refresh, user } = response.data;
+
+      // Store tokens in localStorage
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+
+      // Update AuthContext state immediately
+      setUser(user);
 
       // Redirect based on profile completion
       if (response.data.is_profile_complete) {

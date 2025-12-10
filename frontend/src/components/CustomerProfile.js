@@ -5,11 +5,13 @@ import { useAuth } from '../context/AuthContext';
 const CustomerProfile = () => {
   const { user: authUser } = useAuth();
   const [profile, setProfile] = useState(null);
-  const [form, setForm] = useState({ phone: '', address: '' });
+  const [form, setForm] = useState({ email: '', phone: '', address: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [emailChanged, setEmailChanged] = useState(false);
+  const [phoneChanged, setPhoneChanged] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -19,7 +21,11 @@ const CustomerProfile = () => {
         if (!authUser?.id) throw new Error('User not authenticated');
         const res = await customersAPI.retrieve(authUser.id);
         setProfile(res.data);
-        setForm({ phone: res.data.phone || '', address: res.data.address || '' });
+        setForm({
+          email: res.data.email || '',
+          phone: res.data.phone || '',
+          address: res.data.address || ''
+        });
       } catch (err) {
         console.error('Profile fetch error:', err);
         setError('Failed to load profile.');
@@ -37,7 +43,21 @@ const CustomerProfile = () => {
   }, [authUser]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+
+    // Track if email or phone changed
+    if (name === 'email' && value !== profile.email) {
+      setEmailChanged(true);
+    } else if (name === 'email' && value === profile.email) {
+      setEmailChanged(false);
+    }
+
+    if (name === 'phone' && value !== profile.phone) {
+      setPhoneChanged(true);
+    } else if (name === 'phone' && value === profile.phone) {
+      setPhoneChanged(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -45,16 +65,57 @@ const CustomerProfile = () => {
     setSaving(true);
     setError('');
     setSuccess('');
+
     try {
       const userId = profile.id;
-      await customersAPI.partialUpdate(userId, form);
-      setSuccess('Profile updated successfully!');
+
+      // Prepare update data
+      const updateData = { ...form };
+
+      // Validate email format if changed
+      if (emailChanged) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(form.email)) {
+          setError('Please enter a valid email address');
+          setSaving(false);
+          return;
+        }
+      }
+
+      // Validate phone format if changed
+      if (phoneChanged) {
+        const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/;
+        if (form.phone && !phoneRegex.test(form.phone)) {
+          setError('Please enter a valid phone number');
+          setSaving(false);
+          return;
+        }
+      }
+
+      await customersAPI.partialUpdate(userId, updateData);
+
+      // Show appropriate success message
+      if (emailChanged || phoneChanged) {
+        const changedFields = [];
+        if (emailChanged) changedFields.push('email');
+        if (phoneChanged) changedFields.push('phone number');
+        setSuccess(`Profile updated! Your ${changedFields.join(' and ')} will be verified on next login.`);
+        setEmailChanged(false);
+        setPhoneChanged(false);
+      } else {
+        setSuccess('Profile updated successfully!');
+      }
+
       setProfile({ ...profile, ...form });
 
-      // Auto-hide success message after 3 seconds
-      setTimeout(() => setSuccess(''), 3000);
+      // Auto-hide success message after 5 seconds
+      setTimeout(() => setSuccess(''), 5000);
     } catch (err) {
-      setError('Failed to update profile.');
+      const errorMsg = err.response?.data?.email?.[0] ||
+                       err.response?.data?.phone?.[0] ||
+                       err.response?.data?.message ||
+                       'Failed to update profile.';
+      setError(errorMsg);
     } finally {
       setSaving(false);
     }
@@ -183,7 +244,7 @@ const CustomerProfile = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Email Field */}
                 <div>
-                  <label style={{
+                  <label htmlFor="email" style={{
                     display: 'block',
                     fontSize: '0.875rem',
                     fontWeight: '600',
@@ -198,27 +259,48 @@ const CustomerProfile = () => {
                     </div>
                   </label>
                   <input
+                    id="email"
+                    name="email"
                     type="email"
-                    value={profile.email}
-                    disabled
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="your.email@example.com"
                     style={{
                       width: '100%',
                       padding: 'var(--space-3)',
-                      border: '1px solid var(--gray-300)',
+                      border: emailChanged ? '2px solid var(--warning)' : '2px solid var(--gray-300)',
                       borderRadius: 'var(--radius-md)',
                       fontSize: '1rem',
-                      background: 'var(--gray-50)',
-                      color: 'var(--gray-600)',
-                      cursor: 'not-allowed'
+                      transition: 'border-color 0.2s',
+                      minHeight: '44px'
                     }}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                    onBlur={(e) => e.target.style.borderColor = emailChanged ? 'var(--warning)' : 'var(--gray-300)'}
                   />
-                  <p style={{
-                    fontSize: '0.75rem',
-                    color: 'var(--gray-500)',
-                    marginTop: 'var(--space-1)'
-                  }}>
-                    Email cannot be changed
-                  </p>
+                  {emailChanged && (
+                    <p style={{
+                      fontSize: '0.75rem',
+                      color: '#d97706',
+                      marginTop: 'var(--space-1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}>
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      Email change requires re-verification on next login
+                    </p>
+                  )}
+                  {!emailChanged && (
+                    <p style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--gray-500)',
+                      marginTop: 'var(--space-1)'
+                    }}>
+                      Used for order updates and account recovery
+                    </p>
+                  )}
                 </div>
 
                 {/* Username Field */}
@@ -307,15 +389,39 @@ const CustomerProfile = () => {
                     style={{
                       width: '100%',
                       padding: 'var(--space-3)',
-                      border: '2px solid var(--gray-300)',
+                      border: phoneChanged ? '2px solid var(--warning)' : '2px solid var(--gray-300)',
                       borderRadius: 'var(--radius-md)',
                       fontSize: '1rem',
                       transition: 'border-color 0.2s',
                       minHeight: '44px'
                     }}
                     onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                    onBlur={(e) => e.target.style.borderColor = 'var(--gray-300)'}
+                    onBlur={(e) => e.target.style.borderColor = phoneChanged ? 'var(--warning)' : 'var(--gray-300)'}
                   />
+                  {phoneChanged && (
+                    <p style={{
+                      fontSize: '0.75rem',
+                      color: '#d97706',
+                      marginTop: 'var(--space-1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}>
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      Phone change requires OTP verification on next login
+                    </p>
+                  )}
+                  {!phoneChanged && (
+                    <p style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--gray-500)',
+                      marginTop: 'var(--space-1)'
+                    }}>
+                      Used for order notifications and OTP login
+                    </p>
+                  )}
                 </div>
 
                 {/* Address Field */}
@@ -399,7 +505,15 @@ const CustomerProfile = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setForm({ phone: profile.phone || '', address: profile.address || '' })}
+                onClick={() => {
+                  setForm({
+                    email: profile.email || '',
+                    phone: profile.phone || '',
+                    address: profile.address || ''
+                  });
+                  setEmailChanged(false);
+                  setPhoneChanged(false);
+                }}
                 className="btn btn-secondary min-h-[44px] focus:ring-2 focus:ring-gray-400"
                 disabled={saving}
                 style={{

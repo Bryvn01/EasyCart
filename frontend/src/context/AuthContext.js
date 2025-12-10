@@ -23,8 +23,10 @@ export const AuthProvider = ({ children }) => {
           setUser(response.data);
         })
         .catch(() => {
+          // Clear tokens AND user state on auth failure
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
+          setUser(null);
         })
         .finally(() => {
           setLoading(false);
@@ -75,6 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    setUser,  // Export setUser for OTP login
     login,
     register,
     logout,

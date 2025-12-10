@@ -319,10 +319,12 @@ def verify_otp_login(request):
                 "refresh": str(refresh),
                 "user": {
                     "id": user.id,
+                    "username": user.username,
                     "email": user.email,
                     "phone_number": user.phone_number,
                     "first_name": user.first_name,
                     "last_name": user.last_name,
+                    "is_admin": user.is_staff or user.is_superuser,
                 },
                 "is_profile_complete": is_profile_complete,
             }

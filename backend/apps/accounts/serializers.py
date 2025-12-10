@@ -60,6 +60,16 @@ class UserLoginSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+    User profile serializer with controlled field updates.
+
+    Best Practice Implementation:
+    - Username: Read-only (never changeable - identity anchor)
+    - Email: Editable with validation (requires uniqueness check)
+    - Phone: Editable with validation (supports OTP login)
+    - Role/Admin flags: Read-only (security - only backend can modify)
+    """
+
     class Meta:
         model = User
         fields = (
@@ -73,3 +83,47 @@ class UserSerializer(serializers.ModelSerializer):
             "is_staff",
             "is_superuser",
         )
+        read_only_fields = (
+            "id",
+            "username",
+            "role",
+            "is_admin",
+            "is_staff",
+            "is_superuser",
+        )
+
+    def validate_email(self, value):
+        """
+        Validate email uniqueness when updating.
+        """
+        user = self.instance
+        if user and value != user.email:
+            # Check if email is already taken by another user
+            if User.objects.filter(email=value).exclude(id=user.id).exists():
+                raise serializers.ValidationError(
+                    "This email is already in use by another account."
+                )
+        return value
+
+    def validate_phone(self, value):
+        """
+        Validate phone number format and uniqueness.
+        """
+        if value:
+            # Basic phone validation (can be enhanced)
+            import re
+
+            phone_pattern = re.compile(
+                r"^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$"
+            )
+            if not phone_pattern.match(value):
+                raise serializers.ValidationError("Please enter a valid phone number.")
+
+            # Check uniqueness for OTP users
+            user = self.instance
+            if user and value != user.phone:
+                if User.objects.filter(phone=value).exclude(id=user.id).exists():
+                    raise serializers.ValidationError(
+                        "This phone number is already in use by another account."
+                    )
+        return value
