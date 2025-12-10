@@ -385,6 +385,142 @@
       border: 1px solid currentColor;
     }
   }
+
+  /* 26. PWA FLOATING BUTTON STACK - Best Practice Positioning */
+  /*
+   * Industry Standard: Floating Action Buttons should be stacked vertically
+   * to avoid overlap and provide clear touch targets
+   *
+   * Reference:
+   * - Material Design: FAB positioning and spacing
+   * - Apple HIG: Floating controls with safe area insets
+   * - PWA Best Practices: Non-overlapping interactive elements
+   */
+
+  /* Mobile Footer - Above Bottom Nav */
+  footer.md\\:hidden {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 16px);
+  }
+
+  /* Floating Button Base Styles */
+  .floating-button-base {
+    position: fixed;
+    touch-action: manipulation;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* Z-index Stack (lowest to highest) */
+  .z-floating-low {
+    z-index: 48;
+  }
+
+  .z-floating-mid {
+    z-index: 49;
+  }
+
+  .z-floating-high {
+    z-index: 50;
+  }
+
+  /* Bottom Safe Area Utility */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Floating Button Container - Right Side Stack */
+  .floating-buttons-right {
+    position: fixed;
+    right: 20px;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 12px;
+    z-index: 50;
+  }
+
+  /* Floating Button Container - Left Side Stack */
+  .floating-buttons-left {
+    position: fixed;
+    left: 20px;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 12px;
+    z-index: 49;
+  }
+
+  /* Prevent FAB overlap with bottom nav */
+  .fab-container {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 16px);
+  }
+
+  /* Chat Button - Primary right position */
+  .chat-button {
+    right: 20px;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    z-index: 50;
+  }
+
+  /* Back to Top - Secondary left position */
+  .back-to-top-button {
+    left: 20px;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    z-index: 49;
+  }
+
+  /* Shopping Cart FAB - If needed, position above chat */
+  .cart-fab {
+    right: 20px;
+    bottom: calc(152px + env(safe-area-inset-bottom, 0px));
+    z-index: 50;
+  }
+
+  /* Ensure touch targets don't overlap */
+  .floating-button-base:active {
+    transform: scale(0.95);
+  }
+
+  @media (hover: hover) {
+    .floating-button-base:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+/* ===== Tablet Adjustments (768px - 1024px) ===== */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .container {
+    max-width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  /* Larger touch targets for tablets */
+  button,
+  a.btn {
+    min-height: 48px;
+    padding: 14px 20px;
+  }
+
+  /* Desktop positioning for floating buttons */
+  .back-to-top-button,
+  .chat-button {
+    bottom: 24px;
+  }
+}
+
+/* ===== Desktop Adjustments (>= 1024px) ===== */
+@media (min-width: 1024px) {
+  /* Desktop: Return to standard positioning */
+  .back-to-top-button {
+    right: 20px;
+    left: auto;
+    bottom: 24px;
+  }
+
+  .chat-button {
+    bottom: 24px;
+  }
 }
 
 /* ===== Tablet Adjustments (768px - 1024px) ===== */
