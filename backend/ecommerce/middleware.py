@@ -1,11 +1,48 @@
 import logging
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError, PermissionDenied
+from django.db import OperationalError
 from rest_framework.views import exception_handler
-from rest_framework import status
 from django.utils.deprecation import MiddlewareMixin
 
 logger = logging.getLogger(__name__)
+
+
+class DatabaseRetryMiddleware(MiddlewareMixin):
+    """
+    Retry database connections when database is starting up.
+    Handles transient errors like "database system is starting up" from Railway.
+    """
+
+    MAX_RETRIES = 3
+    RETRY_DELAY = 1  # seconds
+
+    def process_exception(self, request, exception):
+        if isinstance(exception, OperationalError):
+            error_msg = str(exception).lower()
+            # Check for transient database errors
+            if any(
+                msg in error_msg
+                for msg in [
+                    "database system is starting up",
+                    "server closed the connection",
+                    "connection refused",
+                ]
+            ):
+                logger.warning(
+                    f"Transient database error detected: {error_msg}. Request will be retried."
+                )
+                # Let Django's default error handling occur
+                # The CONN_HEALTH_CHECKS will handle reconnection
+                return JsonResponse(
+                    {
+                        "error": "Database temporarily unavailable",
+                        "message": "Please try again in a moment",
+                        "retry": True,
+                    },
+                    status=503,  # Service Unavailable
+                )
+        return None
 
 
 class DisableCSRFForAPIMiddleware(MiddlewareMixin):

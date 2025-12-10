@@ -71,6 +71,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "ecommerce.middleware.DatabaseRetryMiddleware",  # Handle transient DB errors
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "ecommerce.middleware.DisableCSRFForAPIMiddleware",  # Disable CSRF for /api/* endpoints
