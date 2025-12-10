@@ -102,6 +102,14 @@ def send_otp_whatsapp(phone_number, otp_code):
 def send_otp_email(email, otp_code):
     """Send OTP via Email as fallback"""
     try:
+        # Check if email is configured
+        if not settings.EMAIL_HOST:
+            logger.warning(
+                "Email not configured - using console logging for development"
+            )
+            print(f"\n📧 [DEV] Email OTP to {email}: {otp_code}\n")
+            return True
+
         subject = "EasyCart - Your Verification Code"
         message = f"""
 Hello,
@@ -127,6 +135,11 @@ EasyCart Team
         return True
     except Exception as e:
         logger.error(f"Email send failed: {str(e)}")
+        # In development, still return True if console backend is used
+        if "console" in settings.EMAIL_BACKEND.lower():
+            logger.info(f"Console email backend - OTP logged: {otp_code}")
+            print(f"\n📧 [DEV] Email OTP to {email}: {otp_code}\n")
+            return True
         return False
 
 
