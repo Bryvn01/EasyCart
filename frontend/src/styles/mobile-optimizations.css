@@ -58,6 +58,12 @@ html {
 
 /* ===== Mobile Navigation Spacing ===== */
 @media (max-width: 768px) {
+  /* Main content safe area - prevents bottom nav overlap */
+  .mobile-safe-content {
+    padding-bottom: var(--content-bottom-padding);
+    min-height: calc(100vh - var(--mobile-header-height));
+  }
+
   .mobile-nav-spacing {
     padding-bottom: calc(80px + var(--safe-area-bottom));
   }
@@ -66,8 +72,28 @@ html {
     padding-bottom: calc(100px + var(--safe-area-bottom));
   }
 
+  /* Ensure content is always scrollable and visible */
   html {
     overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  body {
+    overflow-x: hidden;
+    position: relative;
+    /* Prevent overscroll bounce on iOS */
+    overscroll-behavior-y: none;
+  }
+
+  /* Additional padding for pages with forms or buttons at bottom */
+  .mobile-form-safe {
+    padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom) + 32px);
+  }
+
+  /* Ensure last child in scrollable containers has proper spacing */
+  .mobile-scroll-container > *:last-child {
+    margin-bottom: var(--content-bottom-padding);
   }
 }
 

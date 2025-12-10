@@ -43,14 +43,14 @@ const BottomNav = () => {
     <>
       {/* Search Overlay */}
       {showSearchOverlay && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] md:hidden"
           onClick={() => setShowSearchOverlay(false)}
           role="dialog"
           aria-modal="true"
           aria-label="Search overlay"
         >
-          <div 
+          <div
             className="absolute top-0 left-0 right-0 bg-white shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
@@ -97,19 +97,23 @@ const BottomNav = () => {
       )}
 
       {/* Bottom Navigation */}
-      <nav 
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-lg border-t border-gray-200 shadow-lg md:hidden" 
-        role="navigation" 
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-lg border-t-2 border-gray-200 md:hidden"
+        role="navigation"
         aria-label="Bottom navigation"
         style={{
-          paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.08)',
         }}
       >
-        <div className="flex justify-around items-center h-16 px-2">
+        <div className="flex justify-around items-center h-16 px-2" style={{
+          paddingLeft: 'max(8px, env(safe-area-inset-left))',
+          paddingRight: 'max(8px, env(safe-area-inset-right))',
+        }}>
           {navItems.map((item) => {
             const isActive = location.pathname === item.to && !item.isSearchButton;
             const Component = item.onClick ? 'button' : Link;
-            const componentProps = item.onClick 
+            const componentProps = item.onClick
               ? { onClick: item.onClick, type: 'button' }
               : { to: item.to };
 
