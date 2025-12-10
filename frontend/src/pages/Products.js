@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -33,6 +33,7 @@ const Products = () => {
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Guest cart hook for non-authenticated users
   const { addToGuestCart, guestCartCount, migrateGuestCartToServer } = useGuestCart(isAuthenticated);
@@ -66,23 +67,44 @@ const Products = () => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    // Get search term and category from URL parameters
+    // INDUSTRY BEST PRACTICE: Read filters from URL on mount
     const urlParams = new URLSearchParams(location.search);
     const urlSearch = urlParams.get('search');
     const urlCategory = urlParams.get('category');
+    const urlSort = urlParams.get('sort');
+    const urlMinPrice = urlParams.get('min_price');
+    const urlMaxPrice = urlParams.get('max_price');
+    const urlPage = urlParams.get('page');
 
-    if (urlSearch) {
-      setSearchTerm(urlSearch);
+    if (urlSearch) setSearchTerm(urlSearch);
+    if (urlCategory) setSelectedCategory(urlCategory);
+    if (urlSort) setSortBy(urlSort);
+    if (urlMinPrice || urlMaxPrice) {
+      setPriceRange({ min: urlMinPrice || '', max: urlMaxPrice || '' });
     }
-
-    if (urlCategory) {
-      setSelectedCategory(urlCategory);
-    } else if (!urlCategory && selectedCategory) {
-      // Clear category if not in URL
-      setSelectedCategory('');
-    }
+    if (urlPage) setCurrentPage(parseInt(urlPage) || 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search]);
+  }, []);
+
+  // INDUSTRY BEST PRACTICE: Sync filters to URL for shareable links
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (debouncedSearchTerm) params.set('search', debouncedSearchTerm);
+    if (selectedCategory) params.set('category', selectedCategory);
+    if (sortBy) params.set('sort', sortBy);
+    if (priceRange.min) params.set('min_price', priceRange.min);
+    if (priceRange.max) params.set('max_price', priceRange.max);
+    if (currentPage > 1) params.set('page', currentPage);
+
+    const newSearch = params.toString();
+    const currentSearch = location.search.slice(1);
+
+    // Only update URL if it actually changed (avoid infinite loops)
+    if (newSearch !== currentSearch) {
+      navigate({ search: newSearch ? `?${newSearch}` : '' }, { replace: true });
+    }
+  }, [debouncedSearchTerm, selectedCategory, sortBy, priceRange.min, priceRange.max, currentPage, navigate, location.search]);
 
   // Debounce search term
   useEffect(() => {
@@ -296,10 +318,13 @@ const Products = () => {
             />
           </div>
           <div>
+            <label htmlFor="category-filter" className="sr-only">Category</label>
             <select
+              id="category-filter"
               className="form-control"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
+              aria-label="Filter products by category"
             >
               <option value="">All Categories</option>
               {Array.isArray(categories) && categories.map(category => (
@@ -310,10 +335,13 @@ const Products = () => {
             </select>
           </div>
           <div>
+            <label htmlFor="sort-filter" className="sr-only">Sort By</label>
             <select
+              id="sort-filter"
               className="form-control"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sort products"
             >
               <option value="">Sort By</option>
               <option value="name">Name A-Z</option>
@@ -331,13 +359,25 @@ const Products = () => {
               className="form-control pl-12"
               placeholder="Min Price"
               min="0"
+              step="1"
               value={priceRange.min}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === '' || (!isNaN(value) && parseFloat(value) >= 0)) {
+                // BEST PRACTICE: Allow empty or valid positive numbers only
+                if (value === '' || (!isNaN(value) && parseFloat(value) >= 0 && isFinite(parseFloat(value)))) {
                   setPriceRange(prev => ({ ...prev, min: value }));
                 }
               }}
+              onBlur={(e) => {
+                // BEST PRACTICE: Validate min <= max on blur
+                const min = parseFloat(e.target.value);
+                const max = parseFloat(priceRange.max);
+                if (!isNaN(min) && !isNaN(max) && min > max) {
+                  toast.error('Minimum price cannot be greater than maximum price');
+                  setPriceRange(prev => ({ ...prev, min: '' }));
+                }
+              }}
+              aria-label="Minimum price filter"
             />
           </div>
           <div className="relative">
@@ -347,13 +387,25 @@ const Products = () => {
               className="form-control pl-12"
               placeholder="Max Price"
               min="0"
+              step="1"
               value={priceRange.max}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === '' || (!isNaN(value) && parseFloat(value) >= 0)) {
+                // BEST PRACTICE: Allow empty or valid positive numbers only
+                if (value === '' || (!isNaN(value) && parseFloat(value) >= 0 && isFinite(parseFloat(value)))) {
                   setPriceRange(prev => ({ ...prev, max: value }));
                 }
               }}
+              onBlur={(e) => {
+                // BEST PRACTICE: Validate min <= max on blur
+                const min = parseFloat(priceRange.min);
+                const max = parseFloat(e.target.value);
+                if (!isNaN(min) && !isNaN(max) && max < min) {
+                  toast.error('Maximum price cannot be less than minimum price');
+                  setPriceRange(prev => ({ ...prev, max: '' }));
+                }
+              }}
+              aria-label="Maximum price filter"
             />
           </div>
         </div>
