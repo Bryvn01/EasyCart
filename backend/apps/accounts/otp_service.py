@@ -102,6 +102,11 @@ def send_otp_whatsapp(phone_number, otp_code):
 def send_otp_email(email, otp_code):
     """Send OTP via Email as fallback"""
     try:
+        # Skip temp emails (created for phone-only users)
+        if email.endswith("@easycart.temp"):
+            logger.warning(f"Skipping OTP email to temp address: {email}")
+            return False
+
         # Check if email is configured
         if not settings.EMAIL_HOST:
             logger.warning(
