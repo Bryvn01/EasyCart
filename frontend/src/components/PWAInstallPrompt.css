@@ -117,7 +117,7 @@
 .pwa-info-btn {
   padding: 8px 12px;
   background: #f3f4f6;
-  color: #667eea;
+  color: #4338ca; /* Darker indigo for WCAG AA contrast compliance */
 }
 
 .pwa-dismiss-btn {
