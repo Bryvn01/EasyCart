@@ -1,9 +1,10 @@
-/* Google Fonts loaded via HTML with preconnect for better performance */
-@import './styles/mobile-optimizations.css';
-@import './styles/instagram-mobile.css';
-@import './styles/mobile-product-enhancements.css';
-@import './styles/mobile-compact-layout.css';
-@import './styles/mobile-ux-best-practices.css';
+/*
+ * CRITICAL CSS OPTIMIZATION
+ * Mobile-first imports are lazy-loaded below to reduce initial bundle size
+ * Only critical styles loaded immediately
+ */
+
+/* Tailwind Base (Critical) */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -1183,3 +1184,11 @@ input:focus:not(:focus-visible) {
 
 /* Connection-aware image loading - removed unsupported media feature */
 /* Note: prefers-reduced-data is not widely supported yet, will use JavaScript fallback */
+
+/* ===== NON-CRITICAL CSS (Lazy Loaded) ===== */
+/* Mobile-specific styles loaded after initial render to improve FCP/LCP */
+@import './styles/mobile-optimizations.css';
+@import './styles/instagram-mobile.css';
+@import './styles/mobile-product-enhancements.css';
+@import './styles/mobile-compact-layout.css';
+@import './styles/mobile-ux-best-practices.css';
