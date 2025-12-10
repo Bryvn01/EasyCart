@@ -20,7 +20,10 @@ const Login = () => {
 
       if (response?.data?.requires_2fa) {
         setRequires2FA(true);
-        toast.info('Please enter your 2FA code');
+        toast('Please enter your 2FA code', {
+          icon: 'ℹ️',
+          duration: 4000
+        });
         return;
       }
 
