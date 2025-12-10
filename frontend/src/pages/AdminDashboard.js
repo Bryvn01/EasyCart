@@ -109,7 +109,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
             <div className="flex items-center">
               <div className="p-3 bg-blue-100 rounded-lg">
@@ -120,6 +120,11 @@ const AdminDashboard = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Orders</p>
                 <p className="text-2xl font-bold text-gray-900">{dashboardData.totalOrders}</p>
+                {dashboardData.order_trend && (
+                  <p className={`text-xs mt-1 ${dashboardData.order_trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {dashboardData.order_trend >= 0 ? '↑' : '↓'} {Math.abs(dashboardData.order_trend).toFixed(1)}% vs prev
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -133,7 +138,13 @@ const AdminDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">KES {dashboardData.totalRevenue?.toLocaleString()}</p>
+                <p className="text-lg font-bold text-gray-900">KES {dashboardData.totalRevenue?.toLocaleString()}</p>
+                <p className="text-xs text-gray-500">Completed only</p>
+                {dashboardData.revenue_trend && (
+                  <p className={`text-xs mt-1 ${dashboardData.revenue_trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {dashboardData.revenue_trend >= 0 ? '↑' : '↓'} {Math.abs(dashboardData.revenue_trend).toFixed(1)}% vs prev
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -148,6 +159,7 @@ const AdminDashboard = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Active Customers</p>
                 <p className="text-2xl font-bold text-gray-900">{dashboardData.customerStats?.active || 0}</p>
+                <p className="text-xs text-gray-500">In period</p>
               </div>
             </div>
           </div>
@@ -161,9 +173,25 @@ const AdminDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Avg Order Value</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  KES {dashboardData.totalOrders > 0 ? Math.round(dashboardData.totalRevenue / dashboardData.totalOrders).toLocaleString() : 0}
+                <p className="text-lg font-bold text-gray-900">
+                  KES {dashboardData.avg_order_value?.toLocaleString() || 0}
                 </p>
+                <p className="text-xs text-gray-500">Per completed order</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+            <div className="flex items-center">
+              <div className="p-3 bg-indigo-100 rounded-lg">
+                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Conversion Rate</p>
+                <p className="text-2xl font-bold text-gray-900">{dashboardData.conversion_rate?.toFixed(1)}%</p>
+                <p className="text-xs text-gray-500">Completed orders</p>
               </div>
             </div>
           </div>
