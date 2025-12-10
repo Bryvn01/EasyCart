@@ -10,6 +10,9 @@ from rest_framework.throttling import AnonRateThrottle
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.db.models import Count, Q
+from django.db.models.functions import TruncDate
+from .models import OTPDeliveryLog
 from .otp_service import (
     generate_otp,
     send_otp_sms,
@@ -135,13 +138,20 @@ def request_otp(request):
         # Send OTP based on method with fallback to email
         success = False
         attempted_method = method
+        error_msg = ""
 
         if method == "sms" and user.phone_number:
             success = send_otp_sms(user.phone_number, otp_code)
+            if not success:
+                error_msg = "SMS delivery failed"
         elif method == "whatsapp" and user.phone_number:
             success = send_otp_whatsapp(user.phone_number, otp_code)
+            if not success:
+                error_msg = "WhatsApp delivery failed"
         elif method == "email" or is_email:
             success = send_otp_email(user.email, otp_code)
+            if not success:
+                error_msg = "Email delivery failed"
 
         # Fallback to email if primary method fails
         if not success and method != "email":
@@ -150,6 +160,9 @@ def request_otp(request):
                 success = send_otp_email(user.email, otp_code)
                 if success:
                     attempted_method = "email"
+                    error_msg = ""
+                else:
+                    error_msg = f"{method} and email delivery failed"
 
         # Final fallback: console logging in development/production
         if not success:
@@ -159,15 +172,31 @@ def request_otp(request):
             print(f"\n📱 [CONSOLE] OTP for {identifier}: {otp_code}\n")
             logger.info(f"Console OTP logged for user {user.id}: {otp_code}")
             success = True
-            attempted_method = "console (check server logs)"
+            attempted_method = "console"
+            error_msg = ""
+
+        # Log delivery attempt for analytics
+        OTPDeliveryLog.objects.create(
+            user=user,
+            identifier=identifier,
+            delivery_method=attempted_method if success else "failed",
+            success=success,
+            ip_address=client_ip,
+            error_message=error_msg,
+        )
 
         if success:
             logger.info(
                 f"OTP sent to user {user.id} via {attempted_method} from IP {client_ip}"
             )
+            display_method = (
+                attempted_method
+                if attempted_method != "console"
+                else "console (check server logs)"
+            )
             return Response(
                 {
-                    "message": f"OTP sent via {attempted_method}",
+                    "message": f"OTP sent via {display_method}",
                     "identifier": identifier,
                     "is_new_user": created,
                     "expires_in": 600,  # 10 minutes
@@ -326,3 +355,148 @@ def resend_otp(request):
     Body: { "identifier": "email or phone", "method": "sms|whatsapp|email" }
     """
     return request_otp(request)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def otp_delivery_analytics(request):
+    """
+    Get OTP delivery analytics and metrics
+    Query params:
+    - days: Number of days to analyze (default: 7, max: 30)
+    - detailed: Include daily breakdown (default: false)
+    """
+    from datetime import timedelta
+
+    # Get query parameters
+    days = min(int(request.query_params.get("days", 7)), 30)
+    detailed = request.query_params.get("detailed", "false").lower() == "true"
+
+    # Calculate date range
+    end_date = timezone.now()
+    start_date = end_date - timedelta(days=days)
+
+    # Get delivery logs within date range
+    logs = OTPDeliveryLog.objects.filter(created_at__gte=start_date)
+
+    # Overall statistics
+    total_deliveries = logs.count()
+    successful_deliveries = logs.filter(success=True).count()
+    failed_deliveries = logs.filter(success=False).count()
+
+    # Success rate
+    success_rate = (
+        (successful_deliveries / total_deliveries * 100) if total_deliveries > 0 else 0
+    )
+
+    # Delivery method breakdown
+    method_stats = (
+        logs.values("delivery_method")
+        .annotate(count=Count("id"), successful=Count("id", filter=Q(success=True)))
+        .order_by("-count")
+    )
+
+    # Calculate success rate per method
+    for stat in method_stats:
+        stat["success_rate"] = (
+            (stat["successful"] / stat["count"] * 100) if stat["count"] > 0 else 0
+        )
+
+    # Prepare response
+    analytics = {
+        "period": {
+            "start": start_date.isoformat(),
+            "end": end_date.isoformat(),
+            "days": days,
+        },
+        "overview": {
+            "total_deliveries": total_deliveries,
+            "successful": successful_deliveries,
+            "failed": failed_deliveries,
+            "success_rate": round(success_rate, 2),
+        },
+        "by_method": [
+            {
+                "method": stat["delivery_method"],
+                "total": stat["count"],
+                "successful": stat["successful"],
+                "failed": stat["count"] - stat["successful"],
+                "success_rate": round(stat["success_rate"], 2),
+            }
+            for stat in method_stats
+        ],
+    }
+
+    # Add daily breakdown if requested
+    if detailed and total_deliveries > 0:
+        daily_stats = (
+            logs.annotate(date=TruncDate("created_at"))
+            .values("date")
+            .annotate(total=Count("id"), successful=Count("id", filter=Q(success=True)))
+            .order_by("date")
+        )
+
+        analytics["daily_breakdown"] = [
+            {
+                "date": stat["date"].isoformat(),
+                "total": stat["total"],
+                "successful": stat["successful"],
+                "failed": stat["total"] - stat["successful"],
+                "success_rate": round((stat["successful"] / stat["total"] * 100), 2),
+            }
+            for stat in daily_stats
+        ]
+
+    # Add recommendations based on data
+    recommendations = []
+
+    # Check if console is being used too much
+    console_usage = next(
+        (s for s in method_stats if s["delivery_method"] == "console"), None
+    )
+    if console_usage and console_usage["count"] > total_deliveries * 0.5:
+        percentage = round(console_usage["count"] / total_deliveries * 100)
+        recommendations.append(
+            {
+                "type": "warning",
+                "message": (
+                    f"Console logging is used for {percentage}% of deliveries. "
+                    "Configure Twilio or SMTP for better user experience."
+                ),
+            }
+        )
+
+    # Check for high failure rate
+    if failed_deliveries > total_deliveries * 0.2:
+        failure_rate = round(failed_deliveries / total_deliveries * 100)
+        recommendations.append(
+            {
+                "type": "critical",
+                "message": (
+                    f"High failure rate ({failure_rate}%). "
+                    "Check service configurations."
+                ),
+            }
+        )
+
+    # Recommend best method
+    if method_stats:
+        best_method = max(method_stats, key=lambda x: x["success_rate"])
+        if best_method["success_rate"] > 95 and best_method["count"] > 5:
+            method_name = best_method["delivery_method"].title()
+            success_rate = round(best_method["success_rate"], 2)
+            recommendations.append(
+                {
+                    "type": "info",
+                    "message": (
+                        f"{method_name} has the highest success rate "
+                        f"({success_rate}%). Consider prioritizing this method."
+                    ),
+                }
+            )
+
+    analytics["recommendations"] = recommendations
+
+    logger.info(f"OTP analytics requested: {days} days, detailed={detailed}")
+
+    return Response(analytics)
