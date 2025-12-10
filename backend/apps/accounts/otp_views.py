@@ -3,9 +3,10 @@ OTP Authentication Views for Customer Login/Registration
 """
 
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -16,6 +17,7 @@ from .otp_service import (
     send_otp_email,
     verify_otp,
     clear_otp,
+    validate_phone_number,
 )
 import logging
 
@@ -23,17 +25,38 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
+class OTPRequestThrottle(AnonRateThrottle):
+    """Custom throttle: 5 OTP requests per hour per IP"""
+
+    rate = "5/hour"
+
+
+class OTPVerifyThrottle(AnonRateThrottle):
+    """Custom throttle: 10 verification attempts per hour per IP"""
+
+    rate = "10/hour"
+
+
 @api_view(["POST"])
 @permission_classes([AllowAny])
+@throttle_classes([OTPRequestThrottle])
 def request_otp(request):
     """
-    Request OTP for login/registration
+    Request OTP for login/registration with rate limiting and cooldown
     Body: { "identifier": "email or phone", "method": "sms|whatsapp|email" }
     """
     identifier = request.data.get("identifier", "").strip()
-    method = request.data.get("method", "sms").lower()
+    method = request.data.get("method", "email").lower()
+
+    # Get client IP for logging
+    client_ip = request.META.get(
+        "HTTP_X_FORWARDED_FOR", request.META.get("REMOTE_ADDR", "unknown")
+    )
+    if "," in client_ip:
+        client_ip = client_ip.split(",")[0].strip()
 
     if not identifier:
+        logger.warning(f"OTP request without identifier from IP: {client_ip}")
         return Response(
             {"error": "Email or phone number is required"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -45,21 +68,62 @@ def request_otp(request):
     try:
         # Find or create user
         if is_email:
+            # Validate email format
+            if (
+                not identifier
+                or "@" not in identifier
+                or "." not in identifier.split("@")[1]
+            ):
+                logger.warning(
+                    f"Invalid email format from IP {client_ip}: {identifier}"
+                )
+                return Response(
+                    {"error": "Invalid email format"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             user, created = User.objects.get_or_create(
                 email=identifier, defaults={"username": identifier.split("@")[0]}
             )
         else:
-            # Phone number - normalize format
-            phone = identifier.lstrip("+").lstrip("254").lstrip("0")
-            phone_normalized = f"+254{phone}"
+            # Phone number - validate and normalize format
+            phone_normalized = validate_phone_number(identifier)
+
+            if not phone_normalized:
+                logger.warning(
+                    f"Invalid phone number from IP {client_ip}: {identifier}"
+                )
+                return Response(
+                    {
+                        "error": "Invalid phone number. Use format: 0712345678 or +254712345678"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             user, created = User.objects.get_or_create(
                 phone_number=phone_normalized,
                 defaults={
-                    "username": f"user_{phone}",
-                    "email": f"{phone}@easycart.temp",
+                    "username": f"user_{phone_normalized[4:]}",
+                    "email": f"{phone_normalized[4:]}@easycart.temp",
                 },
             )
+
+        # Check cooldown period (prevent spam - 1 minute between requests)
+        COOLDOWN_SECONDS = 60
+        if user.otp_created_at:
+            time_since_last = (timezone.now() - user.otp_created_at).total_seconds()
+            if time_since_last < COOLDOWN_SECONDS:
+                wait_time = int(COOLDOWN_SECONDS - time_since_last)
+                logger.warning(
+                    f"OTP cooldown active for user {user.id} from IP {client_ip}"
+                )
+                return Response(
+                    {
+                        "error": f"Please wait {wait_time} seconds before requesting another OTP",
+                        "retry_after": wait_time,
+                    },
+                    status=status.HTTP_429_TOO_MANY_REQUESTS,
+                )
 
         # Generate OTP
         otp_code = generate_otp()
@@ -88,15 +152,22 @@ def request_otp(request):
                     attempted_method = "email"
 
         if success:
+            logger.info(
+                f"OTP sent to user {user.id} via {attempted_method} from IP {client_ip}"
+            )
             return Response(
                 {
                     "message": f"OTP sent via {attempted_method}",
                     "identifier": identifier,
                     "is_new_user": created,
                     "expires_in": 600,  # 10 minutes
+                    "can_resend_after": 60,  # 1 minute cooldown
                 }
             )
         else:
+            logger.error(
+                f"Failed to send OTP to user {user.id} via {method} from IP {client_ip}"
+            )
             return Response(
                 {
                     "error": f"Failed to send OTP via {method}. Please try another method."
@@ -129,17 +200,36 @@ def request_otp(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
+@throttle_classes([OTPVerifyThrottle])
 def verify_otp_login(request):
     """
-    Verify OTP and login user
+    Verify OTP and login user with attempt tracking
     Body: { "identifier": "email or phone", "otp_code": "123456" }
     """
     identifier = request.data.get("identifier", "").strip()
     otp_code = request.data.get("otp_code", "").strip()
 
+    # Get client IP for logging
+    client_ip = request.META.get(
+        "HTTP_X_FORWARDED_FOR", request.META.get("REMOTE_ADDR", "unknown")
+    )
+    if "," in client_ip:
+        client_ip = client_ip.split(",")[0].strip()
+
     if not identifier or not otp_code:
+        logger.warning(
+            f"OTP verification attempt without credentials from IP: {client_ip}"
+        )
         return Response(
             {"error": "Identifier and OTP code are required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Validate OTP format (6 digits)
+    if not otp_code.isdigit() or len(otp_code) != 6:
+        logger.warning(f"Invalid OTP format from IP {client_ip}")
+        return Response(
+            {"error": "OTP code must be 6 digits"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -149,15 +239,28 @@ def verify_otp_login(request):
         if is_email:
             user = User.objects.get(email=identifier)
         else:
-            phone = identifier.lstrip("+").lstrip("254").lstrip("0")
-            phone_normalized = f"+254{phone}"
+            phone_normalized = validate_phone_number(identifier)
+            if not phone_normalized:
+                logger.warning(
+                    f"Invalid phone number in verification from IP {client_ip}: {identifier}"
+                )
+                return Response(
+                    {"error": "Invalid phone number format"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             user = User.objects.get(phone_number=phone_normalized)
 
-        # Verify OTP
-        is_valid, message = verify_otp(user, otp_code)
+        # Verify OTP with attempt tracking
+        is_valid, message, attempts_remaining = verify_otp(user, otp_code)
 
         if not is_valid:
-            return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
+            logger.warning(
+                f"Failed OTP verification for user {user.id} from IP {client_ip}: {message}"
+            )
+            return Response(
+                {"error": message, "attempts_remaining": attempts_remaining},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
@@ -167,6 +270,8 @@ def verify_otp_login(request):
 
         # Check if profile is complete
         is_profile_complete = bool(user.first_name and user.last_name)
+
+        logger.info(f"Successful OTP login for user {user.id} from IP {client_ip}")
 
         return Response(
             {
@@ -185,9 +290,18 @@ def verify_otp_login(request):
         )
 
     except User.DoesNotExist:
-        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        logger.warning(
+            f"OTP verification attempt for non-existent user from IP {client_ip}: {identifier}"
+        )
+        # Generic error to prevent user enumeration
+        return Response(
+            {"error": "Invalid credentials or OTP expired"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     except Exception as e:
-        logger.error(f"OTP verification error: {str(e)}")
+        logger.error(
+            f"OTP verification error from IP {client_ip}: {str(e)}", exc_info=True
+        )
         return Response(
             {"error": "Failed to verify OTP"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,

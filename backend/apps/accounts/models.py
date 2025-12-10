@@ -37,6 +37,9 @@ class User(AbstractUser):
     otp_code = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(blank=True, null=True)
     otp_verified = models.BooleanField(default=False)
+    otp_attempts = models.IntegerField(default=0)
+    otp_last_attempt = models.DateTimeField(blank=True, null=True)
+    otp_blocked_until = models.DateTimeField(blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
 
     history = HistoricalRecords()

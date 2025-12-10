@@ -40,6 +40,16 @@ const CompleteProfile = () => {
     }
   };
 
+  const handleSkip = () => {
+    // User can skip for now and complete profile later
+    navigate('/');
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
       <div className="max-w-md w-full space-y-8">
@@ -99,13 +109,22 @@ const CompleteProfile = () => {
             {loading ? 'Saving...' : 'Continue Shopping'}
           </button>
 
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="w-full text-sm text-gray-600 hover:text-gray-500"
-          >
-            Skip for now
-          </button>
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="flex-1 text-sm text-indigo-600 hover:text-indigo-500 py-2"
+            >
+              Skip for now
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex-1 text-sm text-gray-600 hover:text-gray-500 py-2"
+            >
+              Logout
+            </button>
+          </div>
         </form>
       </div>
     </div>
