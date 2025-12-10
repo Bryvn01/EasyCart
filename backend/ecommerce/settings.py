@@ -171,9 +171,17 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+
+# Timezone Settings
+# Backend stores all times in UTC (best practice - don't change)
+TIME_ZONE = "UTC"  # Database storage timezone (keep as UTC)
 USE_I18N = True
-USE_TZ = True
+USE_TZ = True  # Enable timezone support (keep True)
+
+# Display timezone for Django admin (convert UTC to local time for display)
+# This makes Django admin show times in East Africa Time (UTC+3)
+# Note: Frontend already handles timezone conversion via browser
+USE_L10N = True  # Enable localized formatting
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
