@@ -1,33 +1,25 @@
-from rest_framework import status
+from rest_framework import status, generics, permissions
 from rest_framework.decorators import (
     api_view,
     permission_classes,
     authentication_classes,
 )
-from django_ratelimit.decorators import ratelimit
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.exceptions import PermissionDenied
 from django.utils.html import escape
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from django.core.mail import send_mail
-from django.conf import settings
-from django.http import Http404
-from rest_framework.exceptions import PermissionDenied
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 import re
-import os
 from .models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 from .permissions import IsSuperAdmin, IsAdminUser
-from rest_framework import generics, permissions
+
 
 # --- Customer Management API Views ---
-from .models import User
-from .serializers import UserSerializer
 
 
 class CustomerListView(generics.ListAPIView):
@@ -130,12 +122,27 @@ def login(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET", "PUT"])
+@api_view(["GET", "PUT", "PATCH"])
 @permission_classes([permissions.IsAuthenticated])
 def profile(request):
+    """
+    User profile endpoint.
+
+    Methods:
+    - GET: Retrieve authenticated user's profile
+    - PUT: Full update of user profile (all fields)
+    - PATCH: Partial update of user profile (specific fields)
+
+    Returns:
+    - User profile data on success
+    - Validation errors on failure (400)
+
+    Authentication: Required (JWT token)
+    """
     if request.method == "GET":
         return Response(UserSerializer(request.user).data)
-    elif request.method == "PUT":
+    elif request.method in ["PUT", "PATCH"]:
+        # Both PUT and PATCH support partial updates for flexibility
         serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -160,11 +167,12 @@ def forgot_password(request):
 
     try:
         user = User.objects.get(email=email)
-        token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        # Generate reset token (stored for future email implementation)
+        default_token_generator.make_token(user)
+        urlsafe_base64_encode(force_bytes(user.pk))
 
-        # In production, send actual email with reset link
-        frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+        # TODO: In production, send actual email with reset link
+        # frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
         # reset_url = f"{frontend_url}/reset-password?uid={uid}&token={token}"
         # send_mail(...)
 
@@ -245,9 +253,6 @@ def django_admin_access(request):
     Returns admin URL and session info.
     """
     from django.conf import settings
-    from django.contrib.sessions.models import Session
-    from django.contrib.auth import login
-    import datetime
 
     # Get admin URL from settings
     admin_url = getattr(settings, "ADMIN_URL", "admin/")
