@@ -24,14 +24,15 @@ const BackToTop = () => {
   return (
     <button
       onClick={scrollToTop}
-      className="fixed w-12 h-12 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+      className="back-to-top-button fixed w-12 h-12 md:w-14 md:h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center active:scale-95 md:hover:scale-105"
       style={{
-        bottom: '90px',
-        right: '20px',
-        zIndex: 44,
-        touchAction: 'manipulation'
+        // Mobile: Left side to avoid chat (right)
+        // Desktop: Right side with standard positioning
+        touchAction: 'manipulation',
+        WebkitTapHighlightColor: 'transparent'
       }}
       aria-label="Back to top"
+      title="Scroll to top"
     >
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />

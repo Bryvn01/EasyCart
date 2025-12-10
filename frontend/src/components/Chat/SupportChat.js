@@ -78,12 +78,8 @@ const SupportChat = () => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200 group md:!bottom-[calc(24px+env(safe-area-inset-bottom,0px))]"
+        className="chat-button fixed transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200 group"
         style={{
-          // On mobile (< 768px), position above the bottom nav (64px height + 16px spacing)
-          // On desktop (>= 768px), use standard bottom positioning via Tailwind class
-          bottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
-          right: '20px',
           width: '60px',
           height: '60px',
           borderRadius: '50%',
@@ -93,12 +89,13 @@ const SupportChat = () => {
           cursor: 'pointer',
           boxShadow: '0 8px 25px rgba(16, 185, 129, 0.4), 0 4px 10px rgba(0, 0, 0, 0.15)',
           touchAction: 'manipulation',
+          WebkitTapHighlightColor: 'transparent',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 50
+          justifyContent: 'center'
         }}
         aria-label="Open support chat"
+        title="Chat with support"
       >
         <FiMessageCircle className="w-7 h-7" />
         {hasUnreadMessages && (
