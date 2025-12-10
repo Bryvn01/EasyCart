@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
 
@@ -10,7 +10,52 @@ const OTPLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [canResend, setCanResend] = useState(true);
+  const [countdown, setCountdown] = useState(0);
+  const [attemptsRemaining, setAttemptsRemaining] = useState(5);
+  const [expiresIn, setExpiresIn] = useState(600);
   const navigate = useNavigate();
+
+  // Countdown timer for resend and expiration
+  useEffect(() => {
+    let interval;
+    if (countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            setCanResend(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [countdown]);
+
+  // Expiration timer
+  useEffect(() => {
+    let interval;
+    if (step === 'verify' && expiresIn > 0) {
+      interval = setInterval(() => {
+        setExpiresIn((prev) => {
+          if (prev <= 1) {
+            setError('OTP expired. Please request a new one.');
+            setStep('request');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [step, expiresIn]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleRequestOTP = async (e) => {
     e.preventDefault();
@@ -22,8 +67,22 @@ const OTPLogin = () => {
       const response = await authAPI.requestOTP(identifier, method);
       setMessage(response.data.message);
       setStep('verify');
+      setCanResend(false);
+      setCountdown(response.data.can_resend_after || 60);
+      setExpiresIn(response.data.expires_in || 600);
+      setAttemptsRemaining(5);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to send OTP');
+      const errorData = err.response?.data;
+
+      // Handle rate limiting
+      if (err.response?.status === 429) {
+        const retryAfter = errorData?.retry_after || 60;
+        setError(`${errorData?.error || 'Too many requests'}`);
+        setCountdown(retryAfter);
+        setCanResend(false);
+      } else {
+        setError(errorData?.error || 'Failed to send OTP');
+      }
     } finally {
       setLoading(false);
     }
@@ -47,22 +106,46 @@ const OTPLogin = () => {
         navigate('/complete-profile');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Invalid OTP code');
+      const errorData = err.response?.data;
+      setError(errorData?.error || 'Invalid OTP code');
+
+      // Update attempts remaining
+      if (errorData?.attempts_remaining !== undefined) {
+        setAttemptsRemaining(errorData.attempts_remaining);
+      }
+
+      // Clear OTP input on error
+      setOtpCode('');
     } finally {
       setLoading(false);
     }
   };
 
   const handleResendOTP = async () => {
+    if (!canResend) return;
+
     setLoading(true);
     setError('');
     setMessage('');
 
     try {
-      await authAPI.requestOTP(identifier, method);
+      const response = await authAPI.requestOTP(identifier, method);
       setMessage('OTP resent successfully');
+      setCanResend(false);
+      setCountdown(response.data.can_resend_after || 60);
+      setExpiresIn(response.data.expires_in || 600);
+      setAttemptsRemaining(5);
+      setOtpCode('');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to resend OTP');
+      const errorData = err.response?.data;
+
+      if (err.response?.status === 429) {
+        const retryAfter = errorData?.retry_after || 60;
+        setError(`${errorData?.error || 'Please wait before requesting another OTP'}`);
+        setCountdown(retryAfter);
+      } else {
+        setError(errorData?.error || 'Failed to resend OTP');
+      }
     } finally {
       setLoading(false);
     }
@@ -138,6 +221,14 @@ const OTPLogin = () => {
           </form>
         ) : (
           <form className="mt-8 space-y-6" onSubmit={handleVerifyOTP}>
+            {/* Expiration Timer */}
+            <div className="text-center text-sm">
+              <span className="text-gray-600">Code expires in: </span>
+              <span className={`font-semibold ${expiresIn < 60 ? 'text-red-600' : 'text-indigo-600'}`}>
+                {formatTime(expiresIn)}
+              </span>
+            </div>
+
             <div>
               <label htmlFor="otp" className="sr-only">OTP Code</label>
               <input
@@ -150,8 +241,16 @@ const OTPLogin = () => {
                 placeholder="000000"
                 value={otpCode}
                 onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                autoFocus
               />
             </div>
+
+            {/* Attempts Remaining */}
+            {attemptsRemaining < 5 && attemptsRemaining > 0 && (
+              <div className="text-center text-sm text-orange-600">
+                ⚠️ {attemptsRemaining} {attemptsRemaining === 1 ? 'attempt' : 'attempts'} remaining
+              </div>
+            )}
 
             <div>
               <button
@@ -167,14 +266,24 @@ const OTPLogin = () => {
               <button
                 type="button"
                 onClick={handleResendOTP}
-                disabled={loading}
-                className="text-sm text-indigo-600 hover:text-indigo-500"
+                disabled={loading || !canResend}
+                className="text-sm text-indigo-600 hover:text-indigo-500 disabled:text-gray-400 disabled:cursor-not-allowed"
               >
-                Resend OTP
+                {!canResend && countdown > 0
+                  ? `Resend in ${countdown}s`
+                  : 'Resend OTP'
+                }
               </button>
               <button
                 type="button"
-                onClick={() => setStep('request')}
+                onClick={() => {
+                  setStep('request');
+                  setOtpCode('');
+                  setError('');
+                  setMessage('');
+                  setCountdown(0);
+                  setCanResend(true);
+                }}
                 className="text-sm text-gray-600 hover:text-gray-500"
               >
                 Change number
