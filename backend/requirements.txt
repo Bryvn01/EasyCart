@@ -25,3 +25,4 @@ qrcode==8.0
 coverage==7.6.10
 cryptography>=43.0.0
 twilio==9.8.8
+pytz==2024.2
