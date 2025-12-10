@@ -10,6 +10,10 @@ const SupportChat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const messagesEndRef = useRef(null);
+  const chatButtonRef = useRef(null);
+  const closeButtonRef = useRef(null);
+  const inputRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -18,6 +22,52 @@ const SupportChat = () => {
       setHasUnreadMessages(false);
     }
   }, [messages, isOpen, hasUnreadMessages]);
+
+  // Handle Escape key to close chat
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+        chatButtonRef.current?.focus();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      // Focus input when chat opens
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+
+  // Focus trapping within chat when open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleTab = (e) => {
+      if (e.key !== 'Tab') return;
+
+      const focusableElements = chatContainerRef.current?.querySelectorAll(
+        'button, input, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusableElements?.length) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      } else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleTab);
+    return () => document.removeEventListener('keydown', handleTab);
+  }, [isOpen]);
 
   // Add safe area support for mobile devices
   useEffect(() => {
@@ -77,7 +127,14 @@ const SupportChat = () => {
   if (!isOpen) {
     return (
       <button
+        ref={chatButtonRef}
         onClick={() => setIsOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsOpen(true);
+          }
+        }}
         className="chat-button fixed transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200 group"
         style={{
           width: '60px',
@@ -94,18 +151,25 @@ const SupportChat = () => {
           alignItems: 'center',
           justifyContent: 'center'
         }}
-        aria-label="Open support chat"
-        title="Chat with support"
+        aria-label="Open support chat. Press Enter or Space to open."
+        aria-haspopup="dialog"
+        title="Chat with support (Press Enter to open)"
+        tabIndex={0}
       >
-        <FiMessageCircle className="w-7 h-7" />
+        <FiMessageCircle className="w-7 h-7" aria-hidden="true" />
         {hasUnreadMessages && (
-          <div
-            className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse border-2 border-white"
-            style={{
-              boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.3)'
-            }}
-            aria-label="Unread messages"
-          />
+          <>
+            <div
+              className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse border-2 border-white"
+              style={{
+                boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.3)'
+              }}
+              aria-hidden="true"
+            />
+            <span className="sr-only" aria-live="polite" aria-atomic="true">
+              You have unread messages
+            </span>
+          </>
         )}
       </button>
     );
@@ -113,6 +177,10 @@ const SupportChat = () => {
 
   return (
     <div
+      ref={chatContainerRef}
+      role="dialog"
+      aria-labelledby="chat-header-title"
+      aria-modal="true"
       className="fixed flex flex-col bg-white border border-gray-200 rounded-2xl shadow-2xl backdrop-blur-sm md:!bottom-[calc(100px+env(safe-area-inset-bottom,0px))]"
       style={{
         // On mobile (< 768px), position above the bottom nav
@@ -133,14 +201,26 @@ const SupportChat = () => {
             <FiMessageCircle className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-semibold">Support Chat</h4>
+            <h4 id="chat-header-title" className="font-semibold">Support Chat</h4>
             <p className="text-xs text-emerald-100">We're here to help!</p>
           </div>
         </div>
         <button
-          onClick={() => setIsOpen(false)}
+          ref={closeButtonRef}
+          onClick={() => {
+            setIsOpen(false);
+            chatButtonRef.current?.focus();
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setIsOpen(false);
+              chatButtonRef.current?.focus();
+            }
+          }}
           className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
-          aria-label="Close chat"
+          aria-label="Close chat. Press Escape or Enter to close."
+          tabIndex={0}
         >
           <FiX className="w-5 h-5" />
         </button>
@@ -186,14 +266,21 @@ const SupportChat = () => {
 
       {/* Enhanced Input Form */}
       <form onSubmit={sendMessage} className="p-4 border-t border-gray-200 bg-white rounded-b-2xl">
+        <label htmlFor="chat-message-input" className="sr-only">
+          Type your message to support team
+        </label>
         <div className="flex gap-2">
           <input
+            ref={inputRef}
+            id="chat-message-input"
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type your message..."
             className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-gray-50 hover:bg-white transition-colors"
             disabled={isTyping}
+            aria-label="Message input"
+            aria-describedby="chat-status"
           />
           <button
             type="submit"
@@ -201,8 +288,13 @@ const SupportChat = () => {
             className="p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full hover:from-emerald-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
             aria-label="Send message"
           >
-            <FiSend className="w-5 h-5" />
+            <FiSend className="w-5 h-5" aria-hidden="true" />
           </button>
+        </div>
+
+        {/* Status for screen readers */}
+        <div id="chat-status" className="sr-only" aria-live="polite" aria-atomic="true">
+          {isTyping ? 'Support is typing...' : 'Ready to send message'}
         </div>
 
         {/* Quick Actions */}
