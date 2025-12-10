@@ -94,7 +94,7 @@ describe('useProducts hook', () => {
     await waitFor(() => {
       expect(api.productsAPI.getProducts).toHaveBeenCalledWith(
         expect.objectContaining({
-          category: '1'
+          category__name: '1'
         })
       );
     });

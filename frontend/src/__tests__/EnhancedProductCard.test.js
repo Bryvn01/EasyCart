@@ -3,6 +3,9 @@ import { render, screen, fireEvent, waitFor } from '../test-utils';
 import EnhancedProductCard from '../components/EnhancedProductCard';
 import toast from 'react-hot-toast';
 
+// Mock react-hot-toast
+jest.mock('react-hot-toast');
+
 // Mock useCart hook
 const mockAddToCart = jest.fn();
 const mockUseCart = {
@@ -40,6 +43,10 @@ describe('EnhancedProductCard', () => {
     mockAddToCart.mockClear();
     // Clear all mocks including toast
     jest.clearAllMocks();
+    // Setup toast mocks
+    toast.success = jest.fn();
+    toast.error = jest.fn();
+    toast.loading = jest.fn();
   });
 
   test('renders product information correctly', () => {

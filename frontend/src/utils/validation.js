@@ -35,3 +35,15 @@ export const validateNumber = (value, min = 0, max = Infinity) => {
   const num = parseFloat(value);
   return !isNaN(num) && num >= min && num <= max;
 };
+
+// Alias for validateNumber
+export const validateNumeric = (value) => {
+  const num = parseFloat(value);
+  return !isNaN(num) && isFinite(num);
+};
+
+// Validate price (must be non-negative)
+export const validatePrice = (value) => {
+  const num = parseFloat(value);
+  return !isNaN(num) && isFinite(num) && num >= 0;
+};
