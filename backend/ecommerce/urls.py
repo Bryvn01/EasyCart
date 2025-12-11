@@ -92,6 +92,7 @@ def api_root(request):
 
 urlpatterns = [
     path("", api_root, name="api-root"),
+    path("api/", api_root, name="api-root-explicit"),
     path("api/health/", health_check, name="health-check"),
     path("api/health/live/", liveness_probe, name="liveness-probe"),
     path("api/health/ready/", readiness_probe, name="readiness-probe"),
