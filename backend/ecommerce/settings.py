@@ -255,14 +255,18 @@ CORS_ALLOWED_ORIGINS = config(
         "https://easycart-frontend-wj9x.onrender.com,"
         "https://easycart-admin-08xf.onrender.com,"
         "http://localhost:3000,"
+        "http://localhost:3001,"
+        "http://127.0.0.1:3001,"
         "https://easycart-backend-2k8l.onrender.com"
     ),
     cast=Csv(),
 )
 # Example for local/dev:
 # CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
+#     "http://localhost:3000",  # Main frontend
 #     "http://127.0.0.1:3000",
+#     "http://localhost:3001",  # Admin dashboard
+#     "http://127.0.0.1:3001",
 #     "https://easycart-frontend-wj9x.onrender.com",
 #     "https://easycart-admin-08xf.onrender.com"
 # ]
@@ -285,6 +289,8 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:3001",  # Admin dashboard
+    "http://127.0.0.1:3001",
     "https://easycart-frontend-wj9x.onrender.com",
     "https://easycart-admin-08xf.onrender.com",
 ]
