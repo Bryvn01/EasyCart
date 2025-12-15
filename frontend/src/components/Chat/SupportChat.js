@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiMessageCircle, FiX, FiSend } from 'react-icons/fi';
+import api from '../../services/api';
 
 const SupportChat = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,6 +10,8 @@ const SupportChat = () => {
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
+  const [sendError, setSendError] = useState(null);
   const messagesEndRef = useRef(null);
   const chatButtonRef = useRef(null);
   const closeButtonRef = useRef(null);
@@ -88,7 +91,7 @@ const SupportChat = () => {
                 .trim();
   };
 
-  const sendMessage = (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
     const sanitizedMessage = sanitizeInput(newMessage);
     if (!sanitizedMessage) return;
@@ -102,26 +105,52 @@ const SupportChat = () => {
 
     setMessages(prev => [...prev, message]);
     setNewMessage('');
+    setSendError(null);
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      // Send to backend API
+      const response = await api.post('/support/messages/', {
+        message_text: sanitizedMessage,
+        page_url: window.location.href,
+      });
+
+      if (response.data.success) {
+        // Store conversation ID for future messages
+        if (response.data.conversation?.id) {
+          setConversationId(response.data.conversation.id);
+        }
+
+        setIsTyping(false);
+        const supportMessage = {
+          id: Date.now() + 1,
+          text: response.data.message || "Thanks for your message! Our team will get back to you shortly. We typically respond within 24 hours.",
+          sender: 'support',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, supportMessage]);
+
+        // Set unread messages flag only if chat was closed before this timeout
+        setTimeout(() => {
+          setHasUnreadMessages(prevHasUnread => {
+            return !isOpen || prevHasUnread;
+          });
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Failed to send support message:', error);
       setIsTyping(false);
-      const supportMessage = {
+      setSendError('Failed to send message. Please try again.');
+
+      // Show error message in chat
+      const errorMessage = {
         id: Date.now() + 1,
-        text: "Thanks for your message! Our team will get back to you shortly. We typically respond within 2-4 hours during business hours.",
-        sender: 'support',
+        text: "We're sorry, we couldn't send your message. Please check your connection and try again, or email us directly at support@ecommerce.com",
+        sender: 'system',
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, supportMessage]);
-      // Set unread messages flag only if chat was closed before this timeout
-      // This ensures new messages received while chat is closed trigger the notification
-      setTimeout(() => {
-        setHasUnreadMessages(prevHasUnread => {
-          // Only set to true if there are new support messages and chat is still closed
-          return !isOpen || prevHasUnread;
-        });
-      }, 100);
-    }, 1500);
+      setMessages(prev => [...prev, errorMessage]);
+    }
   };
 
   if (!isOpen) {

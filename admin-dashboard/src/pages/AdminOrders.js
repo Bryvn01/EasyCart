@@ -48,11 +48,47 @@ const AdminOrders = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "Order ID", flex: 1 },
-    { field: "customer", headerName: "Customer", flex: 1, valueGetter: (params) => params.row.customer_name || params.row.customer || "" },
-    { field: "total", headerName: "Total", flex: 1 },
-    { field: "status", headerName: "Status", flex: 1 },
-    { field: "created_at", headerName: "Created", flex: 1 },
+    { field: "id", headerName: "Order ID", flex: 0.8 },
+    {
+      field: "customer",
+      headerName: "Customer",
+      flex: 1.5,
+      valueGetter: (params) => {
+        const user = params.row.user_details;
+        if (user) {
+          return user.username || user.email || `User #${user.id}`;
+        }
+        return "Guest Customer";
+      },
+    },
+    {
+      field: "total_amount",
+      headerName: "Total",
+      flex: 1,
+      valueFormatter: (params) => {
+        const amount = parseFloat(params.value || 0);
+        return `KES ${amount.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      }
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      valueFormatter: (params) => {
+        const status = params.value || 'pending';
+        return status.charAt(0).toUpperCase() + status.slice(1);
+      }
+    },
+    {
+      field: "created_at",
+      headerName: "Created",
+      flex: 1,
+      valueFormatter: (params) => {
+        if (!params.value) return '';
+        const date = new Date(params.value);
+        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -91,13 +127,58 @@ const AdminOrders = () => {
         <DialogTitle>Order Details</DialogTitle>
         <DialogContent>
           {selectedOrder && (
-            <Box>
-              <Typography variant="subtitle1">Order ID: {selectedOrder.id}</Typography>
-              <Typography variant="subtitle1">Customer: {selectedOrder.customer_name || selectedOrder.customer || ""}</Typography>
-              <Typography variant="subtitle1">Total: {selectedOrder.total}</Typography>
-              <Typography variant="subtitle1">Status: {selectedOrder.status}</Typography>
-              <Typography variant="subtitle1">Created: {selectedOrder.created_at}</Typography>
-              {/* Add more order details as needed */}
+            <Box sx={{ '& > *': { mb: 1.5 } }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                Order ID: #{selectedOrder.id}
+              </Typography>
+              <Typography variant="subtitle1">
+                <strong>Customer:</strong>{' '}
+                {selectedOrder.user_details
+                  ? (selectedOrder.user_details.username || selectedOrder.user_details.email || `User #${selectedOrder.user_details.id}`)
+                  : "Guest Customer"}
+              </Typography>
+              {selectedOrder.user_details?.email && selectedOrder.user_details?.username && (
+                <Typography variant="body2" sx={{ color: 'text.secondary', ml: 2 }}>
+                  Email: {selectedOrder.user_details.email}
+                </Typography>
+              )}
+              <Typography variant="subtitle1">
+                <strong>Total:</strong> KES {parseFloat(selectedOrder.total_amount || 0).toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </Typography>
+              <Typography variant="subtitle1">
+                <strong>Status:</strong>{' '}
+                <Box component="span" sx={{
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: 1,
+                  bgcolor: selectedOrder.status === 'delivered' ? 'success.light' :
+                           selectedOrder.status === 'shipped' ? 'info.light' :
+                           selectedOrder.status === 'processing' ? 'warning.light' :
+                           selectedOrder.status === 'cancelled' ? 'error.light' : 'grey.300',
+                  color: selectedOrder.status === 'delivered' ? 'success.dark' :
+                         selectedOrder.status === 'shipped' ? 'info.dark' :
+                         selectedOrder.status === 'processing' ? 'warning.dark' :
+                         selectedOrder.status === 'cancelled' ? 'error.dark' : 'text.primary',
+                  fontWeight: 'medium',
+                  fontSize: '0.875rem'
+                }}>
+                  {(selectedOrder.status || 'pending').charAt(0).toUpperCase() + (selectedOrder.status || 'pending').slice(1)}
+                </Box>
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                <strong>Created:</strong> {new Date(selectedOrder.created_at).toLocaleString('en-GB', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </Typography>
+              {selectedOrder.payment_method && (
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  <strong>Payment:</strong> {selectedOrder.payment_method.toUpperCase()}
+                </Typography>
+              )}
             </Box>
           )}
         </DialogContent>

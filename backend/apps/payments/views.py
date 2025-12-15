@@ -1,7 +1,7 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -11,6 +11,7 @@ from .models import Payment, PaymentLog
 from .serializers import PaymentSerializer
 from apps.orders.models import Order
 from .gateways.mpesa_gateway import MPesaGateway
+from apps.throttling import PaymentRateThrottle
 import re
 
 
@@ -18,6 +19,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [PaymentRateThrottle]  # Limit to 10 payment attempts per minute
 
     def get_queryset(self):
         # Only allow users to see their own payments (admin can override in future)
@@ -50,7 +52,9 @@ class PaymentViewSet(viewsets.ModelViewSet):
             status="pending",
         )
         try:
-            stk_response = MPesaGateway.initiate_stk_push(payment, phone_number)
+            # Initialize M-Pesa gateway (now uses instance method for environment awareness)
+            gateway = MPesaGateway()
+            stk_response = gateway.initiate_stk_push(payment, phone_number)
             payment.transaction_id = stk_response.get("CheckoutRequestID")
             payment.save()
             return Response(

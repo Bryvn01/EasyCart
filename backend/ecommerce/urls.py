@@ -3,7 +3,13 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
-from apps.products.health_views import health_check, liveness_probe, readiness_probe
+from apps.products.health_views import health_check
+from utils.health_checks import (
+    HealthCheckView,
+    ReadinessCheckView,
+    LivenessCheckView,
+    MetricsView,
+)
 
 
 def api_root(request):
@@ -93,15 +99,23 @@ def api_root(request):
 urlpatterns = [
     path("", api_root, name="api-root"),
     path("api/", api_root, name="api-root-explicit"),
-    path("api/health/", health_check, name="health-check"),
-    path("api/health/live/", liveness_probe, name="liveness-probe"),
-    path("api/health/ready/", readiness_probe, name="readiness-probe"),
+    # Enhanced health checks with comprehensive monitoring
+    path("api/health/", HealthCheckView.as_view(), name="health-check-enhanced"),
+    path("api/health/ready/", ReadinessCheckView.as_view(), name="readiness-check"),
+    path("api/health/live/", LivenessCheckView.as_view(), name="liveness-check"),
+    path(
+        "api/health/legacy/", health_check, name="health-check-legacy"
+    ),  # Keep old endpoint for backward compatibility
+    path(
+        "api/metrics/", MetricsView.as_view(), name="metrics"
+    ),  # Staff-only metrics endpoint
     path("admin/", admin.site.urls, name="django-admin"),
     path("api/auth/", include("apps.accounts.urls")),
     path("api/products/", include("apps.products.urls")),
     path("api/orders/", include("apps.orders.urls")),
     path("api/payments/", include("apps.payments.urls")),
     path("api/admin/", include("apps.admin_dashboard.urls")),
+    path("api/support/", include("apps.support.urls")),
 ]
 
 if settings.DEBUG:

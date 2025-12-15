@@ -299,7 +299,9 @@ const Orders = () => {
   }
 
   return (
-    <div className="container py-8">
+    <div className="container py-8" style={{
+      paddingBottom: 'max(var(--space-8), calc(80px + env(safe-area-inset-bottom, 0px)))'
+    }}>
       <div className="max-w-6xl mx-auto">
         {/* Breadcrumb Navigation */}
         <nav style={{
@@ -326,8 +328,8 @@ const Orders = () => {
         {/* Stats Cards */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 'var(--space-4)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+          gap: 'var(--space-3)',
           marginBottom: 'var(--space-6)'
         }}>
           <div className="card" style={{ padding: 'var(--space-4)' }}>
@@ -352,8 +354,8 @@ const Orders = () => {
         <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 'var(--space-4)'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            gap: 'var(--space-3)'
           }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: 'var(--space-2)' }}>
@@ -682,8 +684,20 @@ const Orders = () => {
         /* Responsive adjustments */
         @media (max-width: 768px) {
           .container {
-            padding-left: var(--space-4);
-            padding-right: var(--space-4);
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+            /* Extra padding for floating elements and bottom nav */
+            padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px) + 24px) !important;
+          }
+
+          /* Reduce card padding on mobile */
+          .card {
+            padding: var(--space-3) !important;
+          }
+
+          /* Optimize grid for mobile */
+          .card > div[style*="grid"] {
+            gap: var(--space-2) !important;
           }
         }
 
@@ -694,22 +708,64 @@ const Orders = () => {
             align-items: flex-start !important;
           }
 
-          /* Make buttons and inputs touch-friendly */
+          /* Make buttons and inputs touch-friendly (WCAG 2.5.5) */
           input, select, button {
-            min-height: 44px !important;
-            font-size: 1rem !important;
+            min-height: 48px !important;
+            font-size: 16px !important; /* Prevents iOS zoom */
+            padding: 12px 16px !important;
           }
 
-          /* Adjust font sizes for mobile */
+          /* Touch-friendly select dropdowns */
+          select {
+            background-size: 16px;
+            padding-right: 40px !important;
+          }
+
+          /* Adjust font sizes for mobile readability */
           .text-3xl {
-            font-size: 1.75rem !important;
+            font-size: 1.5rem !important;
+            line-height: 1.3 !important;
           }
 
           .text-2xl {
-            font-size: 1.5rem !important;
+            font-size: 1.25rem !important;
+            line-height: 1.4 !important;
           }
 
           .text-xl {
+            font-size: 1.125rem !important;
+            line-height: 1.5 !important;
+          }
+
+          /* Improve stats cards on mobile */
+          .card p.text-2xl {
+            font-size: 1.5rem !important;
+          }
+
+          /* Better spacing for mobile */
+          .max-w-6xl {
+            margin: 0 !important;
+          }
+
+          /* Ensure last order card has extra bottom spacing */
+          .max-w-6xl > div:last-child {
+            margin-bottom: max(24px, env(safe-area-inset-bottom, 0px)) !important;
+          }
+        }
+
+        /* Extra small screens (< 375px) */
+        @media (max-width: 374px) {
+          /* Make stats 2 columns on very small screens */
+          .card > div[style*="grid-template-columns"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+
+          /* Smaller text on tiny screens */
+          .text-3xl {
+            font-size: 1.25rem !important;
+          }
+
+          .card p.text-2xl {
             font-size: 1.25rem !important;
           }
         }

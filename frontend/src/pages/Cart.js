@@ -268,7 +268,9 @@ const Cart = () => {
   }
 
   return (
-    <div className="container py-8">
+    <div className="container py-8" style={{
+      paddingBottom: 'calc(80px + env(safe-area-inset-bottom))'
+    }}>
       {/* Screen Reader Announcements */}
       <div
         role="status"
@@ -433,8 +435,8 @@ const Cart = () => {
                           disabled={item.quantity <= 1}
                           aria-label="Decrease quantity"
                           style={{
-                            width: '28px',
-                            height: '28px',
+                            width: '32px',
+                            height: '32px',
                             border: '1px solid var(--gray-300)',
                             background: item.quantity <= 1 ? 'var(--gray-100)' : 'white',
                             borderRadius: 'var(--radius-sm)',
@@ -460,8 +462,8 @@ const Cart = () => {
                           disabled={item.quantity >= (item.product?.stock || 0)}
                           aria-label="Increase quantity"
                           style={{
-                            width: '28px',
-                            height: '28px',
+                            width: '32px',
+                            height: '32px',
                             border: '1px solid var(--gray-300)',
                             background: item.quantity >= (item.product?.stock || 0) ? 'var(--gray-100)' : 'white',
                             borderRadius: 'var(--radius-sm)',
@@ -924,9 +926,43 @@ const Cart = () => {
           /* Product info text smaller on mobile */
           .product-title {
             font-size: 0.9375rem !important;
+            line-height: 1.4 !important;
           }
 
           .product-price {
+            font-size: 1.125rem !important;
+          }
+
+          /* Reduce padding for mobile */
+          .card {
+            padding: 12px !important;
+          }
+
+          .p-6 {
+            padding: 12px !important;
+          }
+        }
+
+        /* Extra Small Screens */
+        @media (max-width: 375px) {
+          .product-image-container {
+            width: 64px !important;
+            height: 64px !important;
+          }
+
+          .product-title {
+            font-size: 0.875rem !important;
+          }
+
+          .product-price {
+            font-size: 1rem !important;
+          }
+
+          h1 {
+            font-size: 1.5rem !important;
+          }
+
+          h2 {
             font-size: 1.125rem !important;
           }
         }
@@ -940,13 +976,25 @@ const Cart = () => {
 
         @media (max-width: 640px) {
           .quantity-controls button {
-            min-width: 44px !important;
-            min-height: 44px !important;
+            min-width: 48px !important;
+            min-height: 48px !important;
+            width: 48px !important;
+            height: 48px !important;
             font-size: 1.125rem !important;
           }
 
           .quantity-controls input {
+            min-height: 48px !important;
+          }
+        }
+
+        /* Extra Small Screens */
+        @media (max-width: 375px) {
+          .quantity-controls button {
+            min-width: 44px !important;
             min-height: 44px !important;
+            width: 44px !important;
+            height: 44px !important;
           }
         }
 
