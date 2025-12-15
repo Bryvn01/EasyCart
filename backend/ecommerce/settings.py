@@ -334,7 +334,38 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Cache Configuration
-REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/1")
+REDIS_URL = config("REDIS_URL", default=None)
+
+# Use Redis cache if available, otherwise use dummy cache
+if REDIS_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "IGNORE_EXCEPTIONS": True,  # Don't crash if Redis is down
+                "SOCKET_CONNECT_TIMEOUT": 1,  # Faster timeout
+                "SOCKET_TIMEOUT": 1,
+                "CONNECTION_POOL_KWARGS": {"max_connections": 50},
+            },
+            "KEY_PREFIX": "easycart",
+            "TIMEOUT": 300,  # 5 minutes default
+        }
+    }
+    # Use Redis for sessions when available
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_CACHE_ALIAS = "default"
+else:
+    # Fall back to local memory cache (for development/Render free tier)
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "easycart-cache",
+        }
+    }
+    # Use database sessions when Redis is not available
+    SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 # Health Check Thresholds (ms)
 # Used by utils.health_checks to classify dependencies as healthy/degraded/unhealthy.
@@ -350,31 +381,13 @@ HEALTHCHECK_CACHE_UNHEALTHY_MS = config(
 )
 
 # Health check behavior
-HEALTHCHECK_CACHE_ENABLED = config("HEALTHCHECK_CACHE_ENABLED", default=True, cast=bool)
+HEALTHCHECK_CACHE_ENABLED = config(
+    "HEALTHCHECK_CACHE_ENABLED", default=bool(REDIS_URL), cast=bool
+)
 HEALTHCHECK_CACHE_LOG_COOLDOWN_S = config(
     "HEALTHCHECK_CACHE_LOG_COOLDOWN_S", default=60, cast=int
 )
 
-# Use Redis cache (now that Redis is installed and running)
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "IGNORE_EXCEPTIONS": True,  # Don't crash if Redis is down
-            "SOCKET_CONNECT_TIMEOUT": 1,  # Faster timeout
-            "SOCKET_TIMEOUT": 1,
-            "CONNECTION_POOL_KWARGS": {"max_connections": 50},
-        },
-        "KEY_PREFIX": "easycart",
-        "TIMEOUT": 300,  # 5 minutes default
-    }
-}
-
-# Session Configuration - Use Redis for sessions
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
 SESSION_COOKIE_AGE = 604800  # 7 days
 SESSION_SAVE_EVERY_REQUEST = False  # Only save when modified
 
