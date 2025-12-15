@@ -135,6 +135,9 @@ def request_otp(request):
         user.otp_verified = False
         user.save()
 
+        # Log OTP for development/debugging (fallback if delivery fails)
+        logger.info(f"OTP generated for user {user.id}: {otp_code}")
+
         # Send OTP based on method with fallback to email
         success = False
         attempted_method = method

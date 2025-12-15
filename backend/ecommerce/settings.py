@@ -5,7 +5,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 import sentry_sdk
 import logging
 from datetime import timedelta
-from decouple import config, Csv
+from decouple import Config, RepositoryEnv, Csv
 from pathlib import Path
 import sys
 import os
@@ -14,6 +14,9 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Ensure python-decouple loads ONLY from backend/.env (ignore parent dirs and shell env vars for project config).
+config = Config(RepositoryEnv(BASE_DIR / ".env"))
 
 # Security Settings
 SECRET_KEY = config("SECRET_KEY")
@@ -59,6 +62,7 @@ INSTALLED_APPS = [
     "apps.products",
     "apps.orders",
     "apps.payments",
+    "apps.support",
 ]
 
 # Cloudinary config for media files
@@ -71,6 +75,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "ecommerce.correlation_middleware.CorrelationIDMiddleware",  # Request tracing
     "ecommerce.middleware.DatabaseRetryMiddleware",  # Handle transient DB errors
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -173,14 +178,13 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "en-us"
 
 # Timezone Settings
-# Backend stores all times in UTC (best practice - don't change)
-TIME_ZONE = "UTC"  # Database storage timezone (keep as UTC)
+# Set to local timezone - Django will store in UTC but display in this timezone
+TIME_ZONE = "Africa/Nairobi"  # East Africa Time (UTC+3)
 USE_I18N = True
-USE_TZ = True  # Enable timezone support (keep True)
+USE_TZ = True  # Enable timezone support (MUST be True)
 
-# Display timezone for Django admin (convert UTC to local time for display)
-# This makes Django admin show times in East Africa Time (UTC+3)
-# Note: Frontend already handles timezone conversion via browser
+# This makes Django admin and APIs display times in local timezone (EAT)
+# Database still stores in UTC (Django handles conversion automatically)
 USE_L10N = True  # Enable localized formatting
 
 # Static files (CSS, JavaScript, Images)
@@ -210,11 +214,22 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    # Throttling enabled for OTP endpoints (custom throttle classes applied via decorators)
-    "DEFAULT_THROTTLE_CLASSES": [],
+    # Global throttling configuration
+    "DEFAULT_THROTTLE_CLASSES": [
+        "apps.throttling.BurstRateThrottle",
+        "apps.throttling.SustainedRateThrottle",
+    ],
     "DEFAULT_THROTTLE_RATES": {
         "anon": "100/hour",
         "user": "1000/hour",
+        "burst": "60/min",
+        "sustained": "1000/hour",
+        "payment": "10/min",
+        "otp": "5/hour",
+        "login": "5/5min",
+        "registration": "3/hour",
+        "strict_anon": "100/hour",
+        "progressive": "100/min",
     },
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
@@ -316,6 +331,25 @@ if not DEBUG:
 # Cache Configuration
 REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/1")
 
+# Health Check Thresholds (ms)
+# Used by utils.health_checks to classify dependencies as healthy/degraded/unhealthy.
+HEALTHCHECK_DB_DEGRADED_MS = config("HEALTHCHECK_DB_DEGRADED_MS", default=250, cast=int)
+HEALTHCHECK_DB_UNHEALTHY_MS = config(
+    "HEALTHCHECK_DB_UNHEALTHY_MS", default=2000, cast=int
+)
+HEALTHCHECK_CACHE_DEGRADED_MS = config(
+    "HEALTHCHECK_CACHE_DEGRADED_MS", default=250, cast=int
+)
+HEALTHCHECK_CACHE_UNHEALTHY_MS = config(
+    "HEALTHCHECK_CACHE_UNHEALTHY_MS", default=10000, cast=int
+)
+
+# Health check behavior
+HEALTHCHECK_CACHE_ENABLED = config("HEALTHCHECK_CACHE_ENABLED", default=True, cast=bool)
+HEALTHCHECK_CACHE_LOG_COOLDOWN_S = config(
+    "HEALTHCHECK_CACHE_LOG_COOLDOWN_S", default=60, cast=int
+)
+
 # Use Redis cache (now that Redis is installed and running)
 CACHES = {
     "default": {
@@ -356,6 +390,10 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@ecommerce.com")
 SERVER_EMAIL = config("SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 
+# Support Configuration
+SUPPORT_EMAIL = config("SUPPORT_EMAIL", default="support@ecommerce.com")
+SITE_URL = config("SITE_URL", default="http://127.0.0.1:8000")
+
 # Twilio Configuration for WhatsApp/SMS OTP delivery
 # Get credentials from https://console.twilio.com
 # TWILIO_ACCOUNT_SID=your_account_sid
@@ -392,10 +430,19 @@ LOGGING = {
             "callback": lambda record: "Components object is deprecated"
             not in record.getMessage(),
         },
+        "pii_masking": {
+            "()": "utils.logging_filters.PIIMaskingFilter",
+        },
+        "correlation_id": {
+            "()": "utils.logging_filters.CorrelationIDFilter",
+        },
+        "sensitive_data": {
+            "()": "utils.logging_filters.SensitiveDataFilter",
+        },
     },
     "formatters": {
         "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "format": "{levelname} {asctime} [{correlation_id}] {module} {process:d} {thread:d} {message}",
             "style": "{",
         },
         "simple": {
@@ -411,12 +458,24 @@ LOGGING = {
             "maxBytes": 1024 * 1024 * 10,  # 10 MB
             "backupCount": 5,
             "formatter": "verbose",
+            "filters": ["pii_masking", "correlation_id", "sensitive_data"],
         },
         "console": {
             "level": "DEBUG" if DEBUG else "INFO",
             "class": "logging.StreamHandler",
             "formatter": "simple",
-            "filters": ["suppress_deprecated"],
+            "filters": ["suppress_deprecated", "pii_masking", "sensitive_data"],
+        },
+        "audit": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": LOG_DIR / "audit.log",
+            "maxBytes": 1024 * 1024 * 50,  # 50 MB for audit logs
+            "backupCount": 10,
+            "formatter": "verbose",
+            "filters": [
+                "correlation_id"
+            ],  # Audit logs need correlation but minimal masking
         },
     },
     "root": {
@@ -437,6 +496,11 @@ LOGGING = {
         "apps": {
             "handlers": ["console", "file"],
             "level": "DEBUG" if DEBUG else "INFO",
+            "propagate": False,
+        },
+        "audit": {
+            "handlers": ["audit"],
+            "level": "INFO",
             "propagate": False,
         },
     },
@@ -470,11 +534,30 @@ def get_env_var(var, default=None, required=False):
         return default
 
 
+# M-Pesa Payment Gateway Configuration
+MPESA_ENVIRONMENT = get_env_var("MPESA_ENVIRONMENT", default="sandbox", required=False)
 MPESA_CONSUMER_KEY = get_env_var("MPESA_CONSUMER_KEY", default="", required=False)
 MPESA_CONSUMER_SECRET = get_env_var("MPESA_CONSUMER_SECRET", default="", required=False)
 MPESA_SHORTCODE = get_env_var("MPESA_SHORTCODE", default="174379", required=False)
 MPESA_PASSKEY = get_env_var("MPESA_PASSKEY", default="", required=False)
 MPESA_CALLBACK_URL = get_env_var("MPESA_CALLBACK_URL", default="", required=False)
+
+# Webhook signature verification (recommended for production)
+MPESA_VERIFY_SIGNATURES = get_env_var(
+    "MPESA_VERIFY_SIGNATURES", default="True", required=False
+).lower() in ("true", "1", "yes")
+MPESA_WEBHOOK_SECRET = get_env_var("MPESA_WEBHOOK_SECRET", default="", required=False)
+
+# Production validation
+if MPESA_ENVIRONMENT == "production" and not DEBUG:
+    if not MPESA_CONSUMER_KEY or not MPESA_CONSUMER_SECRET:
+        logging.warning(
+            "M-Pesa production mode enabled but credentials not configured!"
+        )
+    if MPESA_VERIFY_SIGNATURES and not MPESA_WEBHOOK_SECRET:
+        logging.warning(
+            "M-Pesa signature verification enabled but webhook secret not set!"
+        )
 
 # Development CORS override
 if DEBUG:

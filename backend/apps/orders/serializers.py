@@ -13,6 +13,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+
+    from apps.accounts.serializers import UserSerializer
+
+    user_details = UserSerializer(source="user", read_only=True)
     items = OrderItemSerializer(many=True, read_only=True)
     items_count = serializers.SerializerMethodField()
 
@@ -21,6 +25,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
+            "user_details",
             "total_amount",
             "status",
             "payment_status",
@@ -38,6 +43,34 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def get_items_count(self, obj):
         return obj.items.count()
+
+    def to_representation(self, instance):
+        """
+        Ensure clean, normalized data output.
+        Industry best practice: Always return consistent, validated data.
+        """
+        representation = super().to_representation(instance)
+
+        # Normalize status to lowercase and trim whitespace
+        if representation.get("status"):
+            representation["status"] = str(representation["status"]).lower().strip()
+
+        # Normalize payment_status
+        if representation.get("payment_status"):
+            representation["payment_status"] = (
+                str(representation["payment_status"]).lower().strip()
+            )
+
+        # Ensure total_amount is a valid decimal string
+        if representation.get("total_amount"):
+            try:
+                representation["total_amount"] = (
+                    f"{float(representation['total_amount']):.2f}"
+                )
+            except (ValueError, TypeError):
+                representation["total_amount"] = "0.00"
+
+        return representation
 
 
 class CartItemSerializer(serializers.ModelSerializer):

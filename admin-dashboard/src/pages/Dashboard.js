@@ -40,13 +40,28 @@ const Dashboard = () => {
         return sum + amount;
       }, 0);
 
-      // Transform recent orders
-      const recentOrders = ordersData.slice(0, 5).map(order => ({
-        id: order.id,
-        customer: order.user?.username || order.user?.email || 'Unknown',
-        total: order.total_amount || 0,
-        status: order.status || 'pending'
-      }));
+      // Transform recent orders with proper customer display
+      const recentOrders = ordersData.slice(0, 5).map(order => {
+        // Use user_details (nested serializer) first, then fallback to user ID lookup
+        const userDetails = order.user_details;
+        let customerName = 'Guest Customer';
+
+        if (userDetails) {
+          customerName = userDetails.username || userDetails.email || `User #${userDetails.id}`;
+        } else if (order.user) {
+          // Fallback for legacy data
+          customerName = typeof order.user === 'object'
+            ? (order.user.username || order.user.email || `User #${order.user.id}`)
+            : `User #${order.user}`;
+        }
+
+        return {
+          id: order.id,
+          customer: customerName,
+          total: parseFloat(order.total_amount || 0).toFixed(2),
+          status: (order.status || 'pending').toLowerCase().trim()
+        };
+      });
 
       setStats({
         totalProducts,
@@ -154,11 +169,13 @@ const Dashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        order.status === 'delivered' || order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
                         order.status === 'processing' ? 'bg-yellow-100 text-yellow-800' :
+                        order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
-                        {order.status}
+                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                       </span>
                     </td>
                   </tr>

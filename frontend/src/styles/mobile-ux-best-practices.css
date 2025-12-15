@@ -511,15 +511,20 @@
 
 /* ===== Desktop Adjustments (>= 1024px) ===== */
 @media (min-width: 1024px) {
-  /* Desktop: Return to standard positioning */
-  .back-to-top-button {
-    right: 20px;
-    left: auto;
+  /* Desktop: Both buttons on right side, stacked vertically per Material Design/Apple HIG
+   * Primary action (chat) at bottom, secondary action (back-to-top) above it
+   * Standard FAB spacing: 16px vertical gap between buttons
+   */
+  .chat-button {
+    right: 24px;
     bottom: 24px;
   }
 
-  .chat-button {
-    bottom: 24px;
+  .back-to-top-button {
+    right: 24px;
+    left: auto;
+    /* Position above chat button: chat height (60px) + gap (16px) + chat bottom (24px) = 100px */
+    bottom: 100px;
   }
 }
 
