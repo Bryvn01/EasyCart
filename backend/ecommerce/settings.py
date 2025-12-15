@@ -15,8 +15,13 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Ensure python-decouple loads ONLY from backend/.env (ignore parent dirs and shell env vars for project config).
-config = Config(RepositoryEnv(BASE_DIR / ".env"))
+# Load config from .env file if it exists, otherwise use environment variables
+env_file = BASE_DIR / ".env"
+if env_file.exists():
+    config = Config(RepositoryEnv(env_file))
+else:
+    # On Render and production, use environment variables directly
+    from decouple import config
 
 # Security Settings
 SECRET_KEY = config("SECRET_KEY")
