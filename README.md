@@ -1,13 +1,15 @@
 # EasyCart - E-Commerce Web Application
 
 ![CI/CD](https://github.com/Bryvn01/EasyCart/workflows/CI-CD-Pipeline/badge.svg)
-![Required Checks](https://github.com/Bryvn01/EasyCart/workflows/Required%20Checks/badge.svg)
+![Required Checks](https://github.com/Bryvn01/EasyCart/workflows/Required%20Status%20Checks/badge.svg)
 ![License](https://img.shields.io/badge/license-Proprietary-red.svg)
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
 ![Django](https://img.shields.io/badge/django-5.1.7-green.svg)
 ![React](https://img.shields.io/badge/react-18.3-blue.svg)
 ![PostgreSQL](https://img.shields.io/badge/postgresql-14+-blue.svg)
-![Code Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen.svg)
+[![codecov](https://codecov.io/gh/Bryvn01/EasyCart/branch/main/graph/badge.svg)](https://codecov.io/gh/Bryvn01/EasyCart)
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
+![Tests](https://img.shields.io/badge/tests-parallel-blue.svg)
 
 A complete e-commerce solution with React frontend and Django REST Framework backend, featuring PostgreSQL database, JWT authentication, superadmin CRUD operations, and production deployment on Render.
 
