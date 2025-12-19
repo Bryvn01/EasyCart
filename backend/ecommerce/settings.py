@@ -68,7 +68,7 @@ INSTALLED_APPS = [
     "apps.orders",
     "apps.payments",
     "apps.support",
-    "apps.pos.apps.PosConfig",  # Full path to AppConfig
+    "apps.pos",
 ]
 
 # Cloudinary storage configuration
