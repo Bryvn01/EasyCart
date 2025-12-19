@@ -442,16 +442,15 @@ SERVER_EMAIL = config("SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 SUPPORT_EMAIL = config("SUPPORT_EMAIL", default="support@ecommerce.com")
 SITE_URL = config("SITE_URL", default="http://127.0.0.1:8000")
 
-# Twilio Configuration for WhatsApp/SMS OTP delivery
-# Get credentials from https://console.twilio.com
-# TWILIO_ACCOUNT_SID=<your_twilio_account_sid>
-# TWILIO_AUTH_TOKEN=<your_twilio_auth_token>
-# TWILIO_PHONE_NUMBER=+1234567890 (your Twilio number)
-# TWILIO_WHATSAPP_NUMBER=whatsapp:+1234567890 (optional, for WhatsApp)
-TWILIO_ACCOUNT_SID = config("TWILIO_ACCOUNT_SID", default="")
-TWILIO_AUTH_TOKEN = config("TWILIO_AUTH_TOKEN", default="")
-TWILIO_PHONE_NUMBER = config("TWILIO_PHONE_NUMBER", default="")
-TWILIO_WHATSAPP_NUMBER = config("TWILIO_WHATSAPP_NUMBER", default="")
+# Ultramsg Configuration for WhatsApp delivery
+# Get credentials from https://ultramsg.com/
+# Create an instance and get your Instance ID and Token
+# ULTRAMSG_INSTANCE_ID=instance12345
+# ULTRAMSG_TOKEN=your_api_token
+# ULTRAMSG_PHONE_NUMBER=+254XXXXXXXXX (your WhatsApp Business number)
+ULTRAMSG_INSTANCE_ID = config("ULTRAMSG_INSTANCE_ID", default="")
+ULTRAMSG_TOKEN = config("ULTRAMSG_TOKEN", default="")
+ULTRAMSG_PHONE_NUMBER = config("ULTRAMSG_PHONE_NUMBER", default="")
 
 # Celery Configuration
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://localhost:6379/0")
