@@ -50,56 +50,51 @@ const MobileBottomNav = () => {
 
   return (
     <>
-      {/* Search Overlay */}
+      {/* Search Overlay - Minimal Mobile Best Practice */}
       {showSearchOverlay && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] md:hidden"
+        <div
+          className="fixed inset-0 bg-black/30 z-[60] md:hidden"
           onClick={() => setShowSearchOverlay(false)}
           role="dialog"
           aria-modal="true"
-          aria-label="Search overlay"
+          aria-label="Search"
         >
-          <div 
+          <div
             className="absolute top-0 left-0 right-0 bg-white shadow-lg"
             onClick={(e) => e.stopPropagation()}
+            style={{
+              animation: 'slideDown 0.2s ease-out'
+            }}
           >
-            <div className="p-4">
-              <div className="flex items-center gap-3 mb-4">
-                <h2 className="text-lg font-semibold text-gray-900 flex-1">Search Products</h2>
-                <button
-                  onClick={() => setShowSearchOverlay(false)}
-                  className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  aria-label="Close search"
-                >
-                  <FiX className="w-6 h-6 text-gray-600" />
-                </button>
-              </div>
-              <form onSubmit={handleSearchSubmit}>
+            <div className="px-4 py-3 flex items-center gap-2">
+              <form onSubmit={handleSearchSubmit} className="flex-1">
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <FiSearch className="h-5 w-5 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FiSearch className="h-4 w-4 text-gray-400" />
                   </div>
                   <input
                     type="search"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for products..."
-                    className="w-full h-12 pl-12 pr-4 text-base bg-gray-50 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="Search products..."
+                    className="w-full h-10 pl-10 pr-3 text-sm bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white"
                     style={{ fontSize: '16px' }}
                     autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Escape') {
+                        setShowSearchOverlay(false);
+                      }
+                    }}
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="mt-3 w-full h-12 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full font-medium hover:from-primary-600 hover:to-primary-700 active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                  disabled={!searchQuery.trim()}
-                >
-                  Search
-                </button>
               </form>
-              <div className="mt-4 text-sm text-gray-500">
-                <p>Popular searches: Electronics, Fashion, Home & Garden</p>
-              </div>
+              <button
+                onClick={() => setShowSearchOverlay(false)}
+                className="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                aria-label="Close"
+              >
+                <FiX className="w-5 h-5 text-gray-600" />
+              </button>
             </div>
           </div>
         </div>
@@ -118,7 +113,7 @@ const MobileBottomNav = () => {
           {navItems.map((item) => {
             const isActive = location.pathname === item.path && !item.isSearchButton;
             const Component = item.onClick ? 'button' : Link;
-            const componentProps = item.onClick 
+            const componentProps = item.onClick
               ? { onClick: item.onClick, type: 'button' }
               : { to: item.path };
 
