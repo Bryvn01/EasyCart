@@ -1,14 +1,29 @@
-name: EasyCart CI
+name: EasyCart CI (Render)
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test-and-build:
+  test:
+    name: Full Test Suite (Render)
+    uses: ./.github/workflows/reusable-test.yml
+    secrets:
+      CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+      CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+      CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+
+  legacy-test:
+    name: Legacy Test (Deprecated)
     runs-on: ubuntu-latest
+    if: false  # Disabled - using reusable workflow instead
 
     services:
       postgres:
