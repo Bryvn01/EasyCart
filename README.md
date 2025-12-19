@@ -2,7 +2,7 @@
 
 ![CI/CD](https://github.com/Bryvn01/EasyCart/workflows/CI-CD-Pipeline/badge.svg)
 ![Required Checks](https://github.com/Bryvn01/EasyCart/workflows/Required%20Status%20Checks/badge.svg)
-![License](https://img.shields.io/badge/license-Proprietary-red.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
 ![Django](https://img.shields.io/badge/django-5.1.7-green.svg)
 ![React](https://img.shields.io/badge/react-18.3-blue.svg)
@@ -13,39 +13,7 @@
 
 A complete e-commerce solution with React frontend and Django REST Framework backend, featuring PostgreSQL database, JWT authentication, superadmin CRUD operations, and production deployment on Render.
 
----
-
-## ⚠️ **IMPORTANT LICENSING NOTICE**
-
-**Copyright © 2025 Bryvn01. All Rights Reserved.**
-
-This repository contains **PROPRIETARY SOFTWARE**. Unauthorized use, copying, modification, distribution, or deployment of this code is **STRICTLY PROHIBITED** and may result in legal action.
-
-### 🚫 What You CANNOT Do:
-- ❌ Use this software for commercial purposes without a license
-- ❌ Copy, fork, or redistribute this code
-- ❌ Modify and deploy as your own
-- ❌ Remove copyright notices or licensing information
-- ❌ Host this software for third parties (SaaS)
-
-### ✅ What You CAN Do:
-- ✅ View the code for educational purposes
-- ✅ Star the repository
-- ✅ Report issues and bugs
-- ✅ Request features
-- ✅ **Purchase a commercial license** for legitimate use
-
-### 💰 Commercial Licensing
-**Interested in using EasyCart for your business?**
-
-📧 **Contact:** admin@easycart.com
-🌐 **Website:** Coming Soon
-📄 **License Options:**
-- **Startup License:** $499/month - Single domain, up to 10,000 products
-- **Business License:** $999/month - Multi-domain, unlimited products
-- **Enterprise License:** Custom pricing - White-label, source code access
-
-**Free 14-day trial available!**
+> **Portfolio Project** - Built to demonstrate full-stack development skills. Feel free to explore the code and use it as a learning resource.
 
 ---
 
@@ -56,7 +24,7 @@ This repository contains **PROPRIETARY SOFTWARE**. Unauthorized use, copying, mo
 - **Django Admin**: https://easycart-backend-2k8l.onrender.com/admin/
 - **API**: https://easycart-backend-2k8l.onrender.com/api/
 
-**Note:** These demo instances are for showcase purposes only. Running your own instance requires a valid license.
+> Demo instances may take a moment to wake up if inactive (free tier).
 
 ---
 
@@ -98,7 +66,25 @@ This repository contains **PROPRIETARY SOFTWARE**. Unauthorized use, copying, mo
 - Advanced filtering and search
 - Image upload and management
 - Inventory tracking and analytics
+powershell -Command "
+$DryRun = $true
+$confirm = 'test'
+$mergedRemote = @('branch1')
 
+if (`$DryRun) {
+    Write-Host 'Dry run'
+} else {
+    Write-Host 'Deleting'
+    `$confirm = Read-Host 'Type DELETE'
+    if (`$confirm -eq 'DELETE') {
+        foreach (`$branch in `$mergedRemote) {
+            Write-Host 'Would delete' `$branch
+        }
+    } else {
+        Write-Host 'Cancelled'
+    }
+}
+"
 **Admin Endpoints:**
 - `/api/products/admin/products/` - Product management
 - `/api/products/admin/categories/` - Category management
@@ -781,6 +767,23 @@ If you're experiencing issues with product/category loading or other errors:
 - 🧪 **CI/CD Improvements** - Fixed GitHub Actions workflows with proper test coverage
 - 📦 **Dependency Updates** - All packages updated to latest secure versions
 - ✅ **Test Suite** - Comprehensive test coverage with React Query v5 compatibility
+
+---
+
+## 📄 License & Usage
+
+**MIT License** - Copyright © 2025 Bryvn01
+
+This is a **portfolio project** showcasing full-stack development skills. You are free to:
+- ✅ View and study the code
+- ✅ Use it for learning purposes
+- ✅ Fork and experiment locally
+- ✅ Reference it in your own projects
+
+**Please note:**
+- 📌 Attribution is appreciated but not required
+- 🚫 This is not production-ready software - use at your own risk
+- 💼 For commercial deployment, please review the full [MIT License](LICENSE)
 
 ---
 
