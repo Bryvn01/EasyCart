@@ -15,12 +15,13 @@ const Users = lazy(() => import('./pages/Users'));
 const Reports = lazy(() => import('./pages/Reports'));
 const AdminCategories = lazy(() => import('./pages/AdminCategories'));
 const TwoFactorSetup = lazy(() => import('./pages/TwoFactorSetup'));
+const POSRoutes = lazy(() => import('./pages/POS'));
 
 function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <Router>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <div className="App">
             <Toaster
               position="top-right"
@@ -61,6 +62,7 @@ function App() {
                         <Route path="users" element={<Users />} />
                         <Route path="reports" element={<Reports />} />
                         <Route path="2fa" element={<TwoFactorSetup />} />
+                        <Route path="pos/*" element={<POSRoutes />} />
                         <Route path="" element={<Navigate to="dashboard" replace />} />
                       </Routes>
                     </Layout>

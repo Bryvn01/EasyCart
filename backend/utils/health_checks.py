@@ -234,10 +234,18 @@ class HealthCheckView(APIView):
 
             free_percent = (free / total) * 100
 
-            if free_percent < 5:
+            # Configurable thresholds (default: 5% critical, 10% warning)
+            critical_threshold = getattr(
+                settings, "HEALTHCHECK_DISK_CRITICAL_PERCENT", 5
+            )
+            warning_threshold = getattr(
+                settings, "HEALTHCHECK_DISK_WARNING_PERCENT", 10
+            )
+
+            if free_percent < critical_threshold:
                 check_status = HealthStatus.UNHEALTHY
                 message = f"Critical: Only {free_percent:.1f}% disk space remaining"
-            elif free_percent < 15:
+            elif free_percent < warning_threshold:
                 check_status = HealthStatus.DEGRADED
                 message = f"Warning: Only {free_percent:.1f}% disk space remaining"
             else:
