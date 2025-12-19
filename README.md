@@ -757,7 +757,7 @@ If you're experiencing issues with product/category loading or other errors:
 ## 🆕 Recent Enhancements (2025)
 
 ### Version 2.0.0 - December 2025
-- 🔐 **OTP Authentication** - Passwordless login via SMS, WhatsApp, and Email (Twilio)
+- 🔐 **OTP Authentication** - Passwordless login via SMS, WhatsApp, and Email (Ultramsg)
 - 🔒 **Two-Factor Authentication** - TOTP-based 2FA for admin users
 - 👤 **Profile Personalization** - Progressive profiling for new users
 - 🛠️ **Admin Dashboard Fixes** - Fixed product updates, category handling, orders display
