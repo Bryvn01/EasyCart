@@ -67,6 +67,10 @@ jobs:
           DB_HOST: localhost
           DB_PORT: 5432
           CORS_ALLOWED_ORIGINS: http://localhost:3000
+          HEALTHCHECK_CACHE_ENABLED: False
+          TWILIO_ACCOUNT_SID: ''
+          TWILIO_AUTH_TOKEN: ''
+          TWILIO_PHONE_NUMBER: ''
         run: |
           cd backend
           python manage.py test

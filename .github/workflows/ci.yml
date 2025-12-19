@@ -42,6 +42,10 @@ jobs:
       CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
       CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
       CLOUDINARY_URL: cloudinary://${{ secrets.CLOUDINARY_API_KEY }}:${{ secrets.CLOUDINARY_API_SECRET }}@${{ secrets.CLOUDINARY_CLOUD_NAME }}
+      HEALTHCHECK_CACHE_ENABLED: False
+      TWILIO_ACCOUNT_SID: ''
+      TWILIO_AUTH_TOKEN: ''
+      TWILIO_PHONE_NUMBER: ''
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
