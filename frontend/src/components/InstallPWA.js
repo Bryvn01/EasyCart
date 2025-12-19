@@ -56,6 +56,16 @@ const InstallPWA = () => {
     }
   }, []);
 
+  // Auto-dismiss after 10 seconds
+  useEffect(() => {
+    if (showPrompt) {
+      const timer = setTimeout(() => {
+        handleDismiss();
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [showPrompt]);
+
   if (!showPrompt || !installPrompt) return null;
 
   return (
@@ -63,13 +73,13 @@ const InstallPWA = () => {
       className="install-pwa-prompt"
       style={{
         position: 'fixed',
-        bottom: '20px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 9999,
-        animation: 'slideUp 0.4s ease-out',
-        width: '100%',
-        maxWidth: '500px'
+        top: '80px',
+        right: '16px',
+        left: '16px',
+        zIndex: 60,
+        animation: 'slideDown 0.4s ease-out',
+        maxWidth: '420px',
+        margin: '0 auto'
       }}
       role="dialog"
       aria-label="Install app prompt"
@@ -78,8 +88,8 @@ const InstallPWA = () => {
         style={{
           background: 'white',
           borderRadius: '12px',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-          padding: '20px',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+          padding: '16px',
           border: '1px solid #e5e7eb'
         }}
       >
@@ -87,9 +97,9 @@ const InstallPWA = () => {
           {/* App Icon */}
           <div
             style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '12px',
+              width: '48px',
+              height: '48px',
+              borderRadius: '10px',
               background: '#2563eb',
               display: 'flex',
               alignItems: 'center',
@@ -98,8 +108,8 @@ const InstallPWA = () => {
             }}
           >
             <svg
-              width="32"
-              height="32"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="white"
@@ -117,8 +127,8 @@ const InstallPWA = () => {
           <div style={{ flex: 1 }}>
             <h3
               style={{
-                margin: '0 0 8px 0',
-                fontSize: '18px',
+                margin: '0 0 6px 0',
+                fontSize: '16px',
                 fontWeight: '600',
                 color: '#111827'
               }}
@@ -127,17 +137,17 @@ const InstallPWA = () => {
             </h3>
             <p
               style={{
-                margin: '0 0 16px 0',
-                fontSize: '14px',
+                margin: '0 0 12px 0',
+                fontSize: '13px',
                 color: '#6b7280',
-                lineHeight: '1.5'
+                lineHeight: '1.4'
               }}
             >
-              Install our app for faster access, offline shopping, and a native app experience.
+              Quick access, faster checkout, and personalized shopping experience.
             </p>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 onClick={handleInstallClick}
                 style={{
@@ -145,7 +155,7 @@ const InstallPWA = () => {
                   background: '#2563eb',
                   color: 'white',
                   border: 'none',
-                  padding: '10px 20px',
+                  padding: '10px 16px',
                   borderRadius: '8px',
                   fontSize: '14px',
                   fontWeight: '600',

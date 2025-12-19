@@ -44,17 +44,18 @@ const BottomNav = () => {
       {/* Search Overlay */}
       {showSearchOverlay && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] md:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] md:hidden"
           onClick={() => setShowSearchOverlay(false)}
           role="dialog"
           aria-modal="true"
           aria-label="Search overlay"
         >
           <div
-            className="absolute top-0 left-0 right-0 bg-white shadow-lg"
+            className="absolute top-0 left-0 right-0 bg-white shadow-xl rounded-b-2xl"
             onClick={(e) => e.stopPropagation()}
+            style={{ maxHeight: '320px' }}
           >
-            <div className="p-4">
+            <div className="p-4 pb-6">
               <div className="flex items-center gap-3 mb-4">
                 <h2 className="text-lg font-semibold text-gray-900 flex-1">Search Products</h2>
                 <button
@@ -82,14 +83,14 @@ const BottomNav = () => {
                 </div>
                 <button
                   type="submit"
-                  className="mt-3 w-full h-12 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full font-medium hover:from-primary-600 hover:to-primary-700 active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  className="mt-3 w-full h-11 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full font-medium hover:from-primary-600 hover:to-primary-700 active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                   disabled={!searchQuery.trim()}
                 >
                   Search
                 </button>
               </form>
-              <div className="mt-4 text-sm text-gray-500">
-                <p>Popular searches: Electronics, Fashion, Home & Garden</p>
+              <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500">
+                <p className="truncate">Popular: Electronics, Fashion, Home & Garden</p>
               </div>
             </div>
           </div>
