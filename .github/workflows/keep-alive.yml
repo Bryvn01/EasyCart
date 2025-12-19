@@ -1,0 +1,31 @@
+name: Keep Railway Database Alive
+
+on:
+  schedule:
+    # Run every 5 minutes to prevent Railway DB from sleeping
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  ping-database:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping health endpoint
+        run: |
+          echo "Pinging health endpoint to wake Railway database..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://easycart-backend-2k8l.onrender.com/api/health/)
+
+          if [ $response -eq 200 ] || [ $response -eq 503 ]; then
+            echo "✓ Health check successful (HTTP $response)"
+            exit 0
+          else
+            echo "✗ Health check failed (HTTP $response)"
+            exit 1
+          fi
+
+      - name: Log status
+        if: always()
+        run: |
+          echo "Timestamp: $(date -u)"
+          echo "This workflow keeps the Railway database awake by pinging the health endpoint every 5 minutes."
