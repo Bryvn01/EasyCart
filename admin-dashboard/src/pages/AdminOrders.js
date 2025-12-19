@@ -53,8 +53,8 @@ const AdminOrders = () => {
       field: "customer",
       headerName: "Customer",
       flex: 1.5,
-      valueGetter: (params) => {
-        const user = params.row.user_details;
+      valueGetter: (value, row) => {
+        const user = row.user_details;
         if (user) {
           return user.username || user.email || `User #${user.id}`;
         }
@@ -65,8 +65,8 @@ const AdminOrders = () => {
       field: "total_amount",
       headerName: "Total",
       flex: 1,
-      valueFormatter: (params) => {
-        const amount = parseFloat(params.value || 0);
+      valueFormatter: (value) => {
+        const amount = parseFloat(value || 0);
         return `KES ${amount.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       }
     },
@@ -74,8 +74,8 @@ const AdminOrders = () => {
       field: "status",
       headerName: "Status",
       flex: 1,
-      valueFormatter: (params) => {
-        const status = params.value || 'pending';
+      valueFormatter: (value) => {
+        const status = value || 'pending';
         return status.charAt(0).toUpperCase() + status.slice(1);
       }
     },
@@ -83,9 +83,9 @@ const AdminOrders = () => {
       field: "created_at",
       headerName: "Created",
       flex: 1,
-      valueFormatter: (params) => {
-        if (!params.value) return '';
-        const date = new Date(params.value);
+      valueFormatter: (value) => {
+        if (!value) return '';
+        const date = new Date(value);
         return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       }
     },
@@ -116,9 +116,13 @@ const AdminOrders = () => {
           <DataGrid
             rows={orders.map((o) => ({ ...o, id: o.id }))}
             columns={columns}
-            pageSize={10}
-            rowsPerPageOptions={[10, 20, 50]}
-            disableSelectionOnClick
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 10, page: 0 },
+              },
+            }}
+            pageSizeOptions={[10, 20, 50]}
+            disableRowSelectionOnClick
             autoHeight
           />
         </Box>
