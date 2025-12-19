@@ -129,6 +129,8 @@ jobs:
       - name: Run Django migrations
         run: |
           cd backend
+          # Add current directory to Python path to ensure Django can find apps module
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
           python manage.py makemigrations --check --dry-run
           python manage.py migrate --noinput
 
