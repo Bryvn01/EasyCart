@@ -1,31 +1,29 @@
 import requests
 from decouple import config
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class WhatsAppService:
-    """Send WhatsApp notifications using Ultramsg"""
+    """Send WhatsApp notifications using Twilio"""
 
     def __init__(self):
-        self.instance_id = config("ULTRAMSG_INSTANCE_ID", default="")
-        self.token = config("ULTRAMSG_TOKEN", default="")
-        self.base_url = f"https://api.ultramsg.com/{self.instance_id}"
+        self.account_sid = config("TWILIO_ACCOUNT_SID", default="")
+        self.auth_token = config("TWILIO_AUTH_TOKEN", default="")
+        self.whatsapp_from = config(
+            "TWILIO_WHATSAPP_FROM", default="whatsapp:+14155238886"
+        )
         self.admin_phone = config("ADMIN_WHATSAPP_NUMBER", default="")
 
     def send_order_confirmation(self, order):
         """Send order confirmation to customer"""
-        if not self.instance_id or not self.token:
-            logger.warning("Ultramsg not configured - skipping WhatsApp notification")
+        if not self.account_sid or not self.auth_token:
+            print("⚠️ Twilio not configured - skipping WhatsApp notification")
             print(f"   Order #{order.id} for {order.user.email}")
             return False
 
         customer_name = f"{order.user.first_name} {order.user.last_name}".strip()
         greeting = f"Dear {customer_name}," if customer_name else "Dear Customer,"
 
-        # Ultramsg expects phone in format: 254XXXXXXXXX (no + or spaces)
-        customer_phone = order.phone_number.replace("+", "").replace(" ", "")
+        customer_phone = f"whatsapp:+{order.phone_number}"
         message = f"""
 {greeting}
 
@@ -59,8 +57,7 @@ EasyCart Team
         if not self.admin_phone:
             return False
 
-        # Ultramsg expects phone in format: 254XXXXXXXXX (no + or spaces)
-        admin_phone = self.admin_phone.replace("+", "").replace(" ", "")
+        admin_phone = f"whatsapp:+{self.admin_phone}"
         message = f"""
 🔔 *New Order Received*
 
@@ -85,8 +82,7 @@ View: https://easycart-admin-08xf.onrender.com/orders/{order.id}
         customer_name = f"{order.user.first_name} {order.user.last_name}".strip()
         greeting = f"Dear {customer_name}," if customer_name else "Dear Customer,"
 
-        # Ultramsg expects phone in format: 254XXXXXXXXX (no + or spaces)
-        customer_phone = order.phone_number.replace("+", "").replace(" ", "")
+        customer_phone = f"whatsapp:+{order.phone_number}"
         message = f"""
 {greeting}
 
@@ -123,33 +119,26 @@ EasyCart Team
         return "\n".join(items)
 
     def _send_message(self, to, body):
-        """Send WhatsApp message via Ultramsg"""
-        url = f"{self.base_url}/messages/chat"
+        """Send WhatsApp message via Twilio"""
+        url = f"https://api.twilio.com/2010-04-01/Accounts/{self.account_sid}/Messages.json"
 
-        headers = {"Content-Type": "application/json"}
-
-        data = {
-            "token": self.token,
-            "to": to,
-            "body": body,
-            "priority": 10,
-            "referenceId": "",
-        }
+        data = {"From": self.whatsapp_from, "To": to, "Body": body}
 
         try:
-            response = requests.post(url, json=data, headers=headers, timeout=15)
-            response_data = response.json()
+            response = requests.post(
+                url, data=data, auth=(self.account_sid, self.auth_token), timeout=10
+            )
 
-            if response.status_code == 200 and response_data.get("sent") == "true":
-                logger.info(f"✅ WhatsApp sent to {to} - ID: {response_data.get('id')}")
+            if response.status_code == 201:
+                print(f"✅ WhatsApp sent to {to}")
                 return True
             else:
-                error_msg = response_data.get("error", "Unknown error")
-                logger.error(f"❌ WhatsApp failed: {error_msg}")
+                print(f"❌ WhatsApp failed: {response.text}")
                 return False
 
         except Exception as e:
-            logger.error(f"❌ WhatsApp error: {e}")
-            logger.error(f"   To: {to}")
-            logger.error(f"   Instance: {self.instance_id}")
+            print(f"❌ WhatsApp error: {e}")
+            print(f"   To: {to}")
+            print(f"   From: {self.whatsapp_from}")
+            print(f"   Account SID: {self.account_sid[:10]}...")
             return False

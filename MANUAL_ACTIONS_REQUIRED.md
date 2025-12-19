@@ -85,8 +85,7 @@ REDIS_URL=redis://localhost:6379/1
 - `ALLOWED_HOSTS`: your domain(s) and/or app service hostnames
 - `DB_*`: your Postgres provider or local Postgres settings
 - `CORS_ALLOWED_ORIGINS`: your frontend URL(s)
-- `ULTRAMSG_INSTANCE_ID` / `ULTRAMSG_TOKEN`: Ultramsg Console → Instance ID/Token
-- `ULTRAMSG_PHONE_NUMBER`: Your WhatsApp Business number registered with Ultramsg
+- `TWILIO_*`: Twilio Console → Account SID/Auth Token/Numbers
 - `SENTRY_DSN`: Sentry project settings → DSN
 - `MPESA_CONSUMER_KEY` / `MPESA_CONSUMER_SECRET`: Safaricom Daraja portal app credentials
 - `MPESA_PASSKEY` / `MPESA_SHORTCODE`: from Safaricom (Daraja) for your paybill/till
