@@ -19,6 +19,7 @@ jobs:
       CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
       CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
       CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   legacy-test:
     name: Legacy Test (Deprecated)
