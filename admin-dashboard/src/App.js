@@ -15,7 +15,7 @@ const Users = lazy(() => import('./pages/Users'));
 const Reports = lazy(() => import('./pages/Reports'));
 const AdminCategories = lazy(() => import('./pages/AdminCategories'));
 const TwoFactorSetup = lazy(() => import('./pages/TwoFactorSetup'));
-const POSRoutes = lazy(() => import('./pages/POS/index'));
+const POSRoutes = lazy(() => import('./pages/POS'));
 
 function App() {
   return (
