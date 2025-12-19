@@ -7,12 +7,15 @@
 
 import React from 'react';
 import {
+  StyleProp,
   TouchableOpacity,
   TouchableOpacityProps,
   Text,
   StyleSheet,
   ActivityIndicator,
   View,
+  ViewStyle,
+  TextStyle,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { theme } from '@/theme';
@@ -38,9 +41,9 @@ interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   /** Full width button */
   fullWidth?: boolean;
   /** Custom style */
-  style?: TouchableOpacityProps['style'];
+  style?: StyleProp<ViewStyle>;
   /** Custom text style */
-  textStyle?: object;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export default function Button({
@@ -58,21 +61,50 @@ export default function Button({
 }: ButtonProps) {
   const isDisabled = disabled || loading;
 
+  const variantStyles: Record<ButtonVariant, StyleProp<ViewStyle>> = {
+    filled: styles.filled,
+    outlined: styles.outlined,
+    text: styles.text,
+  };
+
+  const sizeStyles: Record<ButtonSize, StyleProp<ViewStyle>> = {
+    small: styles.size_small,
+    medium: styles.size_medium,
+    large: styles.size_large,
+  };
+
+  const variantDisabledStyles: Partial<Record<ButtonVariant, StyleProp<ViewStyle>>> = {
+    filled: styles.filled_disabled,
+    outlined: styles.outlined_disabled,
+  };
+
+  const textVariantStyles: Record<ButtonVariant, StyleProp<TextStyle>> = {
+    filled: styles.text_filled,
+    outlined: styles.text_outlined,
+    text: styles.text_text,
+  };
+
+  const textSizeStyles: Record<ButtonSize, StyleProp<TextStyle>> = {
+    small: styles.text_small,
+    medium: styles.text_medium,
+    large: styles.text_large,
+  };
+
   // Dynamic styles based on variant and state
   const buttonStyles = [
     styles.base,
-    styles[variant],
-    styles[`size_${size}`],
+    variantStyles[variant],
+    sizeStyles[size],
     fullWidth && styles.fullWidth,
     isDisabled && styles.disabled,
-    isDisabled && styles[`${variant}_disabled`],
+    isDisabled && variantDisabledStyles[variant],
     style,
   ];
 
   const textStyles = [
     styles.text,
-    styles[`text_${variant}`],
-    styles[`text_${size}`],
+    textVariantStyles[variant],
+    textSizeStyles[size],
     isDisabled && styles.text_disabled,
     textStyle,
   ];
@@ -121,7 +153,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: theme.borderRadius.full,
-    transition: 'all 0.2s ease',
   },
 
   // Variants

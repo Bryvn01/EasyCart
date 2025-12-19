@@ -38,6 +38,7 @@
 
 ### Step 1: Set Environment Variables
 ```powershell
+
 # Add to your PowerShell profile or run each time
 $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
 $env:PATH += ";$env:ANDROID_HOME\emulator;$env:ANDROID_HOME\platform-tools;$env:ANDROID_HOME\cmdline-tools\latest\bin"

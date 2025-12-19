@@ -118,7 +118,7 @@ export const useCartStore = create<CartState>()(
           await get().fetchCart();
 
           // Add to offline queue if network error
-          if (error.message?.includes('network') || !navigator.onLine) {
+          if (String(error.message || '').toLowerCase().includes('network')) {
             set((state) => ({
               offlineQueue: [
                 ...state.offlineQueue,
@@ -164,7 +164,7 @@ export const useCartStore = create<CartState>()(
           await get().fetchCart();
 
           // Add to offline queue
-          if (error.message?.includes('network') || !navigator.onLine) {
+          if (String(error.message || '').toLowerCase().includes('network')) {
             set((state) => ({
               offlineQueue: [
                 ...state.offlineQueue,
@@ -199,7 +199,7 @@ export const useCartStore = create<CartState>()(
           await get().fetchCart();
 
           // Add to offline queue
-          if (error.message?.includes('network') || !navigator.onLine) {
+          if (String(error.message || '').toLowerCase().includes('network')) {
             set((state) => ({
               offlineQueue: [
                 ...state.offlineQueue,

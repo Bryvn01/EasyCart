@@ -144,7 +144,7 @@ export const useWishlistStore = create<WishlistState>()(
       checkWishlistStatus: async (productId: number) => {
         try {
           const response = await productsApi.checkWishlistStatus(productId);
-          return response.in_wishlist;
+          return response.is_in_wishlist;
         } catch (error) {
           console.error('Failed to check wishlist status:', error);
           return false;

@@ -20,6 +20,7 @@ import { Toaster } from 'react-hot-toast';
 import SupportChat from './components/Chat/SupportChat';
 import NetworkStatus from './components/NetworkStatus';
 import { usePerformance } from './hooks/usePerformance';
+import { initializeLicenseProtection } from './utils/licenseProtection';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -54,7 +55,9 @@ function App() {
   usePerformance();
 
   useEffect(() => {
-  // analytics.page('App Loaded');
+    // Initialize license protection and watermarking
+    initializeLicenseProtection();
+    // analytics.page('App Loaded');
   }, []);
 
   return (

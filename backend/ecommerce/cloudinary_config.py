@@ -1,9 +1,12 @@
 # Cloudinary configuration for Django
-# Add to backend/ecommerce/settings.py and install dependencies as needed
+# flake8: noqa
+# Avoid WMI timeout issues on Windows by disabling platform detection
+import os
+
+os.environ.setdefault("PROCESSOR_IDENTIFIER", "GenericProcessor")
 
 import cloudinary
 import cloudinary.uploader
-import cloudinary.api
 from decouple import config
 
 CLOUDINARY_STORAGE = {

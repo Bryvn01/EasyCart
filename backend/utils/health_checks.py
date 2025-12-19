@@ -99,46 +99,69 @@ class HealthCheckView(APIView):
         return Response(response_data, status=http_status)
 
     def _check_database(self) -> Dict[str, Any]:
-        """Check database connectivity and responsiveness."""
-        try:
-            start_time = time.perf_counter()
+        """Check database connectivity and responsiveness with retry for sleeping databases."""
+        max_retries = getattr(settings, "HEALTHCHECK_DB_RETRIES", 2)
+        retry_delay = 1  # seconds
 
-            # Execute simple query
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT 1")
-                cursor.fetchone()
+        for attempt in range(max_retries + 1):
+            try:
+                start_time = time.perf_counter()
 
-            response_time = time.perf_counter() - start_time
-            response_time_ms = round(response_time * 1000, 2)
+                # Close stale connection if retrying
+                if attempt > 0:
+                    connection.close()
+                    time.sleep(retry_delay)
 
-            degraded_ms = int(getattr(settings, "HEALTHCHECK_DB_DEGRADED_MS", 250))
-            unhealthy_ms = int(getattr(settings, "HEALTHCHECK_DB_UNHEALTHY_MS", 2000))
+                # Execute simple query
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT 1")
+                    cursor.fetchone()
 
-            if response_time_ms >= unhealthy_ms:
-                check_status = HealthStatus.UNHEALTHY
-                message = f"Database response slow ({response_time_ms}ms)"
-            elif response_time_ms >= degraded_ms:
-                check_status = HealthStatus.DEGRADED
-                message = f"Database response degraded ({response_time_ms}ms)"
-            else:
-                check_status = HealthStatus.HEALTHY
-                message = "Database connection healthy"
+                response_time = time.perf_counter() - start_time
+                response_time_ms = round(response_time * 1000, 2)
 
-            return {
-                "status": check_status,
-                "response_time_ms": response_time_ms,
-                "message": message,
-                "thresholds_ms": {
-                    "degraded": degraded_ms,
-                    "unhealthy": unhealthy_ms,
-                },
-            }
-        except Exception as e:
-            logger.error(f"Database health check failed: {e}")
-            return {
-                "status": HealthStatus.UNHEALTHY,
-                "message": f"Database connection failed: {type(e).__name__}",
-            }
+                # Adjust thresholds for Railway free tier (sleeping database can take longer)
+                degraded_ms = int(getattr(settings, "HEALTHCHECK_DB_DEGRADED_MS", 1000))
+                unhealthy_ms = int(
+                    getattr(settings, "HEALTHCHECK_DB_UNHEALTHY_MS", 5000)
+                )
+
+                if response_time_ms >= unhealthy_ms:
+                    check_status = HealthStatus.UNHEALTHY
+                    message = f"Database response slow ({response_time_ms}ms)"
+                elif response_time_ms >= degraded_ms:
+                    check_status = HealthStatus.DEGRADED
+                    message = f"Database response degraded ({response_time_ms}ms, waking from sleep)"
+                else:
+                    check_status = HealthStatus.HEALTHY
+                    message = "Database connection healthy"
+
+                return {
+                    "status": check_status,
+                    "response_time_ms": response_time_ms,
+                    "message": message,
+                    "retries": attempt,
+                    "thresholds_ms": {
+                        "degraded": degraded_ms,
+                        "unhealthy": unhealthy_ms,
+                    },
+                }
+            except Exception as e:
+                if attempt < max_retries:
+                    logger.warning(
+                        f"Database health check attempt {attempt + 1} failed, retrying: {e}"
+                    )
+                    retry_delay *= 2  # Exponential backoff
+                    continue
+                else:
+                    logger.error(
+                        f"Database health check failed after {max_retries} retries: {e}"
+                    )
+                    return {
+                        "status": HealthStatus.UNHEALTHY,
+                        "message": f"Database connection failed: {type(e).__name__}",
+                        "retries": attempt,
+                    }
 
     def _check_cache(self) -> Dict[str, Any]:
         """Check Redis cache connectivity."""

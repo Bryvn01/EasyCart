@@ -1,21 +1,245 @@
-MIT License
+EASYCART PROPRIETARY LICENSE AGREEMENT
 
-Copyright (c) 2025 Bryvn01
+Copyright (c) 2025 Bryvn01. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+================================================================================
+IMPORTANT: READ CAREFULLY BEFORE USING THIS SOFTWARE
+================================================================================
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This EasyCart E-Commerce Platform and associated documentation files (the
+"Software") are proprietary and confidential. This Software is protected by
+copyright laws and international copyright treaties, as well as other
+intellectual property laws and treaties.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+BY ACCESSING, DOWNLOADING, OR USING THIS SOFTWARE, YOU ACKNOWLEDGE THAT YOU
+HAVE READ THIS AGREEMENT, UNDERSTAND IT, AND AGREE TO BE BOUND BY ITS TERMS.
+
+================================================================================
+1. LICENSE GRANT
+================================================================================
+
+Subject to the terms of this Agreement and payment of applicable licensing
+fees, Bryvn01 grants you a limited, non-exclusive, non-transferable,
+revocable license to use the Software solely for your internal business
+purposes, subject to the restrictions outlined in Section 2.
+
+================================================================================
+2. RESTRICTIONS
+================================================================================
+
+You MAY NOT:
+
+a) Copy, modify, adapt, or create derivative works of the Software
+b) Distribute, transfer, sublicense, lease, lend, or rent the Software
+c) Reverse engineer, decompile, disassemble, or attempt to derive source code
+d) Remove, alter, or obscure any proprietary notices (copyright, trademark, etc.)
+e) Use the Software for any commercial purpose without a valid paid license
+f) Host the Software as a service (SaaS) for third parties
+g) Publicly display, perform, or make available the Software
+h) Share your license key with unauthorized parties
+i) Deploy the Software on multiple domains without authorization
+j) Use the Software to compete with EasyCart or its services
+
+================================================================================
+3. OWNERSHIP
+================================================================================
+
+The Software is owned and copyrighted by Bryvn01. Your license confers no
+title or ownership in the Software and is not a sale of any rights. All
+rights not expressly granted are reserved by Bryvn01.
+
+================================================================================
+4. LICENSE TYPES
+================================================================================
+
+DEMO LICENSE (Free - No Commercial Use)
+- Educational and evaluation purposes only
+- Maximum 50 products, 100 customers, 10 orders/day
+- "POWERED BY EASYCART" watermark required
+- No commercial use permitted
+- No support included
+
+DEVELOPMENT LICENSE ($499/month)
+- Single developer, single domain
+- Up to 500 products, 1,000 customers
+- Development and staging environments
+- Email support
+- No commercial deployment without Production license
+
+PRODUCTION LICENSE ($999/month)
+- Commercial use authorized
+- Single domain, up to 10,000 products
+- Unlimited customers and orders
+- Priority email support
+- Payment gateway integration
+- Custom branding allowed
+
+ENTERPRISE LICENSE (Custom Pricing)
+- Multi-domain deployment
+- Unlimited products, customers, orders
+- White-label option
+- Source code access
+- Dedicated support
+- Custom development available
+
+================================================================================
+5. TERMINATION
+================================================================================
+
+This license is effective until terminated. Your rights under this license
+will terminate automatically without notice if you fail to comply with any
+term of this Agreement.
+
+Upon termination:
+- You must cease all use of the Software
+- Destroy all copies in your possession or control
+- Remove all installations from your servers
+- Provide written certification of compliance
+
+Bryvn01 reserves the right to terminate your license for breach of this
+Agreement, non-payment, or misuse of the Software.
+
+================================================================================
+6. COMMERCIAL LICENSING
+================================================================================
+
+To obtain a commercial license, contact:
+
+📧 Email: admin@easycart.com
+🌐 GitHub: https://github.com/Bryvn01/EasyCart
+💳 Payment: Contact for invoice and payment methods
+
+Free 14-day trial available for Production and Enterprise licenses.
+
+================================================================================
+7. WARRANTY DISCLAIMER
+================================================================================
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+Bryvn01 does not warrant that:
+- The Software will meet your requirements
+- The Software will be uninterrupted, timely, secure, or error-free
+- Results obtained from use will be accurate or reliable
+- Any errors will be corrected
+
+================================================================================
+8. LIMITATION OF LIABILITY
+================================================================================
+
+IN NO EVENT SHALL BRYVN01 BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+CONSEQUENTIAL, OR EXEMPLARY DAMAGES (INCLUDING BUT NOT LIMITED TO LOSS OF
+PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES) ARISING FROM:
+
+- Use or inability to use the Software
+- Unauthorized access to or alteration of your data
+- Any other matter relating to the Software
+
+This limitation applies even if Bryvn01 has been advised of the possibility
+of such damages.
+
+TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT PAID FOR THE LICENSE IN THE
+PRECEDING 12 MONTHS.
+
+================================================================================
+9. INTELLECTUAL PROPERTY
+================================================================================
+
+All intellectual property rights in the Software, including but not limited
+to copyrights, patents, trademarks, and trade secrets, are and shall remain
+the exclusive property of Bryvn01.
+
+You acknowledge that the Software contains valuable trade secrets and
+proprietary information.
+
+================================================================================
+10. ENFORCEMENT & LEGAL REMEDIES
+================================================================================
+
+Unauthorized use of this Software may result in:
+
+CIVIL REMEDIES:
+- Injunctive relief to stop unauthorized use
+- Monetary damages for actual losses
+- Statutory damages where applicable
+- Recovery of attorney fees and costs
+
+CRIMINAL PROSECUTION:
+- Under applicable copyright and computer fraud laws
+- DMCA violations
+- Theft of trade secrets
+
+DMCA TAKEDOWN:
+- Immediate takedown notices for unauthorized deployments
+- ISP/hosting provider notifications
+- Search engine delisting
+
+Bryvn01 actively monitors for unauthorized use and will vigorously protect
+its intellectual property rights.
+
+================================================================================
+11. AUDIT RIGHTS
+================================================================================
+
+Bryvn01 reserves the right to audit your use of the Software to ensure
+compliance with this Agreement. You agree to cooperate with such audits and
+provide reasonable access to records and systems.
+
+================================================================================
+12. UPDATES & SUPPORT
+================================================================================
+
+Updates, patches, and new versions are provided at Bryvn01's discretion.
+Support levels vary by license type as described in Section 4.
+
+Licensed users receive:
+- Security updates
+- Bug fixes
+- Feature updates (based on license tier)
+- Technical support (based on license tier)
+
+================================================================================
+13. GOVERNING LAW
+================================================================================
+
+This Agreement shall be governed by and construed in accordance with the
+laws of [Your Jurisdiction], without regard to its conflict of law provisions.
+
+Any disputes shall be resolved through binding arbitration in [Your Jurisdiction].
+
+================================================================================
+14. ENTIRE AGREEMENT
+================================================================================
+
+This Agreement constitutes the entire agreement between you and Bryvn01
+concerning the Software and supersedes all prior agreements and understandings.
+
+No modification of this Agreement shall be binding unless in writing and
+signed by an authorized representative of Bryvn01.
+
+================================================================================
+15. ACKNOWLEDGMENT
+================================================================================
+
+BY USING THIS SOFTWARE, YOU ACKNOWLEDGE THAT:
+
+✓ You have read and understand this Agreement
+✓ You agree to be bound by its terms and conditions
+✓ You understand the restrictions on use
+✓ You understand the consequences of unauthorized use
+✓ This Agreement constitutes a legally binding contract
+
+================================================================================
+FOR QUESTIONS OR TO PURCHASE A LICENSE:
+================================================================================
+
+📧 Email: admin@easycart.com
+🐙 GitHub: https://github.com/Bryvn01/EasyCart
+💬 Issues: https://github.com/Bryvn01/EasyCart/issues
+
+================================================================================
+© 2025 Bryvn01. All Rights Reserved.
+EasyCart is a trademark of Bryvn01.
+================================================================================

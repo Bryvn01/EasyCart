@@ -11,7 +11,8 @@ import {
   Menu,
   X,
   Tag,
-  Shield
+  Shield,
+  CreditCard
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -27,6 +28,7 @@ const Layout = ({ children }) => {
     { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Reports', href: '/admin/reports', icon: BarChart3 },
+    { name: 'POS', href: '/admin/pos/dashboard', icon: CreditCard },
     { name: '2FA Security', href: '/admin/2fa', icon: Shield },
   ];
 

@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
   barFill: {
     height: '100%',
     borderRadius: theme.borderRadius.full,
-    transition: 'width 0.3s ease, background-color 0.3s ease',
   },
   label: {
     fontSize: theme.typography.bodySmall.fontSize,

@@ -33,11 +33,11 @@ export interface LoginResponse {
 }
 
 export interface RegisterRequest {
+  first_name: string;
+  last_name: string;
   email: string;
-  username: string;
   password: string;
   phone?: string;
-  address?: string;
 }
 
 export interface RegisterResponse {
@@ -145,20 +145,16 @@ export interface ProductListResponse {
 
 export interface WishlistItem {
   id: number;
-  product: number;
-  product_name: string;
-  product_price: string;
-  product_image: string;
-  product_stock: number;
+  product_id: number;
   added_at: string;
 }
 
 export interface Wishlist {
   id: number;
-  user: number;
   items: WishlistItem[];
-  item_count: number;
-  created_at: string;
+  user?: number;
+  item_count?: number;
+  created_at?: string;
 }
 
 // ==================== REVIEWS ====================
@@ -197,23 +193,27 @@ export interface CreateReviewRequest {
 
 export interface CartItem {
   id: number;
-  product: Product;
+  product_id: number;
   quantity: number;
+  variant_id?: number;
+  price: string;
   subtotal: string;
 }
 
 export interface Cart {
-  id: number;
-  user: number;
   items: CartItem[];
-  total_items: number;
-  total_amount: string;
-  created_at: string;
+  total: string;
+  id?: number;
+  user?: number;
+  total_items?: number;
+  total_amount?: string;
+  created_at?: string;
 }
 
 export interface AddToCartRequest {
   product_id: number;
   quantity: number;
+  variant_id?: number;
 }
 
 export interface UpdateCartItemRequest {

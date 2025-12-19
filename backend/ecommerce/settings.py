@@ -2,6 +2,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from decouple import UndefinedValueError
 from sentry_sdk.integrations.django import DjangoIntegration
+import dj_database_url
 import sentry_sdk
 import logging
 from datetime import timedelta
@@ -9,8 +10,6 @@ from decouple import Config, RepositoryEnv, Csv
 from pathlib import Path
 import sys
 import os
-
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -63,23 +62,29 @@ INSTALLED_APPS = [
     "cloudinary",
     "cloudinary_storage",
     # Local apps
+    "apps.core",  # Core protection system - MUST BE FIRST
     "apps.accounts",
     "apps.products",
     "apps.orders",
     "apps.payments",
     "apps.support",
+    "apps.pos",
 ]
 
-# Cloudinary config for media files
-try:
-    from .cloudinary_config import *  # noqa: F403, F401
-except ImportError:
-    pass
+# Cloudinary storage configuration
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME", default="test-cloud"),
+    "API_KEY": config("CLOUDINARY_API_KEY", default="test-key"),
+    "API_SECRET": config("CLOUDINARY_API_SECRET", default="test-secret"),
+}
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "apps.core.middleware.DomainLockMiddleware",  # Prevent unauthorized domains
+    "apps.core.middleware.BrandingMiddleware",  # Add copyright headers
     "ecommerce.correlation_middleware.CorrelationIDMiddleware",  # Request tracing
     "ecommerce.middleware.DatabaseRetryMiddleware",  # Handle transient DB errors
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -87,6 +92,7 @@ MIDDLEWARE = [
     "ecommerce.middleware.DisableCSRFForAPIMiddleware",  # Disable CSRF for /api/* endpoints
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "apps.core.middleware.LicenseEnforcementMiddleware",  # Enforce license restrictions
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
@@ -133,35 +139,59 @@ TEMPLATES = [
 WSGI_APPLICATION = "ecommerce.wsgi.application"
 
 # Database
-DATABASES = {
-    "default": {
-        "ENGINE": config("DB_ENGINE"),
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
-        "CONN_MAX_AGE": 600,
-        "CONN_HEALTH_CHECKS": True,  # Enable connection health checks
-        # Only add OPTIONS for MySQL
-        "OPTIONS": (
-            {
-                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-                "charset": "utf8mb4",
-            }
-            if config("DB_ENGINE").endswith("mysql")
-            else (
-                {
-                    # PostgreSQL-specific connection options
-                    "connect_timeout": 10,  # Connection timeout in seconds
-                    "options": "-c statement_timeout=30000",  # 30 second query timeout
-                }
-                if config("DB_ENGINE").endswith("postgresql")
-                else {}
-            )
-        ),
+# Support both DATABASE_URL (Render) and individual env vars (local dev)
+# Try DATABASE_URL first (production), fall back to individual vars (local)
+database_url = config("DATABASE_URL", default=None)
+
+if database_url:
+    # Production: Use DATABASE_URL from Render
+    # For Railway free tier: Use shorter connection pooling to handle sleeping DB
+    conn_max_age = 0 if "railway" in database_url.lower() else 600
+
+    DATABASES = {
+        "default": dj_database_url.parse(
+            database_url,
+            conn_max_age=conn_max_age,
+            conn_health_checks=True,
+            ssl_require=True,
+        )
     }
-}
+    # Add PostgreSQL-specific options
+    DATABASES["default"]["OPTIONS"] = {
+        "connect_timeout": 10,
+        "options": "-c statement_timeout=30000",
+    }
+else:
+    # Local development: Use individual environment variables
+    DATABASES = {
+        "default": {
+            "ENGINE": config("DB_ENGINE"),
+            "NAME": config("DB_NAME"),
+            "USER": config("DB_USER"),
+            "PASSWORD": config("DB_PASSWORD"),
+            "HOST": config("DB_HOST"),
+            "PORT": config("DB_PORT"),
+            "CONN_MAX_AGE": 0,  # No pooling for Railway free tier
+            "CONN_HEALTH_CHECKS": True,  # Enable connection health checks
+            # Only add OPTIONS for MySQL
+            "OPTIONS": (
+                {
+                    "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+                    "charset": "utf8mb4",
+                }
+                if config("DB_ENGINE").endswith("mysql")
+                else (
+                    {
+                        # PostgreSQL-specific connection options
+                        "connect_timeout": 10,  # Connection timeout in seconds
+                        "options": "-c statement_timeout=30000",  # 30 second query timeout
+                    }
+                    if config("DB_ENGINE").endswith("postgresql")
+                    else {}
+                )
+            ),
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

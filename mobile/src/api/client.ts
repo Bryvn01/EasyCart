@@ -19,10 +19,17 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 import NetInfo from '@react-native-community/netinfo';
+import {Platform} from 'react-native';
 import {getToken, setToken, removeToken, getRefreshToken} from '@/utils/storage';
 
-// API Base URL from environment
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8000/api';
+// API Base URL
+// Note: Using computer's local IP (192.168.1.67) for physical device testing
+const API_BASE_URL = __DEV__
+  ? Platform.select({
+      android: 'http://192.168.1.67:8000/api',
+      default: 'http://localhost:8000/api',
+    })!
+  : 'http://localhost:8000/api';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -258,7 +265,7 @@ export const retryRequest = async <T>(
     if (retries === 0) {
       throw error;
     }
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise<void>(resolve => setTimeout(() => resolve(), delay));
     return retryRequest(fn, retries - 1, delay * 2); // Exponential backoff
   }
 };

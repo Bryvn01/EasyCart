@@ -75,7 +75,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       // Remove confirmPassword before sending to API
-      const { confirmPassword, ...registerData } = data;
+      const { confirmPassword, acceptTerms, ...registerData } = data;
 
       await register(registerData);
 

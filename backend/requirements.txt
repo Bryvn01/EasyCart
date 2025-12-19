@@ -4,6 +4,7 @@ djangorestframework-simplejwt==5.4.0
 django-cors-headers==4.6.0
 django-filter==24.3
 psycopg2-binary==2.9.11
+dj-database-url==2.2.0
 python-decouple==3.8
 Pillow==11.1.0
 cloudinary==1.44.1
