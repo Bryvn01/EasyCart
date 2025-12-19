@@ -57,7 +57,7 @@ const CompactProductCard = memo(({ product, onAddToCart, priority = false, getPr
           {/* Status Badge - Top Right */}
           {product.stock === 0 ? (
             <span className="compact-badge compact-badge-out-of-stock">Sold Out</span>
-          ) : product.stock < 10 ? (
+          ) : product.stock > 0 && product.stock <= 3 ? (
             <span className="compact-badge compact-badge-low-stock">{product.stock} left</span>
           ) : null}
 

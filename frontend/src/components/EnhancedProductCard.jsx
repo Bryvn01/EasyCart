@@ -88,7 +88,7 @@ const EnhancedProductCard = ({ product }) => {
             {product.stock === 0 && (
               <div className="stock-badge out-of-stock">Out of Stock</div>
             )}
-            {product.stock > 0 && product.stock < 10 && (
+            {product.stock > 0 && product.stock <= 3 && (
               <div className="stock-badge low-stock">Only {product.stock} left</div>
             )}
           </div>

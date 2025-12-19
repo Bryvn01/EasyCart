@@ -160,7 +160,7 @@ const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
 
   const productImage = product.image || product.image_url;
   const isOutOfStock = product.stock === 0;
-  const isLowStock = product.stock > 0 && product.stock < 10;
+  const isLowStock = product.stock > 0 && product.stock <= 3;
 
   // Generate star rating (4-5 stars for demo purposes)
   const rating = product.rating || (4 + Math.random()).toFixed(1);

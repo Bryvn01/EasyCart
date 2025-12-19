@@ -333,6 +333,17 @@ body {
   }
 }
 
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.8s ease-out;
 }
@@ -1040,6 +1051,11 @@ input:focus:not(:focus-visible) {
   .product-card:active {
     transform: scale(0.98);
     transition: transform 0.1s ease;
+  }
+
+  /* Prevent bottom nav from hiding content */
+  .mobile-bottom-padding {
+    padding-bottom: var(--content-bottom-padding) !important;
   }
 }
 
