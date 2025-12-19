@@ -13,15 +13,22 @@ from decouple import config
 
 logger = logging.getLogger(__name__)
 
-# Ultramsg Configuration
-ULTRAMSG_INSTANCE_ID = config("ULTRAMSG_INSTANCE_ID", default="")
-ULTRAMSG_TOKEN = config("ULTRAMSG_TOKEN", default="")
-ULTRAMSG_BASE_URL = (
-    f"https://api.ultramsg.com/{ULTRAMSG_INSTANCE_ID}" if ULTRAMSG_INSTANCE_ID else ""
-)
+# Twilio Configuration
+try:
+    from twilio.rest import Client
 
-if not ULTRAMSG_INSTANCE_ID or not ULTRAMSG_TOKEN:
-    logger.warning("Ultramsg not configured - WhatsApp disabled")
+    TWILIO_ACCOUNT_SID = config("TWILIO_ACCOUNT_SID", default="")
+    TWILIO_AUTH_TOKEN = config("TWILIO_AUTH_TOKEN", default="")
+    TWILIO_PHONE_NUMBER = config("TWILIO_PHONE_NUMBER", default="")
+
+    if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+        twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    else:
+        twilio_client = None
+        logger.warning("Twilio not configured - SMS/WhatsApp disabled")
+except ImportError:
+    twilio_client = None
+    logger.warning("twilio package not installed")
 
 
 def generate_otp():
@@ -31,46 +38,28 @@ def generate_otp():
 
 def send_otp_sms(phone_number, otp_code):
     """
-    Send OTP via SMS using Ultramsg
-    Phone format: 254XXXXXXXXX (Kenya, without +)
+    Send OTP via SMS using Twilio
+    Phone format: +254XXXXXXXXX (Kenya)
     """
-    if not ULTRAMSG_INSTANCE_ID or not ULTRAMSG_TOKEN:
-        logger.warning("Ultramsg not configured - using console logging")
+    if not twilio_client:
+        logger.warning("Twilio not configured - using console logging")
         print(f"\n📱 [DEV] SMS OTP to {phone_number}: {otp_code}\n")
         return True
 
     try:
-        import requests
-
-        # Ensure phone number format: 254XXXXXXXXX (no + or spaces)
-        phone_number = phone_number.replace("+", "").replace(" ", "")
-        if phone_number.startswith("0"):
-            phone_number = f"254{phone_number[1:]}"
+        # Ensure phone number has country code
+        if not phone_number.startswith("+"):
+            phone_number = f'+254{phone_number.lstrip("0")}'
 
         message_body = (
             f"Your EasyCart verification code is: {otp_code}\nValid for 10 minutes."
         )
 
-        url = f"{ULTRAMSG_BASE_URL}/messages/chat"
-        data = {
-            "token": ULTRAMSG_TOKEN,
-            "to": phone_number,
-            "body": message_body,
-            "priority": 10,
-        }
-
-        response = requests.post(url, json=data, timeout=15)
-        response_data = response.json()
-
-        if response.status_code == 200 and response_data.get("sent") == "true":
-            logger.info(f"SMS sent to {phone_number}: {response_data.get('id')}")
-            return True
-        else:
-            logger.error(
-                f"SMS send failed: {response_data.get('error', 'Unknown error')}"
-            )
-            return False
-
+        message = twilio_client.messages.create(
+            body=message_body, from_=TWILIO_PHONE_NUMBER, to=phone_number
+        )
+        logger.info(f"SMS sent to {phone_number}: {message.sid}")
+        return True
     except Exception as e:
         logger.error(f"SMS send failed: {str(e)}")
         return False
@@ -78,47 +67,33 @@ def send_otp_sms(phone_number, otp_code):
 
 def send_otp_whatsapp(phone_number, otp_code):
     """
-    Send OTP via WhatsApp using Ultramsg
-    Phone format: 254XXXXXXXXX (Kenya, without +)
+    Send OTP via WhatsApp using Twilio
+    Note: Requires WhatsApp Business API setup
     """
-    if not ULTRAMSG_INSTANCE_ID or not ULTRAMSG_TOKEN:
-        logger.error("Ultramsg not configured")
+    if not twilio_client:
+        logger.error("WhatsApp service not configured")
         return False
 
     try:
-        import requests
-
-        # Ensure phone number format: 254XXXXXXXXX (no + or spaces)
-        phone_number = phone_number.replace("+", "").replace(" ", "")
-        if phone_number.startswith("0"):
-            phone_number = f"254{phone_number[1:]}"
+        # Ensure phone number has country code
+        if not phone_number.startswith("+"):
+            phone_number = f'+254{phone_number.lstrip("0")}'
 
         message_body = (
             f"Your EasyCart verification code is: {otp_code}\nValid for 10 minutes."
         )
 
-        url = f"{ULTRAMSG_BASE_URL}/messages/chat"
-        data = {
-            "token": ULTRAMSG_TOKEN,
-            "to": phone_number,
-            "body": message_body,
-            "priority": 10,
-        }
+        # Twilio WhatsApp format: whatsapp:+1234567890
+        # Use sandbox number for testing or approved sender for production
+        whatsapp_from = config(
+            "TWILIO_WHATSAPP_FROM", default=f"whatsapp:{TWILIO_PHONE_NUMBER}"
+        )
 
-        response = requests.post(url, json=data, timeout=15)
-        response_data = response.json()
-
-        if response.status_code == 200 and response_data.get("sent") == "true":
-            logger.info(
-                f"WhatsApp OTP sent to {phone_number}: {response_data.get('id')}"
-            )
-            return True
-        else:
-            logger.error(
-                f"WhatsApp send failed: {response_data.get('error', 'Unknown error')}"
-            )
-            return False
-
+        message = twilio_client.messages.create(
+            body=message_body, from_=whatsapp_from, to=f"whatsapp:{phone_number}"
+        )
+        logger.info(f"WhatsApp sent to {phone_number}: {message.sid}")
+        return True
     except Exception as e:
         logger.error(f"WhatsApp send failed: {str(e)}")
         return False
