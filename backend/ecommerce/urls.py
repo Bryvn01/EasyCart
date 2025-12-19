@@ -116,6 +116,7 @@ urlpatterns = [
     path("api/payments/", include("apps.payments.urls")),
     path("api/admin/", include("apps.admin_dashboard.urls")),
     path("api/support/", include("apps.support.urls")),
+    path("api/pos/", include("apps.pos.urls")),
 ]
 
 if settings.DEBUG:

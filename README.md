@@ -2,7 +2,7 @@
 
 ![CI/CD](https://github.com/Bryvn01/EasyCart/workflows/CI-CD-Pipeline/badge.svg)
 ![Required Checks](https://github.com/Bryvn01/EasyCart/workflows/Required%20Checks/badge.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-Proprietary-red.svg)
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
 ![Django](https://img.shields.io/badge/django-5.1.7-green.svg)
 ![React](https://img.shields.io/badge/react-18.3-blue.svg)
@@ -11,12 +11,50 @@
 
 A complete e-commerce solution with React frontend and Django REST Framework backend, featuring PostgreSQL database, JWT authentication, superadmin CRUD operations, and production deployment on Render.
 
+---
+
+## ⚠️ **IMPORTANT LICENSING NOTICE**
+
+**Copyright © 2025 Bryvn01. All Rights Reserved.**
+
+This repository contains **PROPRIETARY SOFTWARE**. Unauthorized use, copying, modification, distribution, or deployment of this code is **STRICTLY PROHIBITED** and may result in legal action.
+
+### 🚫 What You CANNOT Do:
+- ❌ Use this software for commercial purposes without a license
+- ❌ Copy, fork, or redistribute this code
+- ❌ Modify and deploy as your own
+- ❌ Remove copyright notices or licensing information
+- ❌ Host this software for third parties (SaaS)
+
+### ✅ What You CAN Do:
+- ✅ View the code for educational purposes
+- ✅ Star the repository
+- ✅ Report issues and bugs
+- ✅ Request features
+- ✅ **Purchase a commercial license** for legitimate use
+
+### 💰 Commercial Licensing
+**Interested in using EasyCart for your business?**
+
+📧 **Contact:** admin@easycart.com
+🌐 **Website:** Coming Soon
+📄 **License Options:**
+- **Startup License:** $499/month - Single domain, up to 10,000 products
+- **Business License:** $999/month - Multi-domain, unlimited products
+- **Enterprise License:** Custom pricing - White-label, source code access
+
+**Free 14-day trial available!**
+
+---
+
 ## 🌍 Live Demo
 
 - **Frontend**: https://easycart-frontend-wj9x.onrender.com/
 - **Admin Dashboard**: https://easycart-admin-08xf.onrender.com/
 - **Django Admin**: https://easycart-backend-2k8l.onrender.com/admin/
 - **API**: https://easycart-backend-2k8l.onrender.com/api/
+
+**Note:** These demo instances are for showcase purposes only. Running your own instance requires a valid license.
 
 ---
 

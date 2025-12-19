@@ -63,10 +63,10 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: true });
 
           // Check if tokens exist in secure storage
-          const tokens = await storage.getToken();
+          const access = await storage.getToken();
+          const refresh = await storage.getRefreshToken();
 
-          if (tokens) {
-            const { access, refresh } = tokens;
+          if (access && refresh) {
 
             // Fetch user profile with the stored token
             try {
@@ -82,13 +82,13 @@ export const useAuthStore = create<AuthState>()(
               // Token might be expired, try to refresh
               try {
                 const refreshResponse = await authApi.refreshToken({ refresh });
-                await storage.setToken(refreshResponse.access, refreshResponse.refresh);
+                await storage.setToken(refreshResponse.access);
 
                 const user = await authApi.getProfile();
                 set({
                   user,
                   accessToken: refreshResponse.access,
-                  refreshToken: refreshResponse.refresh,
+                  refreshToken: refresh,
                   isInitialized: true,
                   isLoading: false,
                 });
@@ -217,11 +217,11 @@ export const useAuthStore = create<AuthState>()(
           const response = await authApi.refreshToken({ refresh: refreshToken });
 
           // Update tokens in secure storage
-          await storage.setToken(response.access, response.refresh);
+          await storage.setToken(response.access);
 
           set({
             accessToken: response.access,
-            refreshToken: response.refresh,
+            refreshToken,
           });
         } catch (error) {
           // Refresh failed, logout user
@@ -281,16 +281,8 @@ export const useAuthStore = create<AuthState>()(
         try {
           set({ isLoading: true, error: null });
 
-          const success = await storage.enableBiometric(
-            credentials.email,
-            credentials.password
-          );
-
-          if (success) {
-            set({ biometricEnabled: true, isLoading: false });
-          } else {
-            throw new Error('Failed to enable biometric authentication');
-          }
+          await storage.enableBiometric(credentials.email, credentials.password);
+          set({ biometricEnabled: true, isLoading: false });
         } catch (error: any) {
           const errorMessage = error.message || 'Biometric setup failed.';
           set({ error: errorMessage, isLoading: false });

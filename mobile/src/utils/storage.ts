@@ -27,13 +27,17 @@ const REFRESH_TOKEN_KEY = 'refresh_token';
 /**
  * Store JWT access token securely in Keychain
  */
-export const setToken = async (token: string): Promise<void> => {
+export const setToken = async (token: string, refreshToken?: string): Promise<void> => {
   try {
     await Keychain.setGenericPassword(TOKEN_KEY, token, {
       service: TOKEN_KEY,
       accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
       securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
     });
+
+    if (refreshToken) {
+      await setRefreshToken(refreshToken);
+    }
   } catch (error) {
     console.error('Failed to store access token:', error);
     throw error;
@@ -324,6 +328,17 @@ export const getCachedData = <T>(key: string): T | null => {
 };
 
 /**
+ * Remove a single cached key
+ */
+export const removeCachedData = (key: string): void => {
+  try {
+    storage.delete(key);
+  } catch (error) {
+    console.error(`Failed to remove cached data for key ${key}:`, error);
+  }
+};
+
+/**
  * Clear all cached data
  */
 export const clearCache = (): void => {
@@ -368,6 +383,7 @@ export default {
   disableBiometric,
   setCachedData,
   getCachedData,
+  removeCachedData,
   clearCache,
   clearAllData,
 };

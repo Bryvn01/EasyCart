@@ -50,6 +50,13 @@ export const colors = {
   outline: '#E5E7EB',
   outlineVariant: '#D1D5DB',
 
+  // Material-style "on" colors / states
+  onBackground: '#111827',
+  onSurface: '#111827',
+  onSurfaceVariant: '#6B7280',
+  surfaceDisabled: '#E5E7EB',
+  onSurfaceDisabled: '#9CA3AF',
+
   // Text Colors (Light Mode)
   text: '#111827',
   textSecondary: '#6B7280',
@@ -89,18 +96,21 @@ export const colors = {
 export const typography = {
   // Display
   displayLarge: {
+    fontFamily: 'System',
     fontSize: 57,
     fontWeight: '700' as const,
     lineHeight: 64,
     letterSpacing: -0.25,
   },
   displayMedium: {
+    fontFamily: 'System',
     fontSize: 45,
     fontWeight: '700' as const,
     lineHeight: 52,
     letterSpacing: 0,
   },
   displaySmall: {
+    fontFamily: 'System',
     fontSize: 36,
     fontWeight: '700' as const,
     lineHeight: 44,
@@ -109,18 +119,21 @@ export const typography = {
 
   // Headline
   headlineLarge: {
+    fontFamily: 'System',
     fontSize: 32,
     fontWeight: '700' as const,
     lineHeight: 40,
     letterSpacing: 0,
   },
   headlineMedium: {
+    fontFamily: 'System',
     fontSize: 28,
     fontWeight: '700' as const,
     lineHeight: 36,
     letterSpacing: 0,
   },
   headlineSmall: {
+    fontFamily: 'System',
     fontSize: 24,
     fontWeight: '600' as const,
     lineHeight: 32,
@@ -129,18 +142,21 @@ export const typography = {
 
   // Title
   titleLarge: {
+    fontFamily: 'System',
     fontSize: 22,
     fontWeight: '600' as const,
     lineHeight: 28,
     letterSpacing: 0,
   },
   titleMedium: {
+    fontFamily: 'System',
     fontSize: 16,
     fontWeight: '600' as const,
     lineHeight: 24,
     letterSpacing: 0.15,
   },
   titleSmall: {
+    fontFamily: 'System',
     fontSize: 14,
     fontWeight: '600' as const,
     lineHeight: 20,
@@ -149,18 +165,21 @@ export const typography = {
 
   // Body
   bodyLarge: {
+    fontFamily: 'System',
     fontSize: 16,
     fontWeight: '400' as const,
     lineHeight: 24,
     letterSpacing: 0.5,
   },
   bodyMedium: {
+    fontFamily: 'System',
     fontSize: 14,
     fontWeight: '400' as const,
     lineHeight: 20,
     letterSpacing: 0.25,
   },
   bodySmall: {
+    fontFamily: 'System',
     fontSize: 12,
     fontWeight: '400' as const,
     lineHeight: 16,
@@ -169,18 +188,21 @@ export const typography = {
 
   // Label
   labelLarge: {
+    fontFamily: 'System',
     fontSize: 14,
     fontWeight: '600' as const,
     lineHeight: 20,
     letterSpacing: 0.1,
   },
   labelMedium: {
+    fontFamily: 'System',
     fontSize: 12,
     fontWeight: '600' as const,
     lineHeight: 16,
     letterSpacing: 0.5,
   },
   labelSmall: {
+    fontFamily: 'System',
     fontSize: 11,
     fontWeight: '600' as const,
     lineHeight: 16,
@@ -189,12 +211,14 @@ export const typography = {
 
   // Button
   button: {
+    fontFamily: 'System',
     fontSize: 16,
     fontWeight: '600' as const,
     lineHeight: 24,
     letterSpacing: 0.5,
   },
   buttonSmall: {
+    fontFamily: 'System',
     fontSize: 14,
     fontWeight: '600' as const,
     lineHeight: 20,
@@ -203,12 +227,14 @@ export const typography = {
 
   // Caption
   caption: {
+    fontFamily: 'System',
     fontSize: 12,
     fontWeight: '400' as const,
     lineHeight: 16,
     letterSpacing: 0.4,
   },
   overline: {
+    fontFamily: 'System',
     fontSize: 10,
     fontWeight: '500' as const,
     lineHeight: 16,

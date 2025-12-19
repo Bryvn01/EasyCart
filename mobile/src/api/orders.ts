@@ -29,8 +29,8 @@ export const getCart = async (): Promise<Cart> => {
 /**
  * Add product to cart
  */
-export const addToCart = async (data: AddToCartRequest): Promise<CartItem> => {
-  const response = await apiClient.post<CartItem>('/orders/cart/add/', data);
+export const addToCart = async (data: AddToCartRequest): Promise<Cart> => {
+  const response = await apiClient.post<Cart>('/orders/cart/add/', data);
   return response.data;
 };
 
@@ -47,8 +47,8 @@ export const removeFromCart = async (itemId: number): Promise<void> => {
 export const updateCartItem = async (
   itemId: number,
   data: UpdateCartItemRequest
-): Promise<CartItem> => {
-  const response = await apiClient.patch<CartItem>(
+): Promise<Cart> => {
+  const response = await apiClient.patch<Cart>(
     `/orders/cart/update/${itemId}/`,
     data
   );
