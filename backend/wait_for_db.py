@@ -1,35 +1,64 @@
 #!/usr/bin/env python
+"""
+Database readiness check with Railway PostgreSQL retry logic.
+
+This script waits for the database to be available before proceeding with
+migrations. It handles Railway free tier sleep/wake cycles gracefully.
+"""
+import os
 import sys
-import time
-import psycopg2
-from decouple import config
+import logging
+
+# Set up Django environment
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
+
+import django  # noqa: E402
+
+django.setup()
+
+from utils.db_startup import wait_for_database  # noqa: E402
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
-def wait_for_db(max_retries=30, delay=2):
-    """Wait for database to be ready"""
-    db_config = {
-        "dbname": config("DB_NAME"),
-        "user": config("DB_USER"),
-        "password": config("DB_PASSWORD"),
-        "host": config("DB_HOST"),
-        "port": config("DB_PORT", default=5432, cast=int),
-    }
+def main():
+    """Wait for database with retry logic."""
+    logger.info("=" * 70)
+    logger.info("Waiting for Railway PostgreSQL database...")
+    logger.info("(Free tier databases sleep after 15min inactivity)")
+    logger.info("=" * 70)
 
-    for i in range(max_retries):
-        try:
-            conn = psycopg2.connect(**db_config)
-            conn.close()
-            print("✅ Database is ready!")
-            return True
-        except psycopg2.OperationalError:
-            if i < max_retries - 1:
-                print(f"⏳ Waiting for database... ({i + 1}/{max_retries})")
-                time.sleep(delay)
-            else:
-                print(f"❌ Database not ready after {max_retries} attempts")
-                sys.exit(1)
-    return False
+    # Use our enhanced wait_for_database utility with aggressive retries
+    success, message = wait_for_database(
+        max_attempts=15,  # Up to 15 attempts
+        initial_delay=3.0,  # Start with 3 seconds
+        max_delay=10.0,  # Cap at 10 seconds
+        timeout=120,  # 2 minute timeout for Railway wake-up
+    )
+
+    if success:
+        logger.info("=" * 70)
+        logger.info("✅ " + message)
+        logger.info("=" * 70)
+        sys.exit(0)
+    else:
+        logger.error("=" * 70)
+        logger.error("❌ Database connection failed after retries")
+        logger.error("=" * 70)
+        logger.error(message)
+        logger.error("")
+        logger.error("Troubleshooting steps:")
+        logger.error("1. Check Railway database status at railway.app")
+        logger.error("2. Verify DATABASE_URL in Render environment variables")
+        logger.error("3. Try triggering a new deployment in 60 seconds")
+        logger.error("4. Consider upgrading Railway to Developer tier ($5/mo)")
+        logger.error("=" * 70)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    wait_for_db()
+    main()

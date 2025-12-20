@@ -1,16 +1,37 @@
 #!/bin/bash
 set -e
 
-echo "🔧 Installing dependencies..."
+echo "=================================================="
+echo "🚀 EasyCart Backend Build (Render)"
+echo "=================================================="
+
+echo ""
+echo "📦 Installing Python dependencies..."
+pip install --upgrade pip
 pip install -r requirements.txt
 
-echo "⏳ Waiting for database..."
+echo ""
+echo "🗄️  Waiting for Railway PostgreSQL database..."
+echo "    (Free tier may take 30-60s to wake from sleep)"
+echo ""
 python wait_for_db.py
 
-echo "🗄️ Running migrations..."
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ Database connection failed - see errors above"
+    echo "   Retrying deployment may succeed once database wakes"
+    exit 1
+fi
+
+echo ""
+echo "📊 Running database migrations..."
 python manage.py migrate --noinput
 
-echo "📦 Collecting static files..."
+echo ""
+echo "📁 Collecting static files..."
 python manage.py collectstatic --noinput
 
-echo "✅ Build complete!"
+echo ""
+echo "=================================================="
+echo "✅ Build completed successfully!"
+echo "=================================================="
