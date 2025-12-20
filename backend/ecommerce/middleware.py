@@ -1,7 +1,8 @@
 import logging
+import time
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError, PermissionDenied
-from django.db import OperationalError
+from django.db import OperationalError, connection
 from rest_framework.views import exception_handler
 from django.utils.deprecation import MiddlewareMixin
 
@@ -10,39 +11,99 @@ logger = logging.getLogger(__name__)
 
 class DatabaseRetryMiddleware(MiddlewareMixin):
     """
-    Retry database connections when database is starting up.
-    Handles transient errors like "database system is starting up" from Railway.
+    Middleware to handle transient database connection errors with automatic retry logic.
+    Handles Railway free tier database sleep/wake cycles gracefully.
     """
 
     MAX_RETRIES = 3
-    RETRY_DELAY = 1  # seconds
+    RETRY_DELAY = 2  # seconds (increased for Railway wake-up)
+    MAX_DELAY = 8  # seconds
 
-    def process_exception(self, request, exception):
-        if isinstance(exception, OperationalError):
-            error_msg = str(exception).lower()
-            # Check for transient database errors
-            if any(
-                msg in error_msg
-                for msg in [
+    def __call__(self, request):
+        """
+        Process request with automatic retry on transient database errors.
+
+        This middleware will retry the entire request up to MAX_RETRIES times
+        if a transient database error occurs, giving the database time to
+        wake up (important for Railway free tier).
+        """
+        delay = self.RETRY_DELAY
+        last_exception = None
+
+        for attempt in range(self.MAX_RETRIES + 1):
+            try:
+                # Close stale connections before retry
+                if attempt > 0:
+                    connection.close()
+                    logger.info(
+                        f"Retrying request {request.path} (attempt {attempt + 1}/{self.MAX_RETRIES + 1}) "
+                        f"after {delay}s delay"
+                    )
+                    time.sleep(delay)
+
+                # Process the request
+                response = self.get_response(request)
+
+                # If we retried and succeeded, log it
+                if attempt > 0:
+                    logger.info(
+                        f"Request {request.path} succeeded after {attempt + 1} attempts"
+                    )
+
+                return response
+
+            except OperationalError as e:
+                error_msg = str(e).lower()
+                last_exception = e
+
+                # Check if this is a transient error we should retry
+                transient_errors = [
                     "database system is starting up",
                     "server closed the connection",
                     "connection refused",
+                    "could not connect",
+                    "timeout expired",
                 ]
-            ):
-                logger.warning(
-                    f"Transient database error detected: {error_msg}. Request will be retried."
-                )
-                # Let Django's default error handling occur
-                # The CONN_HEALTH_CHECKS will handle reconnection
-                return JsonResponse(
-                    {
-                        "error": "Database temporarily unavailable",
-                        "message": "Please try again in a moment",
-                        "retry": True,
-                    },
-                    status=503,  # Service Unavailable
-                )
-        return None
+
+                is_transient = any(msg in error_msg for msg in transient_errors)
+
+                if is_transient and attempt < self.MAX_RETRIES:
+                    logger.warning(
+                        f"Transient database error on {request.path} "
+                        f"(attempt {attempt + 1}/{self.MAX_RETRIES + 1}): {error_msg}"
+                    )
+                    # Exponential backoff with cap
+                    delay = min(delay * 1.5, self.MAX_DELAY)
+                    continue
+                else:
+                    # Non-transient error or max retries exceeded
+                    if attempt >= self.MAX_RETRIES:
+                        logger.error(
+                            f"Database connection failed after {self.MAX_RETRIES + 1} attempts "
+                            f"for {request.path}: {error_msg}"
+                        )
+                    # Re-raise to let Django handle it
+                    raise
+
+        # If we exhausted retries, return 503
+        if last_exception:
+            logger.error(
+                f"All retry attempts exhausted for {request.path}. "
+                f"Last error: {last_exception}"
+            )
+            return JsonResponse(
+                {
+                    "error": "Database temporarily unavailable",
+                    "message": "The database is waking up. Please try again in 30-60 seconds.",
+                    "retry": True,
+                    "attempts": self.MAX_RETRIES + 1,
+                    "help": "Railway free tier databases sleep after 15min inactivity",
+                },
+                status=503,
+            )
+
+        # Should never reach here, but return normal response
+        return self.get_response(request)
 
 
 class DisableCSRFForAPIMiddleware(MiddlewareMixin):

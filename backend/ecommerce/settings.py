@@ -156,11 +156,23 @@ if database_url:
             ssl_require=True,
         )
     }
-    # Add PostgreSQL-specific options
+    # PostgreSQL-specific production options for Railway
     DATABASES["default"]["OPTIONS"] = {
-        "connect_timeout": 10,
-        "options": "-c statement_timeout=30000",
+        "connect_timeout": 30,  # Increased for Railway cold starts
+        "options": "-c statement_timeout=60000 -c idle_in_transaction_session_timeout=60000",
+        # TCP keepalive for long-running connections (prevents firewall timeouts)
+        "keepalives": 1,
+        "keepalives_idle": 30,
+        "keepalives_interval": 10,
+        "keepalives_count": 5,
+        # Application-level settings
+        "application_name": "easycart_backend",
     }
+    # Add retry configuration for initial connection
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+    DATABASES["default"][
+        "DISABLE_SERVER_SIDE_CURSORS"
+    ] = True  # Better for connection pooling
 else:
     # Local development: Use individual environment variables
     DATABASES = {
@@ -190,8 +202,16 @@ else:
                     else {}
                 )
             ),
+            # Add automatic retry on startup for Railway free tier
+            "ATOMIC_REQUESTS": False,  # Explicit transactions for better error handling
         }
     }
+    # Enhanced connection settings for Railway free tier (sleeps after 15min)
+    if config("DB_ENGINE").endswith("postgresql"):
+        DATABASES["default"]["OPTIONS"]["keepalives"] = 1
+        DATABASES["default"]["OPTIONS"]["keepalives_idle"] = 30
+        DATABASES["default"]["OPTIONS"]["keepalives_interval"] = 10
+        DATABASES["default"]["OPTIONS"]["keepalives_count"] = 5
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
