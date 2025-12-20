@@ -100,8 +100,11 @@ class HealthCheckView(APIView):
 
     def _check_database(self) -> Dict[str, Any]:
         """Check database connectivity and responsiveness with retry for sleeping databases."""
-        max_retries = getattr(settings, "HEALTHCHECK_DB_RETRIES", 2)
-        retry_delay = 1  # seconds
+        # Increased retries for Railway free tier (database sleeps after 15min)
+        max_retries = getattr(settings, "HEALTHCHECK_DB_RETRIES", 5)
+        initial_retry_delay = 2  # Start with 2 seconds
+        max_retry_delay = 10  # Cap at 10 seconds
+        retry_delay = initial_retry_delay
 
         for attempt in range(max_retries + 1):
             try:
@@ -149,18 +152,50 @@ class HealthCheckView(APIView):
             except Exception as e:
                 if attempt < max_retries:
                     logger.warning(
-                        f"Database health check attempt {attempt + 1} failed, retrying: {e}"
+                        f"Database health check attempt {attempt + 1}/{max_retries} "
+                        f"failed, retrying in {retry_delay}s: {e}"
                     )
-                    retry_delay *= 2  # Exponential backoff
+                    # Exponential backoff with cap
+                    retry_delay = min(retry_delay * 1.5, max_retry_delay)
                     continue
                 else:
-                    logger.error(
-                        f"Database health check failed after {max_retries} retries: {e}"
+                    error_details = str(e)
+                    total_wait = sum(
+                        [initial_retry_delay * (1.5**i) for i in range(max_retries)]
                     )
+                    logger.error(
+                        f"Database health check failed after {max_retries + 1} attempts "
+                        f"(total {total_wait}s): {error_details}"
+                    )
+                    # Provide actionable error message
+                    if "server closed the connection" in error_details.lower():
+                        message = (
+                            "Database waking up from sleep (Railway free tier). "
+                            "This typically takes 30-60s. Please refresh in a moment."
+                        )
+                    elif "connection refused" in error_details.lower():
+                        message = (
+                            "Database connection refused. "
+                            "Check DATABASE_URL and firewall settings."
+                        )
+                    elif "timeout" in error_details.lower():
+                        message = (
+                            "Database connection timeout. "
+                            "The database may be under heavy load or unreachable."
+                        )
+                    else:
+                        message = f"Database unavailable: {type(e).__name__}"
+
                     return {
                         "status": HealthStatus.UNHEALTHY,
-                        "message": f"Database connection failed: {type(e).__name__}",
-                        "retries": attempt,
+                        "message": message,
+                        "error_type": type(e).__name__,
+                        "error_details": error_details[:200],
+                        "retries": attempt + 1,
+                        "help": (
+                            "If using Railway free tier, database sleeps after "
+                            "15min inactivity and takes ~30-60s to wake."
+                        ),
                     }
 
     def _check_cache(self) -> Dict[str, Any]:
