@@ -39,7 +39,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "user", "total_amount", "created_at", "updated_at"]
 
     def get_items_count(self, obj):
         return obj.items.count()

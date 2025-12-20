@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -40,6 +40,53 @@ class OrderListView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user).order_by("-created_at")
+
+    def perform_create(self, serializer):
+        from django.db import transaction
+        from decimal import Decimal
+
+        # Get the user's cart
+        try:
+            cart = Cart.objects.get(user=self.request.user)
+        except Cart.DoesNotExist:
+            raise serializers.ValidationError(
+                {"error": "Cart is empty or does not exist"}
+            )
+
+        cart_items = cart.items.all()
+        if not cart_items.exists():
+            raise serializers.ValidationError({"error": "Cart is empty"})
+
+        # Calculate total amount from cart items
+        total_amount = Decimal("0.00")
+        for item in cart_items:
+            # Check stock availability
+            if item.product.stock < item.quantity:
+                raise serializers.ValidationError(
+                    {
+                        "error": f"Insufficient stock for {item.product.name}. Only {item.product.stock} available."
+                    }
+                )
+            total_amount += item.product.price * item.quantity
+
+        # Create the order with atomic transaction
+        with transaction.atomic():
+            # Save the order
+            order = serializer.save(user=self.request.user, total_amount=total_amount)
+
+            # Create order items and reduce stock
+            for cart_item in cart_items:
+                order.items.create(
+                    product=cart_item.product,
+                    quantity=cart_item.quantity,
+                    price=cart_item.product.price,
+                )
+                # Reduce product stock
+                cart_item.product.stock -= cart_item.quantity
+                cart_item.product.save()
+
+            # Clear the cart
+            cart_items.delete()
 
 
 class OrderDetailView(generics.RetrieveAPIView):

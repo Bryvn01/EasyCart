@@ -15,10 +15,10 @@ import unittest
 User = get_user_model()
 
 
-def safe_reverse(url_name):
+def safe_reverse(url_name, kwargs=None):
     """Safely reverse a URL, skipping test if URL doesn't exist."""
     try:
-        return reverse(url_name)
+        return reverse(url_name, kwargs=kwargs)
     except NoReverseMatch:
         raise unittest.SkipTest(f"URL pattern '{url_name}' not found")
 

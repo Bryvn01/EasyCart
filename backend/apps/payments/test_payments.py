@@ -17,10 +17,10 @@ from apps.orders.models import Order
 from apps.payments.models import Payment, PaymentLog
 
 
-def safe_reverse(url_name):
+def safe_reverse(url_name, kwargs=None):
     """Safely reverse a URL, skipping test if URL doesn't exist."""
     try:
-        return reverse(url_name)
+        return reverse(url_name, kwargs=kwargs)
     except NoReverseMatch:
         raise unittest.SkipTest(f"URL pattern '{url_name}' not found")
 
