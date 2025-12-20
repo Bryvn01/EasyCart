@@ -140,9 +140,10 @@ jobs:
           # Add current directory to Python path to ensure Django can find apps module
           export PYTHONPATH="${PYTHONPATH}:$(pwd)"
           python manage.py check --deploy || true
-          coverage run --source='apps' manage.py test --verbosity=2 --keepdb --parallel=2
-          coverage report || true
-          coverage xml || true
+          coverage run --rcfile=../.coveragerc --source='apps' manage.py test --verbosity=2 --keepdb --parallel=2
+          coverage combine || true
+          coverage report --rcfile=../.coveragerc
+          coverage xml --rcfile=../.coveragerc -o coverage.xml
 
       - name: Upload backend coverage
         uses: codecov/codecov-action@v4
@@ -153,6 +154,7 @@ jobs:
           flags: backend
           name: backend-coverage
           fail_ci_if_error: false
+          verbose: true
 
       - name: Install frontend dependencies
         if: inputs.run-frontend-tests
@@ -187,6 +189,7 @@ jobs:
           flags: frontend
           name: frontend-coverage
           fail_ci_if_error: false
+          verbose: true
 
       - name: Build frontend
         if: inputs.run-frontend-tests
