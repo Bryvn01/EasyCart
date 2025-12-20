@@ -17,40 +17,45 @@ class LicenseEnforcementMiddleware:
     Middleware to enforce license restrictions on every request.
     Prevents unauthorized use of the platform.
     """
-    
+
     def __init__(self, get_response):
         self.get_response = get_response
-        
+
     def __call__(self, request):
         # Skip license check for static files and admin media
-        if request.path.startswith('/static/') or request.path.startswith('/media/'):
+        if request.path.startswith("/static/") or request.path.startswith("/media/"):
             return self.get_response(request)
-        
+
         # Check license periodically (every 5 minutes)
-        license_info = cache.get('easycart_license_info')
-        
+        license_info = cache.get("easycart_license_info")
+
         if not license_info:
             try:
                 license_info = LicenseVerifier.get_license_info()
-                cache.set('easycart_license_info', license_info, 300)  # 5 minutes
+                cache.set("easycart_license_info", license_info, 300)  # 5 minutes
             except Exception as e:
                 logger.error(f"License verification failed: {e}")
-                return JsonResponse({
-                    'error': 'License verification failed',
-                    'message': 'Unable to verify EasyCart license. Contact support.',
-                    'support': 'admin@easycart.com'
-                }, status=500)
-        
+                return JsonResponse(
+                    {
+                        "error": "License verification failed",
+                        "message": "Unable to verify EasyCart license. Contact support.",
+                        "support": "admin@easycart.com",
+                    },
+                    status=500,
+                )
+
         # Attach license info to request for use in views
         request.easycart_license = license_info
-        
+
         # For DEMO licenses, add a header to all responses
         response = self.get_response(request)
-        
-        if license_info.get('license_type') == LicenseVerifier.LICENSE_DEMO:
-            response['X-EasyCart-License'] = 'DEMO'
-            response['X-EasyCart-Info'] = 'Contact admin@easycart.com for commercial licensing'
-        
+
+        if license_info.get("license_type") == LicenseVerifier.LICENSE_DEMO:
+            response["X-EasyCart-License"] = "DEMO"
+            response["X-EasyCart-Info"] = (
+                "Contact admin@easycart.com for commercial licensing"
+            )
+
         return response
 
 
@@ -59,37 +64,40 @@ class DomainLockMiddleware:
     Middleware to restrict the application to authorized domains only.
     Prevents running on unauthorized servers.
     """
-    
+
     def __init__(self, get_response):
         self.get_response = get_response
-        
+
     def __call__(self, request):
         # Skip for development (localhost)
-        host = request.get_host().split(':')[0]  # Remove port
-        
+        host = request.get_host().split(":")[0]  # Remove port
+
         # Allow localhost and 127.0.0.1 for development
-        if host in ['localhost', '127.0.0.1', 'testserver']:
+        if host in ["localhost", "127.0.0.1", "testserver"]:
             return self.get_response(request)
-        
+
         # Check if host is in ALLOWED_HOSTS
         allowed_hosts = settings.ALLOWED_HOSTS
-        
-        if '*' in allowed_hosts:
+
+        if "*" in allowed_hosts:
             logger.warning(f"Wildcard ALLOWED_HOSTS - Request from: {host}")
             return self.get_response(request)
-        
+
         # Strict domain checking for production
         if host not in allowed_hosts:
             logger.error(f"Unauthorized domain access attempt: {host}")
-            
+
             # Return HTML response for browsers, JSON for API
-            if request.path.startswith('/api/'):
-                return JsonResponse({
-                    'error': 'Unauthorized Domain',
-                    'message': 'This EasyCart installation is not licensed for this domain.',
-                    'domain': host,
-                    'contact': 'admin@easycart.com'
-                }, status=403)
+            if request.path.startswith("/api/"):
+                return JsonResponse(
+                    {
+                        "error": "Unauthorized Domain",
+                        "message": "This EasyCart installation is not licensed for this domain.",
+                        "domain": host,
+                        "contact": "admin@easycart.com",
+                    },
+                    status=403,
+                )
             else:
                 return HttpResponse(
                     f"""
@@ -113,7 +121,7 @@ class DomainLockMiddleware:
                                 margin: 0 auto;
                             }}
                             h1 {{ color: #d32f2f; }}
-                            .domain {{ 
+                            .domain {{
                                 color: #666;
                                 font-family: monospace;
                                 background: #f5f5f5;
@@ -147,9 +155,9 @@ class DomainLockMiddleware:
                     </body>
                     </html>
                     """,
-                    status=403
+                    status=403,
                 )
-        
+
         return self.get_response(request)
 
 
@@ -158,16 +166,16 @@ class BrandingMiddleware:
     Add EasyCart branding and copyright information to responses.
     Makes it obvious if someone is using unauthorized copies.
     """
-    
+
     def __init__(self, get_response):
         self.get_response = get_response
-        
+
     def __call__(self, request):
         response = self.get_response(request)
-        
+
         # Add headers to all responses
-        response['X-Powered-By'] = 'EasyCart v1.0.0'
-        response['X-Copyright'] = '© 2025 Bryvn01. All rights reserved.'
-        response['X-License'] = 'Proprietary - See LICENSE file'
-        
+        response["X-Powered-By"] = "EasyCart v1.0.0"
+        response["X-Copyright"] = "© 2025 Bryvn01. All rights reserved."
+        response["X-License"] = "Proprietary - See LICENSE file"
+
         return response
