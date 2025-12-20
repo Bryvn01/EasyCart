@@ -1,7 +1,8 @@
 # EasyCart - E-Commerce Web Application
 
 ![CI/CD](https://github.com/Bryvn01/EasyCart/workflows/CI-CD-Pipeline/badge.svg)
-![Required Checks](https://github.com/Bryvn01/EasyCart/workflows/Required%20Status%20Checks/badge.svg)
+![Required Checks](https://github.com/Bryvn01/EasyCart/workflows/Required%20Checks/badge.svg)
+![Status Check](https://github.com/Bryvn01/EasyCart/workflows/Status%20Check/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
 ![Django](https://img.shields.io/badge/django-5.1.7-green.svg)
