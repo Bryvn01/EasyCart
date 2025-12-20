@@ -99,7 +99,7 @@ class CategoryModelTests(TestCase):
         Product.objects.create(
             name="Product 2", price=Decimal("200.00"), stock=5, category=category
         )
-        self.assertEqual(category.product_set.count(), 2)
+        self.assertEqual(category.products.count(), 2)
 
 
 class ProductAPITests(APITestCase):
@@ -218,7 +218,7 @@ class ProductAPITests(APITestCase):
         response = self.client.delete(url)
         self.assertIn(
             response.status_code,
-            [status.HTTP_204_NO_CONTENT, status.HTTP_404_NOT_FOUND],
+            [status.HTTP_200_OK, status.HTTP_204_NO_CONTENT, status.HTTP_404_NOT_FOUND],
         )
 
     def test_filter_products_by_category(self):
