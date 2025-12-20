@@ -3,7 +3,23 @@ Product caching utilities for Redis
 """
 
 from django.core.cache import cache
-from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+def safe_delete_pattern(pattern):
+    """Safely delete cache keys matching pattern, handling backends without delete_pattern"""
+    try:
+        if hasattr(cache, "delete_pattern"):
+            cache.delete_pattern(pattern)
+        else:
+            # For backends without delete_pattern (like LocMemCache in tests)
+            logger.debug(
+                f"Cache backend doesn't support delete_pattern, skipping: {pattern}"
+            )
+    except Exception as e:
+        logger.warning(f"Failed to delete cache pattern {pattern}: {e}")
 
 
 class ProductCache:
@@ -58,12 +74,12 @@ class ProductCache:
         key = cls.PRODUCT_DETAIL_KEY.format(id=product_id)
         cache.delete(key)
         # Also clear product lists
-        cache.delete_pattern("products:list:*")
+        safe_delete_pattern("products:list:*")
 
     @classmethod
     def invalidate_all(cls):
         """Clear all product caches"""
-        cache.delete_pattern("products:*")
+        safe_delete_pattern("products:*")
 
 
 class CartCache:
