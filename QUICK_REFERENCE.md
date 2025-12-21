@@ -1,222 +1,299 @@
-# 🚀 EasyCart Backend Enhancement - Quick Reference
+# 🚀 EasyCart DevOps Quick Reference
 
-## 📖 Start Here
-
-This repository has been enhanced with advanced product management features. Here's what you need to know:
-
-### 🎯 What Changed?
-
-**Before:** Django backend + Basic product features
-**After:** Unified Node.js backend + Advanced product management
-
-### 📚 Essential Reading (In Order)
-
-1. **[README.md](README.md)** - Overview and quick start
-2. **[ENHANCED_PRODUCT_API_GUIDE.md](ENHANCED_PRODUCT_API_GUIDE.md)** - Complete API reference
-3. **[ADMIN_DASHBOARD_INTEGRATION_GUIDE.md](ADMIN_DASHBOARD_INTEGRATION_GUIDE.md)** - Frontend integration
-4. **[IMPLEMENTATION_COMPLETE_SUMMARY.md](IMPLEMENTATION_COMPLETE_SUMMARY.md)** - Full implementation details
-
-### 🔗 Quick Links
-
-| Task | Documentation |
-|------|---------------|
-| API Endpoints | [ENHANCED_PRODUCT_API_GUIDE.md](ENHANCED_PRODUCT_API_GUIDE.md#api-endpoints) |
-| Socket.io Integration | [ADMIN_DASHBOARD_INTEGRATION_GUIDE.md](ADMIN_DASHBOARD_INTEGRATION_GUIDE.md#socketio-integration) |
-| Migration from Django | [DJANGO_DEPRECATION_NOTICE.md](DJANGO_DEPRECATION_NOTICE.md) |
-| Environment Setup | [README.md](README.md#configuration) |
-| Testing | [ENHANCED_PRODUCT_API_GUIDE.md](ENHANCED_PRODUCT_API_GUIDE.md#testing) |
-| Deployment | [IMPLEMENTATION_COMPLETE_SUMMARY.md](IMPLEMENTATION_COMPLETE_SUMMARY.md#deployment-checklist) |
+**Last Updated**: January 2025
+**Status**: ✅ Production Ready | 📊 27% Coverage (→60%) | 🧹 Branch Cleanup Automated
 
 ---
 
-## ⚡ Quick Start (30 seconds)
+## 📊 Current Project Status
 
+```
+✅ Tests:        153/153 passing (100% pass rate)
+📊 Coverage:     27% (Target: 60% in 3 weeks)
+🌳 Branches:     84 total (cleanup in progress)
+🔐 Security:     40 vulnerabilities identified
+🚀 CI/CD:        Stable and automated
+📚 Documentation: Enterprise-grade
+```
+
+---
+
+## 🎯 Quick Commands
+
+### Run Tests
 ```bash
-# 1. Backend
+# Backend (with coverage)
 cd backend
-npm install
-cp .env.example .env
-# Edit .env with MongoDB URI and JWT secret
-npm start
+coverage run --source='apps' manage.py test --parallel=2
+coverage report
 
-# 2. Frontend (new terminal)
+# Frontend
 cd frontend
-npm install
-npm start
-
-# 3. Admin Dashboard (new terminal)
-cd admin-dashboard
-npm install
-npm start
+npm test
 ```
 
----
-
-## 🎨 Key Features
-
-### For Developers
-- ✅ **Unified Node.js Backend** - Single technology stack
-- ✅ **Enhanced Product Model** - SKU, variants, SEO, multi-image
-- ✅ **Real-Time Updates** - Socket.io for live data
-- ✅ **Cloud Storage** - Cloudinary integration
-- ✅ **Comprehensive Docs** - 4 detailed guides
-
-### For Business
-- ✅ **Inventory Management** - Stock tracking & alerts
-- ✅ **SEO Optimization** - Auto-generated slugs & meta tags
-- ✅ **Product Variants** - Size, color, material options
-- ✅ **Discount System** - Compare prices & promotions
-- ✅ **Multi-Image Products** - Up to 5 optimized images
-
-### For End Users
-- ✅ **Fast Loading** - Optimized WebP images
-- ✅ **Accurate Stock** - Real-time availability
-- ✅ **Better Search** - Full-text search
-- ✅ **Visual Appeal** - Multi-image galleries
-- ✅ **Clear Pricing** - Discounts & comparisons
-
----
-
-## 📊 API Endpoints Summary
-
-### Products
-- `GET /api/products` - List with filters
-- `GET /api/products/:id` - Get single product
-- `POST /api/products` - Create (admin)
-- `PUT /api/products/:id` - Update (admin)
-- `DELETE /api/products/:id` - Delete (admin)
-
-### Inventory
-- `PATCH /api/products/:id/stock` - Update stock (admin)
-- `GET /api/products/inventory/low-stock` - Low stock products
-- `GET /api/products/inventory/out-of-stock` - Out of stock
-
-### Images
-- `POST /api/upload/image` - Upload single image (admin)
-- `POST /api/upload/images` - Upload multiple (admin)
-- `DELETE /api/upload/image/:id` - Delete image (admin)
-
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `GET /api/auth/profile` - Get profile (auth required)
-
----
-
-## 🔧 Environment Variables
-
-```env
-# Backend .env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/easycart
-JWT_SECRET=your-secret-key
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
-FRONTEND_URL=http://localhost:3000
-```
-
----
-
-## 📦 Tech Stack
-
-**Backend:**
-- Node.js 18+ / Express 5+
-- MongoDB 7+ / Mongoose
-- Socket.io 4.8+
-- Cloudinary + Sharp
-- JWT + Helmet
-
-**Frontend:**
-- React 18+
-- Socket.io Client
-- Axios
-- Context API
-
----
-
-## 🧪 Testing
-
+### Branch Cleanup
 ```bash
-# Check syntax
-cd backend
-node -c models/Product.js
-node -c controllers/productController.js
+# Automated (already set up - runs Sundays)
+# View workflow: .github/workflows/branch-cleanup-auto.yml
 
-# Start server
-npm start
+# Manual cleanup script
+.\scripts\cleanup-branches.ps1 -DryRun -DeleteMerged
+.\scripts\cleanup-branches.ps1 -DeleteMerged
+.\scripts\cleanup-branches.ps1 -DeleteStale -StaleDays 60
+.\scripts\cleanup-branches.ps1 -DeleteDependabot
+```
 
-# Test endpoints
-curl http://localhost:5000/api/products
-curl http://localhost:5000/api/health
+### Check CI/CD Status
+```bash
+# View GitHub Actions
+https://github.com/Bryvn01/EasyCart/actions
+
+# Check coverage
+https://codecov.io/gh/Bryvn01/EasyCart
+
+# Security alerts
+https://github.com/Bryvn01/EasyCart/security/dependabot
 ```
 
 ---
 
-## 🚨 Common Issues
+## 📅 3-Week Roadmap (At a Glance)
 
-### MongoDB Connection
-**Issue:** `Operation buffering timed out`
-**Solution:** Ensure MongoDB is running or check MONGO_URI
+### ✅ Week 0: Foundation (COMPLETED)
+- [x] Automated branch cleanup workflow
+- [x] Coverage threshold enforcement (25%)
+- [x] Professional README with metrics
+- [x] Comprehensive DevOps improvement plan
+- [x] Branch cleanup PowerShell script
 
-### Image Upload Fails
-**Issue:** Images not uploading
-**Solution:** Configure Cloudinary credentials in .env
+### ⏳ Week 1: Critical Path (STARTING)
+**Focus**: Test Coverage + Documentation
+- [ ] Write 20+ critical path tests (payment/orders/OTP)
+- [ ] Increase coverage: 27% → 40%
+- [ ] Create CONTRIBUTING.md
+- [ ] Manual branch cleanup (first pass)
+- [ ] Configure branch protection rules
 
-### Port Already in Use
-**Issue:** `EADDRINUSE`
-**Solution:** Change PORT in .env or kill existing process
+**Commands**:
+```bash
+# Write tests in
+backend/apps/orders/tests/test_payment_service.py
+backend/apps/accounts/tests/test_otp_service.py
+
+# Update coverage threshold in
+.github/workflows/reusable-test.yml (line 150: THRESHOLD=40)
+```
+
+### ⏳ Week 2: Security & Middleware
+**Focus**: Security Hardening + Middleware Testing
+- [ ] Write 15+ security/middleware tests
+- [ ] Increase coverage: 40% → 50%
+- [ ] Implement security scanning workflow
+- [ ] Review and merge Dependabot PRs (40 vulnerabilities)
+- [ ] Create docs/ARCHITECTURE.md
+
+### ⏳ Week 3: POS System & Finalization
+**Focus**: POS Coverage + Final Polish
+- [ ] Write 30+ POS system tests
+- [ ] Increase coverage: 50% → 60%
+- [ ] Performance benchmarking workflow
+- [ ] Final branch cleanup (<10 branches)
+- [ ] Project health report
+
+---
+
+## 🔧 Common Tasks
+
+### 1. Update Coverage Threshold
+**File**: `.github/workflows/reusable-test.yml` (line ~150)
+```yaml
+THRESHOLD=25  # Change to 40, then 50, then 60
+```
+
+### 2. Manual Branch Deletion
+```bash
+# Delete specific branch
+git push origin --delete branch-name
+
+# Delete multiple merged branches
+git branch -r --merged origin/main | grep "copilot/fix-" | sed 's|origin/||' | xargs -I {} git push origin --delete {}
+```
+
+### 3. Check Test Coverage Locally
+```bash
+cd backend
+coverage run --source='apps' manage.py test --parallel=2
+coverage report
+coverage html  # Generate HTML report in htmlcov/
+```
+
+### 4. Run Pre-commit Hooks Manually
+```bash
+pre-commit run --all-files
+```
+
+### 5. View CI/CD Logs
+```bash
+# GitHub Actions dashboard
+https://github.com/Bryvn01/EasyCart/actions
+
+# Recent workflow runs
+git log --oneline -5
+```
+
+---
+
+## 📋 Weekly Maintenance Checklist
+
+### Monday Morning (Start of Week)
+- [ ] Check GitHub Actions dashboard for failures
+- [ ] Review CodeCov coverage trends
+- [ ] Check for new Dependabot PRs
+
+### Wednesday (Mid-Week)
+- [ ] Review any test failures
+- [ ] Check CI/CD pipeline health
+- [ ] Monitor coverage progress
+
+### Friday (End of Week)
+- [ ] Review weekly goals progress
+- [ ] Merge approved Dependabot PRs
+- [ ] Plan next week's tasks
+
+### Sunday (Automated)
+- Automated branch cleanup runs at midnight UTC
+- Review cleanup summary on Monday
+
+---
+
+## 🎯 Coverage Targets by Module
+
+```
+Module                           Current  Week1  Week2  Week3
+-----------------------------------------------------------------
+apps/orders/payment_service.py    35%     65%    75%    80%
+apps/accounts/otp_service.py       45%     65%    75%    80%
+apps/support/security.py           15%     20%    60%    80%
+apps/core/middleware.py            40%     45%    70%    80%
+apps/pos/ (ALL)                     0%      5%    10%    60%
+-----------------------------------------------------------------
+TOTAL                              27%     40%    50%    60%
+```
+
+---
+
+## 🔗 Important Links
+
+### Documentation
+- [DEVOPS_IMPROVEMENT_PLAN.md](DEVOPS_IMPROVEMENT_PLAN.md) - Full 3-week roadmap
+- [DEVOPS_IMPLEMENTATION_SUMMARY.md](DEVOPS_IMPLEMENTATION_SUMMARY.md) - Current status
+- [README.md](README.md) - Project overview with metrics
+- [BRANCH_CLEANUP_STRATEGY.md](BRANCH_CLEANUP_STRATEGY.md) - Branch management
+
+### Workflows
+- [CI/CD Pipeline](.github/workflows/ci.yml)
+- [Required Checks](.github/workflows/required-checks.yml)
+- [Reusable Test Workflow](.github/workflows/reusable-test.yml) ← Coverage gate here
+- [Branch Cleanup](.github/workflows/branch-cleanup-auto.yml) ← Automated cleanup
+
+### External
+- [GitHub Actions](https://github.com/Bryvn01/EasyCart/actions)
+- [CodeCov Dashboard](https://codecov.io/gh/Bryvn01/EasyCart)
+- [Dependabot Alerts](https://github.com/Bryvn01/EasyCart/security/dependabot)
+- [Live Frontend](https://easycart-frontend-wj9x.onrender.com/)
+- [Live API](https://easycart-backend-2k8l.onrender.com/api/)
+
+---
+
+## 🆘 Troubleshooting
+
+### CI Failing: Coverage Below Threshold
+```bash
+# Check current coverage
+cd backend
+coverage run --source='apps' manage.py test --parallel=2
+coverage report
+
+# If below threshold, write more tests
+# Then update threshold in .github/workflows/reusable-test.yml
+```
+
+### Branch Cleanup Not Running
+```bash
+# Check workflow status
+https://github.com/Bryvn01/EasyCart/actions/workflows/branch-cleanup-auto.yml
+
+# Manual trigger
+# Go to Actions → Automated Branch Cleanup → Run workflow
+
+# Or use PowerShell script
+.\scripts\cleanup-branches.ps1 -DeleteMerged
+```
+
+### Pre-commit Hooks Failing
+```bash
+# Update hooks
+pre-commit autoupdate
+
+# Run manually to see errors
+pre-commit run --all-files
+
+# Skip if needed (not recommended)
+git commit --no-verify
+```
+
+### Test Database Issues
+```bash
+# Drop stale test database (PostgreSQL)
+psql -U postgres -c "DROP DATABASE IF EXISTS test_easycart;"
+
+# Or in Python
+python manage.py test --noinput
+
+# If auth fails, check .env
+DB_USER=your_postgres_user
+DB_PASSWORD=your_postgres_password
+```
+
+---
+
+## 💡 Pro Tips
+
+1. **Write Tests First**: Before writing code, write the test. It's faster.
+2. **Use Coverage HTML**: `coverage html` generates clickable reports.
+3. **Batch Branch Deletions**: Delete 15-20 branches at a time to avoid overwhelming Git.
+4. **Monitor CodeCov**: Set up Slack/email notifications for coverage drops.
+5. **Automate Everything**: If you do it twice, automate it.
 
 ---
 
 ## 📞 Need Help?
 
-1. **Check Documentation**: Start with guides above
-2. **Review Examples**: Code examples in guides
-3. **Test API**: Use cURL examples in docs
-4. **Open Issue**: GitHub issues for bugs
+### Key Files to Reference
+- Coverage enforcement: `.github/workflows/reusable-test.yml`
+- Branch cleanup: `.github/workflows/branch-cleanup-auto.yml`
+- Test configuration: `backend/.coveragerc`
+- Django settings: `backend/config/settings/`
+
+### Common Issues
+- **CI failing**: Check GitHub Actions logs
+- **Coverage too low**: Write tests for critical modules first
+- **Branch pollution**: Run automated cleanup or manual script
+- **Security alerts**: Review Dependabot PRs weekly
 
 ---
 
-## 🎓 Learning Path
+**Remember**: The goal is 60% coverage and <10 branches within 3 weeks. You've got this! 🚀
 
-1. **Day 1**: Read README and API guide
-2. **Day 2**: Set up local environment
-3. **Day 3**: Test API endpoints
-4. **Day 4**: Integrate admin dashboard
-5. **Day 5**: Deploy to production
+**Current Phase**: ✅ Foundation Complete → Starting Week 1
 
 ---
 
-## ✨ What's New (v2.0)
-
-- ✅ Unified Node.js backend (no more Django)
-- ✅ Advanced product model with 20+ new fields
-- ✅ Multi-image support (up to 5 per product)
-- ✅ Real-time inventory updates via Socket.io
-- ✅ Cloud-based image storage (Cloudinary)
-- ✅ Advanced filtering & search
-- ✅ Inventory management with alerts
-- ✅ Product variants system
-- ✅ SEO optimization built-in
-- ✅ Comprehensive documentation
-
----
-
-## 🎯 Next Steps
-
-1. ✅ **Setup**: Follow Quick Start above
-2. ✅ **Learn**: Read API documentation
-3. ✅ **Test**: Try API endpoints
-4. ✅ **Integrate**: Add to admin dashboard
-5. ✅ **Deploy**: Use deployment checklist
-
----
-
-**Status:** ✅ Production Ready
-**Version:** 2.0.0
-**Last Updated:** 2025-01-03
-
----
-
-*For detailed information, see the comprehensive guides listed at the top of this document.*
+**Quick Status Check**:
+```bash
+# Run this command to see everything
+git log --oneline -3
+git branch -r | wc -l  # Branch count
+cd backend && coverage report  # Coverage status
+```
