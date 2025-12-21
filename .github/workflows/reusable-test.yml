@@ -145,6 +145,25 @@ jobs:
           coverage report --rcfile=.coveragerc
           coverage xml --rcfile=.coveragerc -o coverage.xml
 
+      - name: Check coverage threshold
+        run: |
+          cd backend
+          COVERAGE=$(coverage report --rcfile=.coveragerc | grep TOTAL | awk '{print $4}' | sed 's/%//')
+          echo "Current coverage: ${COVERAGE}%"
+
+          # Set minimum threshold (start at 25%, target 60%)
+          THRESHOLD=25
+
+          if [ "$COVERAGE" -lt "$THRESHOLD" ]; then
+            echo "❌ Coverage (${COVERAGE}%) is below threshold (${THRESHOLD}%)"
+            echo "::error::Test coverage must be at least ${THRESHOLD}%"
+            exit 1
+          fi
+
+          echo "✅ Coverage (${COVERAGE}%) meets threshold (${THRESHOLD}%)"
+          echo "🎯 Target: 60% coverage"
+        continue-on-error: false
+
       - name: Upload backend coverage
         uses: codecov/codecov-action@v4
         continue-on-error: true
