@@ -140,7 +140,7 @@ jobs:
           # Add current directory to Python path to ensure Django can find apps module
           export PYTHONPATH="${PYTHONPATH}:$(pwd)"
           python manage.py check --deploy || true
-          coverage run --rcfile=.coveragerc --source='apps' manage.py test --verbosity=2 --keepdb --parallel=2
+          coverage run --rcfile=.coveragerc --source='apps' manage.py test --verbosity=2 --parallel=2
           coverage combine || true
           coverage report --rcfile=.coveragerc
           coverage xml --rcfile=.coveragerc -o coverage.xml
