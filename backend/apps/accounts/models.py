@@ -14,6 +14,14 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15, blank=True)
     address = models.TextField(blank=True)
+    preferred_username = models.CharField(
+        max_length=30,
+        blank=True,
+        null=True,
+        unique=True,
+        help_text="User-chosen display username (optional, must be unique)",
+        verbose_name="Preferred Username"
+    )
     is_admin = models.BooleanField(default=False)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="viewer")
 
@@ -59,6 +67,23 @@ class User(AbstractUser):
     otp_last_attempt = models.DateTimeField(blank=True, null=True)
     otp_blocked_until = models.DateTimeField(blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
+
+    # Email verification fields
+    email_verified = models.BooleanField(
+        default=False,
+        help_text="Whether the user has verified their email address"
+    )
+    email_verification_token = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True,
+        help_text="Token for email verification"
+    )
+    email_verification_sent_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="When the verification email was last sent"
+    )
 
     history = HistoricalRecords()
 

@@ -13,7 +13,7 @@ export const validateEmail = (email) => {
 };
 
 export const validatePassword = (password) => {
-  return password && password.length >= 8;
+  return password && password.length >= 12;
 };
 
 export const validatePhone = (phone) => {
