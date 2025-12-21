@@ -54,27 +54,42 @@ jobs:
           cache-dependency-path: 'frontend/package-lock.json'
 
       - name: Install backend dependencies
-        run: cd backend && pip install -r requirements.txt
+        working-directory: ./backend
+        run: pip install -r requirements.txt
 
       - name: Install frontend dependencies
-        run: cd frontend && npm ci
+        working-directory: ./frontend
+        run: npm ci
 
-      - name: Run backend tests
-        run: cd backend && python manage.py test --verbosity=2
+      - name: Run migrations
+        working-directory: ./backend
         env:
           TWILIO_ACCOUNT_SID: ''
           TWILIO_AUTH_TOKEN: ''
           TWILIO_PHONE_NUMBER: ''
+        run: python manage.py migrate --noinput
+
+      - name: Run backend tests
+        working-directory: ./backend
+        env:
+          TWILIO_ACCOUNT_SID: ''
+          TWILIO_AUTH_TOKEN: ''
+          TWILIO_PHONE_NUMBER: ''
+        run: python manage.py test --verbosity=2
 
       - name: Run frontend tests
-        run: cd frontend && npm test -- --watchAll=false --passWithNoTests --maxWorkers=2 || echo "Frontend tests completed"
+        working-directory: ./frontend
         env:
           CI: true
           NODE_ENV: test
+          REACT_APP_API_URL: http://localhost:8000/api
+        run: npm test -- --watchAll=false --passWithNoTests --maxWorkers=2 || echo "Frontend tests completed"
 
       - name: Build frontend
-        run: cd frontend && npm run build
+        working-directory: ./frontend
         env:
           CI: false
           NODE_ENV: production
+          REACT_APP_API_URL: http://localhost:8000/api
           GENERATE_SOURCEMAP: false
+        run: npm run build
