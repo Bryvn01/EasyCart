@@ -1,20 +1,21 @@
 # EasyCart - E-Commerce Web Application
 
-![CI/CD](https://github.com/Bryvn01/EasyCart/workflows/CI-CD-Pipeline/badge.svg)
-![Required Checks](https://github.com/Bryvn01/EasyCart/workflows/Required%20Checks/badge.svg)
-![Status Check](https://github.com/Bryvn01/EasyCart/workflows/Status%20Check/badge.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.12-blue.svg)
-![Django](https://img.shields.io/badge/django-5.1.7-green.svg)
-![React](https://img.shields.io/badge/react-18.3-blue.svg)
-![PostgreSQL](https://img.shields.io/badge/postgresql-14+-blue.svg)
+[![CI/CD Pipeline](https://github.com/Bryvn01/EasyCart/workflows/CI-CD-Pipeline/badge.svg)](https://github.com/Bryvn01/EasyCart/actions/workflows/ci.yml)
+[![Required Checks](https://github.com/Bryvn01/EasyCart/workflows/Required%20Checks/badge.svg)](https://github.com/Bryvn01/EasyCart/actions/workflows/required-checks.yml)
 [![codecov](https://codecov.io/gh/Bryvn01/EasyCart/branch/main/graph/badge.svg)](https://codecov.io/gh/Bryvn01/EasyCart)
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
-![Tests](https://img.shields.io/badge/tests-parallel-blue.svg)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/django-5.2.7-green.svg)](https://www.djangoproject.com/)
+[![React](https://img.shields.io/badge/react-18.3-blue.svg)](https://reactjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/postgresql-14+-blue.svg)](https://www.postgresql.org/)
+[![Tests](https://img.shields.io/badge/tests-153%20passing-brightgreen.svg)](https://github.com/Bryvn01/EasyCart/actions)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A complete e-commerce solution with React frontend and Django REST Framework backend, featuring PostgreSQL database, JWT authentication, superadmin CRUD operations, and production deployment on Render.
+> **🏆 Enterprise-Grade E-Commerce Platform** - A production-ready, full-stack solution with React frontend and Django REST Framework backend, featuring comprehensive testing (153 tests), automated CI/CD, PostgreSQL database, JWT authentication, and industry best practices.
 
-> **Portfolio Project** - Built to demonstrate full-stack development skills. Feel free to explore the code and use it as a learning resource.
+**Status**: ✅ **Production Ready** | 📊 **27% Coverage** (Target: 60%) | 🚀 **CI/CD Automated**
+
+> **Portfolio Project** - Built to demonstrate full-stack development skills and enterprise software engineering practices. Feel free to explore the code and use it as a learning resource.
 
 ---
 
@@ -754,6 +755,56 @@ If you're experiencing issues with product/category loading or other errors:
 - HTTPS enforcement
 - Security headers (HSTS, XSS protection)
 - Role-based permissions
+
+---
+
+## 🛠️ DevOps & Quality Assurance
+
+### CI/CD Pipeline
+- ✅ **Automated Testing** - 153 tests running on every push
+- ✅ **Code Coverage** - CodeCov integration with 27% coverage (target: 60%)
+- ✅ **Linting & Formatting** - Black, Flake8, ESLint with pre-commit hooks
+- ✅ **Branch Protection** - Required status checks on main branch
+- ✅ **Automated Branch Cleanup** - Weekly cleanup of stale branches
+- ✅ **Security Scanning** - 40 vulnerabilities identified by GitHub Dependabot
+
+### Testing Strategy
+```bash
+# Run all tests
+cd backend
+python manage.py test --parallel=2
+
+# Run with coverage
+coverage run --source='apps' manage.py test --parallel=2
+coverage report
+
+# Frontend tests
+cd frontend
+npm test
+```
+
+### Quality Metrics
+- **Test Pass Rate**: 100% (153/153 tests passing)
+- **Test Coverage**: 27% (Improvement plan: 27% → 60% in 3 weeks)
+- **CI/CD Stability**: ✅ Stable (recent fixes applied)
+- **Code Style**: Black + Flake8 + ESLint enforced via pre-commit
+
+### Branch Management
+- **Active Branches**: 84 total (cleanup in progress)
+- **Protected Branches**: `main`, `develop`
+- **Automated Cleanup**: Weekly Sunday runs at midnight UTC
+- **Strategy**: See [DEVOPS_IMPROVEMENT_PLAN.md](DEVOPS_IMPROVEMENT_PLAN.md)
+
+### Deployment Pipeline
+1. **Local Development** → Code changes
+2. **Pre-commit Hooks** → Linting, formatting, security checks
+3. **GitHub Actions CI** → Tests, coverage, build verification
+4. **Render.com** → Automatic deployment on main branch
+5. **Monitoring** → Health checks, error tracking
+
+**Improvement Roadmap**: See [DEVOPS_IMPROVEMENT_PLAN.md](DEVOPS_IMPROVEMENT_PLAN.md) for comprehensive 3-week improvement strategy.
+
+---
 
 ## 🆕 Recent Enhancements (2025)
 
