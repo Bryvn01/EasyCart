@@ -64,17 +64,21 @@ class UserSerializer(serializers.ModelSerializer):
     User profile serializer with controlled field updates.
 
     Best Practice Implementation:
-    - Username: Read-only (never changeable - identity anchor)
+    - Username: Read-only (never changeable - system identity anchor)
+    - Preferred Username: Editable (user-chosen display name with validation)
     - Email: Editable with validation (requires uniqueness check)
     - Phone: Editable with validation (supports OTP login)
     - Role/Admin flags: Read-only (security - only backend can modify)
     """
+    display_name = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
             "id",
             "username",
+            "preferred_username",
+            "display_name",
             "email",
             "phone",
             "address",
@@ -82,15 +86,31 @@ class UserSerializer(serializers.ModelSerializer):
             "is_admin",
             "is_staff",
             "is_superuser",
+            "first_name",
+            "last_name",
         )
         read_only_fields = (
             "id",
             "username",
+            "display_name",
             "role",
             "is_admin",
             "is_staff",
             "is_superuser",
         )
+
+    def get_display_name(self, obj):
+        """
+        Return display name with fallback hierarchy:
+        1. first_name (if available)
+        2. preferred_username (if set)
+        3. username (system fallback)
+        """
+        if obj.first_name:
+            return obj.first_name
+        elif obj.preferred_username:
+            return obj.preferred_username
+        return obj.username
 
     def validate_email(self, value):
         """
@@ -103,6 +123,42 @@ class UserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "This email is already in use by another account."
                 )
+        return value
+
+    def validate_preferred_username(self, value):
+        """
+        Validate preferred username format and uniqueness.
+        """
+        if value:
+            import re
+            # Username requirements:
+            # - 3-30 characters
+            # - Alphanumeric + underscores and hyphens
+            # - Must start with letter or number
+            # - Cannot be system-generated pattern (user_123456)
+            if len(value) < 3 or len(value) > 30:
+                raise serializers.ValidationError(
+                    "Username must be between 3 and 30 characters."
+                )
+            
+            if not re.match(r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$', value):
+                raise serializers.ValidationError(
+                    "Username can only contain letters, numbers, underscores, and hyphens. Must start with a letter or number."
+                )
+            
+            # Prevent system-generated username pattern
+            if re.match(r'^user_\d+$', value.lower()):
+                raise serializers.ValidationError(
+                    "This username format is reserved. Please choose a different one."
+                )
+            
+            # Check uniqueness
+            user = self.instance
+            if user and value != user.preferred_username:
+                if User.objects.filter(preferred_username=value).exclude(id=user.id).exists():
+                    raise serializers.ValidationError(
+                        "This username is already taken. Please choose another."
+                    )
         return value
 
     def validate_phone(self, value):

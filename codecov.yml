@@ -1,0 +1,62 @@
+# Codecov Configuration
+# https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  precision: 2
+  round: down
+  range: "60...90"
+  status:
+    project:
+      default:
+        target: 60%
+        threshold: 2%
+        if_ci_failed: error
+    patch:
+      default:
+        target: 60%
+        threshold: 5%
+        if_ci_failed: error
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+ignore:
+  - "**/__pycache__/**"
+  - "**/migrations/**"
+  - "**/node_modules/**"
+  - "**/tests/**"
+  - "**/test_*.py"
+  - "**/*_test.py"
+  - "**/setup.py"
+  - "**/conftest.py"
+  - "**/coverage/**"
+  - "**/build/**"
+  - "**/dist/**"
+  - "**/*.config.js"
+  - "**/*.spec.js"
+  - "**/*.test.js"
+  - "**/*.spec.jsx"
+  - "**/*.test.jsx"
+
+flag_management:
+  default_rules:
+    carryforward: true
+    statuses:
+      - type: project
+        target: auto
+      - type: patch
+        target: auto
+
+flags:
+  backend:
+    paths:
+      - backend/
+    carryforward: true
+  frontend:
+    paths:
+      - frontend/src/
+    carryforward: true

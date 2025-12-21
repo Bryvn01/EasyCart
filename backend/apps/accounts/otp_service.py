@@ -42,9 +42,11 @@ def send_otp_sms(phone_number, otp_code):
     Phone format: +254XXXXXXXXX (Kenya)
     """
     if not twilio_client:
-        logger.warning("Twilio not configured - using console logging")
-        print(f"\n📱 [DEV] SMS OTP to {phone_number}: {otp_code}\n")
-        return True
+        logger.warning("Twilio not configured")
+        # Only log OTP in development mode
+        if settings.DEBUG:
+            print(f"\n📱 [DEV] SMS OTP to {phone_number}: {otp_code}\n")
+        return False  # Return False in production if not configured
 
     try:
         # Ensure phone number has country code
@@ -109,11 +111,12 @@ def send_otp_email(email, otp_code):
 
         # Check if email is configured
         if not settings.EMAIL_HOST:
-            logger.warning(
-                "Email not configured - using console logging for development"
-            )
-            print(f"\n📧 [DEV] Email OTP to {email}: {otp_code}\n")
-            return True
+            logger.warning("Email not configured")
+            # Only log OTP in development mode
+            if settings.DEBUG:
+                print(f"\n📧 [DEV] Email OTP to {email}: {otp_code}\n")
+                return True
+            return False  # Return False in production if not configured
 
         subject = "EasyCart - Your Verification Code"
         message = f"""
@@ -141,8 +144,8 @@ EasyCart Team
     except Exception as e:
         logger.error(f"Email send failed: {str(e)}")
         # In development, still return True if console backend is used
-        if "console" in settings.EMAIL_BACKEND.lower():
-            logger.info(f"Console email backend - OTP logged: {otp_code}")
+        if settings.DEBUG and "console" in settings.EMAIL_BACKEND.lower():
+            logger.info("Console email backend - OTP sent to console")
             print(f"\n📧 [DEV] Email OTP to {email}: {otp_code}\n")
             return True
         return False

@@ -214,18 +214,29 @@ else:
         DATABASES["default"]["OPTIONS"]["keepalives_count"] = 5
 
 # Password validation
+# Updated to 12 characters minimum (NIST 800-63B 2025 guidelines)
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 12,
+        },
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+    {
+        "NAME": "apps.accounts.pwned_passwords_validator.PwnedPasswordsValidator",
+        "OPTIONS": {
+            "threshold": 1,  # Reject if password appears even once in breaches
+            "api_timeout": 2,  # 2 second timeout for API requests
+        },
     },
 ]
 
@@ -343,6 +354,13 @@ CORS_ALLOWED_ORIGINS = config(
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
+
+# Frontend URL for email verification links
+FRONTEND_URL = config(
+    "FRONTEND_URL",
+    default="http://localhost:3000"
+)
+
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",

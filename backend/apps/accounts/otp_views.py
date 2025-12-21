@@ -22,6 +22,11 @@ from .otp_service import (
     clear_otp,
     validate_phone_number,
 )
+from .device_fingerprint_service import (
+    track_device_login,
+    detect_suspicious_activity,
+    verify_device_fingerprint,
+)
 import logging
 
 User = get_user_model()
@@ -38,6 +43,12 @@ class OTPVerifyThrottle(AnonRateThrottle):
     """Custom throttle: 10 verification attempts per hour per IP"""
 
     rate = "10/hour"
+
+
+class PasswordResetThrottle(AnonRateThrottle):
+    """Custom throttle: 3 password reset requests per hour per IP"""
+
+    rate = "3/hour"
 
 
 @api_view(["POST"])
@@ -201,7 +212,6 @@ def request_otp(request):
                 {
                     "message": f"OTP sent via {display_method}",
                     "identifier": identifier,
-                    "is_new_user": created,
                     "expires_in": 600,  # 10 minutes
                     "can_resend_after": 60,  # 1 minute cooldown
                 }
@@ -304,8 +314,18 @@ def verify_otp_login(request):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Device fingerprinting and suspicious activity detection
+        is_suspicious, reason = detect_suspicious_activity(user, request)
+        is_known_device, device_info = verify_device_fingerprint(user, request)
+        
+        if is_suspicious:
+            logger.warning(f"Suspicious OTP login detected for user {user.id}: {reason}")
+
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
+
+        # Track device login
+        track_device_login(user, request, str(refresh.access_token))
 
         # Clear OTP after successful login
         clear_otp(user)
@@ -315,6 +335,9 @@ def verify_otp_login(request):
 
         logger.info(f"Successful OTP login for user {user.id} from IP {client_ip}")
 
+        # Get display name with fallback hierarchy
+        display_name = user.first_name or user.preferred_username or user.username
+        
         return Response(
             {
                 "message": "Login successful",
@@ -323,6 +346,8 @@ def verify_otp_login(request):
                 "user": {
                     "id": user.id,
                     "username": user.username,
+                    "preferred_username": user.preferred_username,
+                    "display_name": display_name,
                     "email": user.email,
                     "phone_number": user.phone_number,
                     "first_name": user.first_name,
@@ -330,6 +355,11 @@ def verify_otp_login(request):
                     "is_admin": user.is_staff or user.is_superuser,
                 },
                 "is_profile_complete": is_profile_complete,
+                "security_info": {
+                    "new_device": not is_known_device,
+                    "suspicious_activity": is_suspicious,
+                    "reason": reason if is_suspicious else None,
+                }
             }
         )
 

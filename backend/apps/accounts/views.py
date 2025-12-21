@@ -3,6 +3,7 @@ from rest_framework.decorators import (
     api_view,
     permission_classes,
     authentication_classes,
+    throttle_classes,
 )
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -14,9 +15,19 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.views.decorators.csrf import csrf_exempt
 import re
+import logging
 from .models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 from .permissions import IsSuperAdmin, IsAdminUser
+from .otp_views import PasswordResetThrottle
+from .email_verification_service import send_verification_email
+from .device_fingerprint_service import (
+    track_device_login,
+    detect_suspicious_activity,
+    verify_device_fingerprint,
+)
+
+logger = logging.getLogger(__name__)
 
 
 # --- Customer Management API Views ---
@@ -75,12 +86,22 @@ def register(request):
     serializer = UserRegistrationSerializer(data=data)
     if serializer.is_valid():
         user = serializer.save()
+        
+        # Send verification email (async, non-blocking)
+        try:
+            send_verification_email(user, request)
+            logger.info(f"Verification email sent to new user {user.id}")
+        except Exception as e:
+            logger.error(f"Failed to send verification email to {user.id}: {e}")
+            # Don't block registration if email fails
+        
         refresh = RefreshToken.for_user(user)
         return Response(
             {
                 "user": UserSerializer(user).data,
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "message": "Registration successful! Please check your email to verify your account.",
             },
             status=status.HTTP_201_CREATED,
         )
@@ -98,6 +119,14 @@ def login(request):
     if serializer.is_valid():
         user = serializer.validated_data["user"]
 
+        # Device fingerprinting and suspicious activity detection
+        is_suspicious, reason = detect_suspicious_activity(user, request)
+        is_known_device, device_info = verify_device_fingerprint(user, request)
+        
+        if is_suspicious:
+            logger.warning(f"Suspicious login detected for user {user.id}: {reason}")
+            # In production, you might want to require additional verification
+        
         # Check if 2FA is enabled
         if user.two_factor_enabled:
             # Return special response indicating 2FA required
@@ -106,17 +135,28 @@ def login(request):
                     "requires_2fa": True,
                     "email": user.email,
                     "message": "Please enter your 2FA code",
+                    "security_alert": is_suspicious,
+                    "new_device": not is_known_device,
                 },
                 status=status.HTTP_200_OK,
             )
 
         # Normal login without 2FA
         refresh = RefreshToken.for_user(user)
+        
+        # Track device login
+        track_device_login(user, request, str(refresh.access_token))
+        
         return Response(
             {
                 "user": UserSerializer(user).data,
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "security_info": {
+                    "new_device": not is_known_device,
+                    "suspicious_activity": is_suspicious,
+                    "reason": reason if is_suspicious else None,
+                }
             }
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -153,6 +193,7 @@ def profile(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 @authentication_classes([])  # No authentication required
+@throttle_classes([PasswordResetThrottle])
 @csrf_exempt
 def forgot_password(request):
     email = request.data.get("email", "").strip()
@@ -208,9 +249,9 @@ def reset_password(request):
         )
 
     # Validate password strength
-    if len(password) < 8:
+    if len(password) < 12:
         return Response(
-            {"error": "Password must be at least 8 characters"},
+            {"error": "Password must be at least 12 characters"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 

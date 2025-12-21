@@ -42,7 +42,7 @@ const Register = () => {
     }
 
     if (!validatePassword(formData.password)) {
-      setError('Password must be at least 8 characters long');
+      setError('Password must be at least 12 characters long');
       setLoading(false);
       return;
     }

@@ -4,6 +4,7 @@ from . import views
 from . import two_factor_views
 from . import two_factor_login
 from . import otp_views
+from . import email_verification_views
 
 urlpatterns = [
     path("register/", views.register, name="register"),
@@ -32,4 +33,9 @@ urlpatterns = [
     path("otp/verify/", otp_views.verify_otp_login, name="otp-verify"),
     path("otp/resend/", otp_views.resend_otp, name="otp-resend"),
     path("otp/analytics/", otp_views.otp_delivery_analytics, name="otp-analytics"),
+    # Email Verification
+    path("email/send-verification/", email_verification_views.send_verification, name="email-send-verification"),
+    path("email/verify/", email_verification_views.verify_email, name="email-verify"),
+    path("email/status/", email_verification_views.verification_status, name="email-status"),
+    path("email/resend-verification/", email_verification_views.resend_verification, name="email-resend-verification"),
 ]

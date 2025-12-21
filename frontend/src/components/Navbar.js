@@ -156,7 +156,7 @@ const Navbar = () => {
                 )}
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-600 dark:text-gray-300">
-                    Hi, {user?.username}
+                    Hi, {user?.display_name || user?.first_name || user?.preferred_username || user?.username}
                   </span>
                   <Button variant="secondary" size="sm" onClick={handleLogout}>
                     {t('logout')}
@@ -301,7 +301,12 @@ const Navbar = () => {
                 {/* User Info */}
                 <div className="px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <p className="text-sm text-gray-600 dark:text-gray-400">Signed in as</p>
-                  <p className="font-semibold text-gray-900 dark:text-white">{user?.username}</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">
+                    {user?.display_name || 
+                     (user?.first_name && user?.last_name 
+                       ? `${user.first_name} ${user.last_name}` 
+                       : user?.first_name || user?.preferred_username || user?.username)}
+                  </p>
                 </div>
 
                 <Button
