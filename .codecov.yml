@@ -1,0 +1,63 @@
+# Codecov Configuration
+# Documentation: https://docs.codecov.io/docs/codecov-yaml
+
+codecov:
+  require_ci_to_pass: yes
+  notify:
+    wait_for_ci: yes
+
+coverage:
+  precision: 2
+  round: down
+  range: "50...100"
+
+  status:
+    project:
+      default:
+        target: 60%  # Target coverage
+        threshold: 2%  # Allow 2% drop
+        informational: false
+        if_ci_failed: error
+
+    patch:
+      default:
+        target: 70%  # New code should have higher coverage
+        threshold: 5%
+        informational: true
+        if_ci_failed: ignore
+
+  # Flag-specific targets
+  flags:
+    backend:
+      target: 60%
+      paths:
+        - backend/apps/
+
+    frontend:
+      target: 50%
+      paths:
+        - frontend/src/
+
+# Comment settings
+comment:
+  layout: "reach,diff,flags,tree,footer"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+
+# Ignore paths
+ignore:
+  - "backend/migrations/"
+  - "backend/venv/"
+  - "backend/*/migrations/"
+  - "**/test*.py"
+  - "**/tests.py"
+  - "**/__pycache__/"
+  - "frontend/node_modules/"
+  - "frontend/build/"
+  - "frontend/coverage/"
+  - "docs/"
+  - "*.md"
+  - "admin-dashboard/"
+  - "mobile/"

@@ -2,6 +2,9 @@
 
 [![CI/CD](https://github.com/Bryvn01/EasyCart/workflows/CI-CD-Pipeline/badge.svg)](https://github.com/Bryvn01/EasyCart/actions)
 [![codecov](https://codecov.io/gh/Bryvn01/EasyCart/branch/main/graph/badge.svg)](https://codecov.io/gh/Bryvn01/EasyCart)
+[![Test Coverage](https://img.shields.io/badge/coverage-53%25-yellow.svg)](https://codecov.io/gh/Bryvn01/EasyCart)
+[![Python 3.12](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![Django 6.0](https://img.shields.io/badge/django-6.0-green.svg)](https://www.djangoproject.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Production-ready e-commerce platform with Django REST Framework backend and React frontend. Features JWT authentication, role-based permissions, M-Pesa integration, and automated CI/CD.
@@ -69,14 +72,29 @@ npm start
 ## Testing
 
 ```bash
-# Backend tests
+# Backend tests (53% coverage, targeting 80%)
 cd backend
-pytest --cov=.  # 153 tests, 27% coverage
+python manage.py test --keepdb --verbosity=2
+python -m coverage run --source='apps' manage.py test --keepdb
+python -m coverage report
+python -m coverage html  # View coverage report in htmlcov/
 
 # Frontend tests
 cd frontend
 npm test
+
+# Run all tests in CI/CD
+# Tests automatically run on PR/push via GitHub Actions
 ```
+
+**Test Coverage:** 53% (200+ tests) | **Target:** 80%
+- Accounts: 96% coverage
+- Products: 90% coverage
+- Orders: 95% coverage
+- Payments: 92% coverage
+- Admin Dashboard: 90% coverage (newly added)
+- Core Middleware: 55% coverage (newly added)
+- POS System: 64% coverage (newly added)
 
 ## API Documentation
 

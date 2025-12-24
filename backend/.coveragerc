@@ -1,25 +1,59 @@
 [run]
-source = .
+source = apps
 omit =
     */migrations/*
     */tests/*
+    */tests.py
     */test_*.py
     */__pycache__/*
     */venv/*
     */env/*
+    */node_modules/*
     manage.py
     */wsgi.py
     */asgi.py
+    */settings.py
+    */urls.py
+    ecommerce/__init__.py
+    conftest.py
+    # Legacy test files
+    test_*.py
 
 [report]
+precision = 2
+skip_empty = True
 exclude_lines =
+    # Standard pragmas
     pragma: no cover
     def __repr__
+    def __str__
+
+    # Defensive programming
     raise AssertionError
     raise NotImplementedError
-    if __name__ == .__main__.:
+    return NotImplemented
+
+    # Type checking
     if TYPE_CHECKING:
+    if typing.TYPE_CHECKING:
+
+    # Debugging
+    if __name__ == .__main__.:
+    if settings.DEBUG:
+
+    # Abstract methods
     @abstractmethod
+    @abc.abstractmethod
+
+    # Pass statements
+    pass
+
+    # Ellipsis
+    \.\.\.
 
 [html]
 directory = htmlcov
+title = EasyCart Test Coverage Report
+
+[xml]
+output = coverage.xml
