@@ -113,6 +113,20 @@ jobs:
           pip install -r requirements.txt
           pip install coverage flake8 bandit
 
+      - name: Create backend .env file
+        run: |
+          cd backend
+          cp .env.example .env
+          echo "SECRET_KEY=<your_django_secret_key> secrets.CI_SECRET_KEY || 'test-secret-key-for-ci-testing-only' }}" >> .env
+          echo "DEBUG=True" >> .env
+          echo "DB_NAME=easycart_test" >> .env
+          echo "DB_USER=easycart" >> .env
+          echo "DB_PASSWORD=easycart_test_password" >> .env
+          echo "DB_HOST=localhost" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "REDIS_URL=redis://localhost:6379/1" >> .env
+          echo "HEALTHCHECK_CACHE_ENABLED=False" >> .env
+
       - name: Lint backend (flake8)
         run: |
           cd backend
