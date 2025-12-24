@@ -6,11 +6,11 @@ on:
       python-version:
         required: false
         type: string
-        default: '3.12'
+        default: '3.11'
       node-version:
         required: false
         type: string
-        default: '18'
+        default: '20'
       run-frontend-tests:
         required: false
         type: boolean
