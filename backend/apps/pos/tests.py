@@ -6,7 +6,7 @@ Covers POS transactions, inventory, sales, and reporting.
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase, APIClient
-from apps.pos.models import POSTerminal, POSSale, POSSaleItem
+from apps.pos.models import POSSession, POSTransaction, POSTransactionItem
 from apps.products.models import Product, Category
 from decimal import Decimal
 from django.utils import timezone
@@ -34,60 +34,57 @@ class POSModelTests(TestCase):
             category=self.category,
         )
 
-    def test_pos_terminal_creation(self):
-        """POS terminal should be created successfully."""
-        try:
-            terminal = POSTerminal.objects.create(
-                terminal_id="POS-001", location="Store Front", is_active=True
-            )
-            self.assertEqual(terminal.terminal_id, "POS-001")
-            self.assertTrue(terminal.is_active)
-        except Exception:
-            # Model may not exist yet, that's OK
-            pass
+    def test_pos_session_creation(self):
+        """POS session should be created successfully."""
+        session = POSSession.objects.create(
+            staff=self.user,
+            opening_cash=Decimal("100.00"),
+            opening_notes="Morning shift",
+        )
+        self.assertEqual(session.opening_cash, Decimal("100.00"))
+        self.assertEqual(session.staff, self.user)
+        self.assertEqual(session.status, "open")
 
-    def test_pos_sale_creation(self):
-        """POS sale should be created successfully."""
-        try:
-            terminal = POSTerminal.objects.create(
-                terminal_id="POS-001", location="Store Front"
-            )
+    def test_pos_transaction_creation(self):
+        """POS transaction should be created successfully."""
+        session = POSSession.objects.create(
+            staff=self.user, opening_cash=Decimal("100.00")
+        )
 
-            sale = POSSale.objects.create(
-                terminal=terminal,
-                cashier=self.user,
-                total_amount=Decimal("999.99"),
-                payment_method="cash",
-            )
+        transaction = POSTransaction.objects.create(
+            session=session,
+            subtotal=Decimal("999.99"),
+            total_amount=Decimal("999.99"),
+            payment_method="cash",
+            status="completed",
+        )
 
-            self.assertEqual(sale.total_amount, Decimal("999.99"))
-            self.assertEqual(sale.cashier, self.user)
-        except Exception:
-            pass
+        self.assertEqual(transaction.total_amount, Decimal("999.99"))
+        self.assertEqual(transaction.session, session)
 
-    def test_pos_sale_item_creation(self):
-        """POS sale items should be created successfully."""
-        try:
-            terminal = POSTerminal.objects.create(
-                terminal_id="POS-001", location="Store Front"
-            )
+    def test_pos_transaction_item_creation(self):
+        """POS transaction items should be created successfully."""
+        session = POSSession.objects.create(
+            staff=self.user, opening_cash=Decimal("100.00")
+        )
 
-            sale = POSSale.objects.create(
-                terminal=terminal, cashier=self.user, total_amount=Decimal("999.99")
-            )
+        transaction = POSTransaction.objects.create(
+            session=session,
+            subtotal=Decimal("999.99"),
+            total_amount=Decimal("999.99"),
+            payment_method="cash",
+        )
 
-            sale_item = POSSaleItem.objects.create(
-                sale=sale,
-                product=self.product,
-                quantity=1,
-                unit_price=Decimal("999.99"),
-                subtotal=Decimal("999.99"),
-            )
+        transaction_item = POSTransactionItem.objects.create(
+            transaction=transaction,
+            product=self.product,
+            quantity=1,
+            unit_price=Decimal("999.99"),
+        )
 
-            self.assertEqual(sale_item.quantity, 1)
-            self.assertEqual(sale_item.product, self.product)
-        except Exception:
-            pass
+        self.assertEqual(transaction_item.quantity, 1)
+        self.assertEqual(transaction_item.product, self.product)
+        self.assertEqual(transaction_item.line_total, Decimal("999.99"))
 
 
 class POSAuthenticationTests(APITestCase):
