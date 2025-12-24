@@ -116,16 +116,35 @@ jobs:
       - name: Create backend .env file
         run: |
           cd backend
-          cp .env.example .env
-          echo "SECRET_KEY=${{ secrets.CI_SECRET_KEY || 'test-secret-key-for-ci-testing-only' }}" >> .env
-          echo "DEBUG=True" >> .env
-          echo "DB_NAME=easycart_test" >> .env
-          echo "DB_USER=easycart" >> .env
-          echo "DB_PASSWORD=easycart_test_password" >> .env
-          echo "DB_HOST=localhost" >> .env
-          echo "DB_PORT=5432" >> .env
-          echo "REDIS_URL=redis://localhost:6379/1" >> .env
-          echo "HEALTHCHECK_CACHE_ENABLED=False" >> .env
+          cat > .env <<'EOF'
+          # CI-only settings (non-production)
+          DJANGO_SETTINGS_MODULE=ecommerce.settings
+          SECRET_KEY=django-insecure-test-key-for-ci-only-12345
+          DEBUG=True
+          ALLOWED_HOSTS=localhost,127.0.0.1,testserver
+          CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+
+          DB_ENGINE=django.db.backends.postgresql
+          DB_NAME=easycart_test
+          DB_USER=easycart
+          DB_PASSWORD=easycart_test_password
+          DB_HOST=localhost
+          DB_PORT=5432
+
+          REDIS_URL=redis://localhost:6379/1
+          HEALTHCHECK_CACHE_ENABLED=False
+
+          # External services disabled in CI
+          TWILIO_ACCOUNT_SID=
+          TWILIO_AUTH_TOKEN=
+          TWILIO_PHONE_NUMBER=
+
+          # Cloudinary defaults for tests
+          CLOUDINARY_CLOUD_NAME=test-cloud
+          CLOUDINARY_API_KEY=test-key
+          CLOUDINARY_API_SECRET=test-secret
+          CLOUDINARY_URL=cloudinary://test-key:test-secret@test-cloud
+          EOF
 
       - name: Lint backend (flake8)
         run: |
