@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Check for existing similar issue
         id: check-existing
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -57,7 +57,7 @@ jobs:
 
       - name: Create issue for failed workflow
         if: steps.check-existing.outputs.result && fromJSON(steps.check-existing.outputs.result).shouldCreate
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
