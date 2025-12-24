@@ -16,7 +16,7 @@
    ```
    NODE_ENV=production
    JWT_SECRET=<your_jwt_secret>
-   MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/easycart
+   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>
    PORT=5000
    ```
 6. Click "Deploy"
@@ -73,7 +73,7 @@ After deployment, you'll have:
 2. **Test Admin Login**:
    - URL: `https://your-admin-url.railway.app/admin/login`
    - Email: admin@easycart.com
-   - Password: admin123
+   - Password: <your-admin-password>
 
 3. **Test Frontend**:
    - Visit frontend URL

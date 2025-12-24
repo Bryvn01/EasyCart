@@ -17,7 +17,7 @@
 ## 3. MongoDB Atlas
 1. Go to https://cloud.mongodb.com
 2. Create cluster: "easycart-cluster"
-3. Create user: easycart / EasyCart2024
+3. Create user: <username> / <strong-password>
 4. Whitelist all IPs: 0.0.0.0/0
 5. Copy connection string to backend/.env
 

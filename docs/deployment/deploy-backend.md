@@ -7,8 +7,8 @@
 3. Connect your GitHub repository: `https://github.com/Bryvn01/EasyCart`
 4. Select the `backend` folder as root directory
 5. Add environment variables:
-   - `MONGODB_URI`: `mongodb+srv://<username>:<password>@easycart.abc123.mongodb.net/easycart`
-   - `JWT_SECRET`: `easycart-super-secret-key-2024`
+   - `MONGODB_URI`: `mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>`
+   - `JWT_SECRET`: `<generate-a-long-random-jwt-secret>`
    - `NODE_ENV`: `production`
 6. Deploy
 
@@ -16,7 +16,7 @@
 
 1. Go to https://cloud.mongodb.com
 2. Create free cluster
-3. Create database user: `easycart` / `easycart2024`
+3. Create database user: `<username>` / `<strong-password>`
 4. Whitelist all IPs: `0.0.0.0/0`
 5. Get connection string
 
@@ -36,6 +36,6 @@ curl https://easycart-backend.onrender.com/api/health
 ## 5. Admin Login
 
 - Email: admin@easycart.com
-- Password: admin123
+- Password: <your-admin-password>
 
 **Backend URL:** https://easycart-backend.onrender.com

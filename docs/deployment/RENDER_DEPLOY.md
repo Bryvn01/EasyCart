@@ -31,7 +31,7 @@
    ```
    NODE_ENV=production
    JWT_SECRET=<your_jwt_secret>
-   MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/easycart
+   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>
    ```
 5. Click **"Create Web Service"**
 
@@ -91,7 +91,7 @@ curl -X POST https://easycart-backend.onrender.com/api/seed
 ### **2. Test Admin:**
 - URL: `https://easycart-admin.onrender.com/admin/login`
 - Email: admin@easycart.com
-- Password: admin123
+- Password: <your-admin-password>
 
 ### **3. Test Frontend:**
 - Visit: `https://easycart-1-752r.onrender.com`

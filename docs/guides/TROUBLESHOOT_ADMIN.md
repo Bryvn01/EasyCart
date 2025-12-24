@@ -13,7 +13,7 @@ Should return: `{"status":"OK"}`
 
 ### 3. **Admin Login Credentials**
 - **Email**: admin@easycart.com
-- **Password**: admin123
+- **Password**: <your-admin-password>
 
 ### 4. **If Still Can't Login**
 The admin dashboard now has a fallback:
@@ -47,7 +47,7 @@ POST with:
 ```json
 {
   "email": "admin@easycart.com",
-  "password": "admin123"
+  "password": "<your-admin-password>"
 }
 ```
 

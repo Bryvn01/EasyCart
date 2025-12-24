@@ -13,7 +13,7 @@
 
 3. **Login**:
    - Username: `admin`
-   - Password: `admin123`
+   - Password: `<your-admin-password>`
 
 4. **Navigate to Products**:
    - Click "Products" under "PRODUCTS" section

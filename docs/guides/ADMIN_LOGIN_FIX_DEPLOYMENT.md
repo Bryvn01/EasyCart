@@ -104,7 +104,7 @@ Ensure backend allows admin dashboard origin:
 
 3. **Attempt Login:**
    - Email: `admin@easycart.com`
-   - Password: `admin123`
+   - Password: `<your-admin-password>`
    - Click "Sign in"
 
 4. **Monitor Network Tab:**
@@ -208,7 +208,7 @@ Access to XMLHttpRequest at 'https://...' from origin 'https://easycart-admin.on
 
 1. **Use Demo Mode:**
    - Email: `admin@easycart.com`
-   - Password: Any password (e.g., `admin123`)
+   - Password: Any password (demo mode)
    - Wait 5 seconds
    - Should activate demo mode automatically
 
@@ -239,7 +239,7 @@ Before marking this as complete, verify:
 ### Login Flow
 - [ ] Can access https://easycart-admin.onrender.com/admin/login
 - [ ] Console shows correct API configuration
-- [ ] Can login with `admin@easycart.com` / `admin123`
+- [ ] Can login with `admin@easycart.com` / `<your-admin-password>`
 - [ ] Network tab shows request to correct backend URL
 - [ ] Either succeeds with 200 OK or falls back to demo mode
 - [ ] Redirects to dashboard
@@ -272,7 +272,7 @@ curl https://easycart-backend-0u8r.onrender.com/api/health
 # Test login endpoint directly
 curl -X POST https://easycart-backend-0u8r.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@easycart.com","password":"admin123"}'
+   -d '{"email":"admin@easycart.com","password":"<your-admin-password>"}'
 ```
 
 ### Check Backend Logs

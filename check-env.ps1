@@ -12,13 +12,15 @@ if (Test-Path $backendEnv) {
     $content = Get-Content $backendEnv -Raw
     Write-Host "  [OK] File exists" -ForegroundColor Green
 
-    if ($content -match "SECRET_KEY=<your_django_secret_key> {
+    $hasSecretKey = ($content -match "(?m)^SECRET_KEY=<your_django_secret_key> -and ($content -notmatch "(?m)^SECRET_KEY=<your_django_secret_key>
+    if ($hasSecretKey) {
         Write-Host "  [OK] SECRET_KEY configured" -ForegroundColor Green
     } else {
         Write-Host "  [!!] SECRET_KEY NOT configured" -ForegroundColor Red
     }
 
-    if ($content -match "CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name> {
+    $hasCloudinaryUrl = ($content -match "(?m)^CLOUDINARY_URL=.+$") -and ($content -notmatch "(?m)^CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
+    if ($hasCloudinaryUrl) {
         Write-Host "  [OK] CLOUDINARY_URL configured" -ForegroundColor Green
     } else {
         Write-Host "  [!!] CLOUDINARY_URL NOT configured" -ForegroundColor Red
@@ -35,7 +37,7 @@ if (Test-Path $frontendEnv) {
     $content = Get-Content $frontendEnv -Raw
     Write-Host "  [OK] File exists" -ForegroundColor Green
 
-    if ($content -match "REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
+    if ($content -match "(?m)^REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
         Write-Host "  [OK] CLOUDINARY_CLOUD_NAME configured" -ForegroundColor Green
     } else {
         Write-Host "  [!!] CLOUDINARY_CLOUD_NAME NOT configured" -ForegroundColor Red
@@ -58,7 +60,7 @@ if (Test-Path $adminEnv) {
     $content = Get-Content $adminEnv -Raw
     Write-Host "  [OK] File exists" -ForegroundColor Green
 
-    if ($content -match "REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
+    if ($content -match "(?m)^REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
         Write-Host "  [OK] CLOUDINARY_CLOUD_NAME configured" -ForegroundColor Green
     } else {
         Write-Host "  [!!] CLOUDINARY_CLOUD_NAME NOT configured" -ForegroundColor Red

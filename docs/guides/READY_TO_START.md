@@ -81,8 +81,8 @@ npm start
 
 ## ✅ What's Working Now
 
-- ✅ Django SECRET_KEY secured (68 characters)
-- ✅ Cloudinary fully configured for image uploads
+- ✅ Django SECRET_KEY configured
+- ✅ Cloudinary configured for image uploads
 - ✅ PostgreSQL database ready (easycart / easycart_user)
 - ✅ API endpoints configured correctly
 - ✅ CORS allows frontend and admin
@@ -117,7 +117,7 @@ Should load admin dashboard
 1. Go to http://localhost:8000/admin
 2. Login with superuser
 3. Add a product with an image
-4. Image should upload to Cloudinary (dvpr5bcrp)
+4. Image should upload to Cloudinary (<your_cloud_name>)
 
 ---
 

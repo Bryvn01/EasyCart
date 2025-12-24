@@ -14,13 +14,15 @@ if (Test-Path "$rootDir\backend\.env") {
 
     $backendContent = Get-Content "$rootDir\backend\.env" -Raw
 
-    if ($backendContent -match "SECRET_KEY=<your_django_secret_key> {
+    $hasSecretKey = ($backendContent -match "(?m)^SECRET_KEY=<your_django_secret_key> -and ($backendContent -notmatch "(?m)^SECRET_KEY=<your_django_secret_key>
+    if ($hasSecretKey) {
         Write-Host "   ✅ SECRET_KEY is configured" -ForegroundColor Green
     } else {
         Write-Host "   ⚠️  SECRET_KEY not set" -ForegroundColor Red
     }
 
-    if ($backendContent -match "CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name> {
+    $hasCloudinaryUrl = ($backendContent -match "(?m)^CLOUDINARY_URL=.+$") -and ($backendContent -notmatch "(?m)^CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
+    if ($hasCloudinaryUrl) {
         Write-Host "   ✅ CLOUDINARY_URL is configured" -ForegroundColor Green
     } else {
         Write-Host "   ⚠️  CLOUDINARY_URL not set" -ForegroundColor Red
@@ -50,7 +52,7 @@ if (Test-Path "$rootDir\frontend\.env") {
         Write-Host "   ⚠️  API_URL not set correctly" -ForegroundColor Red
     }
 
-    if ($frontendContent -match "REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
+    if ($frontendContent -match "(?m)^REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
         Write-Host "   ✅ CLOUDINARY_CLOUD_NAME is configured" -ForegroundColor Green
     } else {
         Write-Host "   ⚠️  CLOUDINARY_CLOUD_NAME not set" -ForegroundColor Red
@@ -72,7 +74,7 @@ if (Test-Path "$rootDir\admin-dashboard\.env") {
         Write-Host "   ⚠️  API_URL not set correctly" -ForegroundColor Red
     }
 
-    if ($adminContent -match "REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
+    if ($adminContent -match "(?m)^REACT_APP_CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name> {
         Write-Host "   ✅ CLOUDINARY_CLOUD_NAME is configured" -ForegroundColor Green
     } else {
         Write-Host "   ⚠️  CLOUDINARY_CLOUD_NAME not set" -ForegroundColor Red

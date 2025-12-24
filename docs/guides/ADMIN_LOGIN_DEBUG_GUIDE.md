@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-The EasyCart Admin Dashboard login page (https://easycart-admin.onrender.com/admin/login) was stuck on "Signing in…" when using demo credentials (admin@easycart.com / admin123).
+The EasyCart Admin Dashboard login page (https://easycart-admin.onrender.com/admin/login) was stuck on "Signing in…" when using demo credentials (admin@easycart.com / <your-admin-password>).
 
 ## Root Cause Analysis
 
@@ -131,7 +131,7 @@ catch (error) {
    - Enable "Preserve log"
 
 2. **Attempt Login**
-   - Enter credentials: `admin@easycart.com` / `admin123`
+  - Enter credentials: `admin@easycart.com` / `<your-admin-password>`
    - Click "Sign in"
    - Watch for the `/auth/login` request
 
@@ -289,7 +289,7 @@ curl -X POST https://api.render.com/deploy/srv-xxx?key=yyy
 - [ ] Backend running on `http://localhost:5000`
 - [ ] Admin dashboard has `.env` file with `REACT_APP_API_URL=http://localhost:5000/api`
 - [ ] Run `npm start` in admin-dashboard directory
-- [ ] Login with `admin@easycart.com` / `admin123`
+- [ ] Login with `admin@easycart.com` / `<your-admin-password>`
 - [ ] Check console for API logs
 - [ ] Verify successful login and redirect
 
@@ -357,7 +357,7 @@ curl -X POST https://api.render.com/deploy/srv-xxx?key=yyy
 - User is not an admin
 
 **Solution:**
-1. Use demo credentials: `admin@easycart.com` / `admin123`
+1. Use demo credentials: `admin@easycart.com` / `<your-admin-password>`
 2. Check backend logs for authentication errors
 3. Verify MongoDB has user documents
 

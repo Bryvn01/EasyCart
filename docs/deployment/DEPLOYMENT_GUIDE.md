@@ -62,7 +62,7 @@ git push origin main
 #### Test All Pages
 1. **Login**: https://easycart-admin-08xf.onrender.com/admin/login
    - Email: `admin@easycart.com`
-   - Password: `admin123`
+   - Password: `<your-admin-password>`
 
 2. **Dashboard**: https://easycart-admin-08xf.onrender.com/admin/dashboard
    - ✅ Stats loading

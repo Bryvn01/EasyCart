@@ -9,10 +9,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
 django.setup()
 
 
-MONGO_URI = (
-    "mongodb+srv://<username>:<password>@cluster0.p7rcwl5.mongodb.net/easycart"
-)
-MONGO_DB = "easycart"
+MONGO_URI = os.environ.get("MONGODB_URI") or os.environ.get("MONGO_URI")
+MONGO_DB = os.environ.get("MONGODB_DB") or os.environ.get("MONGO_DB") or "easycart"
+
+if not MONGO_URI:
+    raise RuntimeError(
+        "Missing MongoDB connection string. Set MONGODB_URI (or MONGO_URI) in your environment."
+    )
 client = MongoClient(MONGO_URI)
 mongo_db = client[MONGO_DB]
 

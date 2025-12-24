@@ -7,14 +7,14 @@ Your Easycart application is now ready to run with Kenyan supermarket products!
 ## 🛒 Sample Data Added:
 - 20 Kenyan supermarket products with KES pricing
 - 6 product categories (Groceries, Beverages, Personal Care, etc.)
-- Admin account: username=`admin`, password=`admin123`
+- Admin account: create via `python manage.py createsuperuser`
 
 ## Next Steps:
 
 ### 1. Admin Account Ready
 - Username: `admin`
-- Password: `admin123`
-- Or create new: `python manage.py createsuperuser`
+- Password: <your-admin-password>
+- Recommended: `python manage.py createsuperuser`
 
 ### 2. Start Backend Server
 ```bash
@@ -47,7 +47,7 @@ Double-click `start_servers.bat` to run everything automatically.
 ## 🛠️ Manage Products (Admin):
 1. **Web Interface**: http://localhost:3000/admin (Edit products directly)
 2. **Django Admin**: http://localhost:8000/admin (Full admin panel)
-3. Login: admin / admin123
+3. Login: admin / <your-admin-password>
 4. Add/Edit/Delete Categories and Products
 5. Upload product images
 6. Manage stock levels and pricing

@@ -8,8 +8,8 @@
 3. Connect GitHub repo: `https://github.com/Bryvn01/EasyCart`
 4. Set Root Directory: `backend`
 5. Add Environment Variables:
-   - `MONGODB_URI`: `mongodb+srv://<username>:<password>@cluster0.mongodb.net/easycart`
-   - `JWT_SECRET`: `easycart-super-secret-jwt-key-production-2024`
+   - `MONGODB_URI`: `mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>`
+   - `JWT_SECRET`: `<generate-a-long-random-jwt-secret>`
    - `FRONTEND_URL`: `https://easycart-1-752r.onrender.com`
 6. Deploy
 
@@ -20,8 +20,8 @@
 4. Set Root Directory: `frontend`
 5. Add Environment Variables:
    - `REACT_APP_API_URL`: `https://easycart-backend.onrender.com/api`
-   - `REACT_APP_FIREBASE_API_KEY`: `AIzaSyBqK8J9X2mF4nP7vL3wR8sT1uY6eH9cA2b`
-   - `REACT_APP_POSTHOG_KEY`: `phc_easycart_demo_key_2024`
+   - `REACT_APP_FIREBASE_API_KEY`: `<your_firebase_api_key>`
+   - `REACT_APP_POSTHOG_KEY`: `<your_posthog_project_api_key>`
 6. Deploy
 
 ### Admin Dashboard:
@@ -61,7 +61,7 @@ https://easycart-1-752r.onrender.com
 ### Test Admin Dashboard:
 - URL: `https://easycart-admin.onrender.com/admin/manage`
 - Email: admin@easycart.com
-- Password: admin123
+- Password: <your-admin-password>
 
 ## 4. Benefits of Render:
 

@@ -26,11 +26,11 @@ The application is deployed on Render with automatic builds and HTTPS:
 ### Test URLs:
 - Frontend: https://easycart-1-752r.onrender.com/
 - Admin Panel: https://easycart-admin.onrender.com/admin/manage
-- Login: admin@easycart.com / admin123
+- Login: use your admin credentials
 
 ### Environment Variables for Backend:
 ```
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/easycart
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>
 JWT_SECRET=<your_jwt_secret>
 NODE_ENV=production
 ```
