@@ -74,6 +74,19 @@ jobs:
         working-directory: ./frontend
         run: npm ci --prefer-offline
 
+      - name: Create backend .env file
+        working-directory: ./backend
+        run: |
+          cp .env.example .env
+          echo "SECRET_KEY=test-secret-key-for-ci-testing-only" >> .env
+          echo "DEBUG=True" >> .env
+          echo "DB_NAME=easycart" >> .env
+          echo "DB_USER=easycart" >> .env
+          echo "DB_PASSWORD=easycart" >> .env
+          echo "DB_HOST=localhost" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "REDIS_URL=redis://localhost:6379/1" >> .env
+
       - name: Run migrations
         working-directory: ./backend
         env:
