@@ -204,9 +204,13 @@ class AuditLogMiddleware:
     def __call__(self, request):
         # Only audit destructive methods
         if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
-            # Check if user is authenticated and is superadmin
-            if hasattr(request, "user") and request.user.is_authenticated:
-                if request.user.is_superuser or request.user.is_staff:
+            user = getattr(request, "user", None)
+
+            # Check if user is authenticated and privileged
+            if user is not None and getattr(user, "is_authenticated", False):
+                if getattr(user, "is_superuser", False) or getattr(
+                    user, "is_staff", False
+                ):
                     # Capture request body before processing
                     try:
                         request_body = json.loads(request.body) if request.body else {}
@@ -229,6 +233,8 @@ class AuditLogMiddleware:
         Log audit information to audit logger.
         """
         try:
+            user = getattr(request, "user", None)
+
             # Get client IP
             ip = self._get_client_ip(request)
 
@@ -236,11 +242,11 @@ class AuditLogMiddleware:
             audit_data = {
                 "timestamp": timezone.now().isoformat(),
                 "user": {
-                    "id": request.user.id,
-                    "username": request.user.username,
-                    "email": getattr(request.user, "email", ""),
-                    "is_superuser": request.user.is_superuser,
-                    "is_staff": request.user.is_staff,
+                    "id": getattr(user, "id", None),
+                    "username": getattr(user, "username", ""),
+                    "email": getattr(user, "email", ""),
+                    "is_superuser": getattr(user, "is_superuser", False),
+                    "is_staff": getattr(user, "is_staff", False),
                 },
                 "request": {
                     "method": request.method,
