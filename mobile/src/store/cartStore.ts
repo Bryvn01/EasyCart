@@ -240,7 +240,9 @@ export const useCartStore = create<CartState>()(
       syncOfflineQueue: async () => {
         const { offlineQueue } = get();
 
-        if (offlineQueue.length === 0) return;
+        if (offlineQueue.length === 0) {
+          return;
+        }
 
         set({ isSyncing: true });
 
