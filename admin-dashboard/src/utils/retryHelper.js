@@ -25,32 +25,32 @@ export const retryWithBackoff = async (
   }
 ) => {
   let lastError;
-  
+
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn();
     } catch (error) {
       lastError = error;
-      
+
       // Don't retry if we've exhausted attempts or if error shouldn't be retried
       if (attempt === maxRetries || !shouldRetry(error)) {
         throw error;
       }
-      
+
       // Calculate delay with exponential backoff
       const waitTime = delay * Math.pow(backoffFactor, attempt);
-      
+
       console.warn(
         `API call failed (attempt ${attempt + 1}/${maxRetries + 1}). ` +
         `Retrying in ${waitTime}ms...`,
         error.message
       );
-      
+
       // Wait before retrying
       await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }
-  
+
   throw lastError;
 };
 

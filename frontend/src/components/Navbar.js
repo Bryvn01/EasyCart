@@ -302,9 +302,9 @@ const Navbar = () => {
                 <div className="px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <p className="text-sm text-gray-600 dark:text-gray-400">Signed in as</p>
                   <p className="font-semibold text-gray-900 dark:text-white">
-                    {user?.display_name || 
-                     (user?.first_name && user?.last_name 
-                       ? `${user.first_name} ${user.last_name}` 
+                    {user?.display_name ||
+                     (user?.first_name && user?.last_name
+                       ? `${user.first_name} ${user.last_name}`
                        : user?.first_name || user?.preferred_username || user?.username)}
                   </p>
                 </div>

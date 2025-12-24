@@ -52,14 +52,14 @@ export const safeGet = (obj, path, defaultValue = null) => {
   try {
     const keys = path.split('.');
     let result = obj;
-    
+
     for (const key of keys) {
       if (result === null || result === undefined) {
         return defaultValue;
       }
       result = result[key];
     }
-    
+
     return result === undefined ? defaultValue : result;
   } catch (error) {
     return defaultValue;
@@ -158,14 +158,14 @@ export const sanitizeCSV = (value) => {
   if (value === null || value === undefined) {
     return '';
   }
-  
+
   const str = String(value);
-  
+
   // Escape quotes and wrap in quotes if contains special characters
   if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
     return `"${str.replace(/"/g, '""')}"`;
   }
-  
+
   return str;
 };
 

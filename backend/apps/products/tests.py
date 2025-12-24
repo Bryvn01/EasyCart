@@ -6,8 +6,7 @@ class ProductTests(TestCase):
     def setUp(self):
         """Set up test fixtures"""
         self.category = Category.objects.create(
-            name="Test Category",
-            description="Test category description"
+            name="Test Category", description="Test category description"
         )
 
     def test_product_creation(self):
@@ -15,6 +14,6 @@ class ProductTests(TestCase):
             name="Test Product",
             price=9.99,
             description="Test description",
-            category=self.category
+            category=self.category,
         )
         self.assertEqual(str(product), "Test Product")

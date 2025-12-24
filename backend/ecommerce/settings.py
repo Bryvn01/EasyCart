@@ -92,6 +92,7 @@ MIDDLEWARE = [
     "ecommerce.middleware.DisableCSRFForAPIMiddleware",  # Disable CSRF for /api/* endpoints
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "apps.core.middleware.AuditLogMiddleware",  # Audit superadmin actions
     "apps.core.middleware.LicenseEnforcementMiddleware",  # Enforce license restrictions
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -356,10 +357,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
 
 # Frontend URL for email verification links
-FRONTEND_URL = config(
-    "FRONTEND_URL",
-    default="http://localhost:3000"
-)
+FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000")
 
 CORS_ALLOW_HEADERS = [
     "accept",

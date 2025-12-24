@@ -28,7 +28,7 @@ const MockedBottomNav = () => (
 describe('BottomNav Component', () => {
   test('renders navigation items correctly', async () => {
     render(<MockedBottomNav />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Home')).toBeInTheDocument();
     });
@@ -39,15 +39,15 @@ describe('BottomNav Component', () => {
 
   test('opens search overlay when search button is clicked', async () => {
     render(<MockedBottomNav />);
-    
+
     await waitFor(() => {
       const searchButton = screen.getByText('Search');
       expect(searchButton).toBeInTheDocument();
     });
-    
+
     const searchButton = screen.getByText('Search');
     fireEvent.click(searchButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Search Products')).toBeInTheDocument();
     });
@@ -56,24 +56,24 @@ describe('BottomNav Component', () => {
 
   test('closes search overlay when close button is clicked', async () => {
     render(<MockedBottomNav />);
-    
+
     await waitFor(() => {
       const searchButton = screen.getByText('Search');
       expect(searchButton).toBeInTheDocument();
     });
-    
+
     // Open search overlay
     const searchButton = screen.getByText('Search');
     fireEvent.click(searchButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Search Products')).toBeInTheDocument();
     });
-    
+
     // Close search overlay
     const closeButton = screen.getByLabelText('Close search');
     fireEvent.click(closeButton);
-    
+
     await waitFor(() => {
       expect(screen.queryByText('Search Products')).not.toBeInTheDocument();
     });
@@ -81,7 +81,7 @@ describe('BottomNav Component', () => {
 
   test('has proper ARIA labels for accessibility', async () => {
     render(<MockedBottomNav />);
-    
+
     await waitFor(() => {
       expect(screen.getByRole('navigation', { name: 'Bottom navigation' })).toBeInTheDocument();
     });

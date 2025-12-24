@@ -2,6 +2,39 @@
 
 All notable changes to EasyCart will be documented in this file.
 
+## [2.1.0] - 2025-01-15
+
+### Repository Cleanup - Professional Refactoring
+- **Documentation Organization**
+  - Reduced root markdown files from 409 to 4 (99% reduction)
+  - Created organized `docs/` structure with 8 categorized subfolders
+  - Rewrote README.md from 843 to 111 lines (87% reduction)
+  - Deleted 171 noise files (_COMPLETE, _SUMMARY, _VISUAL patterns)
+  - Moved ~405 documentation files to logical categories
+
+- **Project Structure**
+  - Removed mystery `src/` folder (only 2 leftover files)
+  - Clarified frontend structure: `frontend/`, `admin-dashboard/`, `mobile/`
+  - Deleted duplicate Node.js seeding script (kept Django `seed_products`)
+  - Cleaned up old README backup
+
+- **Production Features**
+  - ✅ Added `AuditLogMiddleware` for superadmin action logging
+  - ✅ Verified Sentry error tracking configuration
+  - ✅ Verified comprehensive health check endpoints (4 endpoints)
+  - ✅ Verified security headers (XSS, HSTS, CSRF, clickjacking)
+  - Audit logs capture user actions, IP, request/response with PII redaction
+  - Separate `audit.log` file (50MB size, 10 backups)
+
+- **Documentation**
+  - Created comprehensive cleanup summary in `docs/maintenance/`
+  - Professional README with clear features, setup, deployment
+  - Organized docs by purpose: setup, api, deployment, architecture, guides, security, testing, maintenance
+
+See [Repository Cleanup Summary](docs/maintenance/REPOSITORY_CLEANUP_SUMMARY.md) for full details.
+
+---
+
 ## [2.0.0] - 2025-12-04
 
 ### Added

@@ -317,9 +317,11 @@ def verify_otp_login(request):
         # Device fingerprinting and suspicious activity detection
         is_suspicious, reason = detect_suspicious_activity(user, request)
         is_known_device, device_info = verify_device_fingerprint(user, request)
-        
+
         if is_suspicious:
-            logger.warning(f"Suspicious OTP login detected for user {user.id}: {reason}")
+            logger.warning(
+                f"Suspicious OTP login detected for user {user.id}: {reason}"
+            )
 
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
@@ -337,7 +339,7 @@ def verify_otp_login(request):
 
         # Get display name with fallback hierarchy
         display_name = user.first_name or user.preferred_username or user.username
-        
+
         return Response(
             {
                 "message": "Login successful",
@@ -359,7 +361,7 @@ def verify_otp_login(request):
                     "new_device": not is_known_device,
                     "suspicious_activity": is_suspicious,
                     "reason": reason if is_suspicious else None,
-                }
+                },
             }
         )
 

@@ -86,7 +86,7 @@ def register(request):
     serializer = UserRegistrationSerializer(data=data)
     if serializer.is_valid():
         user = serializer.save()
-        
+
         # Send verification email (async, non-blocking)
         try:
             send_verification_email(user, request)
@@ -94,7 +94,7 @@ def register(request):
         except Exception as e:
             logger.error(f"Failed to send verification email to {user.id}: {e}")
             # Don't block registration if email fails
-        
+
         refresh = RefreshToken.for_user(user)
         return Response(
             {
@@ -122,11 +122,11 @@ def login(request):
         # Device fingerprinting and suspicious activity detection
         is_suspicious, reason = detect_suspicious_activity(user, request)
         is_known_device, device_info = verify_device_fingerprint(user, request)
-        
+
         if is_suspicious:
             logger.warning(f"Suspicious login detected for user {user.id}: {reason}")
             # In production, you might want to require additional verification
-        
+
         # Check if 2FA is enabled
         if user.two_factor_enabled:
             # Return special response indicating 2FA required
@@ -143,10 +143,10 @@ def login(request):
 
         # Normal login without 2FA
         refresh = RefreshToken.for_user(user)
-        
+
         # Track device login
         track_device_login(user, request, str(refresh.access_token))
-        
+
         return Response(
             {
                 "user": UserSerializer(user).data,
@@ -156,7 +156,7 @@ def login(request):
                     "new_device": not is_known_device,
                     "suspicious_activity": is_suspicious,
                     "reason": reason if is_suspicious else None,
-                }
+                },
             }
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

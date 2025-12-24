@@ -76,7 +76,7 @@ describe('Navbar Component', () => {
     renderNavbar();
     const menuButton = screen.getByLabelText('Open menu');
     fireEvent.click(menuButton);
-    
+
     const mobileMenu = screen.getByTestId('mobile-menu');
     await waitFor(() => {
       expect(mobileMenu).toHaveClass('translate-x-0');
@@ -86,13 +86,13 @@ describe('Navbar Component', () => {
   test('body overflow is prevented when mobile menu is open', async () => {
     renderNavbar();
     const menuButton = screen.getByLabelText('Open menu');
-    
+
     // Initially, overflow should be unset
     expect(document.body.style.overflow).not.toBe('hidden');
-    
+
     // Click to open menu
     fireEvent.click(menuButton);
-    
+
     expect(document.body.style.overflow).toBe('hidden');
     await waitFor(() => {
       expect(document.documentElement.style.overflow).toBe('hidden');
@@ -101,20 +101,20 @@ describe('Navbar Component', () => {
 
   test('mobile menu closes when close button is clicked', async () => {
     renderNavbar();
-    
+
     // Open menu
     const openButton = screen.getByLabelText('Open menu');
     fireEvent.click(openButton);
-    
+
     const mobileMenu = screen.getByTestId('mobile-menu');
     await waitFor(() => {
       expect(mobileMenu).toHaveClass('translate-x-0');
     });
-    
+
     // Close menu
     const closeButton = screen.getByLabelText('Close menu');
     fireEvent.click(closeButton);
-    
+
     await waitFor(() => {
       expect(mobileMenu).toHaveClass('-translate-x-full');
     });
@@ -123,17 +123,17 @@ describe('Navbar Component', () => {
   test('body overflow is restored when mobile menu is closed', async () => {
     renderNavbar();
     const menuButton = screen.getByLabelText('Open menu');
-    
+
     // Open menu
     fireEvent.click(menuButton);
     await waitFor(() => {
       expect(document.body.style.overflow).toBe('hidden');
     });
-    
+
     // Close menu
     const closeButton = screen.getByLabelText('Close menu');
     fireEvent.click(closeButton);
-    
+
     expect(document.body.style.overflow).toBe('unset');
     await waitFor(() => {
       expect(document.documentElement.style.overflow).toBe('unset');
@@ -142,19 +142,19 @@ describe('Navbar Component', () => {
 
   test('mobile menu closes when Escape key is pressed', async () => {
     renderNavbar();
-    
+
     // Open menu
     const menuButton = screen.getByLabelText('Open menu');
     fireEvent.click(menuButton);
-    
+
     const mobileMenu = screen.getByTestId('mobile-menu');
     await waitFor(() => {
       expect(mobileMenu).toHaveClass('translate-x-0');
     });
-    
+
     // Press Escape
     fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
-    
+
     await waitFor(() => {
       expect(mobileMenu).toHaveClass('-translate-x-full');
     });
@@ -162,14 +162,14 @@ describe('Navbar Component', () => {
 
   test('overlay backdrop is rendered when menu is open', async () => {
     renderNavbar();
-    
+
     // Initially no overlay
     expect(screen.queryByTestId('mobile-menu-overlay')).not.toBeInTheDocument();
-    
+
     // Open menu
     const menuButton = screen.getByLabelText('Open menu');
     fireEvent.click(menuButton);
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('mobile-menu-overlay')).toBeInTheDocument();
     });

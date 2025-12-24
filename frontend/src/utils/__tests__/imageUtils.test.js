@@ -119,7 +119,7 @@ describe('imageUtils', () => {
 
       // Get the most recently created Image instance
       const mockImage = global.Image.mock.instances[global.Image.mock.instances.length - 1];
-      
+
       // Trigger onload
       if (mockImage.onload) {
         mockImage.onload();
@@ -134,7 +134,7 @@ describe('imageUtils', () => {
 
       // Get the most recently created Image instance
       const mockImage = global.Image.mock.instances[global.Image.mock.instances.length - 1];
-      
+
       // Trigger onerror
       if (mockImage.onerror) {
         mockImage.onerror();

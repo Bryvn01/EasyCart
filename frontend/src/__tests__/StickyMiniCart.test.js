@@ -1,6 +1,6 @@
 /**
  * StickyMiniCart Component Tests
- * 
+ *
  * Tests for the enhanced sticky mini-cart including:
  * - Visibility based on cart state
  * - Loading state display
@@ -268,7 +268,7 @@ describe('StickyMiniCart Component', () => {
 
       render(<StickyMiniCart />);
       const button = screen.getByRole('button');
-      
+
       expect(button).toHaveAttribute('aria-label');
       expect(button.getAttribute('aria-label')).toContain('3 items');
     });
@@ -384,7 +384,7 @@ describe('StickyMiniCart Component', () => {
       });
 
       render(<StickyMiniCart />);
-      
+
       // Wait for animation delay
       await waitFor(() => {
         const container = screen.getByRole('complementary');
