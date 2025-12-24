@@ -312,7 +312,9 @@ export const setCachedData = (
 export const getCachedData = <T>(key: string): T | null => {
   try {
     const cacheString = storage.getString(key);
-    if (!cacheString) return null;
+    if (!cacheString) {
+      return null;
+    }
 
     const cacheItem = JSON.parse(cacheString);
     if (Date.now() > cacheItem.expiry) {

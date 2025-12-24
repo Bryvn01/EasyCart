@@ -16,7 +16,9 @@ interface PasswordStrengthIndicatorProps {
 export default function PasswordStrengthIndicator({
   password,
 }: PasswordStrengthIndicatorProps) {
-  if (!password) return null;
+  if (!password) {
+    return null;
+  }
 
   const { score, label, color } = calculatePasswordStrength(password);
   const strengthPercentage = (score / 6) * 100;
