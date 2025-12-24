@@ -70,6 +70,7 @@ class UserSerializer(serializers.ModelSerializer):
     - Phone: Editable with validation (supports OTP login)
     - Role/Admin flags: Read-only (security - only backend can modify)
     """
+
     display_name = serializers.SerializerMethodField()
 
     class Meta:
@@ -131,6 +132,7 @@ class UserSerializer(serializers.ModelSerializer):
         """
         if value:
             import re
+
             # Username requirements:
             # - 3-30 characters
             # - Alphanumeric + underscores and hyphens
@@ -140,22 +142,26 @@ class UserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Username must be between 3 and 30 characters."
                 )
-            
-            if not re.match(r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$', value):
+
+            if not re.match(r"^[a-zA-Z0-9][a-zA-Z0-9_-]*$", value):
                 raise serializers.ValidationError(
                     "Username can only contain letters, numbers, underscores, and hyphens. Must start with a letter or number."
                 )
-            
+
             # Prevent system-generated username pattern
-            if re.match(r'^user_\d+$', value.lower()):
+            if re.match(r"^user_\d+$", value.lower()):
                 raise serializers.ValidationError(
                     "This username format is reserved. Please choose a different one."
                 )
-            
+
             # Check uniqueness
             user = self.instance
             if user and value != user.preferred_username:
-                if User.objects.filter(preferred_username=value).exclude(id=user.id).exists():
+                if (
+                    User.objects.filter(preferred_username=value)
+                    .exclude(id=user.id)
+                    .exists()
+                ):
                     raise serializers.ValidationError(
                         "This username is already taken. Please choose another."
                     )

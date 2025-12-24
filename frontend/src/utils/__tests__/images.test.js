@@ -104,7 +104,7 @@ describe('images utilities', () => {
     it('generates srcSet for external URLs', () => {
       const baseUrl = 'https://example.com/image.jpg';
       const result = getImageSizes(baseUrl);
-      
+
       expect(result.src).toBe(baseUrl);
       expect(result.srcSet).toContain('400w');
       expect(result.srcSet).toContain('600w');
@@ -116,7 +116,7 @@ describe('images utilities', () => {
       const baseUrl = 'https://example.com/image.jpg';
       const customSizes = [200, 400, 800, 1600];
       const result = getImageSizes(baseUrl, customSizes);
-      
+
       expect(result.srcSet).toContain('200w');
       expect(result.srcSet).toContain('400w');
       expect(result.srcSet).toContain('800w');
@@ -126,14 +126,14 @@ describe('images utilities', () => {
     it('generates correct srcSet format', () => {
       const baseUrl = 'https://example.com/image.jpg';
       const result = getImageSizes(baseUrl, [400, 800]);
-      
+
       expect(result.srcSet).toBe('https://example.com/image.jpg?width=400 400w, https://example.com/image.jpg?width=800 800w');
     });
 
     it('includes standard sizes attribute for responsive images', () => {
       const baseUrl = 'https://example.com/image.jpg';
       const result = getImageSizes(baseUrl);
-      
+
       expect(result.sizes).toBeTruthy();
       expect(result.sizes).toContain('max-width');
       expect(result.sizes).toContain('vw');

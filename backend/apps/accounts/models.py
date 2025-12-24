@@ -20,7 +20,7 @@ class User(AbstractUser):
         null=True,
         unique=True,
         help_text="User-chosen display username (optional, must be unique)",
-        verbose_name="Preferred Username"
+        verbose_name="Preferred Username",
     )
     is_admin = models.BooleanField(default=False)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="viewer")
@@ -70,19 +70,13 @@ class User(AbstractUser):
 
     # Email verification fields
     email_verified = models.BooleanField(
-        default=False,
-        help_text="Whether the user has verified their email address"
+        default=False, help_text="Whether the user has verified their email address"
     )
     email_verification_token = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True,
-        help_text="Token for email verification"
+        max_length=64, blank=True, null=True, help_text="Token for email verification"
     )
     email_verification_sent_at = models.DateTimeField(
-        blank=True,
-        null=True,
-        help_text="When the verification email was last sent"
+        blank=True, null=True, help_text="When the verification email was last sent"
     )
 
     history = HistoricalRecords()

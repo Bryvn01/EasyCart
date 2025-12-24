@@ -4,12 +4,15 @@ Copyright (c) 2025 Bryvn01. All rights reserved.
 """
 
 import logging
+import json
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 from django.core.cache import cache
+from django.utils import timezone
 from .license import LicenseVerifier
 
 logger = logging.getLogger(__name__)
+audit_logger = logging.getLogger("audit")
 
 
 class LicenseEnforcementMiddleware:
@@ -179,3 +182,121 @@ class BrandingMiddleware:
         response["X-License"] = "Proprietary - See LICENSE file"
 
         return response
+
+
+class AuditLogMiddleware:
+    """
+    Middleware to log superadmin actions for audit trails.
+    Logs all POST, PUT, PATCH, DELETE requests made by superadmin users.
+
+    Logs include:
+    - Timestamp
+    - User information
+    - HTTP method and path
+    - Request body
+    - Response status code
+    - IP address
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Only audit destructive methods
+        if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+            # Check if user is authenticated and is superadmin
+            if hasattr(request, "user") and request.user.is_authenticated:
+                if request.user.is_superuser or request.user.is_staff:
+                    # Capture request body before processing
+                    try:
+                        request_body = json.loads(request.body) if request.body else {}
+                    except Exception:
+                        request_body = request.POST.dict() if request.POST else {}
+
+                    # Process request
+                    response = self.get_response(request)
+
+                    # Log the action after response
+                    self._log_audit(request, response, request_body)
+
+                    return response
+
+        # For non-auditable requests, just pass through
+        return self.get_response(request)
+
+    def _log_audit(self, request, response, request_body):
+        """
+        Log audit information to audit logger.
+        """
+        try:
+            # Get client IP
+            ip = self._get_client_ip(request)
+
+            # Prepare audit log entry
+            audit_data = {
+                "timestamp": timezone.now().isoformat(),
+                "user": {
+                    "id": request.user.id,
+                    "username": request.user.username,
+                    "email": getattr(request.user, "email", ""),
+                    "is_superuser": request.user.is_superuser,
+                    "is_staff": request.user.is_staff,
+                },
+                "request": {
+                    "method": request.method,
+                    "path": request.path,
+                    "query_params": dict(request.GET),
+                    "body": self._sanitize_body(request_body),
+                },
+                "response": {
+                    "status_code": response.status_code,
+                },
+                "ip_address": ip,
+                "user_agent": request.META.get("HTTP_USER_AGENT", ""),
+            }
+
+            # Log as JSON for easy parsing
+            audit_logger.info(json.dumps(audit_data))
+
+        except Exception as e:
+            logger.error(f"Failed to log audit entry: {e}")
+
+    def _get_client_ip(self, request):
+        """
+        Get the real client IP address from request.
+        Handles proxies and load balancers.
+        """
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(",")[0].strip()
+        else:
+            ip = request.META.get("REMOTE_ADDR", "")
+        return ip
+
+    def _sanitize_body(self, body):
+        """
+        Remove sensitive fields from request body before logging.
+        """
+        if not isinstance(body, dict):
+            return body
+
+        # List of sensitive field names to redact
+        sensitive_fields = [
+            "password",
+            "password_confirmation",
+            "token",
+            "secret",
+            "api_key",
+            "access_token",
+            "refresh_token",
+            "credit_card",
+            "cvv",
+            "ssn",
+        ]
+
+        sanitized = body.copy()
+        for field in sensitive_fields:
+            if field in sanitized:
+                sanitized[field] = "***REDACTED***"
+
+        return sanitized

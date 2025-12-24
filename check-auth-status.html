@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check Auth Status</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; }
+        .status { padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        button { background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #45a049; }
+        button.danger { background: #f44336; }
+        button.danger:hover { background: #da190b; }
+        .token-display { word-break: break-all; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 EasyCart Admin Authentication Status</h1>
+
+        <div id="status"></div>
+
+        <div style="margin-top: 20px;">
+            <button onclick="checkAuth()">🔄 Refresh Status</button>
+            <button onclick="clearAuth()" class="danger">🗑️ Clear Auth & Logout</button>
+            <button onclick="window.location.href='http://localhost:3000/admin/login'">🔑 Go to Login</button>
+        </div>
+    </div>
+
+    <script>
+        function checkAuth() {
+            const statusDiv = document.getElementById('status');
+            const adminToken = localStorage.getItem('admin_token');
+            const adminRefreshToken = localStorage.getItem('admin_refresh_token');
+            const user = localStorage.getItem('user');
+
+            let html = '<h2>📊 Authentication Status Check</h2>';
+
+            // Check admin_token
+            if (adminToken) {
+                html += '<div class="status success"><strong>✅ admin_token Found</strong></div>';
+                html += '<div class="info"><strong>Token Preview:</strong><br><div class="token-display">' + adminToken.substring(0, 50) + '...</div></div>';
+
+                // Decode JWT to check expiration
+                try {
+                    const tokenParts = adminToken.split('.');
+                    const payload = JSON.parse(atob(tokenParts[1]));
+                    const exp = new Date(payload.exp * 1000);
+                    const now = new Date();
+
+                    if (exp > now) {
+                        const timeLeft = Math.round((exp - now) / 1000 / 60);
+                        html += '<div class="status success"><strong>✅ Token Valid</strong><br>Expires: ' + exp.toLocaleString() + '<br>Time remaining: ' + timeLeft + ' minutes</div>';
+                    } else {
+                        html += '<div class="status error"><strong>❌ Token Expired</strong><br>Expired: ' + exp.toLocaleString() + '</div>';
+                    }
+
+                    html += '<div class="info"><strong>Token Payload:</strong><pre>' + JSON.stringify(payload, null, 2) + '</pre></div>';
+                } catch (e) {
+                    html += '<div class="status error"><strong>⚠️ Unable to decode token</strong></div>';
+                }
+            } else {
+                html += '<div class="status error"><strong>❌ No admin_token found</strong><br>You are NOT logged in!</div>';
+            }
+
+            // Check refresh token
+            if (adminRefreshToken) {
+                html += '<div class="status success"><strong>✅ admin_refresh_token Found</strong></div>';
+            } else {
+                html += '<div class="status error"><strong>❌ No admin_refresh_token found</strong></div>';
+            }
+
+            // Check user data
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    html += '<div class="status success"><strong>✅ User Data Found</strong></div>';
+                    html += '<div class="info"><strong>User Info:</strong><pre>' + JSON.stringify(userData, null, 2) + '</pre></div>';
+                } catch (e) {
+                    html += '<div class="status error"><strong>⚠️ User data found but invalid JSON</strong></div>';
+                }
+            } else {
+                html += '<div class="status error"><strong>❌ No user data found</strong></div>';
+            }
+
+            // Check all localStorage keys
+            html += '<div class="info"><strong>📦 All localStorage keys:</strong><pre>';
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                html += key + '\n';
+            }
+            html += '</pre></div>';
+
+            // Recommendations
+            html += '<h3>📋 Recommendations:</h3><ul>';
+            if (!adminToken) {
+                html += '<li><strong>Action Required:</strong> Login at <a href="http://localhost:3000/admin/login">http://localhost:3000/admin/login</a></li>';
+            } else {
+                const tokenParts = adminToken.split('.');
+                const payload = JSON.parse(atob(tokenParts[1]));
+                const exp = new Date(payload.exp * 1000);
+                if (exp < new Date()) {
+                    html += '<li><strong>Token Expired:</strong> Please login again</li>';
+                } else {
+                    html += '<li><strong>✅ You are authenticated!</strong> POS should work now.</li>';
+                    html += '<li>Test POS at: <a href="http://localhost:3000/admin/pos/dashboard">http://localhost:3000/admin/pos/dashboard</a></li>';
+                }
+            }
+            html += '</ul>';
+
+            statusDiv.innerHTML = html;
+        }
+
+        function clearAuth() {
+            if (confirm('This will log you out. Continue?')) {
+                localStorage.removeItem('admin_token');
+                localStorage.removeItem('admin_refresh_token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('token'); // Old token if exists
+                alert('✅ Authentication cleared! You can now login again.');
+                checkAuth();
+            }
+        }
+
+        // Check on load
+        checkAuth();
+    </script>
+</body>
+</html>

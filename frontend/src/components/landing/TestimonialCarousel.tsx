@@ -34,9 +34,9 @@ const TestimonialCarousel: React.FC = () => {
   return (
     <section aria-labelledby="testimonial-heading" className="bg-white py-12 px-4 rounded-lg shadow-md max-w-4xl mx-auto mb-12">
       <h2 id="testimonial-heading" className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 text-center">What Our Customers Say</h2>
-      <div 
-        className="relative overflow-hidden min-h-[280px]" 
-        onMouseEnter={() => setIsPaused(true)} 
+      <div
+        className="relative overflow-hidden min-h-[280px]"
+        onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         role="region"
         aria-live="polite"
@@ -46,8 +46,8 @@ const TestimonialCarousel: React.FC = () => {
           <div
             key={`${t.name}-${t.date}`}
             className={`flex flex-col items-center justify-center p-6 transition-all duration-700 ease-in-out absolute inset-0 ${
-              i === active 
-                ? 'opacity-100 translate-x-0' 
+              i === active
+                ? 'opacity-100 translate-x-0'
                 : 'opacity-0 translate-x-full pointer-events-none'
             }`}
             tabIndex={i === active ? 0 : -1}
@@ -68,9 +68,9 @@ const TestimonialCarousel: React.FC = () => {
             <p className="text-gray-700 text-base mb-2 text-center max-w-md">"{t.text}"</p>
             <div className="flex gap-1 mb-2" role="img" aria-label={`Rating: ${t.rating} out of 5 stars`}>
               {Array.from({ length: 5 }).map((_, star) => (
-                <FiStar 
-                  key={star} 
-                  aria-hidden="true" 
+                <FiStar
+                  key={star}
+                  aria-hidden="true"
                   className={`w-5 h-5 ${star < t.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                 />
               ))}

@@ -1,6 +1,6 @@
 /**
  * Enhanced Cart Context Tests
- * 
+ *
  * Tests for enterprise-grade cart state management including:
  * - Optimistic updates
  * - Error handling and rollback
@@ -33,14 +33,14 @@ const { ordersAPI } = require('../services/api');
 
 // Test component that uses the cart context
 const TestComponent = () => {
-  const { 
-    cartCount, 
+  const {
+    cartCount,
     cart,
     loading,
     error,
-    addToCart, 
-    updateCartItem, 
-    removeFromCart, 
+    addToCart,
+    updateCartItem,
+    removeFromCart,
     moveToWishlist,
     clearError
   } = useCart();
@@ -159,7 +159,7 @@ describe('Enhanced CartContext', () => {
       }, { timeout: 3000 });
 
       const addButton = screen.getByTestId('add-to-cart');
-      
+
       await act(async () => {
         addButton.click();
       });
@@ -194,7 +194,7 @@ describe('Enhanced CartContext', () => {
       }, { timeout: 3000 });
 
       const removeButton = screen.getByTestId('remove-item');
-      
+
       await act(async () => {
         removeButton.click();
       });
@@ -229,7 +229,7 @@ describe('Enhanced CartContext', () => {
       }, { timeout: 3000 });
 
       const updateButton = screen.getByTestId('update-item');
-      
+
       await act(async () => {
         updateButton.click();
       });
@@ -261,7 +261,7 @@ describe('Enhanced CartContext', () => {
       }, { timeout: 3000 });
 
       const addButton = screen.getByTestId('add-to-cart');
-      
+
       await act(async () => {
         addButton.click();
       });
@@ -291,7 +291,7 @@ describe('Enhanced CartContext', () => {
       }, { timeout: 3000 });
 
       const addButton = screen.getByTestId('add-to-cart');
-      
+
       await act(async () => {
         addButton.click();
       });
@@ -301,7 +301,7 @@ describe('Enhanced CartContext', () => {
       }, { timeout: 3000 });
 
       const clearButton = screen.getByTestId('clear-error');
-      
+
       await act(async () => {
         clearButton.click();
       });
@@ -323,7 +323,7 @@ describe('Enhanced CartContext', () => {
       }, { timeout: 3000 });
 
       const addButton = screen.getByTestId('add-to-cart');
-      
+
       await act(async () => {
         addButton.click();
         addButton.click();
@@ -347,7 +347,7 @@ describe('Enhanced CartContext', () => {
       }, { timeout: 3000 });
 
       const removeButton = screen.getByTestId('remove-item');
-      
+
       await act(async () => {
         removeButton.click();
         removeButton.click();

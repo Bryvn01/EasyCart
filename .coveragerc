@@ -1,0 +1,48 @@
+# .coveragerc - Coverage.py configuration for Django backend
+[run]
+source = apps
+omit =
+    */migrations/*
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */venv/*
+    */env/*
+    */.venv/*
+    */node_modules/*
+    */staticfiles/*
+    */media/*
+    manage.py
+    */wsgi.py
+    */asgi.py
+    */settings.py
+    */admin.py
+    */apps.py
+    */__init__.py
+
+parallel = True
+concurrency = multiprocessing
+
+[report]
+precision = 2
+skip_covered = False
+skip_empty = True
+sort = Cover
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    @abc.abstractmethod
+    class .*\bProtocol\):
+    @overload
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml
