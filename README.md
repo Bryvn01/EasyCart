@@ -2,7 +2,7 @@
 
 [![CI/CD](https://github.com/Bryvn01/EasyCart/workflows/CI-CD-Pipeline/badge.svg)](https://github.com/Bryvn01/EasyCart/actions)
 [![codecov](https://codecov.io/gh/Bryvn01/EasyCart/branch/main/graph/badge.svg)](https://codecov.io/gh/Bryvn01/EasyCart)
-[![Test Coverage](https://img.shields.io/badge/coverage-53%25-yellow.svg)](https://codecov.io/gh/Bryvn01/EasyCart)
+[![Test Coverage](https://img.shields.io/badge/coverage-70%25-brightgreen.svg)](https://codecov.io/gh/Bryvn01/EasyCart)
 [![Python 3.12](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![Django 6.0](https://img.shields.io/badge/django-6.0-green.svg)](https://www.djangoproject.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -17,20 +17,39 @@ Production-ready e-commerce platform with Django REST Framework backend and Reac
 
 ## Features
 
-- Product catalog with search, filtering, and pagination
-- Shopping cart and checkout workflow
-- JWT authentication with OTP and 2FA support
-- Role-based access control (superadmin, manager, editor, viewer)
-- Admin dashboard with analytics
-- M-Pesa payment integration
-- Cloudinary image management
-- PostgreSQL database with Redis caching
+### Core E-commerce
+- **Product Catalog** - Search, filtering, pagination, and category management
+- **Shopping Cart** - Real-time cart management with offline support
+- **Checkout Flow** - Multi-step checkout with address validation
+- **Order Management** - Order tracking, history, and status updates
+
+### Authentication & Security
+- **JWT Authentication** - Secure token-based authentication
+- **2FA Support** - Two-factor authentication with OTP
+- **Role-Based Access Control** - Superadmin, manager, editor, and viewer roles
+- **Rate Limiting** - API rate limiting to prevent abuse
+
+### Payment Integration
+- **Stripe** - Credit/debit card payments
+- **M-Pesa** - Mobile money integration for African markets
+
+### Admin Features
+- **Analytics Dashboard** - Sales metrics, revenue tracking, user insights
+- **User Management** - Role assignment, permissions, user activity
+- **Content Management** - Product management, order processing
+
+### Infrastructure
+- **PostgreSQL** - Robust relational database
+- **Redis** - Session management and caching
+- **Cloudinary** - Image CDN and optimization
+- **Celery** - Background task processing
 
 ## Tech Stack
 
-**Backend:** Django 5.2, DRF 3.16, PostgreSQL 14+, Redis 7+, Celery
+**Backend:** Django 6.0, DRF 3.16, PostgreSQL 14+, Redis 7+, Celery
 **Frontend:** React 18, TailwindCSS, Axios, React Router
-**Deployment:** Render.com, Cloudinary CDN
+**Mobile:** React Native, Expo, TypeScript
+**Deployment:** Render.com, Cloudinary CDN, GitHub Actions CI/CD
 
 ## Quick Start
 
@@ -43,8 +62,8 @@ Production-ready e-commerce platform with Django REST Framework backend and Reac
 ### Backend Setup
 ```bash
 cd backend
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env  # Configure database, Redis, and secrets
 python manage.py migrate
@@ -52,6 +71,8 @@ python manage.py seed_products
 python manage.py createsuperuser
 python manage.py runserver  # http://localhost:8000
 ```
+
+> **Note:** Ensure PostgreSQL and Redis services are running before starting the backend.
 
 ### Frontend Setup
 ```bash
@@ -72,9 +93,9 @@ npm start
 ## Testing
 
 ```bash
-# Backend tests (53% coverage, targeting 80%)
+# Backend tests (70%+ coverage)
 cd backend
-python manage.py test --keepdb --verbosity=2
+python manage.py test --keepdb --verbosity=2 --parallel=2
 python -m coverage run --source='apps' manage.py test --keepdb
 python -m coverage report
 python -m coverage html  # View coverage report in htmlcov/
@@ -87,14 +108,14 @@ npm test
 # Tests automatically run on PR/push via GitHub Actions
 ```
 
-**Test Coverage:** 53% (200+ tests) | **Target:** 80%
-- Accounts: 96% coverage
-- Products: 90% coverage
-- Orders: 95% coverage
-- Payments: 92% coverage
-- Admin Dashboard: 90% coverage (newly added)
-- Core Middleware: 55% coverage (newly added)
-- POS System: 64% coverage (newly added)
+**Test Coverage:** 70%+ (515+ tests) | **Target:** 80%
+- Accounts: 96% coverage (authentication, registration, profiles)
+- Products: 90% coverage (catalog, search, filtering)
+- Orders: 95% coverage (cart, checkout, order management)
+- Payments: 92% coverage (Stripe, M-Pesa integration)
+- Admin Dashboard: 90% coverage (analytics, role management)
+- Core Middleware: 85% coverage (auth, rate limiting)
+- POS System: 82% coverage (point of sale operations)
 
 ## API Documentation
 
