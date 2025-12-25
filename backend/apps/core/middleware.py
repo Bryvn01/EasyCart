@@ -240,6 +240,7 @@ class AuditLogMiddleware:
 
             # Prepare audit log entry
             audit_data = {
+                "event": "AUDIT",  # explicit marker to survive any log formatting
                 "timestamp": timezone.now().isoformat(),
                 "user": {
                     "id": getattr(user, "id", None),
