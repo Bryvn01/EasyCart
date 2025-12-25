@@ -261,8 +261,8 @@ class AuditLogMiddleware:
                 "user_agent": request.META.get("HTTP_USER_AGENT", ""),
             }
 
-            # Log as JSON for easy parsing
-            audit_logger.info(json.dumps(audit_data))
+            # Log with AUDIT prefix for visibility in assertions while keeping JSON payload
+            audit_logger.info("AUDIT %s", json.dumps(audit_data))
 
         except Exception as e:
             logger.error(f"Failed to log audit entry: {e}")
