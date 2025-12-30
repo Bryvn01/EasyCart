@@ -1,4 +1,6 @@
-﻿# Environment variables
+﻿# Ignore test output logs
+backend/test_logs/*.txt
+# Environment variables
 # Ignore all env files by default, but keep safe templates/samples in git.
 .env*
 !.env.example
