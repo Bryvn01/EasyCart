@@ -1,15 +1,19 @@
+import os
+import sys
+import unittest
+import django
+from apps.accounts.otp_service import send_otp_sms, send_otp_whatsapp
+
 """Quick test script for Twilio configuration"""
 
-import os
-import django
-import sys
+# Skip by default in CI to avoid live Twilio calls; enable with ALLOW_LIVE_EXTERNAL_TESTS=1
+if os.getenv("ALLOW_LIVE_EXTERNAL_TESTS") != "1":
+    raise unittest.SkipTest("Live Twilio test disabled by default")
 
 # Add backend to path
 sys.path.insert(0, "C:/EasyCart/backend")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
 django.setup()
-
-from apps.accounts.otp_service import send_otp_sms, send_otp_whatsapp
 
 print("=" * 60)
 print("🧪 TWILIO CONFIGURATION TEST")

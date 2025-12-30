@@ -7,7 +7,19 @@ class IsPOSStaff(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and request.user.is_staff
+        user = request.user
+        # Only allow users who are authenticated, staff, and have POS access
+        if not user or not user.is_authenticated:
+            return False
+        # Must be staff
+        if not getattr(user, "is_staff", False):
+            return False
+        # Must have is_pos_staff attribute True, or be in POS Staff group
+        if hasattr(user, "is_pos_staff"):
+            if user.is_pos_staff:
+                return True
+        # Fallback: check group membership
+        return user.groups.filter(name__iexact="POS Staff").exists()
 
 
 class HasPOSPermission(permissions.BasePermission):

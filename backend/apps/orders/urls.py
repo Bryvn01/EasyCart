@@ -22,4 +22,10 @@ urlpatterns = [
     path("payment/initiate/", views.initiate_payment, name="initiate-payment"),
     path("payment/mpesa/callback/", views.mpesa_callback, name="mpesa-callback"),
     path("payment/status/<int:order_id>/", views.payment_status, name="payment-status"),
+    path(
+        "<int:pk>/update-status/",
+        views.update_order_status,
+        name="update-order-status",
+    ),
+    path("<int:pk>/cancel/", views.cancel_order, name="cancel-order"),
 ] + admin_router.urls

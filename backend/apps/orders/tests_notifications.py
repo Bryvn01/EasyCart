@@ -113,8 +113,9 @@ class WhatsAppServiceTests(TestCase):
         self.user = User.objects.create_user(
             username="customer", email="customer@test.com", password="Pass123!"
         )
-        self.user.profile.phone_number = "+254712345678"
-        self.user.profile.save()
+        # Use built-in phone_number field; profile model does not exist for custom User
+        self.user.phone_number = "+254712345678"
+        self.user.save(update_fields=["phone_number"])
 
         self.category = Category.objects.create(
             name="Electronics", description="Electronic items"
@@ -142,7 +143,7 @@ class WhatsAppServiceTests(TestCase):
         mock_twilio.return_value = mock_client
 
         message_data = {
-            "to": f"whatsapp:{self.user.profile.phone_number}",
+            "to": f"whatsapp:{self.user.phone_number}",
             "body": f"Your order #{self.order.id} has been confirmed!",
             "from_": "whatsapp:+14155238886",
         }

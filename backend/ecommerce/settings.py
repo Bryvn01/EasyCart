@@ -1,15 +1,30 @@
-# Allow test client host
+import os
+import sys
+import logging
+from pathlib import Path
+from datetime import timedelta
+from decouple import config, UndefinedValueError, Config, RepositoryEnv, Csv
 from django.core.exceptions import ImproperlyConfigured
-from decouple import UndefinedValueError
 from sentry_sdk.integrations.django import DjangoIntegration
 import dj_database_url
 import sentry_sdk
-import logging
-from datetime import timedelta
-from decouple import Config, RepositoryEnv, Csv
-from pathlib import Path
-import sys
-import os
+
+# --- Production Security Settings ---
+# --- Security: Only enforce SSL redirect in production ---
+
+# Security Settings
+SECRET_KEY = config("SECRET_KEY")
+DEBUG = config("DEBUG", default="False").strip().lower() in ("true", "1", "yes", "on")
+
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+APPEND_SLASH = True
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,8 +71,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "django_filters",
-    "django_extensions",
-    "sslserver",
     "simple_history",
     "cloudinary",
     "cloudinary_storage",
@@ -70,6 +83,13 @@ INSTALLED_APPS = [
     "apps.support",
     "apps.pos",
 ]
+
+# Dev-only apps (only load if DEBUG is True)
+if DEBUG:
+    INSTALLED_APPS += [
+        "django_extensions",
+        "sslserver",
+    ]
 
 # Cloudinary storage configuration
 CLOUDINARY_STORAGE = {
@@ -85,11 +105,12 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "apps.core.middleware.DomainLockMiddleware",  # Prevent unauthorized domains
     "apps.core.middleware.BrandingMiddleware",  # Add copyright headers
+    "apps.core.middleware.ContentSecurityPolicyMiddleware",  # Add CSP header for XSS mitigation
     "ecommerce.correlation_middleware.CorrelationIDMiddleware",  # Request tracing
     "ecommerce.middleware.DatabaseRetryMiddleware",  # Handle transient DB errors
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "ecommerce.middleware.DisableCSRFForAPIMiddleware",  # Disable CSRF for /api/* endpoints
+    # CSRF protection enforced for all endpoints
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "apps.core.middleware.AuditLogMiddleware",  # Audit superadmin actions
@@ -281,23 +302,6 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    # Global throttling configuration
-    "DEFAULT_THROTTLE_CLASSES": [
-        "apps.throttling.BurstRateThrottle",
-        "apps.throttling.SustainedRateThrottle",
-    ],
-    "DEFAULT_THROTTLE_RATES": {
-        "anon": "100/hour",
-        "user": "1000/hour",
-        "burst": "60/min",
-        "sustained": "1000/hour",
-        "payment": "10/min",
-        "otp": "5/hour",
-        "login": "5/5min",
-        "registration": "3/hour",
-        "strict_anon": "100/hour",
-        "progressive": "100/min",
-    },
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
     "DEFAULT_FILTER_BACKENDS": [
@@ -371,7 +375,6 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-# CSRF Settings for JWT API
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -380,9 +383,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://easycart-frontend-wj9x.onrender.com",
     "https://easycart-admin-08xf.onrender.com",
 ]
-# Exempt API endpoints from CSRF (handled by middleware)
-CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF cookie if needed
-CSRF_USE_SESSIONS = False  # Don't tie CSRF to sessions (we use JWT)
+CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript from reading CSRF cookie
+CSRF_USE_SESSIONS = False  # Don't tie CSRF to sessions (JWT is used)
 
 # Security Headers
 SECURE_HSTS_SECONDS = 31536000  # 1 year

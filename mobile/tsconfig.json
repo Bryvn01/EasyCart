@@ -1,8 +1,8 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
-    "baseUrl": "./src",
+    "jsx": "react-native",
+    "lib": ["ES2020", "DOM"],
     "paths": {
       "@/*": ["*"],
       "@components/*": ["components/*"],
@@ -16,10 +16,9 @@
       "@theme/*": ["theme/*"],
       "@constants/*": ["constants/*"],
       "@assets/*": ["../assets/*"]
-    },
-    "types": ["react-native", "jest"]
+    }
   },
-  "include": ["src/**/*", "**/*.ts", "**/*.tsx"],
+  "include": ["src/**/*", "**/*.ts", "**/*.tsx", "App.tsx", "index.js"],
   "exclude": [
     "node_modules",
     "babel.config.js",

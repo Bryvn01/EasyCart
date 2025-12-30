@@ -14,7 +14,7 @@
 import axios, {
   AxiosInstance,
   AxiosError,
-  AxiosRequestConfig,
+
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from 'axios';

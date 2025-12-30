@@ -109,7 +109,7 @@ urlpatterns = [
     path(
         "api/metrics/", MetricsView.as_view(), name="metrics"
     ),  # Staff-only metrics endpoint
-    path("admin/", admin.site.urls, name="django-admin"),
+    path(settings.ADMIN_URL, admin.site.urls, name="django-admin"),
     path("api/auth/", include("apps.accounts.urls")),
     path("api/products/", include("apps.products.urls")),
     path("api/orders/", include("apps.orders.urls")),

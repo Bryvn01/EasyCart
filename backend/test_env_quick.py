@@ -1,14 +1,19 @@
+import os
+import sys
+import unittest
+from pathlib import Path
+from decouple import Config, RepositoryEnv
+
 """Quick test to verify TWILIO_WHATSAPP_FROM loads correctly"""
 
-import sys
-from pathlib import Path
+# Skip live .env Twilio inspection unless explicitly allowed to avoid leaking secrets in CI
+if os.getenv("ALLOW_LIVE_EXTERNAL_TESTS") != "1":
+    raise unittest.SkipTest("Twilio env inspection disabled by default")
 
 backend_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(backend_dir))
 
 # Force fresh config load
-from decouple import Config, RepositoryEnv
-
 env_file = backend_dir / ".env"
 config = Config(RepositoryEnv(str(env_file)))
 

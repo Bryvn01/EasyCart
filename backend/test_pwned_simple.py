@@ -1,16 +1,20 @@
+import os
+import unittest
+import django
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+
 """
 Simple test for pwned password validation
 """
 
-import os
-import django
+# Skip networked pwned-password checks unless explicitly allowed
+if os.getenv("ALLOW_LIVE_EXTERNAL_TESTS") != "1":
+    raise unittest.SkipTest("Pwned password live test disabled by default")
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
 django.setup()
-
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 

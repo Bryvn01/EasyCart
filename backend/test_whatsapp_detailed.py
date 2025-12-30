@@ -5,19 +5,29 @@ Tests Twilio WhatsApp configuration with full error details
 
 import os
 import sys
+import unittest
 from pathlib import Path
 
-# Setup Django
-backend_dir = Path(__file__).resolve().parent
-sys.path.insert(0, str(backend_dir))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
 
-import django
+backend_dir = Path(__file__).resolve().parent
+sys.path.insert(0, str(backend_dir))  # noqa: E402
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")  # noqa: E402
+
+# Skip live Twilio calls unless explicitly allowed (opt-in)
+if os.getenv("ALLOW_LIVE_EXTERNAL_TESTS") != "1":
+    raise unittest.SkipTest("Live Twilio WhatsApp test disabled by default")
+
+import django  # noqa: E402
+from decouple import config  # noqa: E402
+from twilio.rest import Client  # noqa: E402
 
 django.setup()
 
-from decouple import config
-from twilio.rest import Client
+# Skip live Twilio calls unless explicitly allowed (opt-in)
+if os.getenv("ALLOW_LIVE_EXTERNAL_TESTS") != "1":
+    raise unittest.SkipTest("Live Twilio WhatsApp test disabled by default")
+
+django.setup()
 
 print("=" * 70)
 print("WHATSAPP DELIVERY TEST")
@@ -32,13 +42,23 @@ TWILIO_WHATSAPP_FROM = config("TWILIO_WHATSAPP_FROM", default="")
 
 print("\n1. Checking Credentials:")
 print(
-    f"   Account SID: {TWILIO_ACCOUNT_SID[:10]}... (length: {len(TWILIO_ACCOUNT_SID)})"
+    "   Account SID: {}... (length: {})".format(
+        TWILIO_ACCOUNT_SID[:10], len(TWILIO_ACCOUNT_SID)
+    )
 )
-print(f"   Auth Token: {TWILIO_AUTH_TOKEN[:10]}... (length: {len(TWILIO_AUTH_TOKEN)})")
-print(f"   Phone Number: {TWILIO_PHONE_NUMBER}")
-print(f"   WhatsApp Number: {TWILIO_WHATSAPP_NUMBER}")
 print(
-    f"   WhatsApp From: {TWILIO_WHATSAPP_FROM if TWILIO_WHATSAPP_FROM else f'whatsapp:{TWILIO_PHONE_NUMBER}'}"
+    "   Auth Token: {}... (length: {})".format(
+        TWILIO_AUTH_TOKEN[:10], len(TWILIO_AUTH_TOKEN)
+    )
+)
+print("   Phone Number: {}".format(TWILIO_PHONE_NUMBER))
+print("   WhatsApp Number: {}".format(TWILIO_WHATSAPP_NUMBER))
+print(
+    "   WhatsApp From: {}".format(
+        TWILIO_WHATSAPP_FROM
+        if TWILIO_WHATSAPP_FROM
+        else f"whatsapp:{TWILIO_PHONE_NUMBER}"
+    )
 )
 
 # Create Twilio client
@@ -64,25 +84,27 @@ print(f"   Message: Your EasyCart verification code is: {test_otp}")
 
 try:
     message = client.messages.create(
-        body=f"Your EasyCart verification code is: {test_otp}\nValid for 10 minutes.",
+        body="Your EasyCart verification code is: {}\nValid for 10 minutes.".format(
+            test_otp
+        ),
         from_=whatsapp_from,
-        to=f"whatsapp:{test_phone}",
+        to="whatsapp:{}".format(test_phone),
     )
-    print(f"\n   ✅ WhatsApp message sent!")
-    print(f"   Message SID: {message.sid}")
-    print(f"   Status: {message.status}")
-    print(f"   Direction: {message.direction}")
-    print(f"   Price: {message.price} {message.price_unit}")
+    print("\n   ✅ WhatsApp message sent!")
+    print("   Message SID: {}".format(message.sid))
+    print("   Status: {}".format(message.status))
+    print("   Direction: {}".format(message.direction))
+    print("   Price: {} {}".format(message.price, message.price_unit))
 except Exception as e:
-    print(f"\n   ❌ WhatsApp send failed!")
-    print(f"   Error Type: {type(e).__name__}")
-    print(f"   Error Message: {str(e)}")
+    print("\n   ❌ WhatsApp send failed!")
+    print("   Error Type: {}".format(type(e).__name__))
+    print("   Error Message: {}".format(str(e)))
 
     # Check if it's a Twilio error with more details
     if hasattr(e, "code"):
-        print(f"   Error Code: {e.code}")
+        print("   Error Code: {}".format(e.code))
     if hasattr(e, "msg"):
-        print(f"   Detailed Message: {e.msg}")
+        print("   Detailed Message: {}".format(e.msg))
 
     # Common error codes
     print("\n   Common Issues:")

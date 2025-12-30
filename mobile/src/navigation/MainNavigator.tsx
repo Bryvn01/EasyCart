@@ -1,3 +1,26 @@
+// Top-level tab bar icon function for use in screenOptions
+function getTabBarIcon(route: { name: string }) {
+  return ({ focused, color, size }: { focused: boolean; color: string; size: number }) => {
+    let iconName: string;
+    switch (route.name) {
+      case 'HomeTab':
+        iconName = focused ? 'home' : 'home-outline';
+        break;
+      case 'CategoriesTab':
+        iconName = focused ? 'view-grid' : 'view-grid-outline';
+        break;
+      case 'CartTab':
+        iconName = focused ? 'cart' : 'cart-outline';
+        break;
+      case 'ProfileTab':
+        iconName = focused ? 'account' : 'account-outline';
+        break;
+      default:
+        iconName = 'help-circle-outline';
+    }
+    return <Icon name={iconName} size={size} color={color} />;
+  };
+}
 /**
  * Main Navigator
  *
@@ -31,7 +54,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 // Placeholder components (replace with actual screens)
 import { View, Text, StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
+
 
 const PlaceholderScreen = ({ title }: { title: string }) => (
   <View style={styles.placeholder}>
@@ -275,28 +298,7 @@ export default function MainNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string;
-
-          switch (route.name) {
-            case 'HomeTab':
-              iconName = focused ? 'home' : 'home-outline';
-              break;
-            case 'CategoriesTab':
-              iconName = focused ? 'view-grid' : 'view-grid-outline';
-              break;
-            case 'CartTab':
-              iconName = focused ? 'cart' : 'cart-outline';
-              break;
-            case 'ProfileTab':
-              iconName = focused ? 'account' : 'account-outline';
-              break;
-            default:
-              iconName = 'help-circle-outline';
-          }
-
-          return <Icon name={iconName} size={size} color={color} />;
-        },
+          tabBarIcon: getTabBarIcon(route),
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
         tabBarStyle: {
@@ -315,6 +317,7 @@ export default function MainNavigator() {
         headerShown: false, // Headers are handled by nested stacks
       })}
     >
+
       <Tab.Screen
         name="HomeTab"
         component={HomeTabNavigator}

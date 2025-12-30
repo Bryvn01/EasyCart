@@ -1,3 +1,4 @@
+from django_ratelimit.decorators import ratelimit
 from rest_framework import status, generics, permissions
 from rest_framework.decorators import (
     api_view,
@@ -112,12 +113,23 @@ def register(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 @authentication_classes([])  # No authentication required for login
-# @ratelimit(key="ip", rate="100/m", method="POST", block=False)  # Disabled for testing
+@ratelimit(key="ip", rate="5/m", method="POST", block=True)
 def login(request):
     # Rate limiting disabled for testing - re-enable in production
     serializer = UserLoginSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.validated_data["user"]
+
+        # Block login for inactive, blocked, or unverified users (best practice)
+        if (
+            not user.is_active
+            or getattr(user, "is_blocked", False)
+            or not getattr(user, "is_verified", True)
+        ):
+            return Response(
+                {"detail": "Account is inactive, blocked, or not verified."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Device fingerprinting and suspicious activity detection
         is_suspicious, reason = detect_suspicious_activity(user, request)
@@ -143,10 +155,7 @@ def login(request):
 
         # Normal login without 2FA
         refresh = RefreshToken.for_user(user)
-
-        # Track device login
         track_device_login(user, request, str(refresh.access_token))
-
         return Response(
             {
                 "user": UserSerializer(user).data,
@@ -188,6 +197,38 @@ def profile(request):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def change_password(request):
+    old_password = request.data.get("old_password", "")
+    new_password = request.data.get("new_password", "")
+    new_password_confirm = request.data.get("new_password_confirm", "")
+
+    if not request.user.check_password(old_password):
+        return Response(
+            {"old_password": ["Old password is incorrect"]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if new_password != new_password_confirm:
+        return Response(
+            {"new_password_confirm": ["Passwords do not match"]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if len(new_password) < 8:
+        return Response(
+            {"new_password": ["Password must be at least 8 characters"]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    request.user.set_password(new_password)
+    request.user.save()
+    return Response(
+        {"message": "Password changed successfully"}, status=status.HTTP_200_OK
+    )
 
 
 @api_view(["POST"])
@@ -316,3 +357,15 @@ def django_admin_access(request):
         },
         status=status.HTTP_200_OK,
     )
+
+
+@api_view(["GET"])
+@permission_classes([IsAdminUser])
+def admin_dashboard(request):
+    return Response({"message": "Admin dashboard available"}, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def logout(request):
+    return Response({"message": "Logged out"}, status=status.HTTP_200_OK)

@@ -6,7 +6,7 @@
 import apiClient from './client';
 import type {
   Cart,
-  CartItem,
+
   Order,
   OrderListResponse,
   CheckoutRequest,

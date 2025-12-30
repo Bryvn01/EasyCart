@@ -31,14 +31,13 @@ import type { RegisterScreenProps } from '@/navigation/types';
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
+
 
   const { register, isLoading, error, clearError } = useAuthStore();
 
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -53,7 +52,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
     },
   });
 
-  const password = watch('password');
+
 
   // Clear error on unmount
   useEffect(() => {
@@ -75,7 +74,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       // Remove confirmPassword before sending to API
-      const { confirmPassword, acceptTerms, ...registerData } = data;
+      const { ...registerData } = data;
 
       await register(registerData);
 
@@ -256,7 +255,6 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
                 style={styles.termsContainer}
                 onPress={() => {
                   const newValue = !value;
-                  setAcceptedTerms(newValue);
                   onChange(newValue);
                 }}
                 accessibilityRole="checkbox"

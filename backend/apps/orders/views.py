@@ -610,3 +610,60 @@ def payment_status(request, order_id):
             "total_amount": order.total_amount,
         }
     )
+
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def update_order_status(request, pk):
+    """Allow admins to update order status."""
+    order = get_object_or_404(Order, pk=pk)
+
+    # Only admins/superadmins can update order status
+    if not getattr(request.user, "is_admin", False) and not getattr(
+        request.user, "is_staff", False
+    ):
+        return Response(
+            {"detail": "Not authorized to update orders"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    new_status = request.data.get("status")
+    if not new_status:
+        return Response(
+            {"detail": "Missing status"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    order.status = escape(str(new_status))
+    order.save(update_fields=["status"])
+
+    return Response({"status": order.status}, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def cancel_order(request, pk):
+    """Allow a user to cancel their own order if not yet shipped."""
+    order = get_object_or_404(Order, pk=pk)
+
+    if order.user != request.user and not getattr(request.user, "is_admin", False):
+        return Response(
+            {"detail": "Not authorized to cancel this order"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    if order.status == "shipped":
+        return Response(
+            {"detail": "Cannot cancel a shipped order"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    order.status = "cancelled"
+    order.save(update_fields=["status"])
+
+    # Restore product stock for all items in the cancelled order (best practice)
+    for item in getattr(order, "items", []).all() if hasattr(order, "items") else []:
+        product = item.product
+        product.stock = product.stock + item.quantity
+        product.save(update_fields=["stock"])
+
+    return Response({"status": order.status}, status=status.HTTP_200_OK)

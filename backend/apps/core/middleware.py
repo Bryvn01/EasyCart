@@ -1,8 +1,3 @@
-"""
-EasyCart Custom Middleware
-Copyright (c) 2025 Bryvn01. All rights reserved.
-"""
-
 import logging
 import json
 from django.http import JsonResponse, HttpResponse
@@ -10,6 +5,30 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 from .license import LicenseVerifier
+
+"""
+EasyCart Custom Middleware
+Copyright (c) 2025 Bryvn01. All rights reserved.
+"""
+
+
+class ContentSecurityPolicyMiddleware:
+    """
+    Adds a strict Content Security Policy header to all HTML responses to mitigate XSS.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if response.get("Content-Type", "").startswith("text/html"):
+            response["Content-Security-Policy"] = (
+                "default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+                "object-src 'none'; frame-ancestors 'none'; base-uri 'self';"
+            )
+        return response
+
 
 logger = logging.getLogger(__name__)
 audit_logger = logging.getLogger("audit")

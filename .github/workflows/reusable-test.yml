@@ -91,6 +91,24 @@ jobs:
         with:
           fetch-depth: 0  # Full history for better analysis
 
+      - name: Install system tools (psql, redis-cli)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client redis-tools
+
+      - name: Wait for Postgres and Redis
+        env:
+          PGPASSWORD: ${{ env.DB_PASSWORD }}
+        run: |
+          for i in {1..30}; do
+            pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER && \
+            redis-cli -h localhost ping && break
+            echo "Waiting for services... ($i/30)"
+            sleep 2
+          done
+          pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER
+          redis-cli -h localhost ping
+
       - name: Set up Python ${{ inputs.python-version }}
         uses: actions/setup-python@v5
         with:

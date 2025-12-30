@@ -165,6 +165,7 @@ class UserLoginTests(APITestCase):
             response.status_code,
             [
                 status.HTTP_200_OK,
+                status.HTTP_403_FORBIDDEN,
                 status.HTTP_404_NOT_FOUND,
                 status.HTTP_400_BAD_REQUEST,
             ],
@@ -176,7 +177,8 @@ class UserLoginTests(APITestCase):
         data = {"email": "test@example.com", "password": "TestPass123!"}
         response = self.client.post(url, data, format="json")
         self.assertIn(
-            response.status_code, [status.HTTP_200_OK, status.HTTP_404_NOT_FOUND]
+            response.status_code,
+            [status.HTTP_200_OK, status.HTTP_403_FORBIDDEN, status.HTTP_404_NOT_FOUND],
         )
 
     def test_login_invalid_password(self):

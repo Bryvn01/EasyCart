@@ -106,18 +106,6 @@ class DatabaseRetryMiddleware(MiddlewareMixin):
         return self.get_response(request)
 
 
-class DisableCSRFForAPIMiddleware(MiddlewareMixin):
-    """
-    Disable CSRF protection for API endpoints that use JWT authentication.
-    CSRF is not needed for stateless JWT authentication.
-    """
-
-    def process_request(self, request):
-        if request.path.startswith("/api/"):
-            setattr(request, "_dont_enforce_csrf_checks", True)
-            logger.info(f"CSRF disabled for {request.path}")
-
-
 class ErrorHandlingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

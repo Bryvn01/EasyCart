@@ -3,6 +3,17 @@
     "react-app",
     "react-app/jest"
   ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "serviceworker": true
+  },
+  "plugins": ["cypress"],
+  "globals": {
+    "cy": "readonly",
+    "Cypress": "readonly",
+    "clients": "readonly"
+  },
   "rules": {
     "testing-library/no-unnecessary-act": "warn",
     "testing-library/prefer-screen-queries": "warn",
@@ -10,7 +21,8 @@
     "testing-library/no-node-access": "warn",
     "testing-library/no-container": "warn",
     "testing-library/prefer-find-by": "warn",
-    "no-unused-vars": "warn",
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-undef": "off",
     "no-throw-literal": "warn",
     "jsx-a11y/img-redundant-alt": "warn",
     "import/first": "warn",

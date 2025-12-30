@@ -43,7 +43,7 @@
     /* Prevent horizontal scroll */
     overflow-x: hidden;
     /* Smooth scrolling */
-    -webkit-overflow-scrolling: touch;
+
     /* Prevent iOS bounce - alternative approach */
     overscroll-behavior-y: none;
   }
@@ -87,22 +87,23 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    -webkit-user-select: none;
     user-select: none;
   }
 
   /* 5. IMPROVE SCROLL PERFORMANCE */
   .smooth-scroll {
-    -webkit-overflow-scrolling: touch;
+
     scroll-behavior: smooth;
   }
 
   /* Hardware acceleration for smooth animations */
   .gpu-accelerate {
-    transform: translateZ(0);
     -webkit-transform: translateZ(0);
+    transform: translateZ(0);
     will-change: transform;
-    backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   /* 6. FIX STICKY ELEMENTS */
@@ -128,7 +129,7 @@
   .modal-content {
     max-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 32px);
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+
   }
 
   /* 8. FORM INPUT FIXES */
@@ -257,6 +258,7 @@
     gap: 4px;
     /* Prevent selection */
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
     user-select: none;
   }
 

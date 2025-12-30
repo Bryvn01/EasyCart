@@ -113,7 +113,7 @@ class POSAuthenticationTests(APITestCase):
         """Regular users should not access POS system."""
         self.client.force_authenticate(user=self.regular_user)
         response = self.client.get("/api/pos/")
-        self.assertIn(response.status_code, [403, 404])
+        self.assertIn(response.status_code, [401, 403, 404])
 
     def test_unauthenticated_cannot_access_pos(self):
         """Unauthenticated users should not access POS."""

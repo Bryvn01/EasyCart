@@ -2,10 +2,11 @@ from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Sum, Count, Avg, Q, F
+from django.db.models import Sum, Count, Avg
+from django.db.models.functions import ExtractHour, TruncDate
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from datetime import datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal
 
 from apps.pos.models import (
@@ -14,15 +15,12 @@ from apps.pos.models import (
     POSTransactionItem,
     POSStaffPermission,
     POSDiscount,
-    POSReceipt,
 )
 from apps.pos.serializers import (
     POSSessionSerializer,
     POSTransactionSerializer,
-    POSTransactionItemSerializer,
     POSStaffPermissionSerializer,
     POSDiscountSerializer,
-    POSReceiptSerializer,
     ProductQuickSearchSerializer,
     POSDashboardStatsSerializer,
 )
@@ -38,9 +36,9 @@ from apps.products.models import Product
 
 
 class POSSessionViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for managing POS sessions.
-    """
+    """ViewSet for managing POS sessions."""
+
+    # Remove manual permission check; rely on DRF permission_classes and get_permissions
 
     queryset = POSSession.objects.all()
     serializer_class = POSSessionSerializer
@@ -58,12 +56,14 @@ class POSSessionViewSet(viewsets.ModelViewSet):
         return POSSession.objects.filter(staff=user)
 
     def get_permissions(self):
-        """Apply different permissions for different actions."""
+        """Apply best-practice permissions for all POS endpoints."""
+        # Only POS staff can access any POS endpoint by default
         if self.action == "create":
             return [IsAuthenticated(), IsPOSStaff(), CanOpenSession()]
         elif self.action in ["close_session", "reconcile"]:
             return [IsAuthenticated(), IsPOSStaff(), CanCloseSession()]
-        return super().get_permissions()
+        # Enforce IsAuthenticated and IsPOSStaff for all other actions (list, retrieve, etc.)
+        return [IsAuthenticated(), IsPOSStaff()]
 
     def create(self, request, *args, **kwargs):
         """Open a new POS session."""
@@ -146,10 +146,10 @@ class POSSessionViewSet(viewsets.ModelViewSet):
             .annotate(total=Sum("total_amount"), count=Count("id"))
         )
 
-        # Get hourly sales
+        # Get hourly sales (safe, no .extra)
         hourly_sales = (
             session.transactions.filter(status="completed")
-            .extra({"hour": "EXTRACT(hour FROM created_at)"})
+            .annotate(hour=ExtractHour("created_at"))
             .values("hour")
             .annotate(total=Sum("total_amount"), count=Count("id"))
             .order_by("hour")
@@ -567,29 +567,27 @@ class POSDashboardViewSet(viewsets.ViewSet):
 
         stats["top_products"] = list(top_products)
 
-        # Hourly sales (last 24 hours)
+        # Hourly sales (last 24 hours, safe)
         now = timezone.now()
         hourly_start = now - timedelta(hours=24)
         hourly_sales = (
             queryset.filter(created_at__gte=hourly_start)
-            .extra({"hour": "EXTRACT(hour FROM created_at)"})
+            .annotate(hour=ExtractHour("created_at"))
             .values("hour")
             .annotate(total=Sum("total_amount"), count=Count("id"))
             .order_by("hour")
         )
-
         stats["hourly_sales"] = list(hourly_sales)
 
-        # Daily sales (last 30 days)
+        # Daily sales (last 30 days, safe)
         daily_start = now - timedelta(days=30)
         daily_sales = (
             queryset.filter(created_at__gte=daily_start)
-            .extra({"date": "DATE(created_at)"})
+            .annotate(date=TruncDate("created_at"))
             .values("date")
             .annotate(total=Sum("total_amount"), count=Count("id"))
             .order_by("date")
         )
-
         stats["daily_sales"] = list(daily_sales)
 
         serializer = POSDashboardStatsSerializer(stats)
