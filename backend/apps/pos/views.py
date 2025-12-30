@@ -1,7 +1,8 @@
-from rest_framework import viewsets, status, filters
-from rest_framework.decorators import action
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, status, filters
+from rest_framework.decorators import action
 from django.db.models import Sum, Count, Avg
 from django.db.models.functions import ExtractHour, TruncDate
 from django.utils import timezone
@@ -9,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from datetime import timedelta
 from decimal import Decimal
 
+from .permissions import IsPOSStaff
 from apps.pos.models import (
     POSSession,
     POSTransaction,
@@ -25,7 +27,6 @@ from apps.pos.serializers import (
     POSDashboardStatsSerializer,
 )
 from apps.pos.permissions import (
-    IsPOSStaff,
     CanOpenSession,
     CanCloseSession,
     CanVoidTransaction,
@@ -33,6 +34,14 @@ from apps.pos.permissions import (
     CanViewReports,
 )
 from apps.products.models import Product
+
+
+# Custom API root view for POS endpoints
+class PosAPIRootView(APIView):
+    permission_classes = [IsAuthenticated, IsPOSStaff]
+
+    def get(self, request, format=None):
+        return Response({"detail": "POS API root. Access restricted to POS staff."})
 
 
 class POSSessionViewSet(viewsets.ModelViewSet):
