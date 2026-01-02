@@ -238,10 +238,10 @@ This project demonstrates:
 
 ## 📞 Contact
 
-**Developer**: [Your Name]
+**Developer**: Bryvn01
 **Portfolio**: [Your Portfolio URL]
 **LinkedIn**: [Your LinkedIn]
-**Email**: [Your Email]
+**Email**: Bryangitau@yahoo.com
 
 ## 📄 License
 
