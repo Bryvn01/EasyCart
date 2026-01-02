@@ -192,7 +192,7 @@ jobs:
           export PYTHONPATH="${PYTHONPATH}:$(pwd)"
           python manage.py check --deploy || true
           # Run tests with coverage, keep test database to avoid errors
-          coverage run --rcfile=.coveragerc --source='apps' manage.py test --verbosity=2 --parallel=2 --keepdb
+          coverage run --rcfile=.coveragerc --source='apps' manage.py test --verbosity=2 --keepdb
           coverage combine || true
           coverage report --rcfile=.coveragerc
           coverage xml --rcfile=.coveragerc -o coverage.xml

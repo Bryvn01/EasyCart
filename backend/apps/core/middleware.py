@@ -21,6 +21,7 @@ class ContentSecurityPolicyMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        print(f"[DEBUG CSP] Middleware called for path: {request.path}", flush=True)
         response = self.get_response(request)
         if response.get("Content-Type", "").startswith("text/html"):
             response["Content-Security-Policy"] = (
