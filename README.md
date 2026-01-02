@@ -240,7 +240,7 @@ This project demonstrates:
 
 **Developer**: Bryvn01
 **Portfolio**: [Your Portfolio URL]
-**LinkedIn**: [Your LinkedIn]
+**LinkedIn**: https://www.linkedin.com/in/brian-g-9772ab2a5 
 **Email**: Bryangitau@yahoo.com
 
 ## 📄 License
