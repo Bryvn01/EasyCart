@@ -4,21 +4,21 @@ from rest_framework import permissions
 class IsPOSStaff(permissions.BasePermission):
     """
     Permission to check if user is staff with POS access.
+    Staff users and superusers have POS access by default.
     """
 
     def has_permission(self, request, view):
         user = request.user
-        # Only allow users who are authenticated, staff, and have POS access
+        # Only allow users who are authenticated
         if not user or not user.is_authenticated:
             return False
-        # Must be staff
-        if not getattr(user, "is_staff", False):
-            return False
-        # Must have is_pos_staff attribute True, or be in POS Staff group
-        if hasattr(user, "is_pos_staff"):
-            if user.is_pos_staff:
-                return True
-        # Fallback: check group membership
+        # Superusers have full access
+        if user.is_superuser:
+            return True
+        # Staff users have POS access
+        if getattr(user, "is_staff", False):
+            return True
+        # Check for explicit POS Staff group membership
         return user.groups.filter(name__iexact="POS Staff").exists()
 
 
