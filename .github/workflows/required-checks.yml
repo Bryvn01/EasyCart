@@ -130,7 +130,7 @@ jobs:
           HEALTHCHECK_CACHE_ENABLED: 'False'
         run: |
           export PYTHONPATH="${PYTHONPATH}:$(pwd)"
-          python manage.py test --verbosity=2 --keepdb --parallel=2
+          python manage.py test --verbosity=2 --keepdb
 
       - name: Run frontend tests
         working-directory: ./frontend
