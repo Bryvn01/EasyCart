@@ -238,8 +238,7 @@ This project demonstrates:
 
 ## 📞 Contact
 
-**Developer**: Bryvn01
-**LinkedIn**: https://www.linkedin.com/in/brian-g-9772ab2a5 
+**Developer**: Bryvn01 
 **Email**: Bryangitau@yahoo.com
 
 ## 📄 License
