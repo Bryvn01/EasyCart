@@ -1,8 +1,24 @@
+---
 name: "CodeQL"
 
-on:
+"on":
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'tests/**'
+      - 'docs/**'
+      - 'examples/**'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'tests/**'
+      - 'docs/**'
+      - 'examples/**'
+  workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 0' # weekly scan only
+    - cron: '0 0 * * 0'  # weekly scan only
 
 jobs:
   analyze:
@@ -16,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'python', 'javascript' ]
+        language: ['python', 'javascript']
 
     steps:
       - name: Checkout repository
@@ -26,6 +42,8 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
+          queries: security-extended
+          disable-default-queries: false
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3

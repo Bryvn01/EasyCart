@@ -1,30 +1,29 @@
-# Security Policy
-
-## Reporting a Vulnerability
-
-If you discover a security vulnerability in EasyCart, please report it by emailing the maintainer directly. Do not open a public issue.
-
-**Contact:** Create an issue with the label "security" (without details) and the maintainer will contact you privately.
+# Security Policy for EasyCart
 
 ## Supported Versions
 
+Only the latest major release line is supported for security updates.
+
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.x.x   | :white_check_mark: |
-| < 2.0   | :x:                |
+| 1.x.x   | :white_check_mark: |
+| < 1.0   | :x:                |
 
-## Security Measures
+## Reporting a Vulnerability
 
-This project implements:
-- JWT authentication
-- CSRF protection
-- Input sanitization
-- SQL injection prevention
-- XSS protection
-- Rate limiting
-- Two-factor authentication
-- Secure password hashing
+Please report vulnerabilities using GitHub Private Vulnerability Reporting for this repository.
 
-## Responsible Disclosure
+- Initial triage response SLA: within 48 hours
+- Target time to a verified fix: within 7 days after triage
 
-We appreciate responsible disclosure of security vulnerabilities. Please allow up to 48 hours for an initial response.
+Include the following in your report:
+
+1. Affected version
+2. Steps to reproduce
+3. Potential impact
+
+Do not disclose vulnerability details publicly before coordinated remediation.
+
+## Disclosure Policy
+
+EasyCart follows coordinated disclosure with the reporter. We will work together on validation, remediation, and a responsible public disclosure timeline after a fix is available.
