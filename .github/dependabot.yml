@@ -1,54 +1,23 @@
+---
 version: 2
 updates:
-  # Backend Python dependencies
   - package-ecosystem: "pip"
     directory: "/backend"
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "backend"
-    commit-message:
-      prefix: "chore(deps)"
-
-  # Frontend npm dependencies
-  - package-ecosystem: "npm"
-    directory: "/frontend"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "frontend"
-    commit-message:
-      prefix: "chore(deps)"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-
-  # Admin dashboard npm dependencies
-  - package-ecosystem: "npm"
-    directory: "/admin-dashboard"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 3
-    labels:
-      - "dependencies"
-      - "admin"
-    commit-message:
-      prefix: "chore(deps)"
-
-  # GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    labels:
-      - "dependencies"
-      - "ci"
-    commit-message:
-      prefix: "chore(deps)"
+    target-branch: "main"
+    versioning-strategy: "auto"
+    assignees:
+      - "Bryvn01"
+    reviewers:
+      - "Bryvn01"
+    groups:
+      production-deps:
+        dependency-type: "production"
+        patterns:
+          - "*"
+      development-deps:
+        dependency-type: "development"
+        patterns:
+          - "*"
