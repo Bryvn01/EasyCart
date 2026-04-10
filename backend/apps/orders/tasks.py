@@ -43,6 +43,15 @@ def create_order_notifications(order_id, order_status):
             User.objects.filter(is_staff=True, is_active=True).values_list("id", flat=True)
         )
         cache.set(cache_key, recipient_ids, 300)
+    else:
+        recipient_ids = list(
+            User.objects.filter(
+                id__in=recipient_ids,
+                is_staff=True,
+                is_active=True,
+            ).values_list("id", flat=True)
+        )
+        cache.set(cache_key, recipient_ids, 300)
 
     if not recipient_ids:
         return
@@ -63,7 +72,10 @@ def create_order_notifications(order_id, order_status):
     OrderNotification.objects.bulk_create(notifications, ignore_conflicts=True)
 
     if features.get("email_support", False):
-        send_order_notification_emails.delay(order.id, recipient_ids, order_status)
+        if getattr(settings, "CELERY_TASK_ALWAYS_EAGER", False):
+            send_order_notification_emails(order.id, recipient_ids, order_status)
+        else:
+            send_order_notification_emails.delay(order.id, recipient_ids, order_status)
 
 
 @shared_task(max_retries=2, default_retry_delay=60, rate_limit="10/m")

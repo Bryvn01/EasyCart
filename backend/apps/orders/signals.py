@@ -32,9 +32,6 @@ def notify_staff_on_order_status(sender, instance, created, **kwargs):
     if not created and previous_status == instance.status:
         return
 
-    if getattr(instance, "_order_notification_enqueued", False):
-        return
-
     license_info = LicenseVerifier.get_license_info()
     features = license_info.get("features", {})
     is_demo_mode = license_info.get("license_type") == LicenseVerifier.LICENSE_DEMO
@@ -45,5 +42,7 @@ def notify_staff_on_order_status(sender, instance, created, **kwargs):
         if today_orders > max_orders_per_day:
             return
 
-    create_order_notifications.delay(instance.id, instance.status)
-    instance._order_notification_enqueued = True
+    if getattr(settings, "CELERY_TASK_ALWAYS_EAGER", False):
+        create_order_notifications(instance.id, instance.status)
+    else:
+        create_order_notifications.delay(instance.id, instance.status)

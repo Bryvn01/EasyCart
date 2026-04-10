@@ -1,6 +1,7 @@
 from decimal import Decimal
 from unittest.mock import patch
 
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
@@ -27,6 +28,7 @@ def _license_info(license_type="dev", max_orders_per_day=100, email_support=True
 )
 class OrderNotificationTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.client = APIClient()
         self.customer = User.objects.create_user(
             username="customer",
