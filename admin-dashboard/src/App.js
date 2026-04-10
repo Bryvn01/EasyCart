@@ -15,6 +15,7 @@ const Users = lazy(() => import('./pages/Users'));
 const Reports = lazy(() => import('./pages/Reports'));
 const AdminCategories = lazy(() => import('./pages/AdminCategories'));
 const TwoFactorSetup = lazy(() => import('./pages/TwoFactorSetup'));
+const Notifications = lazy(() => import('./pages/Notifications'));
 const POSRoutes = lazy(() => import('./pages/POS'));
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
                         <Route path="orders" element={<Orders />} />
                         <Route path="users" element={<Users />} />
                         <Route path="reports" element={<Reports />} />
+                        <Route path="notifications" element={<Notifications />} />
                         <Route path="2fa" element={<TwoFactorSetup />} />
                         <Route path="pos/*" element={<POSRoutes />} />
                         <Route path="" element={<Navigate to="dashboard" replace />} />

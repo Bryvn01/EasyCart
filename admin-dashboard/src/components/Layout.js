@@ -14,6 +14,7 @@ import {
   Shield,
   CreditCard
 } from 'lucide-react';
+import NotificationBell from './NotificationBell';
 
 const Layout = ({ children }) => {
   const { user, logout } = useAuth();
@@ -114,10 +115,11 @@ const Layout = ({ children }) => {
 
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1" />
-            <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <div className="flex items-center gap-x-2">
-                <span className="text-sm font-medium text-gray-700">{user?.name}</span>
-                <button
+              <div className="flex items-center gap-x-4 lg:gap-x-6">
+                <NotificationBell />
+                <div className="flex items-center gap-x-2">
+                  <span className="text-sm font-medium text-gray-700">{user?.name}</span>
+                  <button
                   onClick={handleLogout}
                   className="flex items-center gap-x-1 text-sm text-gray-500 hover:text-gray-700"
                 >
