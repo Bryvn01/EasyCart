@@ -106,7 +106,15 @@ def register(request):
             },
             status=status.HTTP_201_CREATED,
         )
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # Include explicit validation details to diagnose payload mismatches (e.g. missing password_confirm).
+    return Response(
+        {
+            "message": "Registration validation failed",
+            "errors": serializer.errors,
+            "received_fields": list(data.keys()),
+        },
+        status=status.HTTP_400_BAD_REQUEST,
+    )
 
 
 @csrf_exempt

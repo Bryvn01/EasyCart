@@ -64,6 +64,7 @@ const Register = () => {
       username: sanitizeInput(formData.username),
       email: sanitizeInput(formData.email),
       password: formData.password, // Don't sanitize password
+      password_confirm: formData.password_confirm, // Required by backend serializer
       phone: sanitizeInput(formData.phone),
       address: sanitizeInput(formData.address),
     };
@@ -79,7 +80,14 @@ const Register = () => {
       });
     } catch (err) {
       console.error('Registration error:', err);
-      const errorMessage = err.response?.data?.message ||
+      const serializerErrors = err.response?.data?.errors;
+      const validationMessage = serializerErrors
+        ? Object.entries(serializerErrors)
+            .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+            .join(' | ')
+        : '';
+      const errorMessage = validationMessage ||
+                          err.response?.data?.message ||
                           err.response?.data?.error ||
                           err.message ||
                           'Registration failed. Please try again.';
