@@ -47,7 +47,7 @@ const NotificationBell = () => {
   const visibleNotifications = useMemo(() => (
     notifications.map((item) => ({
       ...item,
-      isRead: locallyReadIds.has(item.id)
+      isRead: Boolean(item.is_read) || locallyReadIds.has(item.id)
     }))
   ), [notifications, locallyReadIds]);
 

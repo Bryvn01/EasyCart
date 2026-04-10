@@ -46,7 +46,7 @@ const Notifications = () => {
   }, [statusFilter]);
 
   const displayedNotifications = useMemo(
-    () => notifications.map((item) => ({ ...item, isRead: locallyReadIds.has(item.id) })),
+    () => notifications.map((item) => ({ ...item, isRead: Boolean(item.is_read) || locallyReadIds.has(item.id) })),
     [notifications, locallyReadIds]
   );
 
