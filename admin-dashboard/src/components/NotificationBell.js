@@ -60,7 +60,7 @@ const NotificationBell = () => {
     try {
       await notificationService.markAsRead(notificationId);
     } catch (error) {
-      console.warn('Mark-as-read endpoint unavailable, using local read state only.');
+      console.warn('Failed to update read status on server, marked locally only.');
       toast('Notification marked as read locally');
     }
   };

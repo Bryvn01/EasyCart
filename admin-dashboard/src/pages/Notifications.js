@@ -64,7 +64,7 @@ const Notifications = () => {
       setUnread((prev) => Math.max(prev - 1, 0));
       toast.success('Notification marked as read');
     } catch (error) {
-      toast.error('Could not mark notification as read');
+      toast.error('Could not mark notification as read. Please try again or refresh the page.');
     } finally {
       setMarkingIds((prev) => {
         const next = new Set(prev);
@@ -86,7 +86,7 @@ const Notifications = () => {
       setUnread(0);
       toast.success('All notifications marked as read');
     } catch (error) {
-      toast.error('Could not mark all notifications as read');
+      toast.error('Could not mark all notifications as read. Please try again or refresh the page.');
     } finally {
       setMarkingAll(false);
     }
