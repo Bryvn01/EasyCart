@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.utils.html import escape
@@ -10,7 +11,8 @@ import json
 import re
 import requests
 import logging
-from .models import Order, Cart, CartItem
+from apps.accounts.permissions import IsAdminUser
+from .models import Cart, CartItem, Order, OrderNotification
 from apps.products.models import Product
 from .serializers import OrderSerializer, CartSerializer, CartItemSerializer
 from .payment_service import (
@@ -610,6 +612,36 @@ def payment_status(request, order_id):
             "total_amount": order.total_amount,
         }
     )
+
+
+class StaffNotificationsView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        notifications_qs = OrderNotification.objects.filter(
+            recipient=request.user,
+            is_read=False,
+        ).select_related("order")
+        unread_count = notifications_qs.count()
+        notifications = notifications_qs.order_by("-created_at")[:20]
+
+        return Response(
+            {
+                "count": unread_count,
+                "unread": unread_count,
+                "results": [
+                    {
+                        "id": notification.id,
+                        "order_id": notification.order_id,
+                        "message": notification.message,
+                        "order_status": notification.order_status,
+                        "created_at": notification.created_at,
+                        "order_total": str(notification.order.total_amount),
+                    }
+                    for notification in notifications
+                ],
+            }
+        )
 
 
 @api_view(["PATCH"])
