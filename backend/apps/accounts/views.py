@@ -15,6 +15,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 import re
 import logging
 from .models import User
@@ -107,14 +108,13 @@ def register(request):
             status=status.HTTP_201_CREATED,
         )
     # Include explicit validation details to diagnose payload mismatches (e.g. missing password_confirm).
-    return Response(
-        {
-            "message": "Registration validation failed",
-            "errors": serializer.errors,
-            "received_fields": list(data.keys()),
-        },
-        status=status.HTTP_400_BAD_REQUEST,
-    )
+    error_payload = {
+        "message": "Registration validation failed",
+        "errors": serializer.errors,
+    }
+    if settings.DEBUG:
+        error_payload["received_fields"] = list(data.keys())
+    return Response(error_payload, status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt

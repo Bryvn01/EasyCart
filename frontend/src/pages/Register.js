@@ -84,7 +84,7 @@ const Register = () => {
       const validationMessage = serializerErrors
         ? Object.entries(serializerErrors)
             .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
-            .join(' | ')
+            .join('. ')
         : '';
       const errorMessage = validationMessage ||
                           err.response?.data?.message ||
