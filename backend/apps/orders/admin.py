@@ -1,7 +1,10 @@
 from django.contrib import admin
+from django.db.models import Count, Q
 from django.utils import timezone
+from django.utils.html import format_html
 import pytz
-from .models import Order, OrderItem, Cart, CartItem
+
+from .models import Cart, CartItem, Order, OrderItem, OrderNotification
 
 
 class TimezoneAwareAdmin(admin.ModelAdmin):
@@ -50,6 +53,7 @@ class OrderAdmin(TimezoneAwareAdmin):
         "status",
         "payment_status",
         "payment_method",
+        "notification_status",
         "created_at_local",  # Show local time instead of UTC
     ]
     list_filter = ["status", "payment_status", "payment_method", "created_at"]
@@ -100,6 +104,26 @@ class OrderAdmin(TimezoneAwareAdmin):
         ),
     )
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.annotate(
+            unread_notification_count=Count(
+                "notifications",
+                filter=Q(notifications__is_read=False),
+            )
+        )
+
+    def notification_status(self, obj):
+        unread_count = getattr(obj, "unread_notification_count", 0)
+        color = "red" if unread_count > 0 else "green"
+        return format_html(
+            '<span style="color: {};">{} unread</span>',
+            color,
+            unread_count,
+        )
+
+    notification_status.short_description = "Notifications"
+
 
 class CartItemInline(admin.TabularInline):
     model = CartItem
@@ -111,3 +135,10 @@ class CartAdmin(admin.ModelAdmin):
     list_display = ["user", "created_at"]
     search_fields = ["user__username"]
     inlines = [CartItemInline]
+
+
+@admin.register(OrderNotification)
+class OrderNotificationAdmin(admin.ModelAdmin):
+    list_display = ["id", "order", "recipient", "order_status", "is_read", "created_at"]
+    list_filter = ["is_read", "order_status", "created_at"]
+    search_fields = ["order__id", "recipient__email", "message"]

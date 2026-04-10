@@ -8,6 +8,11 @@ admin_router.register(r"admin/orders", AdminOrderViewSet, basename="admin-order"
 
 urlpatterns = [
     path("", views.OrderListView.as_view(), name="order-list"),
+    path(
+        "staff/notifications/",
+        views.StaffNotificationsView.as_view(),
+        name="staff-notifications",
+    ),
     path("<int:pk>/", views.OrderDetailView.as_view(), name="order-detail"),
     path("cart/", views.get_cart, name="get-cart"),
     path("cart/add/", views.add_to_cart, name="add-to-cart"),

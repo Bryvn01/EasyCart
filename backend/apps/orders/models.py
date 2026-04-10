@@ -1,5 +1,6 @@
-from django.db import models
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.utils.html import escape
 from apps.products.models import Product
 
@@ -57,6 +58,38 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id} - {escape(str(self.user.email))}"
+
+
+class OrderNotification(models.Model):
+    order = models.ForeignKey(
+        Order, related_name="notifications", on_delete=models.CASCADE
+    )
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="order_notifications",
+        on_delete=models.CASCADE,
+    )
+    order_status = models.CharField(max_length=20)
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["order", "recipient", "order_status"],
+                name="unique_order_notification_per_status_recipient",
+            )
+        ]
+        indexes = [
+            models.Index(fields=["recipient", "-created_at"]),
+            models.Index(fields=["is_read"]),
+            models.Index(fields=["order", "order_status"]),
+        ]
+
+    def __str__(self):
+        return f"Order #{self.order_id} -> {escape(str(self.recipient.email))}"
 
 
 class OrderItem(models.Model):
