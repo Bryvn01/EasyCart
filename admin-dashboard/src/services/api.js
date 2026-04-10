@@ -88,6 +88,17 @@ export const customersAPI = {
   delete: (id) => api.delete(`/auth/customers/${id}/`),
 };
 
+export const notificationService = {
+  getNotifications: (page = 1, params = {}) =>
+    api.get('/orders/staff/notifications/', { params: { page, ...params } }),
+  getUnreadCount: () =>
+    api.get('/orders/staff/notifications/unread-count/'),
+  markAsRead: (notificationId) =>
+    api.patch(`/orders/staff/notifications/${notificationId}/`, { is_read: true }),
+  markAllRead: () =>
+    api.patch('/orders/staff/notifications/mark-all-read/'),
+};
+
 // Add getCustomers to adminAPI for dashboard
 adminAPI.getCustomers = () => api.get('/auth/customers/');
 
