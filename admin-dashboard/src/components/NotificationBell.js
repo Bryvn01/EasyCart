@@ -3,25 +3,9 @@ import { Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { notificationService } from '../services/api';
+import { parseNotificationPayload } from '../utils/notificationParser';
 
 const POLL_INTERVAL = 30000;
-
-const parseNotificationPayload = (payload = {}) => {
-  const results = Array.isArray(payload.results)
-    ? payload.results
-    : Array.isArray(payload.notifications)
-      ? payload.notifications
-      : Array.isArray(payload)
-        ? payload
-        : [];
-
-  const unreadRaw = payload.unread ?? payload.unread_count ?? payload.unreadCount;
-  const unread = Number.isFinite(unreadRaw)
-    ? unreadRaw
-    : results.filter((item) => !item.is_read).length;
-
-  return { results, unread };
-};
 
 const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
