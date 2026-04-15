@@ -1,5 +1,7 @@
 import React from 'react';
 
+const CENTER_POINT = 50;
+
 const Sparkline = ({ data = [] }) => {
   if (!Array.isArray(data) || data.length === 0) {
     return <div className="h-14 w-full rounded bg-gray-100 dark:bg-gray-700" />;
@@ -11,8 +13,8 @@ const Sparkline = ({ data = [] }) => {
 
   const points = data
     .map((value, index) => {
-      const x = data.length === 1 ? 50 : (index / (data.length - 1)) * 100;
-      const y = range === 0 ? 50 : ((value - min) / range) * 100;
+      const x = data.length === 1 ? CENTER_POINT : (index / (data.length - 1)) * 100;
+      const y = range === 0 ? CENTER_POINT : ((value - min) / range) * 100;
       return `${x},${100 - y}`;
     })
     .join(' ');

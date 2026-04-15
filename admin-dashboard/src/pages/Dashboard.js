@@ -14,7 +14,8 @@ const formatPercentChange = (current, previous) => {
   }
 
   const change = ((current - previous) / previous) * 100;
-  return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+  const sign = change > 0 ? '+' : '';
+  return `${sign}${change.toFixed(1)}%`;
 };
 
 const Dashboard = () => {
@@ -112,6 +113,10 @@ const Dashboard = () => {
   };
 
   const revenueTrend = useMemo(() => {
+    if (stats.revenueTrendData.length < 4) {
+      return null;
+    }
+
     const midpoint = Math.floor(stats.revenueTrendData.length / 2);
     const previousRevenue = stats.revenueTrendData.slice(0, midpoint).reduce((sum, value) => sum + value, 0);
     const currentRevenue = stats.revenueTrendData.slice(midpoint).reduce((sum, value) => sum + value, 0);
