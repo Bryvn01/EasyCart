@@ -8,9 +8,14 @@ import StatusBadge from '../components/StatusBadge';
 import Sparkline from '../components/Sparkline';
 import Skeleton from '../components/Skeleton';
 
+const RECENT_ORDERS_LIMIT = 5;
+const TOP_PRODUCTS_LIMIT = 5;
+const ORDERS_FOR_ANALYSIS_LIMIT = 30;
+const REVENUE_TREND_POINTS_LIMIT = 12;
+
 const formatPercentChange = (current, previous) => {
   if (previous <= 0) {
-    return current > 0 ? '+100.0%' : '0.0%';
+    return current > 0 ? '—' : '0.0%';
   }
 
   const change = ((current - previous) / previous) * 100;
@@ -37,8 +42,8 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       const [productsRes, ordersRes, usersRes] = await Promise.all([
-        adminAPI.getProducts({ page: 1, limit: 5 }),
-        adminAPI.getOrders({ page: 1, limit: 30 }),
+        adminAPI.getProducts({ page: 1, limit: TOP_PRODUCTS_LIMIT }),
+        adminAPI.getOrders({ page: 1, limit: ORDERS_FOR_ANALYSIS_LIMIT }),
         adminAPI.getCustomers ? adminAPI.getCustomers() : Promise.resolve({ data: [] })
       ]);
 
@@ -55,7 +60,7 @@ const Dashboard = () => {
         return sum + amount;
       }, 0);
 
-      const recentOrders = ordersData.slice(0, 5).map((order) => {
+      const recentOrders = ordersData.slice(0, RECENT_ORDERS_LIMIT).map((order) => {
         const userDetails = order.user_details;
         let customerName = 'Guest Customer';
 
@@ -76,14 +81,14 @@ const Dashboard = () => {
       });
 
       const revenueTrendData = ordersData
-        .slice(0, 12)
+        .slice(0, REVENUE_TREND_POINTS_LIMIT)
         .map((order) => parseFloat(order.total_amount || 0))
         .reverse();
 
-      const topProducts = productsData.slice(0, 5).map((product) => ({
+      const topProducts = productsData.slice(0, TOP_PRODUCTS_LIMIT).map((product) => ({
         id: product.id,
         name: product.name || `Product #${product.id}`,
-        sold: Number(product.total_sold ?? product.sold_count ?? 0)
+        sold: Number(product.total_sold ?? product.sold_count ?? 0) // sold_count kept for legacy payloads
       }));
 
       setStats({
@@ -117,6 +122,7 @@ const Dashboard = () => {
       return null;
     }
 
+    // Compare older half vs newer half to show recent performance movement.
     const midpoint = Math.floor(stats.revenueTrendData.length / 2);
     const previousRevenue = stats.revenueTrendData.slice(0, midpoint).reduce((sum, value) => sum + value, 0);
     const currentRevenue = stats.revenueTrendData.slice(midpoint).reduce((sum, value) => sum + value, 0);
