@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { notificationService } from '../services/api';
+import { parseNotificationPayload } from '../utils/notificationParser';
 
 const STATUS_OPTIONS = ['all', 'processing', 'completed'];
 const DEFAULT_PAGE_SIZE = 10;
@@ -22,10 +23,10 @@ const Notifications = () => {
       const params = statusFilter === 'all' ? {} : { order_status: statusFilter };
       const response = await notificationService.getNotifications(page, params);
       const payload = response.data || {};
-      const results = Array.isArray(payload.results) ? payload.results : [];
+      const { results, count, unread } = parseNotificationPayload(payload);
       setNotifications(results);
-      setCount(payload.count || 0);
-      setUnread(payload.unread || 0);
+      setCount(count);
+      setUnread(unread);
     } catch (error) {
       console.error('Failed to load notifications:', error);
       toast.error('Failed to load notifications');

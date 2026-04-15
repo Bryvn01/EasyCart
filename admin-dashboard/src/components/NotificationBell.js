@@ -3,6 +3,7 @@ import { Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { notificationService } from '../services/api';
+import { parseNotificationPayload } from '../utils/notificationParser';
 
 const POLL_INTERVAL = 30000;
 
@@ -18,9 +19,10 @@ const NotificationBell = () => {
     try {
       const response = await notificationService.getNotifications(1);
       const payload = response.data || {};
-      const latest = Array.isArray(payload.results) ? payload.results.slice(0, 10) : [];
+      const { results, unread } = parseNotificationPayload(payload);
+      const latest = results.slice(0, 10);
       setNotifications(latest);
-      setUnreadCount(typeof payload.unread === 'number' ? payload.unread : 0);
+      setUnreadCount(unread);
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
     } finally {
