@@ -5,6 +5,26 @@ import { notificationService } from '../services/api';
 const STATUS_OPTIONS = ['all', 'processing', 'completed'];
 const DEFAULT_PAGE_SIZE = 10;
 
+const parseNotificationPayload = (payload = {}) => {
+  const results = Array.isArray(payload.results)
+    ? payload.results
+    : Array.isArray(payload.notifications)
+      ? payload.notifications
+      : Array.isArray(payload)
+        ? payload
+        : [];
+
+  const countRaw = payload.count ?? payload.total ?? payload.total_count;
+  const count = Number.isFinite(countRaw) ? countRaw : results.length;
+
+  const unreadRaw = payload.unread ?? payload.unread_count ?? payload.unreadCount;
+  const unread = Number.isFinite(unreadRaw)
+    ? unreadRaw
+    : results.filter((item) => !item.is_read).length;
+
+  return { results, count, unread };
+};
+
 const Notifications = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -22,10 +42,10 @@ const Notifications = () => {
       const params = statusFilter === 'all' ? {} : { order_status: statusFilter };
       const response = await notificationService.getNotifications(page, params);
       const payload = response.data || {};
-      const results = Array.isArray(payload.results) ? payload.results : [];
+      const { results, count, unread } = parseNotificationPayload(payload);
       setNotifications(results);
-      setCount(payload.count || 0);
-      setUnread(payload.unread || 0);
+      setCount(count);
+      setUnread(unread);
     } catch (error) {
       console.error('Failed to load notifications:', error);
       toast.error('Failed to load notifications');

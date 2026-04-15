@@ -6,6 +6,23 @@ import { notificationService } from '../services/api';
 
 const POLL_INTERVAL = 30000;
 
+const parseNotificationPayload = (payload = {}) => {
+  const results = Array.isArray(payload.results)
+    ? payload.results
+    : Array.isArray(payload.notifications)
+      ? payload.notifications
+      : Array.isArray(payload)
+        ? payload
+        : [];
+
+  const unreadRaw = payload.unread ?? payload.unread_count ?? payload.unreadCount;
+  const unread = Number.isFinite(unreadRaw)
+    ? unreadRaw
+    : results.filter((item) => !item.is_read).length;
+
+  return { results, unread };
+};
+
 const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -18,9 +35,10 @@ const NotificationBell = () => {
     try {
       const response = await notificationService.getNotifications(1);
       const payload = response.data || {};
-      const latest = Array.isArray(payload.results) ? payload.results.slice(0, 10) : [];
+      const { results, unread } = parseNotificationPayload(payload);
+      const latest = results.slice(0, 10);
       setNotifications(latest);
-      setUnreadCount(typeof payload.unread === 'number' ? payload.unread : 0);
+      setUnreadCount(unread);
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
     } finally {
