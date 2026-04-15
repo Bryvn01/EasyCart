@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, ShoppingCart, Users, DollarSign, PlusCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -82,7 +82,7 @@ const Dashboard = () => {
       const topProducts = productsData.slice(0, 5).map((product) => ({
         id: product.id,
         name: product.name || `Product #${product.id}`,
-        sold: product.total_sold ?? product.sold_count ?? product.order_count ?? 0
+        sold: Number(product.total_sold ?? product.sold_count ?? 0)
       }));
 
       setStats({
@@ -111,10 +111,12 @@ const Dashboard = () => {
     }
   };
 
-  const midpoint = Math.floor(stats.revenueTrendData.length / 2);
-  const previousRevenue = stats.revenueTrendData.slice(0, midpoint).reduce((sum, value) => sum + value, 0);
-  const currentRevenue = stats.revenueTrendData.slice(midpoint).reduce((sum, value) => sum + value, 0);
-  const revenueTrend = midpoint > 0 ? formatPercentChange(currentRevenue, previousRevenue) : null;
+  const revenueTrend = useMemo(() => {
+    const midpoint = Math.floor(stats.revenueTrendData.length / 2);
+    const previousRevenue = stats.revenueTrendData.slice(0, midpoint).reduce((sum, value) => sum + value, 0);
+    const currentRevenue = stats.revenueTrendData.slice(midpoint).reduce((sum, value) => sum + value, 0);
+    return midpoint > 0 ? formatPercentChange(currentRevenue, previousRevenue) : null;
+  }, [stats.revenueTrendData]);
 
   const statCards = [
     { title: 'Revenue', value: `KES ${(stats.totalRevenue || 0).toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, trend: revenueTrend, icon: DollarSign },

@@ -17,7 +17,7 @@ const StatusBadge = ({ status = 'pending' }) => {
 
   return (
     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${style}`}>
-      {toLabel(normalized || 'pending')}
+      {toLabel(normalized)}
     </span>
   );
 };
