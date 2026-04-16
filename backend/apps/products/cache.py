@@ -35,15 +35,28 @@ class ProductCache:
     TIMEOUT_LONG = 3600  # 1 hour
 
     @classmethod
-    def get_product_list(cls, category=None, page=1):
+    def build_product_list_key(cls, category=None, page=1, query_fingerprint=None):
+        """Build a cache key for product list responses."""
+        if query_fingerprint:
+            return f"products:list:{query_fingerprint}"
+        return cls.PRODUCT_LIST_KEY.format(category=category or "all", page=page)
+
+    @classmethod
+    def get_product_list(cls, category=None, page=1, query_fingerprint=None):
         """Get cached product list"""
-        key = cls.PRODUCT_LIST_KEY.format(category=category or "all", page=page)
+        key = cls.build_product_list_key(
+            category=category, page=page, query_fingerprint=query_fingerprint
+        )
         return cache.get(key)
 
     @classmethod
-    def set_product_list(cls, data, category=None, page=1, timeout=None):
+    def set_product_list(
+        cls, data, category=None, page=1, query_fingerprint=None, timeout=None
+    ):
         """Cache product list"""
-        key = cls.PRODUCT_LIST_KEY.format(category=category or "all", page=page)
+        key = cls.build_product_list_key(
+            category=category, page=page, query_fingerprint=query_fingerprint
+        )
         cache.set(key, data, timeout or cls.TIMEOUT_SHORT)
 
     @classmethod
