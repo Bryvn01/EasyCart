@@ -3,18 +3,18 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #f8fafc;
+  background: var(--gray-50);
 }
 
 /* Card hover/focus effect */
 .product-card {
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--gray-200);
 }
 .product-card:focus-within,
 .product-card:hover {
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-  border-color: #cbd5e1;
+  border-color: var(--gray-300);
   outline: none;
 }
 
@@ -25,7 +25,7 @@
 }
 .product-card button:focus,
 .product-card .btn:focus {
-  outline: 2px solid var(--primary-600, #1e293b);
+  outline: 2px solid var(--primary-600);
   outline-offset: 2px;
   box-shadow: none;
 }
