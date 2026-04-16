@@ -83,6 +83,7 @@ class HealthCheckView(APIView):
 
         response_data = {
             "status": overall_status,
+            # Intentionally dynamic for observability; payload size may vary slightly.
             "timestamp": time.time(),
             "response_time_ms": round(response_time * 1000, 2),
             "checks": checks,

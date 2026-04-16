@@ -585,6 +585,11 @@ LOGGING = {
             "level": "DEBUG" if DEBUG else "INFO",
             "propagate": False,
         },
+        "apps.core.middleware": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG" if DEBUG else "WARNING",
+            "propagate": False,
+        },
         "audit": {
             "handlers": ["audit"],
             "level": "INFO",
