@@ -39,7 +39,7 @@ class ProductCache:
         """Build a cache key for product list responses."""
         if query_fingerprint:
             if category is not None or page != 1:
-                logger.debug(
+                logger.warning(
                     "Ignoring category/page when query_fingerprint is provided"
                 )
             return f"products:list:{query_fingerprint}"
