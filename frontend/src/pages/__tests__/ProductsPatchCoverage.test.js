@@ -86,4 +86,3 @@ describe('Products page patch coverage', () => {
     });
   });
 });
-

@@ -22,7 +22,7 @@ describe('UI SearchInput', () => {
     const onSearch = jest.fn();
     render(<SearchInput onSearch={onSearch} />);
 
-    fireEvent.change(screen.getByPlaceholderText('Search products...'), {
+    fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'coffee' }
     });
     expect(onSearch).not.toHaveBeenCalled();
@@ -33,4 +33,3 @@ describe('UI SearchInput', () => {
     expect(onSearch).toHaveBeenCalledWith('coffee');
   });
 });
-

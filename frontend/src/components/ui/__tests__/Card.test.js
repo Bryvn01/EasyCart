@@ -24,4 +24,3 @@ describe('UI Card', () => {
     expect(screen.getByText('Footer').closest('div')).toHaveClass('border-t');
   });
 });
-

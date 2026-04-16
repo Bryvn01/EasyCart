@@ -6,14 +6,21 @@ import ProductCard from '../ProductCard';
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key, options) => {
-      if (typeof options === 'string') return options;
-      if (!options || typeof options !== 'object') return key;
+      const textMap = {
+        quickView: 'Quick View',
+        addToCart: 'Add to Cart',
+        outOfStock: 'Out of Stock'
+      };
+      if (!options || typeof options !== 'object') {
+        return textMap[key] || key;
+      }
       if (options.defaultValue) {
         return options.defaultValue
           .replace('{{percent}}', options.percent ?? '')
           .replace('{{count}}', options.count ?? '');
       }
-      return key;
+
+      return textMap[key] || key;
     }
   })
 }));
@@ -33,12 +40,13 @@ describe('ProductCard (catalog UI coverage)', () => {
   };
 
   test('renders priority image loading, low-stock and discount badges, and visible quick view', () => {
+    const onAddToCart = jest.fn();
     const onQuickView = jest.fn();
     render(
       <MemoryRouter>
         <ProductCard
           product={baseProduct}
-          onAddToCart={jest.fn()}
+          onAddToCart={onAddToCart}
           onQuickView={onQuickView}
           priority={true}
         />
@@ -55,6 +63,9 @@ describe('ProductCard (catalog UI coverage)', () => {
     expect(quickViewBtn).toBeInTheDocument();
     fireEvent.click(quickViewBtn);
     expect(onQuickView).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add to Cart - Kenyan Coffee' }));
+    expect(onAddToCart).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }));
   });
 
   test('hides quick view and disables cart action when out of stock', () => {
@@ -72,4 +83,3 @@ describe('ProductCard (catalog UI coverage)', () => {
     expect(actionButton).toBeDisabled();
   });
 });
-

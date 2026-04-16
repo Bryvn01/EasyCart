@@ -6,7 +6,7 @@ describe('UI Input', () => {
   test('renders label/required state and updated class styling', () => {
     render(<Input id="email" label="Email" required placeholder="name@example.com" />);
 
-    expect(screen.getByLabelText('Email')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /Email/i })).toBeInTheDocument();
     expect(screen.getByLabelText('required')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('name@example.com')).toHaveClass('rounded', 'text-sm', 'focus:ring-1');
   });
@@ -30,4 +30,3 @@ describe('UI Input', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Invalid number');
   });
 });
-
