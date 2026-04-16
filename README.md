@@ -118,6 +118,7 @@ Used in code:
 ### Mobile (`mobile/.env`)
 
 `mobile/.env.example` is present, but runtime API base URL in `mobile/src/api/client.ts` is currently hardcoded by platform/dev mode logic.
+For local mobile testing, update `API_BASE_URL` in `mobile/src/api/client.ts` to your machine/LAN reachable backend URL.
 
 ## Testing & Coverage
 
