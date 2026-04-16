@@ -192,10 +192,10 @@ const Products = () => {
   // Handle pagination with smooth scroll to top
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    // Scroll to top of product grid smoothly
+    // Avoid animated scroll so pagination feedback feels immediate.
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'auto'
     });
   };
 
@@ -213,7 +213,7 @@ const Products = () => {
   }
 
   return (
-    <div className="container py-3 px-1 sm:px-4" style={{ maxWidth: '100%' }}>
+    <div className="container py-6 px-2 sm:px-4" style={{ maxWidth: '100%' }}>
       {/* Breadcrumb */}
       <nav className="mb-2 px-2 hidden sm:block" aria-label="Breadcrumb">
         <ol className="flex items-center gap-2 text-sm text-gray-600">
@@ -232,14 +232,14 @@ const Products = () => {
       </nav>
 
       {/* Header */}
-      <div className="mb-3 px-2">
-        <h1 className="text-3xl font-bold mb-2">
+      <div className="mb-6 px-2">
+        <h1 className="text-2xl md:text-3xl font-semibold mb-2 tracking-tight">
           {selectedCategory ?
             `${selectedCategory} Products` :
             'Our Products'
           }
         </h1>
-        <p style={{ color: 'var(--gray-600)' }}>
+        <p className="text-gray-600 max-w-2xl">
           {debouncedSearchTerm ?
             `Search results for "${debouncedSearchTerm}"` :
             'Discover quality Kenyan products at great prices'
@@ -255,7 +255,8 @@ const Products = () => {
       {/* Active Filters Summary */}
       {(selectedCategory || debouncedSearchTerm || sortBy || priceRange.min || priceRange.max) && (
         <div style={{
-          background: 'var(--primary-50)',
+          background: 'var(--gray-100)',
+          border: '1px solid var(--gray-200)',
           padding: 'var(--space-3)',
           borderRadius: 'var(--radius-md)',
           marginBottom: 'var(--space-4)',
@@ -263,7 +264,7 @@ const Products = () => {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <div style={{ fontSize: '0.875rem', color: 'var(--primary-700)' }}>
+          <div style={{ fontSize: '0.875rem', color: 'var(--gray-700)' }}>
             <strong>Active Filters:</strong>
             {selectedCategory && <span> Category: {selectedCategory}</span>}
             {debouncedSearchTerm && <span> Search: "{debouncedSearchTerm}"</span>}
@@ -278,15 +279,7 @@ const Products = () => {
               setSortBy('');
               setPriceRange({ min: '', max: '' });
             }}
-            style={{
-              background: 'var(--primary-600)',
-              color: 'white',
-              border: 'none',
-              padding: 'var(--space-1) var(--space-3)',
-              borderRadius: 'var(--radius-sm)',
-              fontSize: '0.75rem',
-              cursor: 'pointer'
-            }}
+            className="btn btn-secondary"
           >
             Clear All
           </button>
@@ -309,7 +302,7 @@ const Products = () => {
       />
 
       {/* Filters */}
-      <div className="card hidden md:block" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
+      <div className="card hidden md:block" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-8)' }}>
         <div className="grid grid-cols-5 gap-4">
           <div>
             <SearchInput
@@ -412,7 +405,7 @@ const Products = () => {
       </div>
 
       {/* Products Grid - Mobile-optimized responsive layout */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 px-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 px-1">
         {products.map((product, index) => (
           <ProductCard
             key={product.id}
@@ -510,7 +503,7 @@ const Products = () => {
                     padding: 'var(--space-2) var(--space-3)',
                     border: '1px solid var(--gray-300)',
                     borderRadius: 'var(--radius-sm)',
-                    background: currentPage === pageNum ? 'var(--primary-600)' : 'white',
+                    background: currentPage === pageNum ? 'var(--gray-900)' : 'white',
                     color: currentPage === pageNum ? 'white' : 'var(--gray-700)',
                     cursor: 'pointer',
                     fontWeight: currentPage === pageNum ? '600' : '400',
