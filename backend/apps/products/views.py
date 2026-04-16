@@ -97,7 +97,7 @@ class ProductListView(APIView):
                 for value in request.query_params.getlist(key)
             )
             query_param_string = urlencode(query_items, doseq=True)
-            query_fingerprint = hashlib.md5(
+            query_fingerprint = hashlib.sha256(
                 query_param_string.encode("utf-8")
             ).hexdigest()
             cache_key = ProductCache.build_product_list_key(
