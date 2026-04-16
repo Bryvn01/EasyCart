@@ -5,6 +5,7 @@ services:
     region: oregon
     buildCommand: "cd backend && chmod +x build.sh && ./build.sh"
     startCommand: "cd backend && gunicorn ecommerce.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+    healthCheckPath: /api/health/live/
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
