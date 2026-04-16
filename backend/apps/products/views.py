@@ -91,11 +91,10 @@ class ProductListView(APIView):
             page = int(request.query_params.get("page", 1))
             page_size = int(request.query_params.get("page_size", 20))
 
-            query_items = sorted(
-                (key, value)
-                for key in request.query_params
-                for value in request.query_params.getlist(key)
-            )
+            query_items = []
+            for key in sorted(request.query_params.keys()):
+                for value in request.query_params.getlist(key):
+                    query_items.append((key, value))
             query_param_string = urlencode(query_items, doseq=True)
             query_fingerprint = hashlib.sha256(
                 query_param_string.encode("utf-8")

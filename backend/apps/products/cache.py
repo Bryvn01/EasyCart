@@ -38,6 +38,10 @@ class ProductCache:
     def build_product_list_key(cls, category=None, page=1, query_fingerprint=None):
         """Build a cache key for product list responses."""
         if query_fingerprint:
+            if category is not None or page != 1:
+                logger.debug(
+                    "Ignoring category/page when query_fingerprint is provided"
+                )
             return f"products:list:{query_fingerprint}"
         return cls.PRODUCT_LIST_KEY.format(category=category or "all", page=page)
 
