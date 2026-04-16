@@ -84,13 +84,13 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
 
         {product.stock > 0 && product.stock <= 3 && (
           <div className="absolute bottom-2 left-2 z-20" aria-label="Low Stock">
-            <span className="bg-amber-600 text-white px-2 py-1 rounded font-semibold text-xs" role="status">
+            <span className="bg-gray-700 text-white px-2 py-1 rounded font-semibold text-xs" role="status">
               {t('onlyXLeft', { count: product.stock, defaultValue: 'Only {{count}} left' })}
             </span>
           </div>
         )}
 
-        {/* Keep this visible on touch devices where hover-only controls are hard to discover. */}
+        {/* Rendered persistently by design so quick view remains discoverable without hover. */}
         {product.stock > 0 && (
           <button
             onClick={handleQuickView}
