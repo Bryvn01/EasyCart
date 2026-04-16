@@ -54,7 +54,7 @@ docs/               Setup, deployment, API, security, testing guides
 ### 1) Backend (Django API on `http://localhost:8000`)
 
 ```bash
-cd /home/runner/work/EasyCart/EasyCart/backend
+cd backend
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -67,7 +67,7 @@ python manage.py runserver
 ### 2) Frontend (React dev server on `http://localhost:3000`)
 
 ```bash
-cd /home/runner/work/EasyCart/EasyCart/frontend
+cd frontend
 npm ci
 cp .env.example .env
 npm start
@@ -78,7 +78,7 @@ npm start
 Run on another port when frontend is already running:
 
 ```bash
-cd /home/runner/work/EasyCart/EasyCart/admin-dashboard
+cd admin-dashboard
 npm ci
 cp .env.example .env
 PORT=3001 npm start
@@ -87,7 +87,7 @@ PORT=3001 npm start
 ### 4) Mobile (React Native)
 
 ```bash
-cd /home/runner/work/EasyCart/EasyCart/mobile
+cd mobile
 npm ci
 cp .env.example .env
 npm start
@@ -121,7 +121,7 @@ Used in code:
 
 ## Testing & Coverage
 
-## Local commands
+### Local commands
 
 - **Backend:** `python manage.py test --verbosity=2 --keepdb`
 - **Frontend:** `npm test -- --watchAll=false --passWithNoTests`, `npm run lint`, `npm run build`

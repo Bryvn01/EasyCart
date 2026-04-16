@@ -5,7 +5,7 @@ Primary backend implementation is Django + Django REST Framework.
 ## Quick start
 
 ```bash
-cd /home/runner/work/EasyCart/EasyCart/backend
+cd backend
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
