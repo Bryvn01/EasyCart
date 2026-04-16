@@ -90,7 +90,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, loading = false, prior
           </div>
         )}
 
-        {/* Rendered persistently by design so quick view remains discoverable without hover. */}
+        {/* Kept visibly rendered (when in stock) so quick view is discoverable without hover. */}
         {product.stock > 0 && (
           <button
             onClick={handleQuickView}

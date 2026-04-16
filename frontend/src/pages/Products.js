@@ -503,7 +503,7 @@ const Products = () => {
                     padding: 'var(--space-2) var(--space-3)',
                     border: '1px solid var(--gray-300)',
                     borderRadius: 'var(--radius-sm)',
-                     background: currentPage === pageNum ? 'var(--gray-900)' : 'white',
+                    background: currentPage === pageNum ? 'var(--gray-900)' : 'white',
                     color: currentPage === pageNum ? 'white' : 'var(--gray-700)',
                     cursor: 'pointer',
                     fontWeight: currentPage === pageNum ? '600' : '400',
