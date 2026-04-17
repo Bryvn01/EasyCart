@@ -257,6 +257,11 @@ const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
 
 ProductCard.displayName = 'ProductCard';
 
+const TRENDING_CATEGORY_PATTERNS = {
+  phonesAndTablets: /phone|tablet|mobile/i,
+  fashion: /fashion|clothing|apparel|shoe/i
+};
+
 // Main Landing Page Component
 const LandingPage = () => {
   const [categories, setCategories] = useState([]);
@@ -459,8 +464,8 @@ const LandingPage = () => {
     });
 
     // Prioritize categories with strongest local shopping intent, then gracefully fall back.
-    const phonesAndTablets = sorted.filter((product) => /phone|tablet|mobile/i.test(getCategoryName(product)));
-    const fashion = sorted.filter((product) => /fashion|clothing|apparel|shoe/i.test(getCategoryName(product)));
+    const phonesAndTablets = sorted.filter((product) => TRENDING_CATEGORY_PATTERNS.phonesAndTablets.test(getCategoryName(product)));
+    const fashion = sorted.filter((product) => TRENDING_CATEGORY_PATTERNS.fashion.test(getCategoryName(product)));
 
     if (phonesAndTablets.length >= 4) return phonesAndTablets.slice(0, 6);
     if (fashion.length >= 4) return fashion.slice(0, 6);
@@ -657,7 +662,7 @@ const LandingPage = () => {
 
                 <a
                   href="#trending-nairobi"
-                  className="mt-3 inline-flex min-h-[44px] items-center text-sm md:text-base font-semibold text-primary-700 hover:text-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md px-1"
+                  className="mt-3 inline-flex min-h-[44px] items-center text-sm md:text-base font-semibold text-primary-700 hover:text-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md px-2"
                 >
                   4.8★ (5,000+ reviews)
                 </a>

@@ -8,6 +8,9 @@ import CartBadge from './ui/CartBadge';
 import { useTheme } from '../context/ThemeContext';
 import { FiMenu, FiX, FiShoppingCart, FiSun, FiMoon } from 'react-icons/fi';
 
+const NAVBAR_HEIGHT_DEFAULT = 'h-16';
+const NAVBAR_HEIGHT_SCROLLED = 'h-14';
+
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const { cartCount, updateCartCount } = useCart();
@@ -95,7 +98,7 @@ const Navbar = () => {
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`flex justify-between items-center gap-4 transition-all duration-200 ${scrolled ? 'h-14' : 'h-16'}`}>
+        <div className={`flex justify-between items-center gap-4 transition-all duration-200 ${scrolled ? NAVBAR_HEIGHT_SCROLLED : NAVBAR_HEIGHT_DEFAULT}`}>
           {/* Logo */}
           <Link
             to="/"
