@@ -12,12 +12,10 @@ import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import MobileSearchBar from '../components/MobileSearchBar';
 import {
   FiShoppingCart,
-  FiSmartphone,
   FiPackage,
   FiTruck,
   FiShield,
   FiAward,
-  FiStar,
   FiAlertCircle,
   FiHome,
   FiMonitor,
@@ -36,7 +34,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => (
       </div>
       <h2 className="text-2xl font-bold text-gray-900 mb-4">Something went wrong</h2>
       <p className="text-gray-600 mb-6">
-        We're having trouble loading the page. Please try again.
+        {error?.message || "We're having trouble loading the page. Please try again."}
       </p>
       <button
         onClick={resetErrorBoundary}
@@ -162,22 +160,18 @@ const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
   const isOutOfStock = product.stock === 0;
   const isLowStock = product.stock > 0 && product.stock <= 3;
 
-  // Generate star rating (4-5 stars for demo purposes)
-  const rating = product.rating || (4 + Math.random()).toFixed(1);
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
-
   return (
-    <div className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-primary-500 hover:shadow-lg transition-all duration-200">
+    <div className="group bg-white overflow-hidden transition-colors duration-150">
       <Link to={`/products/${product.id}`} className="block" aria-label={`View ${product.name} details`}>
-        <div className="relative aspect-square overflow-hidden bg-gray-50">
+        {/* Fixed aspect ratio prevents CLS while images stream in */}
+        <div className="relative aspect-square overflow-hidden bg-gray-100">
           {productImage && !imageError ? (
             <>
               <img
                 src={productImage}
                 alt={product.name}
                 className={`w-full h-full object-cover transition-transform duration-300 ${
-                  imageLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-105'
+                  imageLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-[1.01]'
                 }`}
                 loading={loadingStrategy}
                 fetchPriority={fetchPriorityValue}
@@ -212,10 +206,10 @@ const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
             </div>
           )}
 
-          {/* Professional Badges */}
+          {/* Lightweight badges keep status clear without visual clutter */}
           {product.is_flash_sale && !isOutOfStock && (
             <div className="absolute top-3 left-3">
-              <span className="inline-flex items-center gap-1 bg-red-600 text-white px-3 py-1 rounded-md font-semibold text-xs shadow-lg">
+              <span className="inline-flex items-center gap-1 bg-red-600 text-white px-3 py-1 rounded-md font-semibold text-xs">
                 SALE
               </span>
             </div>
@@ -223,7 +217,7 @@ const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
 
           {isLowStock && !isOutOfStock && (
             <div className="absolute top-3 right-3">
-              <span className="bg-orange-700 text-white px-3 py-1 rounded-md font-medium text-xs shadow-lg">
+              <span className="bg-orange-700 text-white px-3 py-1 rounded-md font-medium text-xs">
                 Only {product.stock} left
               </span>
             </div>
@@ -231,36 +225,18 @@ const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
         </div>
       </Link>
 
-      <div className="p-4">
+      <div className="p-4 border-t border-gray-100">
         <Link to={`/products/${product.id}`}>
           <h3
-            className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors min-h-[3rem]"
+            className="font-semibold text-gray-900 mb-3 line-clamp-2 hover:text-primary-600 transition-colors min-h-[3rem]"
             title={product.name}
           >
             {product.name}
           </h3>
         </Link>
 
-        {/* Star Rating - Accessible */}
-        <div className="flex items-center gap-1 mb-3" role="img" aria-label={`Rating: ${rating} out of 5 stars`}>
-          {[...Array(5)].map((_, i) => (
-            <FiStar
-              key={i}
-              aria-hidden="true"
-              className={`w-4 h-4 ${
-                i < fullStars
-                  ? 'fill-yellow-400 text-yellow-400'
-                  : i === fullStars && hasHalfStar
-                  ? 'fill-yellow-400 text-yellow-400 opacity-50'
-                  : 'text-gray-300'
-              }`}
-            />
-          ))}
-          <span className="text-sm text-gray-600 ml-1" aria-hidden="true">({rating})</span>
-        </div>
-
         <div className="flex items-baseline justify-between mb-3">
-          <div className="text-2xl font-bold text-gray-900" aria-label={`Price: KSh ${product.price?.toLocaleString() || '0'}`}>
+          <div className="text-2xl font-extrabold text-gray-900" aria-label={`Price: KSh ${product.price?.toLocaleString() || '0'}`}>
             KSh {product.price?.toLocaleString() || '0'}
           </div>
         </div>
@@ -268,7 +244,7 @@ const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
         <button
           onClick={handleAddToCartClick}
           disabled={isOutOfStock}
-          className="w-full py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 flex items-center justify-center gap-2"
+          className="w-full min-h-[44px] py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-150 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 flex items-center justify-center gap-2"
           aria-label={isOutOfStock ? 'Out of stock' : `Add ${product.name} to cart`}
         >
           {!isOutOfStock && <FiShoppingCart className="w-5 h-5" />}
@@ -285,6 +261,7 @@ ProductCard.displayName = 'ProductCard';
 const LandingPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [allProducts, setAllProducts] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [error, setError] = useState(null);
   const [errorDetails, setErrorDetails] = useState(null);
@@ -369,6 +346,7 @@ const LandingPage = () => {
       const categoriesData = categoriesRes.data.results || categoriesRes.data || [];
 
       setCategories(categoriesData.slice(0, 6));
+      setAllProducts(productsData);
 
       // Enhanced product filtering and sorting
       const featured = productsData
@@ -467,13 +445,29 @@ const LandingPage = () => {
     }
   }, [newsletterEmail]);
 
-  // Memoized stats data
-  const statsData = useMemo(() => [
-    { value: '10K+', label: 'Happy Customers' },
-    { value: '5K+', label: 'Products Available' },
-    { value: '50+', label: 'Categories' },
-    { value: '24/7', label: 'Customer Support' }
-  ], []);
+  const getCategoryName = useCallback((product) => {
+    if (typeof product?.category === 'string') return product.category;
+    return product?.category?.name || product?.category_name || '';
+  }, []);
+
+  const trendingNowProducts = useMemo(() => {
+    const inStock = allProducts.filter((product) => product.stock > 0);
+
+    const sorted = [...inStock].sort((a, b) => {
+      if (a.is_top_seller !== b.is_top_seller) return b.is_top_seller ? 1 : -1;
+      return (b.rating || 0) - (a.rating || 0);
+    });
+
+    // Prioritize categories with strongest local shopping intent, then gracefully fall back.
+    const phonesAndTablets = sorted.filter((product) => /phone|tablet|mobile/i.test(getCategoryName(product)));
+    const fashion = sorted.filter((product) => /fashion|clothing|apparel|shoe/i.test(getCategoryName(product)));
+
+    if (phonesAndTablets.length >= 4) return phonesAndTablets.slice(0, 6);
+    if (fashion.length >= 4) return fashion.slice(0, 6);
+
+    const combined = [...phonesAndTablets, ...fashion];
+    return (combined.length > 0 ? combined : sorted).slice(0, 6);
+  }, [allProducts, getCategoryName]);
 
   if (error && !loading) {
     return (
@@ -633,155 +627,150 @@ const LandingPage = () => {
       <main id="main-content" className="min-h-screen bg-gray-50">
         {/* Mobile Search Bar - Sticky */}
         <MobileSearchBar />
-        {/* Hero Section - Minimal & Professional */}
-        <section className="hidden md:block relative bg-gradient-to-br from-primary-600 to-primary-700 text-white overflow-hidden">
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              {/* Hero Content */}
-              <div className="text-center lg:text-left">
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                  Kenya's Leading Online Shopping Platform
+        {/* Hero Section */}
+        <section className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-10 items-center">
+              <div>
+                <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight">
+                  Quality Products, Delivered Fast Across Nairobi.
                 </h1>
-                <p className="text-base md:text-lg mb-6 text-white/90 max-w-2xl mx-auto lg:mx-0">
-                  Quality products, competitive prices, fast delivery nationwide.
-                </p>
 
-                {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-6">
-                  <Link
-                    to="/products"
-                    className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold bg-white text-primary-600 rounded-lg hover:bg-gray-50 transition-colors focus:ring-2 focus:ring-white focus:ring-offset-2"
-                    aria-label="Start shopping now"
-                  >
-                    <FiShoppingCart className="mr-2 w-5 h-5" />
-                    Shop Now
-                  </Link>
-                  <Link
-                    to="/app-download"
-                    className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold bg-transparent border-2 border-white text-white rounded-lg hover:bg-white/10 transition-colors focus:ring-2 focus:ring-white focus:ring-offset-2"
-                    aria-label="Download our mobile app"
-                  >
-                    <FiSmartphone className="mr-2 w-5 h-5" />
-                    Get Mobile App
-                  </Link>
+                <div className="mt-4 flex flex-wrap gap-2 text-sm">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700">
+                    <FiShield className="w-4 h-4" aria-hidden="true" />
+                    Secure Checkout
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700">
+                    <FiTruck className="w-4 h-4" aria-hidden="true" />
+                    Same-day Nairobi
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700">
+                    <FiAward className="w-4 h-4" aria-hidden="true" />
+                    Quality Guaranteed
+                  </span>
                 </div>
 
-                {/* Trust Badges */}
-                <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-md border border-white/20">
-                    <FiTruck className="w-4 h-4" />
-                    <span className="text-xs font-medium">Fast Delivery</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-md border border-white/20">
-                    <FiShield className="w-4 h-4" />
-                    <span className="text-xs font-medium">Secure Payment</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-md border border-white/20">
-                    <FiAward className="w-4 h-4" />
-                    <span className="text-xs font-medium">Quality Guaranteed</span>
-                  </div>
+                <p className="mt-5 text-base md:text-lg text-gray-700 max-w-2xl">
+                  Secure M-Pesa checkout, same-day delivery on orders over KSh 2,000.
+                </p>
+
+                <a
+                  href="#trending-nairobi"
+                  className="mt-3 inline-flex min-h-[44px] items-center text-sm md:text-base font-semibold text-primary-700 hover:text-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md px-1"
+                >
+                  4.8★ (5,000+ reviews)
+                </a>
+
+                <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                  <a
+                    href="#trending-nairobi"
+                    className="inline-flex min-h-[44px] items-center justify-center px-6 py-3 text-base font-semibold bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-150 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    aria-label="Jump to best-selling products"
+                  >
+                    <FiShoppingCart className="mr-2 w-5 h-5" />
+                    Shop Best Sellers
+                  </a>
+                  <Link
+                    to="/products"
+                    className="inline-flex min-h-[44px] items-center justify-center px-6 py-3 text-base font-semibold bg-white text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-150 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    aria-label="Browse all products"
+                  >
+                    Browse All Products
+                  </Link>
                 </div>
               </div>
 
-              {/* Hero Stats/Features - Professional */}
-              <div className="hidden lg:grid grid-cols-2 gap-4">
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <div className="text-3xl font-bold mb-1">10,000+</div>
-                  <div className="text-sm text-white/80">Products Available</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <div className="text-3xl font-bold mb-1">5,000+</div>
-                  <div className="text-sm text-white/80">Happy Customers</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <div className="text-3xl font-bold mb-1">24/7</div>
-                  <div className="text-sm text-white/80">Customer Support</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <div className="text-3xl font-bold mb-1">4.8★</div>
-                  <div className="text-sm text-white/80">Average Rating</div>
-                </div>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 md:p-8">
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-5">Why Nairobi shoppers trust EasyCart</p>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <FiShield className="w-5 h-5 text-primary-600 mt-0.5" aria-hidden="true" />
+                    <div>
+                      <p className="font-semibold text-gray-900">Secure M-Pesa Payments</p>
+                      <p className="text-sm text-gray-600">Checkout is quick, familiar, and protected.</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <FiTruck className="w-5 h-5 text-primary-600 mt-0.5" aria-hidden="true" />
+                    <div>
+                      <p className="font-semibold text-gray-900">Fast Local Fulfillment</p>
+                      <p className="text-sm text-gray-600">Same-day delivery available for qualifying Nairobi orders.</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <FiAward className="w-5 h-5 text-primary-600 mt-0.5" aria-hidden="true" />
+                    <div>
+                      <p className="font-semibold text-gray-900">Curated Quality</p>
+                      <p className="text-sm text-gray-600">Popular products from trusted local and global brands.</p>
+                    </div>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Mobile Compact Banner */}
-        <section className="md:hidden bg-primary-600 text-white py-4 px-4">
-          <div className="text-center">
-            <h1 className="text-xl font-bold mb-2">Shop Quality Products</h1>
+        {/* Trending products section shown immediately after hero for faster product discovery */}
+        <section
+          id="trending-nairobi"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20"
+          aria-labelledby="trending-nairobi-heading"
+        >
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 id="trending-nairobi-heading" className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                Trending Now in Nairobi
+              </h2>
+              <p className="text-gray-600 text-sm md:text-base">
+                Popular picks from phones, tablets, and fashion this week.
+              </p>
+            </div>
             <Link
               to="/products"
-              className="inline-flex items-center justify-center px-5 py-2 text-sm font-semibold bg-white text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
+              className="inline-flex min-h-[44px] items-center text-primary-700 font-semibold hover:text-primary-800 transition-colors duration-150 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md px-1"
+              aria-label="View all products"
             >
-              <FiShoppingCart className="mr-2 w-4 h-4" />
-              Browse Now
+              View All
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </Link>
-          </div>
-        </section>
-
-        {/* Categories Section */}
-        <section
-          className="max-w-7xl mx-auto py-4 md:py-16"
-          aria-labelledby="categories-heading"
-        >
-          <div className="hidden md:block text-center mb-10 px-4 sm:px-6 lg:px-8">
-            <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-              Shop by Category
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Discover what you need from our wide range of categories
-            </p>
-          </div>
-          <div className="md:hidden px-4 mb-2">
-            <h2 className="text-lg font-bold text-gray-900">Categories</h2>
           </div>
 
           {loading ? (
-            <>
-              {/* Mobile skeleton - matches HorizontalCategoryScroll layout */}
-              <div className="md:hidden">
-                <MobileCategorySkeleton />
-              </div>
-              {/* Desktop skeleton - matches grid layout */}
-              <div className="hidden md:block px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                  {[...Array(6)].map((_, i) => (
-                    <CategorySkeleton key={i} />
-                  ))}
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Mobile: Horizontal Scroll */}
-              <div className="md:hidden">
-                <HorizontalCategoryScroll
-                  categories={categories}
-                  selectedCategory={null}
-                  onSelectCategory={(categoryName) => {
-                    window.location.href = `/products?category=${encodeURIComponent(categoryName)}`;
-                  }}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+              {[...Array(6)].map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : trendingNowProducts.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+              {trendingNowProducts.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                  index={index}
                 />
-              </div>
-
-              {/* Desktop: Grid */}
-              <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 px-4 sm:px-6 lg:px-8">
-                {categories.map((category) => (
-                  <CategoryCard
-                    key={category.id}
-                    category={category}
-                    getCategoryIcon={getCategoryIcon}
-                  />
-                ))}
-              </div>
-            </>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
+              <p className="text-gray-600 mb-4">Fresh trending items are loading. Explore the full catalog in the meantime.</p>
+              <Link
+                to="/products"
+                className="inline-flex min-h-[44px] items-center justify-center px-5 py-2.5 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-150 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              >
+                Browse Products
+              </Link>
+            </div>
           )}
         </section>
 
         {/* Featured Products Section */}
         <section
-          className="bg-white py-12 md:py-16"
+          className="bg-white py-14 md:py-20"
           aria-labelledby="trending-heading"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -796,7 +785,7 @@ const LandingPage = () => {
               </div>
               <Link
                 to="/products"
-                className="inline-flex items-center text-primary-600 font-semibold hover:text-primary-700 transition-colors focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded text-sm md:text-base"
+                className="inline-flex min-h-[44px] items-center text-primary-600 font-semibold hover:text-primary-700 transition-colors focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded text-sm md:text-base px-1"
                 aria-label="View all products"
               >
                 View All
@@ -828,7 +817,7 @@ const LandingPage = () => {
             <div className="text-center mt-8">
               <Link
                 to="/products"
-                className="inline-flex items-center px-8 py-3 text-lg font-semibold bg-primary-600 text-white rounded-lg shadow-md hover:bg-primary-700 hover:shadow-lg transition-all duration-300 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                className="inline-flex min-h-[44px] items-center px-8 py-3 text-lg font-semibold bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-150 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 aria-label="Explore all products"
               >
                 Explore All Products
@@ -840,8 +829,63 @@ const LandingPage = () => {
           </div>
         </section>
 
+        {/* Shop by Category Section */}
+        <section
+          className="max-w-7xl mx-auto py-14 md:py-20"
+          aria-labelledby="categories-heading"
+        >
+          <div className="hidden md:block text-center mb-10 px-4 sm:px-6 lg:px-8">
+            <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+              Shop by Category
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Discover what you need from our wide range of categories
+            </p>
+          </div>
+          <div className="md:hidden px-4 mb-2">
+            <h2 className="text-lg font-bold text-gray-900">Shop by Category</h2>
+          </div>
+
+          {loading ? (
+            <>
+              <div className="md:hidden">
+                <MobileCategorySkeleton />
+              </div>
+              <div className="hidden md:block px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                  {[...Array(6)].map((_, i) => (
+                    <CategorySkeleton key={i} />
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="md:hidden">
+                <HorizontalCategoryScroll
+                  categories={categories}
+                  selectedCategory={null}
+                  onSelectCategory={(categoryName) => {
+                    window.location.href = `/products?category=${encodeURIComponent(categoryName)}`;
+                  }}
+                />
+              </div>
+
+              <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 px-4 sm:px-6 lg:px-8">
+                {categories.map((category) => (
+                  <CategoryCard
+                    key={category.id}
+                    category={category}
+                    getCategoryIcon={getCategoryIcon}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+
         {/* Trust Signals Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Secure Payments */}
             <div className="bg-white rounded-lg border border-gray-200 p-8 hover:border-primary-500 hover:shadow-md transition-all duration-200 text-center">
@@ -895,27 +939,9 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="bg-gradient-to-r from-primary-600 to-primary-700 text-white py-12 md:py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {statsData.map((stat, index) => (
-                <div
-                  key={index}
-                  className="animate-fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="text-4xl md:text-5xl font-bold mb-2">{stat.value}</div>
-                  <div className="text-blue-100 text-sm md:text-base">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Newsletter Section */}
         <section
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20"
           aria-labelledby="newsletter-heading"
         >
           <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl p-8 md:p-12 text-center">

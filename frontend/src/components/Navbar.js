@@ -85,15 +85,17 @@ const Navbar = () => {
 
   return (
     <nav
-      className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-[50] transition-all duration-300"
+      className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-[50] transition-all duration-200"
       style={{
-        backdropFilter: scrolled ? 'blur(10px)' : 'none',
-        backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'white',
-        boxShadow: scrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+        backdropFilter: scrolled ? 'blur(6px)' : 'none',
+        backgroundColor: scrolled
+          ? (isDarkMode ? 'rgba(31, 41, 55, 0.96)' : 'rgba(255, 255, 255, 0.96)')
+          : (isDarkMode ? '#1f2937' : 'white'),
+        boxShadow: scrolled ? '0 1px 2px rgba(0, 0, 0, 0.06)' : '0 1px 1px rgba(0, 0, 0, 0.04)'
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 gap-4">
+        <div className={`flex justify-between items-center gap-4 transition-all duration-200 ${scrolled ? 'h-14' : 'h-16'}`}>
           {/* Logo */}
           <Link
             to="/"
@@ -186,7 +188,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:ring-2 focus:ring-primary-500"
+            className="md:hidden p-2 rounded-lg min-w-[44px] min-h-[44px] inline-flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:ring-2 focus:ring-primary-500"
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
