@@ -13,3 +13,21 @@ services:
         fromDatabase:
           name: easycart-db
           property: connectionString
+
+  - type: web
+    name: easycart-frontend
+    env: static
+    region: oregon
+    rootDir: frontend
+    buildCommand: "npm ci && CI=false npm run build"
+    staticPublishPath: build
+    pullRequestPreviewsEnabled: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false
+      - key: NODE_VERSION
+        value: 20.19.0
