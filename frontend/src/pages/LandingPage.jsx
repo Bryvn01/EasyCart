@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { productsAPI, ordersAPI, getApiBaseUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -12,7 +12,6 @@ import HorizontalCategoryScroll from '../components/HorizontalCategoryScroll';
 import MobileSearchBar from '../components/MobileSearchBar';
 import {
   FiShoppingCart,
-  FiSmartphone,
   FiPackage,
   FiTruck,
   FiShield,
@@ -162,10 +161,10 @@ const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
   const isOutOfStock = product.stock === 0;
   const isLowStock = product.stock > 0 && product.stock <= 3;
 
-  // Generate star rating (4-5 stars for demo purposes)
-  const rating = product.rating || (4 + Math.random()).toFixed(1);
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
+  const parsedRating = Number(product.rating);
+  const hasRating = Number.isFinite(parsedRating) && parsedRating > 0;
+  const fullStars = hasRating ? Math.floor(parsedRating) : 0;
+  const hasHalfStar = hasRating ? parsedRating % 1 >= 0.5 : false;
 
   return (
     <div className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-primary-500 hover:shadow-lg transition-all duration-200">
@@ -242,22 +241,26 @@ const ProductCard = React.memo(({ product, onAddToCart, index = 999 }) => {
         </Link>
 
         {/* Star Rating - Accessible */}
-        <div className="flex items-center gap-1 mb-3" role="img" aria-label={`Rating: ${rating} out of 5 stars`}>
-          {[...Array(5)].map((_, i) => (
-            <FiStar
-              key={i}
-              aria-hidden="true"
-              className={`w-4 h-4 ${
-                i < fullStars
-                  ? 'fill-yellow-400 text-yellow-400'
-                  : i === fullStars && hasHalfStar
-                  ? 'fill-yellow-400 text-yellow-400 opacity-50'
-                  : 'text-gray-300'
-              }`}
-            />
-          ))}
-          <span className="text-sm text-gray-600 ml-1" aria-hidden="true">({rating})</span>
-        </div>
+        {hasRating ? (
+          <div className="flex items-center gap-1 mb-3" role="img" aria-label={`Rating: ${parsedRating.toFixed(1)} out of 5 stars`}>
+            {[...Array(5)].map((_, i) => (
+              <FiStar
+                key={i}
+                aria-hidden="true"
+                className={`w-4 h-4 ${
+                  i < fullStars
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : i === fullStars && hasHalfStar
+                    ? 'fill-yellow-400 text-yellow-400 opacity-50'
+                    : 'text-gray-300'
+                }`}
+              />
+            ))}
+            <span className="text-sm text-gray-600 ml-1" aria-hidden="true">({parsedRating.toFixed(1)})</span>
+          </div>
+        ) : (
+          <div className="text-sm text-gray-500 mb-3">No ratings yet</div>
+        )}
 
         <div className="flex items-baseline justify-between mb-3">
           <div className="text-2xl font-bold text-gray-900" aria-label={`Price: KSh ${product.price?.toLocaleString() || '0'}`}>
@@ -298,6 +301,7 @@ const LandingPage = () => {
   const { isAuthenticated } = useAuth();
   const { fetchCartCount } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // INDUSTRY BEST PRACTICE: Guest cart with localStorage
   const {
@@ -467,14 +471,6 @@ const LandingPage = () => {
     }
   }, [newsletterEmail]);
 
-  // Memoized stats data
-  const statsData = useMemo(() => [
-    { value: '10K+', label: 'Happy Customers' },
-    { value: '5K+', label: 'Products Available' },
-    { value: '50+', label: 'Categories' },
-    { value: '24/7', label: 'Customer Support' }
-  ], []);
-
   if (error && !loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -567,7 +563,7 @@ const LandingPage = () => {
     "@type": "Organization",
     "name": "EasyCart",
     "url": siteUrl,
-    "description": "Kenya's Leading Online Shopping Platform"
+    "description": "Online shopping in Kenya"
     // TODO: Add logo, contactPoint, and sameAs when real values are available
     // "logo": `${siteUrl}/logo.png`,
     // "contactPoint": { ... },
@@ -589,7 +585,7 @@ const LandingPage = () => {
   return (
     <>
       <Helmet>
-        <title>EasyCart - Kenya's Leading Online Shopping Platform</title>
+        <title>EasyCart - Online Shopping in Kenya</title>
         <meta
           name="description"
           content="Shop the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi. Secure payments with M-Pesa, Visa, and Mastercard."
@@ -603,14 +599,14 @@ const LandingPage = () => {
 
         {/* Open Graph / Social Media */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="EasyCart - Kenya's Leading Online Shopping Platform" />
+        <meta property="og:title" content="EasyCart - Online Shopping in Kenya" />
         <meta property="og:description" content="Shop the best deals on groceries, electronics, fashion, and more. Free delivery on orders over KSh 2,000 in Nairobi." />
         <meta property="og:url" content={siteUrl} />
         <meta property="og:site_name" content="EasyCart" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="EasyCart - Kenya's Leading Online Shopping Platform" />
+        <meta name="twitter:title" content="EasyCart - Online Shopping in Kenya" />
         <meta name="twitter:description" content="Shop the best deals on groceries, electronics, fashion, and more." />
 
         {/* Structured Data */}
@@ -640,7 +636,7 @@ const LandingPage = () => {
               {/* Hero Content */}
               <div className="text-center lg:text-left">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                  Kenya's Leading Online Shopping Platform
+                  Shop Online Across Kenya
                 </h1>
                 <p className="text-base md:text-lg mb-6 text-white/90 max-w-2xl mx-auto lg:mx-0">
                   Quality products, competitive prices, fast delivery nationwide.
@@ -655,14 +651,6 @@ const LandingPage = () => {
                   >
                     <FiShoppingCart className="mr-2 w-5 h-5" />
                     Shop Now
-                  </Link>
-                  <Link
-                    to="/app-download"
-                    className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold bg-transparent border-2 border-white text-white rounded-lg hover:bg-white/10 transition-colors focus:ring-2 focus:ring-white focus:ring-offset-2"
-                    aria-label="Download our mobile app"
-                  >
-                    <FiSmartphone className="mr-2 w-5 h-5" />
-                    Get Mobile App
                   </Link>
                 </div>
 
@@ -683,25 +671,6 @@ const LandingPage = () => {
                 </div>
               </div>
 
-              {/* Hero Stats/Features - Professional */}
-              <div className="hidden lg:grid grid-cols-2 gap-4">
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <div className="text-3xl font-bold mb-1">10,000+</div>
-                  <div className="text-sm text-white/80">Products Available</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <div className="text-3xl font-bold mb-1">5,000+</div>
-                  <div className="text-sm text-white/80">Happy Customers</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <div className="text-3xl font-bold mb-1">24/7</div>
-                  <div className="text-sm text-white/80">Customer Support</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <div className="text-3xl font-bold mb-1">4.8★</div>
-                  <div className="text-sm text-white/80">Average Rating</div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
@@ -760,7 +729,7 @@ const LandingPage = () => {
                   categories={categories}
                   selectedCategory={null}
                   onSelectCategory={(categoryName) => {
-                    window.location.href = `/products?category=${encodeURIComponent(categoryName)}`;
+                    navigate(`/products?category=${encodeURIComponent(categoryName)}`);
                   }}
                 />
               </div>
@@ -891,24 +860,6 @@ const LandingPage = () => {
               <div className="text-primary-600 font-semibold text-sm">
                 Easy returns within 30 days
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Section */}
-        <section className="bg-gradient-to-r from-primary-600 to-primary-700 text-white py-12 md:py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {statsData.map((stat, index) => (
-                <div
-                  key={index}
-                  className="animate-fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="text-4xl md:text-5xl font-bold mb-2">{stat.value}</div>
-                  <div className="text-blue-100 text-sm md:text-base">{stat.label}</div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
