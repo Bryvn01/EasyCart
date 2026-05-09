@@ -21,3 +21,7 @@ updates:
         dependency-type: "development"
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "Django"
+        versions:
+          - ">=6"
