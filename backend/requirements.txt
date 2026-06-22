@@ -61,7 +61,7 @@ sqlparse==0.5.5
 stripe==15.2.1
 twilio==9.10.9
 typing_extensions==4.15.0
-Django>=6.0.6,<7.0
+Django>=5.2,<6.0
 tzlocal==5.4.3
 urllib3==2.7.0
 vine==5.1.0
