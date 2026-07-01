@@ -41,6 +41,7 @@ ignore:
   - "**/*.test.js"
   - "**/*.spec.jsx"
   - "**/*.test.jsx"
+  - "**/setupProxy.js"
 
 flag_management:
   default_rules:
