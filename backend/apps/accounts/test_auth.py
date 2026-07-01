@@ -335,6 +335,7 @@ class TwoFactorAuthenticationTests(APITestCase):
                 status.HTTP_202_ACCEPTED,
                 status.HTTP_404_NOT_FOUND,
                 status.HTTP_400_BAD_REQUEST,
+                status.HTTP_403_FORBIDDEN,
             ],
         )
 

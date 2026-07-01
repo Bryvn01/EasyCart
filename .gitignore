@@ -52,6 +52,7 @@ venv/
 env/
 ENV/
 .venv/
+easycart-env/
 
 # Node.js
 node_modules/
@@ -117,3 +118,26 @@ storybook-static
 
 # Office documents
 *.pptx
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage HTML reports
+htmlcov/
+
+# Coverage data files
+*.coverage
+
+# Temporary CI/issue scripts
+CI_*.md
+GITHUB_MANAGEMENT.md
+ISSUES_PRS_SUMMARY.md
+RESOLUTION_COMPLETE.md
+scripts/close-duplicate-issues.sh
+scripts/close-duplicates.ps1
+
+# Accidental artifacts in services
+admin-dashboard/src/services/Promise.reject(error))
+admin-dashboard/src/services/response
+admin-dashboard/src/services/{
+frontend/src/temp_files.txt

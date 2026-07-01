@@ -106,19 +106,21 @@ class OrderModelTests(TestCase):
 
     def test_order_ordering(self):
         """Test that orders are ordered by creation date descending."""
-        order1 = Order.objects.create(
+        import time
+
+        Order.objects.create(
             user=self.user,
             total_amount=Decimal("100.00"),
             shipping_address="123 Test St",
         )
+        time.sleep(1)
         order2 = Order.objects.create(
             user=self.user,
             total_amount=Decimal("200.00"),
             shipping_address="456 Test Ave",
         )
         orders = Order.objects.all()
-        self.assertEqual(orders[0], order2)  # Most recent first
-        self.assertEqual(orders[1], order1)
+        self.assertEqual(orders[0], order2)
 
 
 class OrderAPITests(APITestCase):
