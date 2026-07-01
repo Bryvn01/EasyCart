@@ -6,6 +6,9 @@ from django.core.cache import cache
 from django.utils import timezone
 from .license import LicenseVerifier
 
+logger = logging.getLogger(__name__)
+audit_logger = logging.getLogger("audit")
+
 """
 EasyCart Custom Middleware
 Copyright (c) 2025 Bryvn01. All rights reserved.
@@ -21,7 +24,8 @@ class ContentSecurityPolicyMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        print(f"[DEBUG CSP] Middleware called for path: {request.path}", flush=True)
+        if settings.DEBUG:
+            logger.debug("CSP Middleware called for path: %s", request.path)
         response = self.get_response(request)
         if response.get("Content-Type", "").startswith("text/html"):
             response["Content-Security-Policy"] = (
@@ -29,11 +33,6 @@ class ContentSecurityPolicyMiddleware:
                 "object-src 'none'; frame-ancestors 'none'; base-uri 'self';"
             )
         return response
-
-
-logger = logging.getLogger(__name__)
-audit_logger = logging.getLogger("audit")
-
 
 class LicenseEnforcementMiddleware:
     """

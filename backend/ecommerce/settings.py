@@ -501,6 +501,7 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_ALWAYS_EAGER = config("CELERY_TASK_ALWAYS_EAGER", default=DEBUG, cast=bool)
+FEATURE_NOTIFICATIONS = config("FEATURE_NOTIFICATIONS", default=False, cast=bool)
 
 # Logging Configuration
 LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
@@ -582,6 +583,11 @@ LOGGING = {
         "apps": {
             "handlers": ["console", "file"],
             "level": "DEBUG" if DEBUG else "INFO",
+            "propagate": False,
+        },
+        "apps.core.middleware": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG" if DEBUG else "WARNING",
             "propagate": False,
         },
         "audit": {

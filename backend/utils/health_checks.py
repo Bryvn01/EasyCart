@@ -83,6 +83,7 @@ class HealthCheckView(APIView):
 
         response_data = {
             "status": overall_status,
+            # Intentionally dynamic for observability; payload size may vary slightly.
             "timestamp": time.time(),
             "response_time_ms": round(response_time * 1000, 2),
             "checks": checks,
@@ -129,9 +130,13 @@ class HealthCheckView(APIView):
                     getattr(settings, "HEALTHCHECK_DB_UNHEALTHY_MS", 5000)
                 )
 
+                # A successful query should not mark the service unhealthy solely due to latency.
+                # Reserve UNHEALTHY for true connectivity/query failures handled in the except path.
                 if response_time_ms >= unhealthy_ms:
-                    check_status = HealthStatus.UNHEALTHY
-                    message = f"Database response slow ({response_time_ms}ms)"
+                    check_status = HealthStatus.DEGRADED
+                    message = (
+                        f"Database response very slow ({response_time_ms}ms, likely waking from sleep)"
+                    )
                 elif response_time_ms >= degraded_ms:
                     check_status = HealthStatus.DEGRADED
                     message = f"Database response degraded ({response_time_ms}ms, waking from sleep)"

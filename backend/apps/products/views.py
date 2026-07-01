@@ -12,6 +12,8 @@ from django.db import models
 from .models import Product, Category
 from .cache import ProductCache
 import logging
+import hashlib
+from urllib.parse import urlencode
 
 logger = logging.getLogger(__name__)
 
@@ -89,18 +91,28 @@ class ProductListView(APIView):
             page = int(request.query_params.get("page", 1))
             page_size = int(request.query_params.get("page_size", 20))
 
-            # Only cache simple category+page queries (no search/filters)
-            if (
-                not search
-                and not request.query_params.get("price_min")
-                and not request.query_params.get("price_max")
-            ):
-                cached_data = ProductCache.get_product_list(category, page)
-                if cached_data:
-                    logger.info(
-                        f"Returned products from cache (category={category}, page={page})"
-                    )
-                    return Response(cached_data, status=status.HTTP_200_OK)
+            query_items = []
+            for key in sorted(request.query_params.keys()):
+                for value in request.query_params.getlist(key):
+                    query_items.append((key, value))
+            query_param_string = urlencode(query_items, doseq=True)
+            query_fingerprint = hashlib.sha256(
+                query_param_string.encode("utf-8")
+            ).hexdigest()
+            cache_key = ProductCache.build_product_list_key(
+                query_fingerprint=query_fingerprint
+            )
+
+            cached_data = ProductCache.get_product_list(
+                query_fingerprint=query_fingerprint
+            )
+            if cached_data:
+                logger.info(
+                    "Returned products from cache (cache_key=%s, params_fingerprint=%s)",
+                    cache_key,
+                    query_fingerprint,
+                )
+                return Response(cached_data, status=status.HTTP_200_OK)
 
             # PERFORMANCE: Use select_related to prevent N+1 queries
             queryset = Product.objects.select_related("category").all()
@@ -178,16 +190,12 @@ class ProductListView(APIView):
 
             if page < total_pages:
                 # Build next URL with current query params
-                from urllib.parse import urlencode
-
                 next_params = request.query_params.copy()
                 next_params["page"] = page + 1
                 next_url = f"{base_url}?{urlencode(next_params)}"
 
             if page > 1:
                 # Build previous URL with current query params
-                from urllib.parse import urlencode
-
                 prev_params = request.query_params.copy()
                 prev_params["page"] = page - 1
                 previous_url = f"{base_url}?{urlencode(prev_params)}"
@@ -202,13 +210,9 @@ class ProductListView(APIView):
                 "results": serializer.data,
             }
 
-            # Cache simple queries
-            if (
-                not search
-                and not request.query_params.get("price_min")
-                and not request.query_params.get("price_max")
-            ):
-                ProductCache.set_product_list(response_data, category, page)
+            ProductCache.set_product_list(
+                response_data, query_fingerprint=query_fingerprint
+            )
 
             logger.info(
                 f"Returned {len(serializer.data)} products from PostgreSQL (page {page}/{total_pages})"
