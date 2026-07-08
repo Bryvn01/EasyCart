@@ -64,7 +64,7 @@ jobs:
           npm audit --audit-level=high --production || true
 
       - name: Run Dependabot alerts check
-        uses: github/super-linter@v5
+        uses: github/super-linter@v7
         continue-on-error: true
         env:
           DEFAULT_BRANCH: main
